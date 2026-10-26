@@ -105,6 +105,7 @@ public sealed partial class MainWindow : Window
 
         // Wire input
         roomList.ValueChanged += (_, _) => OnRoomSelected();
+        roomList.Accepting += (_, e) => { e.Handled = true; EnterRoom(); };
         roomList.RowRender += OnRoomRowRender;
         input.Accepting += (_, e) => { e.Handled = true; HandleInput(); };
         input.TextChanged += (_, _) => OnInputChanged();
@@ -383,14 +384,32 @@ public sealed partial class MainWindow : Window
         args.RowAttribute = new TuiAttribute(roomsWithHighlight.Contains(roomId) ? Color.BrightYellow : Color.White, normal.Background);
     }
 
-    /// <summary>Open the room picked in the room list.</summary>
+    /// <summary>Show the room picked in the room list; while browsing the list with arrow keys, focus stays in the list.</summary>
     private void OnRoomSelected()
     {
         // Ignore programmatic selection
         if (updatingRooms || roomList.SelectedItem is not int index || index >= roomIds.Count) return;
         if (roomIds[index] == currentRoomId) return;
-        // Open
-        _ = OpenRoomAsync(roomIds[index]);
+        // Open, keeping the list focused when it has focus
+        _ = OpenRoomAsync(roomIds[index], enter: !roomList.HasFocus);
+    }
+
+    /// <summary>Enter the room selected in the room list: answer its invite, or move to the input line.</summary>
+    private void EnterRoom()
+    {
+        // Selected room, opened if browsing has not opened it yet
+        if (roomList.SelectedItem is not int index || index >= roomIds.Count) return;
+        string roomId = roomIds[index];
+        if (roomId != currentRoomId)
+        {
+            _ = OpenRoomAsync(roomId, enter: true);
+            return;
+        }
+
+        // Invites ask; joined rooms take input
+        input.SetFocus();
+        bool invited = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.Membership == Memberships.Invite);
+        if (invited) AnswerInvite(roomId);
     }
 
     /// <summary>Select the room at <paramref name="index"/> in the room list.</summary>
@@ -425,8 +444,10 @@ public sealed partial class MainWindow : Window
         SelectRoomAt((current + step + roomIds.Count) % roomIds.Count);
     }
 
-    /// <summary>Show a room: header, members, stored history and pending messages; answer invites first.</summary>
-    private async Task OpenRoomAsync(string roomId)
+    /// <summary>Show a room: header, members, stored history and pending messages.</summary>
+    /// <param name="roomId">Room to show.</param>
+    /// <param name="enter">Whether to move to the input line and answer an invite; false while browsing the room list, which keeps focus.</param>
+    private async Task OpenRoomAsync(string roomId, bool enter = true)
     {
         // Switch, leaving composing and typing in the previous room
         if (currentRoomId is string previous) SendTyping(previous, false);
@@ -435,14 +456,14 @@ public sealed partial class MainWindow : Window
         roomsWithHighlight.Remove(roomId);
         RefreshRooms();
         RefreshHeader();
-        input.SetFocus();
+        if (enter) input.SetFocus();
 
-        // Invites ask first
+        // Invites ask first, or wait for Enter while browsing
         string membership = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.Membership : Memberships.Leave);
         if (membership == Memberships.Invite)
         {
-            timeline.SetEntries([]);
-            AnswerInvite(roomId);
+            timeline.SetEntries([new TimelineEntry { Text = "-!- You are invited to this room. Press Enter to join or reject.", Kind = EntryKind.Info }]);
+            if (enter) AnswerInvite(roomId);
             return;
         }
 

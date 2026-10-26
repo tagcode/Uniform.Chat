@@ -157,6 +157,8 @@ View → Logs (or `/logs`) shows the log of this run and earlier ones; each run 
 |---|---|
 | Alt+1 … Alt+9 | Go to room 1–9 |
 | Ctrl+N, Ctrl+P | Next, previous room |
+| Up, Down in the room list | Look through rooms; focus stays in the list (click the list, or press Tab on an empty input line, to get there) |
+| Enter in the room list | Type in the selected room; for an invite, join or reject it |
 | PageUp, PageDown | Scroll messages |
 | Ctrl+PageUp | Load older messages |
 | Ctrl+O | Join a room |
