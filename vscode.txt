@@ -1,0 +1,85 @@
+VS-Code Key-shortcuts:
+    Command Palette     Ctrl+Shift+P
+        .Net
+        Continue
+        View: Show Testing    
+    Bottom Panel        Shift+J
+    Problems            Ctrl+Shift+M
+    Source Control      Ctrl+Shift+G
+
+	Chat		        Ctrl+Alt+I
+	Open File	        Ctrl+O
+	Open Folder	        Ctrl+K Ctrl+O
+	Open Recenet        Ctrl+R
+    Extensions          Ctrl+Shift+X
+    C# Debug Launch     Ctrl+Shift+D
+    Build               Ctrl+Shift+B
+    Keyboard shortcuts  Ctrl+K, Ctrl+S
+    Terminal            Ctrl+`
+    Go to symbol        Ctrl+Shift+O
+    Search class        Ctrl+T
+
+    Chat (Continue)     Ctrl+L
+
+    Reveal (file in explorer)   Ctrl+K, R
+
+    Debug               F5
+
+keybindings.json:
+    {
+        "key": "ctrl+d",
+        "command": "editor.action.duplicateSelection",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+-",
+        "command": "workbench.action.navigateBack"
+    },
+    {
+        "key": "ctrl+shift+-",
+        "command": "workbench.action.navigateForward"
+    },
+    {
+        "key": "ctrl+shift+s",
+        "command": "workbench.action.files.saveAll",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+f10",
+        "command": "editor.debug.action.runToCursor",
+        "when": "editorTextFocus && inDebugMode"
+    }    
+
+dotnet:
+	dotnet new console
+	dotnet new classlib -n ""
+	dotnet new web
+
+	dotnet new sln -n mysolution
+	dotnet sln add scratch2.csproj
+
+    dotnet build
+
+C#:
+    F2          Rename class
+
+Settings
+    terminal.integrated.hideOnLastClosed        To prevent the bottom panel from closing
+
+Git:
+    git commit -am "bla"
+
+VSCode shell:
+    code serve-web --host 0.0.0.0 --port 8000 --without-connection-token --accept-server-license-terms 
+
+git:
+    git config pull.rebase false            # merge vai rebase default operation, vscode ei syncaa muuttaminen
+    git checkout -b feature/blaa            # create a new feature specific branch (-b creates a branch)
+    git checkout -b master
+    git branch                              # list local branches
+    git branch -a                           # list global branches
+    git branch -d name                      # removes a local branch (blocks if unmerged)
+    git branch -D name                      # removes a local branch (forced, data loss)
+    git push origin --delete name           # removes a branch on remote
+    git fetch --prune                       # Prune stale remote branches
+
