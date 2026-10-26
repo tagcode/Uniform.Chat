@@ -14,11 +14,17 @@
     <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix homeserver building blocks: room versions, event format, content hashes, signing, redaction and authorization rules.</Description>
     <PackageTags>matrix;homeserver;server</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Protocol.Core\Uniform.Matrix.Protocol.Core.csproj" />

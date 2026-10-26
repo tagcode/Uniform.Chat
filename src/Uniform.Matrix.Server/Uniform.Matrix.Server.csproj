@@ -14,11 +14,17 @@
     <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix homeserver engine on ASP.NET Core and SQLite: accounts, rooms, sync, media, the end-to-end encryption relay and the room directory. Add it with AddMatrixServer and MapMatrixServer.</Description>
     <PackageTags>matrix;homeserver;server;aspnetcore</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

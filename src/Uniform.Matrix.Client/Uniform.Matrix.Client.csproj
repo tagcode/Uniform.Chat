@@ -14,11 +14,17 @@
     <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix client engine with local SQLite storage: session, sync, outbox, media cache, encryption and room state.</Description>
     <PackageTags>matrix;client;chat;sqlite</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Protocol.Client\Uniform.Matrix.Protocol.Client.csproj" />

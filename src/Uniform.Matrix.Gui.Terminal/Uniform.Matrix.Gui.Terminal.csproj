@@ -14,11 +14,17 @@
     <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Terminal.Gui components for host applications: settings window, log window and dialogs.</Description>
     <PackageTags>terminal;tui;terminal.gui;settings</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />

@@ -31,15 +31,15 @@ MatrixClient resumed = new(http, storedSession);
 Filter filter = new() { Room = new RoomFilter { Timeline = new RoomEventFilter { Limit = 50, LazyLoadMembers = true } } };
 string filterId = await client.CreateFilterAsync(filter);
 
-await foreach (SyncResponse sync in client.SyncLoopAsync(filter: filterId, onRetry: (ex, wait) => Console.Error.WriteLine($"Sync failed, retrying in {wait}: {ex.Message}"), ct: ct))
+await foreach (SyncResponse sync in client.SyncLoopAsync(filter: filterId, onRetry: (exception, wait) => Console.Error.WriteLine($"Sync failed, retrying in {wait}: {exception.Message}"), cancellationToken: cancellationToken))
 {
     foreach ((string roomId, JoinedRoom room) in sync.Rooms.Join)
     {
-        foreach (ClientEvent ev in room.Timeline.Events)
+        foreach (ClientEvent clientEvent in room.Timeline.Events)
         {
-            if (ev.Type != EventTypes.RoomMessage) continue;
-            if (!ev.TryGetContent(out MessageContent? message)) continue;
-            Console.WriteLine($"[{roomId}] {ev.Sender}: {message.Body}");
+            if (clientEvent.Type != EventTypes.RoomMessage) continue;
+            if (!clientEvent.TryGetContent(out MessageContent? message)) continue;
+            Console.WriteLine($"[{roomId}] {clientEvent.Sender}: {message.Body}");
         }
     }
 
@@ -59,7 +59,7 @@ Room state is in the `Uniform.Matrix.Client` library (`using Uniform.Matrix.Clie
 ```csharp
 RoomStore store = new(client.UserId!);
 
-await foreach (SyncResponse sync in client.SyncLoopAsync(since: store.NextBatch, ct: ct))
+await foreach (SyncResponse sync in client.SyncLoopAsync(since: store.NextBatch, cancellationToken: cancellationToken))
 {
     SyncChanges changes = store.Apply(sync);
 
@@ -69,10 +69,10 @@ await foreach (SyncResponse sync in client.SyncLoopAsync(since: store.NextBatch,
     foreach (TimelineBatch batch in changes.Timeline)
     {
         if (batch.Limited) Console.WriteLine($"[{batch.Room.DisplayName}] -- some messages skipped --");
-        foreach (ClientEvent ev in batch.Events)
+        foreach (ClientEvent clientEvent in batch.Events)
         {
-            if (!ev.TryGetContent(out MessageContent? message) || message.Body is null) continue;
-            Console.WriteLine($"[{batch.Room.DisplayName}] <{batch.Room.GetMemberDisplayName(ev.Sender)}> {message.Body}");
+            if (!clientEvent.TryGetContent(out MessageContent? message) || message.Body is null) continue;
+            Console.WriteLine($"[{batch.Room.DisplayName}] <{batch.Room.GetMemberDisplayName(clientEvent.Sender)}> {message.Body}");
         }
     }
 }

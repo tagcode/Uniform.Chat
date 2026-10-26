@@ -14,10 +14,16 @@
     <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix specification types shared by clients and servers: identifiers, events, API records and canonical JSON.</Description>
     <PackageTags>matrix;protocol;chat</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
