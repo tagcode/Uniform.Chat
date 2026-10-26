@@ -364,3 +364,6 @@ tests/Uniform.Matrix.Protocol.Crypto.Tests/runtimes/
 
 # Live test accounts and their recovery keys
 testclient*.txt
+
+# Editor settings, kept local
+.vscode/

@@ -10,7 +10,7 @@ internal static class LiveAccounts
     private const string AccountFile = "testclient.txt";
     private const string RecoveryFile = "testclient-recovery.txt";
 
-    /// <summary>Directory holding <c>testclient.txt</c>, found upwards from the test binary.</summary>
+    /// <summary>Directory holding <c>testclient.txt</c>, found upwards from the test binary; skip the test when there is none.</summary>
     private static string Root
     {
         get
@@ -18,8 +18,10 @@ internal static class LiveAccounts
             // Search upwards
             DirectoryInfo? directory = new(AppContext.BaseDirectory);
             while (directory is not null && !File.Exists(Path.Combine(directory.FullName, AccountFile))) directory = directory.Parent;
+            // Live tests need the git-ignored account file
+            Assert.SkipWhen(directory is null, $"{AccountFile} is missing; live tests need test accounts.");
             // Return directory
-            return directory?.FullName ?? throw new FileNotFoundException(AccountFile);
+            return directory!.FullName;
         }
     }
 

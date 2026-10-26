@@ -168,25 +168,47 @@ public class LiveServerTests(LiveSession session) : IClassFixture<LiveSession>
 public sealed class LiveSession : IAsyncLifetime
 {
     private readonly HttpClient http = new();
+    private readonly TestAccount? account = TestAccount.TryLoad();
+    private MatrixClient? client;
 
-    /// <summary>Test account from testclient.txt.</summary>
-    public TestAccount Account { get; } = TestAccount.Load();
-    /// <summary>Logged-in client.</summary>
-    public MatrixClient Client { get; private set; } = null!;
+    /// <summary>Test account from testclient.txt; skip the test when the file is missing.</summary>
+    public TestAccount Account
+    {
+        get
+        {
+            // Live tests need the git-ignored account file
+            Assert.SkipWhen(account is null, "testclient.txt is missing; live tests need a test account.");
+            // Return account
+            return account!;
+        }
+    }
 
-    /// <summary>Discover the homeserver and log in.</summary>
+    /// <summary>Logged-in client; skip the test when there is no test account.</summary>
+    public MatrixClient Client
+    {
+        get
+        {
+            // Logged in at start when the account exists
+            Assert.SkipWhen(client is null, "testclient.txt is missing; live tests need a test account.");
+            // Return client
+            return client!;
+        }
+    }
+
+    /// <summary>Discover the homeserver and log in, when there is a test account.</summary>
     public async ValueTask InitializeAsync()
     {
-        // Log in
-        Client = new MatrixClient(http, await HomeserverDiscovery.DiscoverAsync(http, Account.ServerName));
-        await Client.LoginWithPasswordAsync(Account.Localpart, Account.Password, "Uniform.Matrix.Client.Tests");
+        // No account file: tests skip
+        if (account is null) return;
+        client = new MatrixClient(http, await HomeserverDiscovery.DiscoverAsync(http, account.ServerName));
+        await client.LoginWithPasswordAsync(account.Localpart, account.Password, "Uniform.Matrix.Client.Tests");
     }
 
     /// <summary>Log out, deleting the test device.</summary>
     public async ValueTask DisposeAsync()
     {
         // Log out
-        if (Client?.IsLoggedIn == true) await Client.LogoutAsync();
+        if (client?.IsLoggedIn == true) await client.LogoutAsync();
         http.Dispose();
     }
 }
@@ -194,11 +216,12 @@ public sealed class LiveSession : IAsyncLifetime
 /// <summary>Account parsed from testclient.txt: first line <c>@localpart:server</c>, then a <c>password: ...</c> line.</summary>
 public sealed record TestAccount(string Localpart, string ServerName, string Password)
 {
-    /// <summary>Find and parse testclient.txt from the test binary directory upwards.</summary>
-    public static TestAccount Load()
+    /// <summary>Find and parse testclient.txt from the test binary directory upwards; return null when there is none.</summary>
+    public static TestAccount? TryLoad()
     {
         // Read non-empty lines
-        List<string> lines = File.ReadAllLines(FindFile("testclient.txt")).Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
+        if (FindFile("testclient.txt") is not string path) return null;
+        List<string> lines = File.ReadAllLines(path).Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
 
         // Parse user ID and password
         if (!UserId.TryParse(lines[0], out UserId userId)) throw new FormatException("First line of testclient.txt must be @localpart:server");
@@ -207,8 +230,8 @@ public sealed record TestAccount(string Localpart, string ServerName, string Pas
         return new TestAccount(userId.Localpart, userId.ServerName, password);
     }
 
-    /// <summary>Return the path of <paramref name="name"/> in the binary directory or its nearest parent.</summary>
-    private static string FindFile(string name)
+    /// <summary>Return the path of <paramref name="name"/> in the binary directory or its nearest parent, or null.</summary>
+    private static string? FindFile(string name)
     {
         // Walk up from binary directory
         for (DirectoryInfo? dir = new(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
@@ -217,6 +240,6 @@ public sealed record TestAccount(string Localpart, string ServerName, string Pas
             if (File.Exists(path)) return path;
         }
         // Not found
-        throw new FileNotFoundException($"{name} not found in any parent of {AppContext.BaseDirectory}");
+        return null;
     }
 }
