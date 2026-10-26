@@ -1,8 +1,8 @@
 # Durum
 
-A pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/), the open protocol for decentralised, end-to-end encrypted chat.
+A pure .NET implementation of the [Matrix](https://spec.matrix.org/latest/) chat protocol.
 
-There are two applications here, a chat client and a homeserver, both running in a text terminal. They are built from class libraries that can be used on their own.
+There are two applications here, a matrix chat client and a matrix server, both running in a text terminal. They are built from class libraries that can be used independently.
 
 > [!NOTE]
 > This is version 0.1, an early pre-release. Expect changes, and do not rely on it for important conversations yet.
