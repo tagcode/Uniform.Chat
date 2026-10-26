@@ -83,6 +83,10 @@ git:
     git push origin --delete name           # removes a branch on remote
     git fetch --prune                       # Prune stale remote branches
 
+    git config --global user.name "- -"
+    git config --global user.email ""
+
+
 github:
     git tag v0.1.0                          # Marks current commit
     git push origin v0.1.0                  # Sends the tag to github and triggers workflow
