@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Package -->
+  <PropertyGroup>
+    <Version>0.1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Matrix specification types shared by clients and servers: identifiers, events, API records and canonical JSON.</Description>
+    <PackageTags>matrix;protocol;chat</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

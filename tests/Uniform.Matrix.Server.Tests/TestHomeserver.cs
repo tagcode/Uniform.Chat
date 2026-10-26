@@ -1,0 +1,67 @@
+namespace Uniform.Matrix.Server.Tests;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Uniform.Matrix.Protocol.Client;
+
+/// <summary>A homeserver running in memory with its own data directory, reached through <see cref="CreateClient"/>; dispose to stop it and delete its data.</summary>
+internal sealed class TestHomeserver : IAsyncDisposable
+{
+    /// <summary>Server name of test servers.</summary>
+    public const string ServerName = "test.local";
+    private readonly WebApplication app;
+    private readonly string directory;
+
+    /// <summary>Wrap a started server.</summary>
+    private TestHomeserver(WebApplication app, string directory)
+    {
+        // Store parts
+        this.app = app;
+        this.directory = directory;
+    }
+
+    /// <summary>Base address clients use.</summary>
+    public Uri BaseAddress { get; } = new("http://localhost/");
+
+    /// <summary>Start a server; <paramref name="settings"/> override configuration, e.g. <c>Server:PublicBaseUrl</c>.</summary>
+    public static async Task<TestHomeserver> StartAsync(IReadOnlyDictionary<string, string?>? settings = null)
+    {
+        // Configuration with a private data directory
+        string directory = Directory.CreateTempSubdirectory("matrix-server-").FullName;
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Matrix.Server.Tests", EnvironmentName = "Development" });
+        builder.WebHost.UseTestServer();
+        Dictionary<string, string?> values = new() { ["Server:ServerName"] = ServerName, ["Storage:DataDirectory"] = directory };
+        foreach ((string key, string? value) in settings ?? new Dictionary<string, string?>()) values[key] = value;
+        builder.Configuration.AddInMemoryCollection(values);
+
+        // Server as the app runs it, logging into the test output
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(new TestOutputLoggerProvider());
+        builder.AddMatrixServer();
+        WebApplication app = builder.Build();
+        app.MapMatrixServer();
+        await app.StartAsync(TestContext.Current.CancellationToken);
+        // Return running server
+        return new TestHomeserver(app, directory);
+    }
+
+    /// <summary>Services of the server, for tests that call the engine directly.</summary>
+    public IServiceProvider Services => app.Services;
+
+    /// <summary>Return an HTTP client to the server.</summary>
+    public HttpClient CreateHttpClient() => app.GetTestClient();
+
+    /// <summary>Return a Matrix client to the server, not logged in.</summary>
+    public MatrixClient CreateClient() => new(CreateHttpClient(), BaseAddress);
+
+    /// <summary>Stop the server and delete its data.</summary>
+    public async ValueTask DisposeAsync()
+    {
+        // Stop, then remove files
+        await app.DisposeAsync();
+        Directory.Delete(directory, recursive: true);
+    }
+}

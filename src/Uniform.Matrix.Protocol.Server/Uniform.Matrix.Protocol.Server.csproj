@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Package -->
+  <PropertyGroup>
+    <Version>0.1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Matrix homeserver building blocks: room versions, event format, content hashes, signing, redaction and authorization rules.</Description>
+    <PackageTags>matrix;homeserver;server</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uniform.Matrix.Protocol.Core\Uniform.Matrix.Protocol.Core.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.Protocol.Crypto\Uniform.Matrix.Protocol.Crypto.csproj" />
+  </ItemGroup>
+
+</Project>

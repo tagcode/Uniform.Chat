@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
+    ],
+    "output": "_site",
+    "template": [ "theme" ],
+    "globalMetadata": {
+      "_appTitle": "Matrix User Guide",
+      "_appName": "Matrix Client",
+      "_enableSearch": true
+    }
+  }
+}

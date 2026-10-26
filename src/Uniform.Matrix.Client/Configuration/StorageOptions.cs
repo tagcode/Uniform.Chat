@@ -1,0 +1,32 @@
+namespace Uniform.Matrix.Client.Configuration;
+
+using Uniform.Matrix.Hosting;
+
+/// <summary>Local storage locations, configuration section <see cref="Section"/>.</summary>
+public sealed record StorageOptions
+{
+    /// <summary>Configuration section name.</summary>
+    public const string Section = "Storage";
+
+    /// <summary>Root directory; when unset, the application's data directory, e.g. <c>~/.local/share/durum-matrix-client-terminal</c>, see <see cref="AppDirectories.Data"/>.</summary>
+    [RestartRequired]
+    public string? DataDirectory { get; set; }
+    /// <summary>Database file name inside each account directory.</summary>
+    [RestartRequired]
+    public string DatabaseFileName { get; set; } = "client.db";
+    /// <summary>Media cache directory name inside each account directory.</summary>
+    [RestartRequired]
+    public string MediaDirectoryName { get; set; } = "media";
+    /// <summary>Directory inside <see cref="DataDirectory"/> with one log file per session.</summary>
+    [RestartRequired]
+    public string LogDirectoryName { get; set; } = "logs";
+    /// <summary>Session log files to keep; older ones are deleted at start.</summary>
+    [RestartRequired]
+    public int LogFilesKept { get; set; } = 20;
+
+    /// <summary>Return <see cref="DataDirectory"/>, or the data directory of <paramref name="applicationName"/> when unset.</summary>
+    public string ResolveDataDirectory(string applicationName) => DataDirectory ?? AppDirectories.Data(applicationName);
+
+    /// <summary>Return the log directory under <see cref="ResolveDataDirectory"/>.</summary>
+    public string ResolveLogDirectory(string applicationName) => Path.Combine(ResolveDataDirectory(applicationName), LogDirectoryName);
+}
