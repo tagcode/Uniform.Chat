@@ -1,0 +1,149 @@
+# Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
+# build the apps for Windows and Linux, push the packages to NuGet.org with trusted publishing,
+# and create a GitHub release with the app archives.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_VERSION: 10.0.x
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      # v1.2.3 or v1.2.3-suffix; the suffix makes a prerelease on NuGet and GitHub
+      - id: version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME is not v<major>.<minor>.<patch>[-suffix]"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [[ "$version" == *-* ]]; then echo "prerelease=true" >> "$GITHUB_OUTPUT"; else echo "prerelease=false" >> "$GITHUB_OUTPUT"; fi
+
+  test:
+    name: Build and test
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # Live tests skip without testclient.txt; native vodozemac tests skip without the native library
+      - run: dotnet build Uniform.Matrix.slnx -c Release
+      - run: dotnet test --solution Uniform.Matrix.slnx -c Release --no-build
+
+  packages:
+    name: Pack libraries
+    needs: [version, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - run: dotnet pack Uniform.Matrix.slnx -c Release -o artifacts -p:Version=${{ needs.version.outputs.version }} -p:ContinuousIntegrationBuild=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nuget
+          path: artifacts/*.*nupkg
+          if-no-files-found: error
+
+  apps:
+    name: Apps (${{ matrix.rid }})
+    needs: [version, test]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rid: [linux-x64, linux-arm64, win-x64, win-arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows
+      - name: Publish and archive
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          RID: ${{ matrix.rid }}
+        run: |
+          mkdir -p release
+          for app in client:Durum.Matrix.Client.Terminal server:Durum.Matrix.Server.Host; do
+            name="durum-${app%%:*}-$VERSION-$RID"
+            dotnet publish "src/${app#*:}" -c Release -r "$RID" --self-contained \
+              -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true \
+              -p:DebugType=embedded -p:IsTransformWebConfigDisabled=true -p:ContinuousIntegrationBuild=true \
+              -p:Version="$VERSION" -o "publish/$name"
+            cp -r LICENSE LICENSES THIRD-PARTY-NOTICES.md "publish/$name/"
+            if [[ "$RID" == win-* ]]; then
+              (cd publish && zip -qr "../release/$name.zip" "$name")
+            else
+              tar -czf "release/$name.tar.gz" -C publish "$name"
+            fi
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apps-${{ matrix.rid }}
+          path: release/*
+          if-no-files-found: error
+
+  nuget:
+    name: Publish to NuGet.org
+    needs: [version, packages, apps]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      # Trusted publishing: GitHub's OIDC token is exchanged for a short-lived NuGet API key
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget
+          path: artifacts
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      # Symbol packages (.snupkg) next to the packages are pushed with them
+      - run: dotnet nuget push "artifacts/*.nupkg" --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  release:
+    name: GitHub release
+    needs: [version, nuget]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: apps-*
+          path: release
+          merge-multiple: true
+      - name: Checksums
+        run: cd release && sha256sum * > SHA256SUMS.txt
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+          PRERELEASE: ${{ needs.version.outputs.prerelease }}
+        run: |
+          flags=()
+          if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Durum $VERSION" --generate-notes "${flags[@]}"

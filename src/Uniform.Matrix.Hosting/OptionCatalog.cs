@@ -132,11 +132,11 @@ public sealed partial class OptionCatalog
         }
     }
 
-    /// <summary>Read property summaries from an assembly's XML documentation file next to it, as plain text.</summary>
+    /// <summary>Read property summaries from an assembly's XML documentation file in the application directory, as plain text.</summary>
     private static Dictionary<string, string> LoadSummaries(Assembly assembly)
     {
-        // Assert the documentation file
-        string path = Path.ChangeExtension(assembly.Location, ".xml");
+        // Assert the documentation file; by name in the application directory, as single-file apps have no assembly location
+        string path = Path.Combine(AppContext.BaseDirectory, $"{assembly.GetName().Name}.xml");
         if (!File.Exists(path)) return [];
 
         // Summary of each member

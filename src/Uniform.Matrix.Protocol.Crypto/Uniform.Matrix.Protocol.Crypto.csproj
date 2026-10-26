@@ -11,6 +11,9 @@
   <PropertyGroup>
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT AND Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Description>Matrix end-to-end encryption in pure .NET: Olm, Megolm, cross-signing, secret storage, key backup and emoji verification, ported from vodozemac and compatible with it.</Description>
     <PackageTags>matrix;e2ee;olm;megolm;encryption</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>

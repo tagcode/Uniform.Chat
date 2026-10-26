@@ -11,6 +11,9 @@
   <PropertyGroup>
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <Description>Matrix homeserver building blocks: room versions, event format, content hashes, signing, redaction and authorization rules.</Description>
     <PackageTags>matrix;homeserver;server</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
