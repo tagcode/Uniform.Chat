@@ -100,6 +100,10 @@ Joins: `RoomService.JoinAsync` sends joins of room IDs of other servers that are
 
 Transactions: `/send` hands each PDU to `EventSender.AcceptEventAsync`, which checks its hash, the sender server's signature and the auth rules against the current state (not yet the state before the event, which matters once rooms fork), and stores it; an event replaces only the forward extremities it builds on. `FederationSender` follows `ServerStream` and sends local users' events, and remote joins this server accepted, to the other servers with joined members, one transaction per event and server, without retries yet. EDUs (typing, receipts, presence) are not sent or read.
 
+Invites of other servers' users: `RemoteInvites` signs the invite with `EventSender.SignAsync` (built and checked, not stored), sends it with `invite` v2 and the stripped room state from `EventSender.InviteRoomStateAsync`, checks that the invitee's server signed the same event, and stores it through `AcceptEventAsync`. Receiving invites is not there yet.
+
+Older clients use `r0` paths and unstable key backup paths; `LegacyPaths` maps them to `v3` before routing. Requests no endpoint knows are logged with method and path, without the query.
+
 Room version 12 (`RoomVersion.V12`, `RoomIdIsCreateHash`): the room ID is `!` and the create event's hash, the create event has no `room_id` and is left out of `auth_events`, and the creators (the sender and `additional_creators`, see `AuthRules.Creators`) have unlimited power and cannot be listed in power levels. Such rooms can be joined through `via` servers, since their IDs name no server; creating them here is refused until room creation builds the create event before the room's row. `FederationTests` run two servers in memory whose federation clients reach each other through a test handler.
 
 HTTPS comes from `TlsCertificate` (in `Http/`), which reads the PEM files of `Tls:*`, sends the intermediates with the certificate (other servers check the chain) and reads the files again within a minute of a renewal.

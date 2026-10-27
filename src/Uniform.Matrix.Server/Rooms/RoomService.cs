@@ -20,9 +20,10 @@ public sealed class RoomService
     private readonly IOptions<ServerOptions> options;
     private readonly TimeProvider time;
     private readonly RemoteJoins remoteJoins;
+    private readonly RemoteInvites remoteInvites;
 
     /// <summary>Create the service.</summary>
-    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time, RemoteJoins remoteJoins)
+    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time, RemoteJoins remoteJoins, RemoteInvites remoteInvites)
     {
         // Store dependencies
         this.contexts = contexts;
@@ -30,6 +31,7 @@ public sealed class RoomService
         this.options = options;
         this.time = time;
         this.remoteJoins = remoteJoins;
+        this.remoteInvites = remoteInvites;
     }
 
     /// <summary>Server name of local rooms and users.</summary>
@@ -118,11 +120,21 @@ public sealed class RoomService
         return roomId;
     }
 
-    /// <summary>Invite a local user; remote users need federation.</summary>
+    /// <summary>Invite a user: local users directly, other servers' users through their server, which signs the invite too.</summary>
     public async Task InviteAsync(string userId, string roomId, string target, string? reason, bool isDirect, CancellationToken cancellationToken)
     {
-        // Local, existing users only
-        if (!target.EndsWith(":" + ServerName, StringComparison.Ordinal)) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Inviting users of other servers needs federation, which is not supported yet.");
+        // Other servers' users through their server
+        if (!UserId.TryParse(target, out UserId invitee)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "Invalid user ID.");
+        if (invitee.ServerName != ServerName)
+        {
+            JsonObject remote = new() { ["membership"] = Memberships.Invite };
+            if (reason is not null) remote["reason"] = reason;
+            if (isDirect) remote["is_direct"] = true;
+            await remoteInvites.InviteAsync(userId, roomId, target, invitee.ServerName, remote, cancellationToken);
+            return;
+        }
+
+        // Local, existing users
         await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
         {
             if (!await db.Users.AnyAsync(u => u.UserId == target, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown user.");

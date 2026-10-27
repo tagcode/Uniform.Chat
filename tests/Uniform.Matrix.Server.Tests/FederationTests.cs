@@ -255,6 +255,28 @@ public class FederationTests
         Assert.Equal(ErrorCodes.Forbidden, remote.Errcode);
     }
 
+    /// <summary>The server announces where to reach it for federation, and for clients its address and call service, only when configured.</summary>
+    [Fact]
+    public async Task ServeWellKnown()
+    {
+        // Arrange: one server with delegation and a public address, one without
+        await using TestHomeserver set = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Federation:WellKnownServer"] = "example.org:443", ["Server:PublicBaseUrl"] = "https://example.org", ["Calls:LiveKitServiceUrl"] = "https://rtc.example.org/jwt" });
+        await using TestHomeserver unset = await TestHomeserver.StartAsync();
+        using HttpClient http = set.CreateHttpClient();
+        using HttpClient plain = unset.CreateHttpClient();
+
+        // Act
+        JsonObject server = (await http.GetFromJsonAsync<JsonObject>("/.well-known/matrix/server", Ct))!;
+        JsonObject client = (await http.GetFromJsonAsync<JsonObject>("/.well-known/matrix/client", Ct))!;
+        HttpStatusCode none = (await plain.GetAsync("/.well-known/matrix/server", Ct)).StatusCode;
+
+        // Assert
+        Assert.Equal("example.org:443", server["m.server"]!.GetValue<string>());
+        Assert.Equal("https://example.org", client["m.homeserver"]!["base_url"]!.GetValue<string>());
+        Assert.Equal("https://rtc.example.org/jwt", client["org.matrix.msc4143.rtc_foci"]![0]!["livekit_service_url"]!.GetValue<string>());
+        Assert.Equal(HttpStatusCode.NotFound, none);
+    }
+
     /// <summary>Send a GET with an optional authorization; return the status.</summary>
     private static async Task<HttpStatusCode> SendAsync(HttpClient http, string uri, string? authorization)
     {

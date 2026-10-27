@@ -8,6 +8,8 @@ public sealed record FederationOptions
 
     /// <summary>Whether to talk to other servers and answer them; off while federation is unfinished.</summary>
     public bool Enabled { get; set; }
+    /// <summary>Where other servers should connect, announced in <c>/.well-known/matrix/server</c>, e.g. <c>example.org:443</c> when a reverse proxy on port 443 forwards to this server; not served when unset, so other servers use port 8448 or the port in the server name.</summary>
+    public string? WellKnownServer { get; set; }
     /// <summary>Whether to reach servers at private, loopback and link-local addresses; off, so remote names cannot make the server reach machines inside its network.</summary>
     public bool AllowPrivateAddresses { get; set; }
     /// <summary>How long to wait for another server to answer.</summary>

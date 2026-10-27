@@ -84,6 +84,36 @@ public sealed class EventSender
         return eventId;
     }
 
+    /// <summary>Build, hash and sign a local event and check it against the room's rules without storing it, for events another server must sign too, such as invites of its users; store it with <see cref="AcceptEventAsync"/>.</summary>
+    public async Task<(JsonObject Pdu, string EventId, RoomVersion Version)> SignAsync(EventDraft draft, CancellationToken cancellationToken)
+    {
+        // Built on the current state, like a sent event
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        (_, RoomVersion version, JsonObject pdu, Dictionary<(string, string), JsonObject> authState) = await BuildAsync(db, draft, cancellationToken);
+        string serverName = options.Value.ServerName;
+        EventFormat.HashAndSign(pdu, version, serverName, keys.KeyId, keys.Secret);
+
+        // Assert the rules allow it now
+        string? rejection = AuthRules.Check(pdu, version, authState, (e, server) => server == serverName && EventFormat.HasValidSignature(e, version, serverName, keys.KeyId, keys.PublicKey));
+        if (rejection is not null) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, rejection);
+        // Return signed event
+        return (pdu, EventFormat.ComputeEventId(pdu, version), version);
+    }
+
+    /// <summary>Return this server's public keys by key ID, for <see cref="AcceptEventAsync"/> of its own events.</summary>
+    public IReadOnlyDictionary<string, string> OwnKeys => new Dictionary<string, string> { [keys.KeyId] = keys.PublicKey };
+
+    /// <summary>Return the state an invitee sees before joining, as stripped events: create, join rules, name, avatar, alias, encryption, and the inviter's membership.</summary>
+    public async Task<JsonArray> InviteRoomStateAsync(string roomId, string inviter, CancellationToken cancellationToken)
+    {
+        // Current state of those keys
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        (string Type, string StateKey)[] wanted = [(EventTypes.RoomCreate, ""), ("m.room.join_rules", ""), (EventTypes.RoomName, ""), ("m.room.avatar", ""), (EventTypes.RoomCanonicalAlias, ""), ("m.room.encryption", ""), (EventTypes.RoomMember, inviter)];
+        Dictionary<(string, string), JsonObject> state = await LoadCurrentAsync(db, roomId, wanted, cancellationToken);
+        // Return stripped events
+        return new JsonArray([.. state.Values.Select(e => (JsonNode)new JsonObject { ["type"] = e["type"]?.DeepClone(), ["state_key"] = e["state_key"]?.DeepClone(), ["sender"] = e["sender"]?.DeepClone(), ["content"] = e["content"]?.DeepClone() })]);
+    }
+
     /// <summary>Return an unsigned join event of <paramref name="userId"/> for another server to sign, as <c>make_join</c> answers, with the room version.</summary>
     public async Task<(JsonObject Template, RoomVersion Version)> MakeJoinAsync(string roomId, string userId, CancellationToken cancellationToken)
     {

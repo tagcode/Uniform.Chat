@@ -121,6 +121,7 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<FederationClient>();
         builder.Services.AddSingleton<RemoteServerKeys>();
         builder.Services.AddSingleton<RemoteJoins>();
+        builder.Services.AddSingleton<RemoteInvites>();
         builder.Services.AddHostedService<FederationSender>();
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<OpenIdTokens>();
@@ -150,6 +151,14 @@ public static class ServerServiceExtensions
                 status.RequestFinished(context.Response.StatusCode);
             }
         });
+
+        // Older clients, such as those on Element Android's SDK, use r0 paths, which v3 replaced without other changes; routed after the rewrite
+        app.Use((context, next) =>
+        {
+            context.Request.Path = LegacyPaths.Rewrite(context.Request.Path);
+            return next(context);
+        });
+        app.UseRouting();
 
         // Rate limits inside the error handling, so refusals are counted like other answers
         app.UseRateLimiter();

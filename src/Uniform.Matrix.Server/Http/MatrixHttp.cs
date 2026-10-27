@@ -67,10 +67,12 @@ public static class MatrixHttp
             return;
         }
 
-        // Unknown endpoints and methods, which the router answers without a body
+        // Unknown endpoints and methods, which the router answers without a body; logged without the query, which may hold tokens, to show what clients miss
         if (context.Response.HasStarted || context.Response.ContentLength > 0 || context.Response.ContentType is not null) return;
+        if (context.Response.StatusCode is not (StatusCodes.Status404NotFound or StatusCodes.Status405MethodNotAllowed)) return;
+        logger.LogInformation("Unrecognized request {Method} {Path}", context.Request.Method, context.Request.Path);
         if (context.Response.StatusCode == StatusCodes.Status404NotFound) await WriteErrorAsync(context, HttpStatusCode.NotFound, ErrorCodes.Unrecognized, "Unrecognized request.");
-        else if (context.Response.StatusCode == StatusCodes.Status405MethodNotAllowed) await WriteErrorAsync(context, HttpStatusCode.MethodNotAllowed, ErrorCodes.Unrecognized, "Method not allowed.");
+        else await WriteErrorAsync(context, HttpStatusCode.MethodNotAllowed, ErrorCodes.Unrecognized, "Method not allowed.");
     }
 
     /// <summary>Write a Matrix error body.</summary>
