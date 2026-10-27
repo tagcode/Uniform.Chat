@@ -1,9 +1,9 @@
-namespace Durum.Matrix.Client.Terminal.Tests;
+namespace Uniform.Matrix.Client.Terminal.Tests;
 
 using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Text;
-using Durum.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Matrix.Client.Terminal.Ui.Images;
 
 /// <summary>Unit tests for <see cref="DecodedImage"/> and <see cref="AsciiArt"/>.</summary>
 public class ImageTests

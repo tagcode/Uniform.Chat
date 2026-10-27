@@ -1,6 +1,6 @@
-namespace Durum.Matrix.Client.Terminal.Ui;
+namespace Uniform.Matrix.Client.Terminal.Ui;
 
-using Durum.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Matrix.Client.Terminal.Ui.Images;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Gui.Terminal;

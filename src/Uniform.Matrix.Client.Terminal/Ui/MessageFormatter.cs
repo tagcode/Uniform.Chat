@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Client.Terminal.Ui;
+namespace Uniform.Matrix.Client.Terminal.Ui;
 
 using System.Text.Json;
 using Uniform.Matrix.Client.Formatting;

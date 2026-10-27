@@ -37,25 +37,25 @@ src/
     State/                               RoomStore and Room: client-side room state built from sync
     Formatting/                          Markdown to HTML for sending, HTML to text and event descriptions for display
     MatrixKeyTransport.cs,               EncryptedMedia.cs  Encryption over a MatrixClient
-  Durum.Matrix.Client.Terminal/          Terminal client app
+  Uniform.Matrix.Client.Terminal/          Terminal client app
     Configuration/                       Display options
     Ui/                                  Main window, message log, image previews, client dialogs
-  Durum.Matrix.Client.Gui/               Avalonia app shared by desktop and Android: views, view models, services
+  Uniform.Matrix.Client.Avalonia.Core/               Avalonia app shared by desktop and Android: views, view models, services
     Services/                            One engine host per sign-in, remembered account, UI dispatcher
     ViewModels/                          Login, chat, room list items, message list
     Views/                               Windows and views in XAML, rich text, styles
-  Durum.Matrix.Client.Desktop/           Windows and Linux entry point, Linux menu entry installer
-  Durum.Matrix.Client.Android/           Android entry point, manifest and resources; not in the solution
+  Uniform.Matrix.Client.Desktop/           Windows and Linux entry point, Linux menu entry installer
+  Uniform.Matrix.Client.Android/           Android entry point, manifest and resources; not in the solution
   Uniform.Matrix.Protocol.Server/        Room versions, event format, hashing, signing, redaction, auth rules
   Uniform.Matrix.Server/                 Homeserver engine: AddMatrixServer, endpoints, services, storage
-  Durum.Matrix.Server.Host/              Server app, with or without the dashboard
+  Uniform.Matrix.Server.Host/              Server app, with or without the dashboard
 tests/
   Uniform.Matrix.Protocol.Tests/         API and canonical JSON unit tests, live tests against the test server
   Uniform.Matrix.Protocol.Crypto.Tests/  Olm, Megolm, oracle, protocol and live encryption tests
   Uniform.Matrix.Hosting.Tests/          Settings and log file tests
   Uniform.Matrix.Client.Tests/           Room state, stores, services and rich text tests
-  Durum.Matrix.Client.Terminal.Tests/    Option registration, message log and image tests
-  Durum.Matrix.Client.Gui.Tests/         View models against the in-memory server, headless rendering
+  Uniform.Matrix.Client.Terminal.Tests/    Option registration, message log and image tests
+  Uniform.Matrix.Client.Avalonia.Core.Tests/         View models against the in-memory server, headless rendering
   Uniform.Matrix.Protocol.Server.Tests/  Event format and auth rule tests
   Uniform.Matrix.Server.Tests/           Server through our own client, in memory
 docs/
@@ -66,7 +66,7 @@ docs/
 Dependencies point down; the protocol libraries know nothing of storage, hosting or UI:
 
 ```text
-Durum.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform.Matrix.Protocol.Client ──► Uniform.Matrix.Protocol.Core
+Uniform.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform.Matrix.Protocol.Client ──► Uniform.Matrix.Protocol.Core
     │                              │   │
     │                              │   └──► Uniform.Matrix.Protocol.Crypto ──► Uniform.Matrix.Protocol.Core
     │                              └───────┐
@@ -77,15 +77,15 @@ Durum.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform.M
 The graphical app uses the same engine, without the terminal components:
 
 ```text
-Durum.Matrix.Client.Desktop ──┐
-                              ├──► Durum.Matrix.Client.Gui ──► Uniform.Matrix.Client ──► …
-Durum.Matrix.Client.Android ──┘
+Uniform.Matrix.Client.Desktop ──┐
+                              ├──► Uniform.Matrix.Client.Avalonia.Core ──► Uniform.Matrix.Client ──► …
+Uniform.Matrix.Client.Android ──┘
 ```
 
 The server side, which also uses Core through Crypto:
 
 ```text
-Durum.Matrix.Server.Host ──► Uniform.Matrix.Server ──► Uniform.Matrix.Protocol.Server ──► Uniform.Matrix.Protocol.Crypto
+Uniform.Matrix.Server.Host ──► Uniform.Matrix.Server ──► Uniform.Matrix.Protocol.Server ──► Uniform.Matrix.Protocol.Crypto
     │                          │
     │                          └───────────┐
     │                                      ▼
@@ -162,7 +162,7 @@ Settings and logging for any application on the .NET generic host, the client's 
 
 ### Settings
 
-`SettingsStore` adds two configuration layers: the application's settings file (`$XDG_CONFIG_HOME/<app>/settings.json`, where `<app>` is the host's application name in kebab case, e.g. `durum-matrix-client-terminal`) right after `appsettings.json`, so environment and command line still win, and an in-memory *applied* layer on top. Applying sets the top layer and reloads the configuration; saving merges into the file, clears those keys from the applied layer and reloads. Options read through `IOptionsMonitor<UiOptions>` change at once; the others are marked `[RestartRequired]` and read at start. Each application registers its option records with `AddOptionSection<T>`, and `OptionCatalog` lists their properties by reflection, with descriptions read from the XML documentation of each record's assembly, so the settings window and the API reference say the same. `[Secret]` options are not shown, saved or exported. `SettingsEditor` holds the window's edits and is tested without the UI.
+`SettingsStore` adds two configuration layers: the application's settings file (`$XDG_CONFIG_HOME/<app>/settings.json`, where `<app>` is the host's application name in kebab case, e.g. `uniform-matrix-client-terminal`) right after `appsettings.json`, so environment and command line still win, and an in-memory *applied* layer on top. Applying sets the top layer and reloads the configuration; saving merges into the file, clears those keys from the applied layer and reloads. Options read through `IOptionsMonitor<UiOptions>` change at once; the others are marked `[RestartRequired]` and read at start. Each application registers its option records with `AddOptionSection<T>`, and `OptionCatalog` lists their properties by reflection, with descriptions read from the XML documentation of each record's assembly, so the settings window and the API reference say the same. `[Secret]` options are not shown, saved or exported. `SettingsEditor` holds the window's edits and is tested without the UI.
 
 ### Logs
 
@@ -227,7 +227,7 @@ Messages are written to the `Outbox` table first and then sent in order. Each me
 
 SQLite is the default, through EF Core. No EF Core provider stores YAML, so a YAML store would be a separate implementation of `ClientStore`.
 
-## Durum.Matrix.Client.Terminal
+## Uniform.Matrix.Client.Terminal
 
 The terminal app: `Program` calls `AddSettings`, `AddMatrixClient` and registers its `UiOptions`, then runs the UI.
 
@@ -244,7 +244,7 @@ The terminal app: `Program` calls `AddSettings`, `AddMatrixClient` and registers
 - Terminal.Gui 2.5 does not report F3 when the terminal sends `ESC O R` (most xterm-style terminals do), so message selection is on Ctrl+Up.
 - Reading `Room` state for display goes through `SyncProcessor.Read`, as `RoomStore` is not thread-safe. History and member loading fetch from the server outside the lock and apply inside it.
 
-## Durum.Matrix.Client.Gui
+## Uniform.Matrix.Client.Avalonia.Core
 
 The graphical app, in Avalonia 12 with the Fluent theme and CommunityToolkit.Mvvm. The same views run in a desktop window and as the single view of the Android activity; `GuiPlatform` carries what differs: the application name (and so the data folders), the device name shown to other sessions, whether the screen is always one pane, and extra services.
 

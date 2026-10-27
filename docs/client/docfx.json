@@ -2,16 +2,16 @@
   "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
   "build": {
     "content": [
-      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
     "resource": [
       { "files": [ "images/**" ] }
     ],
     "output": "_site",
-    "template": [ "theme" ],
+    "template": [ "../theme" ],
     "globalMetadata": {
-      "_appTitle": "Matrix User Guide",
-      "_appName": "Matrix Client",
+      "_appTitle": "Uniform.Matrix Client Guide",
+      "_appName": "Uniform.Matrix Client",
       "_enableSearch": true
     }
   }

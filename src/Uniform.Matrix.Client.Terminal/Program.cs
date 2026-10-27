@@ -1,6 +1,6 @@
-using Durum.Matrix.Client.Terminal;
-using Durum.Matrix.Client.Terminal.Configuration;
-using Durum.Matrix.Client.Terminal.Ui;
+using Uniform.Matrix.Client.Terminal;
+using Uniform.Matrix.Client.Terminal.Configuration;
+using Uniform.Matrix.Client.Terminal.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Terminal.Gui.App;
@@ -9,6 +9,9 @@ using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Core;
+
+// Data and settings of the app's earlier name move to the new name once
+foreach (string move in AppDirectories.MoveFromPreviousName("Durum.Matrix.Client.Terminal", "Uniform.Matrix.Client.Terminal")) Console.Error.WriteLine($"Moved {move}");
 
 // Read appsettings.json next to the executable, not from the working directory
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory });

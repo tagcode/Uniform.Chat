@@ -1,9 +1,0 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="using:Durum.Matrix.Client.Gui.Views"
-        x:Class="Durum.Matrix.Client.Gui.Views.MainWindow"
-        Icon="avares://Durum.Matrix.Client.Gui/Assets/icon.png"
-        Title="Durum"
-        Width="1100" Height="720" MinWidth="360" MinHeight="420">
-  <views:MainView />
-</Window>

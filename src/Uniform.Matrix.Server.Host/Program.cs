@@ -1,5 +1,5 @@
-using Durum.Matrix.Server.Host;
-using Durum.Matrix.Server.Host.Ui;
+using Uniform.Matrix.Server.Host;
+using Uniform.Matrix.Server.Host.Ui;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +9,9 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
+
+// Data and settings of the app's earlier name move to the new name once
+foreach (string move in AppDirectories.MoveFromPreviousName("Durum.Matrix.Server.Host", "Uniform.Matrix.Server.Host")) Console.Error.WriteLine($"Moved {move}");
 
 // Read appsettings.json next to the executable, not from the working directory
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory });

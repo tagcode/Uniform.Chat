@@ -1,6 +1,6 @@
 # Uniform.Matrix.Client
 
-A Matrix client engine for the .NET generic host: login and session storage, sync with local SQLite storage, room state, an outbox that keeps messages until the server has them, a media cache, and end-to-end encryption with cross-signing, key backup and verification. It has no user interface; the [Durum terminal client](https://github.com/tagcode/Uniform.Matrix) is one built on it.
+A Matrix client engine for the .NET generic host: login and session storage, sync with local SQLite storage, room state, an outbox that keeps messages until the server has them, a media cache, and end-to-end encryption with cross-signing, key backup and verification. It has no user interface; the [Uniform.Matrix terminal client](https://github.com/tagcode/Uniform.Matrix) is one built on it.
 
 ```bash
 dotnet add package Uniform.Matrix.Client

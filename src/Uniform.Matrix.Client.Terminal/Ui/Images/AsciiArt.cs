@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Client.Terminal.Ui.Images;
+namespace Uniform.Matrix.Client.Terminal.Ui.Images;
 
 using System.Text;
 

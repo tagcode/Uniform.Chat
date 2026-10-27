@@ -1,4 +1,4 @@
-# Durum
+# Uniform.Matrix
 
 A pure .NET implementation of the [Matrix](https://spec.matrix.org/latest/) chat protocol.
 
@@ -9,7 +9,7 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 
 ## Terminal client
 
-`Durum.Matrix.Client.Terminal` is the terminal chat client: rooms, messages, files and image previews, end-to-end encryption with cross-signing, key backup and emoji verification, settings and logs.
+`Uniform.Matrix.Client.Terminal` is the terminal chat client: rooms, messages, files and image previews, end-to-end encryption with cross-signing, key backup and emoji verification, settings and logs.
 
 <pre>
  File  Room  View  Help
@@ -25,20 +25,20 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 </pre>
 
-- User guide: [Getting started](docs/user/articles/getting-started.md), [Interface](docs/user/articles/interface.md)
+- User guide: [Getting started](docs/client/articles/getting-started.md), [Interface](docs/client/articles/interface.md)
 - Developer guide: [Architecture](docs/dev/articles/architecture.md), [Using the protocol client](docs/dev/articles/using-client.md)
 
 ## Desktop and Android client
 
-`Durum.Matrix.Client.Desktop` and `Durum.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
+`Uniform.Matrix.Client.Desktop` and `Uniform.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
 
-![The desktop client](docs/user/images/desktop.png)
+![The desktop client](docs/client/images/desktop.png)
 
-- User guide: [Desktop and Android app](docs/user/articles/desktop.md)
+- User guide: [Desktop and Android app](docs/client/articles/desktop.md)
 
 ## Server
 
-`Durum.Matrix.Server.Host` is a homeserver with a dashboard in the terminal, or without one as a service: accounts, rooms, sync, profiles, typing and receipts, the room directory, files with thumbnails, and the encryption relay with cross-signing and key backup. Federation with other servers is not there yet.
+`Uniform.Matrix.Server.Host` is a homeserver with a dashboard in the terminal, or without one as a service: accounts, rooms, sync, profiles, typing and receipts, the room directory, files with thumbnails, and the encryption relay with cross-signing and key backup. Federation with other servers is not there yet.
 
 <pre>
 ┌Matrix server localhost───────────────────────────────────────────────────────────┐
@@ -48,14 +48,14 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 │ Requests:   1520 answered, 3 in progress, 2 failed                               │
 │ Accounts:   4 users, 3 rooms                                                     │
 │                                                                                  │
-│ Data:       /home/alice/.local/share/durum-matrix-server-host                    │
-│ Log:        /home/alice/.local/share/durum-matrix-server-host/logs/2026-10-26…   │
+│ Data:       /home/alice/.local/share/uniform-matrix-server-host                  │
+│ Log:        /home/alice/.local/share/uniform-matrix-server-host/logs/2026-10-26… │
 │                                                                                  │
 │ F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q stops it.    │
 └──────────────────────────────────────────────────────────────────────────────────┘
 </pre>
 
-- User guide: [Running the server](docs/user/articles/server.md)
+- User guide: [Running the server](docs/server/articles/running.md)
 - Developer guide: [Server](docs/dev/articles/server.md), [Architecture](docs/dev/articles/architecture.md)
 
 ## Libraries
@@ -78,8 +78,8 @@ Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 ```bash
 dotnet build Uniform.Matrix.slnx
 dotnet test --solution Uniform.Matrix.slnx
-dotnet run --project src/Durum.Matrix.Server.Host
-dotnet run --project src/Durum.Matrix.Client.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
+dotnet run --project src/Uniform.Matrix.Server.Host
+dotnet run --project src/Uniform.Matrix.Client.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
 ```
 
 See [Building and testing](docs/dev/articles/building-and-testing.md) for the tests and the documentation sites.

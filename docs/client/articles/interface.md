@@ -89,7 +89,7 @@ Room → Send file (or `/upload`) opens a file browser; the file is uploaded and
 Images in the log get a preview under the message, drawn with shade blocks:
 
 ```text
-20:01 <durum> [image: ring.png, 1 KB]
+20:01 <alice> [image: ring.png, 1 KB]
       ░▒▓▓█████▓▓▒░
     ░▓██▓▒░    ░▒▓██▓░
     ▓██░          ░██▓
@@ -132,7 +132,7 @@ File → Settings (or `/settings`) lists every option with its current value, wh
 
 - **Edit** (or Enter) changes the selected option; options with fixed values, such as yes/no or the image preview style, offer a list.
 - **Apply** uses the changes now, until the client exits. Options marked ↻ take effect only after a restart.
-- **Save** writes the changes to `~/.config/durum-matrix-client-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), which is read at every start.
+- **Save** writes the changes to `~/.config/uniform-matrix-client-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), which is read at every start.
 - **Reset** undoes one step at a time: first an edit that is not applied, then an applied change that is not saved. Pressed again, it removes the option from the settings file on save, so the default applies again.
 - **Load** reads another settings file as changes to apply or save; **Export** writes the current settings to a file.
 

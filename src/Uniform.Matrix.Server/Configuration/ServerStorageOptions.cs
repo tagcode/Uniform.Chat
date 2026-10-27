@@ -8,7 +8,7 @@ public sealed record ServerStorageOptions
     /// <summary>Configuration section name.</summary>
     public const string Section = "Storage";
 
-    /// <summary>Root directory; when unset, the application's data directory, e.g. <c>~/.local/share/durum-matrix-server-host</c>, see <see cref="AppDirectories.Data"/>.</summary>
+    /// <summary>Root directory; when unset, the application's data directory, e.g. <c>~/.local/share/uniform-matrix-server-host</c>, see <see cref="AppDirectories.Data"/>.</summary>
     [RestartRequired]
     public string? DataDirectory { get; set; }
     /// <summary>SQLite database file name inside <see cref="DataDirectory"/>.</summary>

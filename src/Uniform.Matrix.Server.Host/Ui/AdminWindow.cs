@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Server.Host.Ui;
+namespace Uniform.Matrix.Server.Host.Ui;
 
 using System.Collections.ObjectModel;
 using Uniform.Matrix.Gui.Terminal;

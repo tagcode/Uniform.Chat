@@ -1,21 +1,26 @@
 # Running the server
 
-The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as this terminal client or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
+The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform.Matrix clients or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
 
 > [!NOTE]
 > The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, typing, read receipts, room tags, room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is not there yet, so only users of this server can talk to each other.
 
 ## Requirements
 
-- Linux with a terminal that supports UTF-8 and colors, for the dashboard
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- Linux or Windows; for the dashboard, a terminal that supports UTF-8 and colors
+
+## Install
+
+Download `uniform-matrix-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases) and unpack it anywhere. It needs nothing else installed. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
+
+To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Matrix.Server.Host --` from the repository root in place of the program in the examples below.
 
 ## Run with the dashboard
 
-From the repository root:
+In the unpacked folder:
 
 ```bash
-dotnet run --project src/Durum.Matrix.Server.Host
+./Uniform.Matrix.Server.Host
 ```
 
 When started from a terminal, the server opens its dashboard and serves at `http://localhost:8008`:
@@ -28,8 +33,8 @@ When started from a terminal, the server opens its dashboard and serves at `http
 │ Requests:   1520 answered, 3 in progress, 2 failed                               │
 │ Accounts:   4 users, 3 rooms                                                     │
 │                                                                                  │
-│ Data:       /home/alice/.local/share/durum-matrix-server-host                    │
-│ Log:        /home/alice/.local/share/durum-matrix-server-host/logs/2026-10-26…   │
+│ Data:       /home/alice/.local/share/uniform-matrix-server-host                  │
+│ Log:        /home/alice/.local/share/uniform-matrix-server-host/logs/2026-10-26… │
 │                                                                                  │
 │ F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q stops it.    │
 └──────────────────────────────────────────────────────────────────────────────────┘
@@ -54,10 +59,13 @@ The dashboard refreshes every second. The server keeps serving while menus and w
 
 ### Settings window
 
-File → Settings is the same window as in the client (see [Settings](interface.md#settings)): it lists every option, its value and where the value comes from.
+File → Settings lists every option with its current value, where the value comes from, and a description of the selected option.
 
+- **Edit** (or Enter) changes the selected option; options with fixed values offer a list.
 - **Apply** uses a change at once, until the server stops. Options marked ↻, such as the server name and the data folder, take effect only after a restart.
-- **Save** writes the changes to `~/.config/durum-matrix-server-host/settings.json`, which is read at every start.
+- **Save** writes the changes to `~/.config/uniform-matrix-server-host/settings.json`, which is read at every start.
+- **Reset** undoes one step at a time: first an edit that is not applied, then an applied change that is not saved. Pressed again, it removes the option from the settings file on save, so the default applies again.
+- Edited options are marked `*`, applied but unsaved ones `+`. Values given on the command line override the settings file.
 - Registration tokens are secret: they are never shown in the window.
 
 To open registration for a while, for example: select `Server:Registration`, choose `Open` and Apply. New users can register at once. Set it back to `Disabled` and Apply when they are done. Nothing is saved unless you choose Save.
@@ -87,7 +95,7 @@ File → Logs shows the log of this session, and lets you open earlier sessions.
 Without a terminal, for example as a service, the server runs without the dashboard and also writes its log to standard output:
 
 ```bash
-dotnet run --project src/Durum.Matrix.Server.Host -- --Host:Ui=None
+./Uniform.Matrix.Server.Host --Host:Ui=None
 ```
 
 `Host:Ui` chooses the mode:
@@ -105,7 +113,7 @@ Stop the server with Ctrl+C, or with `SIGTERM` from a service manager.
 Publish the server once, then run the published program from a unit file:
 
 ```bash
-dotnet publish src/Durum.Matrix.Server.Host -c Release -o ~/matrix-server
+dotnet publish src/Uniform.Matrix.Server.Host -c Release -o ~/matrix-server
 ```
 
 ```ini
@@ -114,7 +122,7 @@ dotnet publish src/Durum.Matrix.Server.Host -c Release -o ~/matrix-server
 Description=Matrix homeserver
 
 [Service]
-ExecStart=%h/matrix-server/Durum.Matrix.Server.Host
+ExecStart=%h/matrix-server/Uniform.Matrix.Server.Host
 Restart=on-failure
 
 [Install]
@@ -133,7 +141,7 @@ systemd connects the server's input to `/dev/null` and its output to the journal
 Settings come from these places; later ones override earlier ones:
 
 1. `appsettings.json` next to the program
-2. `~/.config/durum-matrix-server-host/settings.json`, written by the settings window
+2. `~/.config/uniform-matrix-server-host/settings.json`, written by the settings window
 3. Environment variables, with `__` between parts: `Server__Registration=Open`
 4. The command line: `--Server:Registration=Open`
 5. Changes applied in the settings window, until the server stops
@@ -146,7 +154,7 @@ Settings come from these places; later ones override earlier ones:
 | `Server:Registration` | `Disabled` | Who can create accounts: `Disabled`, `Open` (anyone), or `Token` (anyone with a registration token). |
 | `Server:RegistrationTokens` | not set | Tokens for `Token` registration, separated by commas. |
 | `Media:MaxUploadSize` | `52428800` | Largest file users can upload, in bytes (50 MiB). |
-| `Storage:DataDirectory` | `~/.local/share/durum-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
+| `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
 | `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](#run-without-the-dashboard). ↻ |
 
@@ -164,8 +172,8 @@ To let people register in their own client instead:
 1. Start the server with registration open, or with tokens:
 
    ```bash
-   dotnet run --project src/Durum.Matrix.Server.Host -- --Server:Registration=Open
-   dotnet run --project src/Durum.Matrix.Server.Host -- --Server:Registration=Token --Server:RegistrationTokens=let-me-in
+   ./Uniform.Matrix.Server.Host --Server:Registration=Open
+   ./Uniform.Matrix.Server.Host --Server:Registration=Token --Server:RegistrationTokens=let-me-in
    ```
 
    Or change `Server:Registration` in the settings window and Apply, as above.
@@ -186,17 +194,17 @@ The new user is `@alice:localhost`, or `@alice:` followed by the configured serv
 
 ## Connecting clients
 
-Log in with the full user ID and the homeserver address `http://localhost:8008`. In Element, edit the homeserver on the sign-in page. In this terminal client, give the address with `--Matrix:Homeserver`:
+Log in with the full user ID and the homeserver address `http://localhost:8008`. In Element, edit the homeserver on the sign-in page. In the Uniform.Matrix terminal client, give the address with `--Matrix:Homeserver`:
 
 ```bash
-dotnet run --project src/Durum.Matrix.Client.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
+./Uniform.Matrix.Client.Terminal --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
 ```
 
 Without an address, clients find the server from the user ID: they look for `https://<server name>/.well-known/matrix/client`. That needs a real server name, HTTPS and `Server:PublicBaseUrl`.
 
 ## Files
 
-Everything the server keeps is in the data folder, `~/.local/share/durum-matrix-server-host` by default (under `$XDG_DATA_HOME` when set):
+Everything the server keeps is in the data folder, `~/.local/share/uniform-matrix-server-host` by default (under `$XDG_DATA_HOME` when set):
 
 | File | Contents |
 |---|---|

@@ -35,7 +35,7 @@ await app.RunAsync();
 
 `AdminService` creates accounts, resets passwords and manages the room directory without an access token, for an operator's own tools.
 
-The server speaks plain HTTP; put a reverse proxy in front of it for HTTPS. The [Durum server](https://github.com/tagcode/Uniform.Matrix) is a ready application with a terminal dashboard, built on this package.
+The server speaks plain HTTP; put a reverse proxy in front of it for HTTPS. The [Uniform.Matrix server](https://github.com/tagcode/Uniform.Matrix) is a ready application with a terminal dashboard, built on this package.
 
 More in [Server](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/server.md).
 

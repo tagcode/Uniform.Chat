@@ -15,8 +15,8 @@ public sealed class LogFileTests : IDisposable
         string[] lines =
         [
             "stray line",
-            "2026-10-26 01:05:36.901 [Information] Durum.Matrix.Client.Terminal.Services.CryptoService: Encryption ready",
-            "2026-10-26 01:05:37.000 [Error] Durum.Matrix.Client.Terminal.Ui.MainWindow: Sending failed",
+            "2026-10-26 01:05:36.901 [Information] Uniform.Matrix.Client.Terminal.Services.CryptoService: Encryption ready",
+            "2026-10-26 01:05:37.000 [Error] Uniform.Matrix.Client.Terminal.Ui.MainWindow: Sending failed",
             "System.InvalidOperationException: boom",
             "   at Somewhere()",
         ];
@@ -28,7 +28,7 @@ public sealed class LogFileTests : IDisposable
         Assert.Equal(3, entries.Count);
         Assert.Null(entries[0].Level);
         Assert.Equal(LogLevel.Information, entries[1].Level);
-        Assert.Equal("Durum.Matrix.Client.Terminal.Services.CryptoService", entries[1].Category);
+        Assert.Equal("Uniform.Matrix.Client.Terminal.Services.CryptoService", entries[1].Category);
         Assert.Equal(3, entries[2].Lines.Count);
         Assert.True(entries[2].Matches(LogLevel.Warning, "BOOM"));
         Assert.False(entries[1].Matches(LogLevel.Warning, null));

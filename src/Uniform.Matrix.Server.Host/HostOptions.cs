@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Server.Host;
+namespace Uniform.Matrix.Server.Host;
 
 using Uniform.Matrix.Hosting;
 

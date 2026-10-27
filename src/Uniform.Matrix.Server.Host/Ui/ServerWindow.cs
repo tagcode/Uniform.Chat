@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Server.Host.Ui;
+namespace Uniform.Matrix.Server.Host.Ui;
 
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;

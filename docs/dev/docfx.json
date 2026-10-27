@@ -5,8 +5,8 @@
       "src": [
         {
           "src": "../../src",
-          "files": [ "Uniform.*/*.csproj", "Durum.*/*.csproj" ],
-          "exclude": [ "Durum.Matrix.Client.Android/*.csproj" ]
+          "files": [ "Uniform.*/*.csproj" ],
+          "exclude": [ "Uniform.Matrix.Client.Android/*.csproj" ]
         }
       ],
       "dest": "api",
@@ -19,7 +19,7 @@
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
     ],
     "output": "_site",
-    "template": [ "theme" ],
+    "template": [ "../theme" ],
     "globalMetadata": {
       "_appTitle": "Matrix .NET Developer Guide",
       "_appName": "Matrix .NET",

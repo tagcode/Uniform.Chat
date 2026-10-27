@@ -1,5 +1,5 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
-# build the apps (desktop, terminal client, server) for Windows and Linux, push the packages to NuGet.org with trusted publishing,
+# build the apps (desktop, terminal client, server) with their user guides for Windows and Linux, push the packages to NuGet.org with trusted publishing,
 # and create a GitHub release with the app archives.
 name: Release
 
@@ -65,9 +65,35 @@ jobs:
           # Only passed between jobs; the release and NuGet keep the published files
           retention-days: 1
 
+  docs:
+    name: User guides
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      # HTML for reading offline; the statictoc theme needs no web server
+      - run: dotnet tool restore
+      - run: dotnet docfx docs/client/docfx.json
+      - run: dotnet docfx docs/server/docfx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-client
+          path: docs/client/_site
+          if-no-files-found: error
+          retention-days: 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-server
+          path: docs/server/_site
+          if-no-files-found: error
+          retention-days: 1
+
   apps:
     name: Apps (${{ matrix.rid }})
-    needs: [version, test]
+    needs: [version, test, docs]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -77,23 +103,34 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs-client
+          path: guides/client
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs-server
+          path: guides/server
       # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows.
       # desktop is the Avalonia app; its Linux archive has install-desktop-entry.sh for the application menu.
+      # Each archive has its user guide as HTML in docs/: the client guide for both clients, the server guide for the server.
       - name: Publish and archive
         env:
           VERSION: ${{ needs.version.outputs.version }}
           RID: ${{ matrix.rid }}
         run: |
           mkdir -p release
-          for app in desktop:Durum.Matrix.Client.Desktop client:Durum.Matrix.Client.Terminal server:Durum.Matrix.Server.Host; do
-            name="durum-${app%%:*}-$VERSION-$RID"
-            dotnet publish "src/${app#*:}" -c Release -r "$RID" --self-contained \
+          for app in desktop:Uniform.Matrix.Client.Desktop:client terminal:Uniform.Matrix.Client.Terminal:client server:Uniform.Matrix.Server.Host:server; do
+            IFS=: read -r kind project guide <<< "$app"
+            name="uniform-matrix-$kind-$VERSION-$RID"
+            dotnet publish "src/$project" -c Release -r "$RID" --self-contained \
               -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true \
               -p:DebugType=embedded -p:IsTransformWebConfigDisabled=true -p:ContinuousIntegrationBuild=true \
               -p:Version="$VERSION" -o "publish/$name"
             # Our symbols are embedded; native libraries bring large .pdb files of their own
             rm -f "publish/$name"/*.pdb
             cp -r LICENSE LICENSES THIRD-PARTY-NOTICES.md "publish/$name/"
+            cp -r "guides/$guide" "publish/$name/docs"
             if [[ "$RID" == win-* ]]; then
               (cd publish && zip -qr "../release/$name.zip" "$name")
             else
@@ -153,4 +190,4 @@ jobs:
         run: |
           flags=()
           if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
-          gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Durum $VERSION" --generate-notes "${flags[@]}"
+          gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Uniform.Matrix $VERSION" --generate-notes "${flags[@]}"

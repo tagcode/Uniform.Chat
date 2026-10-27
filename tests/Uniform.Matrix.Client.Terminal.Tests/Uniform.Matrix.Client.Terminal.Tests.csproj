@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Durum.Matrix.Client.Terminal\Durum.Matrix.Client.Terminal.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Matrix.Client.Terminal\Uniform.Matrix.Client.Terminal.csproj" />
     <Compile Include="..\Uniform.Matrix.Protocol.Tests\StubHandler.cs" Link="StubHandler.cs" />
   </ItemGroup>
 

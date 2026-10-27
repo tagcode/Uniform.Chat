@@ -1,7 +1,7 @@
-namespace Durum.Matrix.Client.Terminal.Tests;
+namespace Uniform.Matrix.Client.Terminal.Tests;
 
 using System.Text.Json;
-using Durum.Matrix.Client.Terminal.Ui;
+using Uniform.Matrix.Client.Terminal.Ui;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;

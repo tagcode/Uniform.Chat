@@ -1,7 +1,7 @@
-namespace Durum.Matrix.Client.Terminal.Ui;
+namespace Uniform.Matrix.Client.Terminal.Ui;
 
 using System.Collections.ObjectModel;
-using Durum.Matrix.Client.Terminal.Configuration;
+using Uniform.Matrix.Client.Terminal.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -163,7 +163,7 @@ public sealed partial class MainWindow : Window
         ]),
         new MenuBarItem("_Help", [
             new MenuItem { Title = "_Commands and keys", Key = Key.F1, Action = ShowHelp },
-            new MenuItem { Title = "_About", Action = () => Dialogs.Info(app, "About", "Durum.Matrix.Client.Terminal\nA Matrix chat client for the terminal.\n\nhttps://spec.matrix.org") },
+            new MenuItem { Title = "_About", Action = () => Dialogs.Info(app, "About", "Uniform.Matrix.Client.Terminal\nA Matrix chat client for the terminal.\n\nhttps://spec.matrix.org") },
         ]),
     ]);
 

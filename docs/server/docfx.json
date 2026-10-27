@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
+    ],
+    "output": "_site",
+    "template": [ "../theme" ],
+    "globalMetadata": {
+      "_appTitle": "Uniform.Matrix Server Guide",
+      "_appName": "Uniform.Matrix Server",
+      "_enableSearch": true
+    }
+  }
+}

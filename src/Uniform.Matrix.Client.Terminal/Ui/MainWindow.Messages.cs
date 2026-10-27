@@ -1,7 +1,7 @@
-namespace Durum.Matrix.Client.Terminal.Ui;
+namespace Uniform.Matrix.Client.Terminal.Ui;
 
 using System.Text.Json;
-using Durum.Matrix.Client.Terminal.Configuration;
+using Uniform.Matrix.Client.Terminal.Configuration;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client;
 using Uniform.Matrix.Client.Configuration;

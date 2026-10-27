@@ -1,6 +1,6 @@
-namespace Durum.Matrix.Client.Terminal.Tests;
+namespace Uniform.Matrix.Client.Terminal.Tests;
 
-using Durum.Matrix.Client.Terminal.Configuration;
+using Uniform.Matrix.Client.Terminal.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +18,7 @@ public sealed class OptionTests : IDisposable
     public void CanDescribeAllOptions()
     {
         // Arrange: register like Program, with logs in a temporary directory
-        HostApplicationBuilder builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { ApplicationName = "Durum.Matrix.Client.Terminal" });
+        HostApplicationBuilder builder = Host.CreateEmptyApplicationBuilder(new HostApplicationBuilderSettings { ApplicationName = "Uniform.Matrix.Client.Terminal" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Storage:DataDirectory"] = directory });
         builder.AddSettings();
         builder.AddMatrixClient();
@@ -32,8 +32,8 @@ public sealed class OptionTests : IDisposable
         Assert.Equal(["Matrix", "Storage", "Ui", "Logging"], options.Select(o => o.Key.Split(':')[0]).Distinct());
         Assert.All(options, o => Assert.False(string.IsNullOrWhiteSpace(o.Description), o.Key));
         Assert.Null(options.Single(o => o.Key == "Storage:DataDirectory").DefaultValue);
-        Assert.EndsWith(Path.Combine("share", "durum-matrix-client-terminal"), new StorageOptions().ResolveDataDirectory("Durum.Matrix.Client.Terminal"));
-        Assert.EndsWith(Path.Combine("durum-matrix-client-terminal", "settings.json"), services.GetRequiredService<SettingsStore>().Path);
+        Assert.EndsWith(Path.Combine("share", "uniform-matrix-client-terminal"), new StorageOptions().ResolveDataDirectory("Uniform.Matrix.Client.Terminal"));
+        Assert.EndsWith(Path.Combine("uniform-matrix-client-terminal", "settings.json"), services.GetRequiredService<SettingsStore>().Path);
     }
 
     /// <summary>Remove the temporary directory.</summary>

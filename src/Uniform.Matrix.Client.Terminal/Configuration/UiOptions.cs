@@ -1,6 +1,6 @@
-namespace Durum.Matrix.Client.Terminal.Configuration;
+namespace Uniform.Matrix.Client.Terminal.Configuration;
 
-using Durum.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Matrix.Client.Terminal.Ui.Images;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Display settings, configuration section <see cref="Section"/>.</summary>

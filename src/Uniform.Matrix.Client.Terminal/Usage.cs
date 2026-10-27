@@ -1,4 +1,4 @@
-namespace Durum.Matrix.Client.Terminal;
+namespace Uniform.Matrix.Client.Terminal;
 
 using System.Runtime.InteropServices;
 using Uniform.Matrix.Client.Configuration;
@@ -21,12 +21,12 @@ internal static class Usage
     public static string Text(string? userId, string settingsPath)
     {
         // Program name as the user typed it
-        string program = Path.GetFileName(Environment.ProcessPath) ?? "Durum.Matrix.Client.Terminal";
+        string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Matrix.Client.Terminal";
         string problem = string.IsNullOrWhiteSpace(userId) ? "Give your Matrix user ID to start." : $"\"{userId}\" is not a Matrix user ID; it looks like @alice:matrix.org.";
         string section = MatrixOptions.Section;
         // Return help
         return $$"""
-            Durum, a Matrix chat client for the terminal
+            Uniform.Matrix, a Matrix chat client for the terminal
 
             {{problem}}
 

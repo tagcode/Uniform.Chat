@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
+             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.ConnectingView"
+             x:DataType="vm:ConnectingViewModel">
+  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+    <Image Source="avares://Uniform.Matrix.Client.Avalonia.Core/Assets/logo.png" Width="96" Height="96" />
+    <ProgressBar IsIndeterminate="True" Width="200" />
+    <TextBlock HorizontalAlignment="Center" Text="{Binding UserId, StringFormat='Signing in to {0}…'}" />
+  </StackPanel>
+</UserControl>

@@ -63,7 +63,7 @@ URL previews:
 
 ## Milestone 2: federation
 A public name is only needed for federating with real servers, a Synapse test server or the open network. Synapse has to reach our server and validate its certificate. When we get there, it needs:
-- a subdomain, e.g. durum.example.org, pointing at the machine running the test server;
+- a subdomain, e.g. matrix.example.org, pointing at the machine running the test server;
 - one TCP port forwarded through NAT and the firewall: 8448, the federation default, or 443 with `.well-known/matrix/server` delegation;
 - a TLS certificate, most easily from a reverse proxy like Caddy that gets Let's Encrypt certificates by itself; Kestrel can also use a certificate file.
 
@@ -77,11 +77,8 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 
 # Docfx theme
 
-- Docfx theme is currently full branch of default, but it can be reduced to the diff of default.
-
-# Namespace
-
-- Rename Durum.* to Uniform.*. So everything will be consistent. E.g. Uniform.Matrix.Client.Android.
+- Docfx theme (`docs/theme`, shared by all three sites) is currently full branch of default, but it can be reduced to the diff of default.
+- Offline guides in the release archives: the top bar and search load files by script, which browsers block for pages opened from disk; the sidebar and links work.
 
 # UserManagement 
 
@@ -89,17 +86,6 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
-# User documentation
-- Split the `docs/user` into `docs/server` and `docs/client` documnetation.
-- Include the client documentation as html within the client release files; .tar.gz and .zip.
-- Include the server documentation as html within the server release files; .tar.gz and .zip.
-
-# Matrix client release
-- Include user documentation in the relase .tar.gz and .zip
-
 # Matrix server
 - When application starts, and bind address is reserved, don't show full stack trace.
 - Have user management actions leave a log entry at Information level.
-
-# Matrix Avalonia clients
-- If Durum.Matrix.Client.Gui contains avalonia specific shared implementations, then it should be named Durum.Matrix.Client.Avalonia.Core
