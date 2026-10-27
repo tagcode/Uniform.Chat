@@ -39,10 +39,12 @@ jobs:
     needs: version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      # The solution has the Android app, which needs its workload; the runner has the Android SDK and Java
+      - run: dotnet workload install android
       # Live tests skip without testclient.txt; native vodozemac tests skip without the native library
       - run: dotnet build Uniform.Matrix.slnx -c Release
       - run: dotnet test --solution Uniform.Matrix.slnx -c Release --no-build
@@ -52,10 +54,12 @@ jobs:
     needs: [version, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      # Packing builds the whole solution, the Android app too
+      - run: dotnet workload install android
       - run: dotnet pack Uniform.Matrix.slnx -c Release -o artifacts -p:Version=${{ needs.version.outputs.version }} -p:ContinuousIntegrationBuild=true
       - uses: actions/upload-artifact@v4
         with:
@@ -70,8 +74,8 @@ jobs:
     needs: version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       # HTML for reading offline, one guide per app; the statictoc theme needs no web server
@@ -97,8 +101,8 @@ jobs:
       matrix:
         rid: [linux-x64, linux-arm64, win-x64, win-arm64]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - uses: actions/download-artifact@v4
@@ -152,7 +156,7 @@ jobs:
         with:
           name: nuget
           path: artifacts
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - id: login
