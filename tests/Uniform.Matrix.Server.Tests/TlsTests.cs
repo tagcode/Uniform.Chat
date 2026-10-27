@@ -64,7 +64,7 @@ public class TlsTests
             request.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(request.PublicKey, false));
             DateTimeOffset from = DateTimeOffset.UtcNow.AddDays(-1);
             if (issuer is null) return request.CreateSelfSigned(from, from.AddYears(1));
-            using X509Certificate2 signed = request.Create(issuer, from, from.AddYears(1), RandomNumberGenerator.GetBytes(8));
+            using X509Certificate2 signed = request.Create(issuer, from, new DateTimeOffset(issuer.NotAfter.ToUniversalTime()).AddDays(-1), RandomNumberGenerator.GetBytes(8));
             // Return with its key
             return signed.CopyWithPrivateKey(key);
         }

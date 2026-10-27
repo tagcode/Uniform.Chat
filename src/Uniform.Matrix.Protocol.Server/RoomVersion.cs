@@ -7,9 +7,11 @@ public sealed record RoomVersion
     public static readonly RoomVersion V10 = new() { Id = "10", CreateHasCreator = true, Redaction = RedactionRules.V10 };
     /// <summary>Version 11: the create event's sender is the creator, clarified redaction.</summary>
     public static readonly RoomVersion V11 = new() { Id = "11", CreateHasCreator = false, Redaction = RedactionRules.V11 };
+    /// <summary>Version 12: the room ID is the create event's hash, and the creators have unlimited power.</summary>
+    public static readonly RoomVersion V12 = new() { Id = "12", CreateHasCreator = false, Redaction = RedactionRules.V11, RoomIdIsCreateHash = true };
 
     /// <summary>Versions this server can create and joins, by ID.</summary>
-    public static IReadOnlyDictionary<string, RoomVersion> Supported { get; } = new Dictionary<string, RoomVersion> { [V10.Id] = V10, [V11.Id] = V11 };
+    public static IReadOnlyDictionary<string, RoomVersion> Supported { get; } = new Dictionary<string, RoomVersion> { [V10.Id] = V10, [V11.Id] = V11, [V12.Id] = V12 };
 
     /// <summary>Version of new rooms unless the client asks for another.</summary>
     public static RoomVersion Default => V10;
@@ -20,6 +22,11 @@ public sealed record RoomVersion
     public bool CreateHasCreator { get; init; }
     /// <summary>Which keys survive redaction.</summary>
     public RedactionRules Redaction { get; init; }
+    /// <summary>Whether the room ID is <c>!</c> and the create event's reference hash, the create event has no <c>room_id</c> and is left out of <c>auth_events</c>, and the creators (the sender and <c>additional_creators</c>) have unlimited power; from version 12.</summary>
+    public bool RoomIdIsCreateHash { get; init; }
+
+    /// <summary>Return the room ID of a room whose create event has ID <paramref name="createEventId"/>, when <see cref="RoomIdIsCreateHash"/>.</summary>
+    public static string RoomIdOf(string createEventId) => "!" + createEventId[1..];
 
     /// <summary>Return the version of ID <paramref name="id"/>, or null when not supported.</summary>
     public static RoomVersion? Find(string? id) => id is not null && Supported.TryGetValue(id, out RoomVersion? version) ? version : null;

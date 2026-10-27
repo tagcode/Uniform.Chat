@@ -1,5 +1,7 @@
 namespace Uniform.Matrix.Server.Tests;
 
+using System.Net.Http.Json;
+
 using System.Net;
 using System.Text.Json;
 using Uniform.Matrix.Protocol.Client;
@@ -221,5 +223,38 @@ public class RoomTests
         Assert.Equal(ErrorCodes.NotFound, unknown.Errcode);
         Assert.Equal("11", create?.GetProperty("room_version").GetString());
         Assert.False(create?.TryGetProperty("creator", out _));
+    }
+
+    /// <summary>A transaction ID is per room: reusing it in another room sends a new event, while a retry in the same room returns the first.</summary>
+    [Fact]
+    public async Task ScopeTransactionsToRooms()
+    {
+        // Arrange: two rooms, one device
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        string kitchen = await alice.CreateRoomAsync(new CreateRoomRequest(), Ct);
+        string garden = await alice.CreateRoomAsync(new CreateRoomRequest(), Ct);
+        using HttpClient http = server.CreateHttpClient();
+        http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+
+        // Act: t1 in the kitchen twice, then in the garden
+        string first = await SendAsync(http, kitchen, "t1");
+        string retry = await SendAsync(http, kitchen, "t1");
+        string other = await SendAsync(http, garden, "t1");
+
+        // Assert
+        Assert.Equal(first, retry);
+        Assert.NotEqual(first, other);
+    }
+
+    /// <summary>Send a text with a transaction ID; return the event ID.</summary>
+    private static async Task<string> SendAsync(HttpClient http, string roomId, string transactionId)
+    {
+        // PUT as clients do
+        using HttpResponseMessage response = await http.PutAsJsonAsync($"/_matrix/client/v3/rooms/{Uri.EscapeDataString(roomId)}/send/m.room.message/{transactionId}", new { msgtype = "m.text", body = "hello" }, Ct);
+        response.EnsureSuccessStatusCode();
+        // Return ID
+        return (await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(Ct)).GetProperty("event_id").GetString()!;
     }
 }

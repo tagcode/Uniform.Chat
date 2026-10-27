@@ -705,10 +705,9 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EventId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("UserId", "DeviceId", "TransactionId");
+                    b.HasKey("UserId", "DeviceId", "TransactionId", "EventId");
 
                     b.ToTable("Transactions");
                 });

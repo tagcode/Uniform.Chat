@@ -59,12 +59,13 @@ public sealed class EventSender
     /// <summary>Build and store the event at stream <paramref name="position"/>.</summary>
     private async Task<string> SendAtAsync(EventDraft draft, long position, CancellationToken cancellationToken)
     {
-        // A retried transaction returns the event it already created
+        // A retried transaction returns the event it already created; transaction IDs are per room, as the room is part of the endpoint
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         if (draft.DeviceId is string device && draft.TransactionId is string txn)
         {
-            TransactionRow? sent = await db.Transactions.AsNoTracking().SingleOrDefaultAsync(t => t.UserId == draft.Sender && t.DeviceId == device && t.TransactionId == txn, cancellationToken);
-            if (sent is not null) return sent.EventId;
+            string? sent = await db.Transactions.AsNoTracking().Where(t => t.UserId == draft.Sender && t.DeviceId == device && t.TransactionId == txn)
+                .Join(db.Events.Where(e => e.RoomId == draft.RoomId), t => t.EventId, e => e.EventId, (t, _) => t.EventId).FirstOrDefaultAsync(cancellationToken);
+            if (sent is not null) return sent;
         }
 
         // The PDU on the current state, hashed and signed
@@ -251,7 +252,7 @@ public sealed class EventSender
         // The PDU without hash and signature
         JsonObject pdu = new()
         {
-            ["auth_events"] = new JsonArray([.. authState.Values.Select(e => e["event_id"]!.GetValue<string>()).Order(StringComparer.Ordinal).Select(id => (JsonNode)id)]),
+            ["auth_events"] = new JsonArray([.. authState.Where(e => !version.RoomIdIsCreateHash || e.Key.Item1 != EventTypes.RoomCreate).Select(e => e.Value["event_id"]!.GetValue<string>()).Order(StringComparer.Ordinal).Select(id => (JsonNode)id)]),
             ["content"] = draft.Content.DeepClone(),
             ["depth"] = depth,
             ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(),

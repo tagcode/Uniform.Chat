@@ -59,8 +59,10 @@ public sealed class RemoteJoins
         List<string> stateIds = [];
         foreach ((JsonNode? node, bool isState) in (joined?["state"] as JsonArray ?? []).Select(n => (n, true)).Concat((joined?["auth_chain"] as JsonArray ?? []).Select(n => (n, false))))
         {
-            if (node is not JsonObject pdu || pdu["room_id"]?.GetValue<string>() != roomId) throw Bad(resident, "an event of another room");
+            if (node is not JsonObject pdu) throw Bad(resident, "an event that is not an object");
             string id = EventFormat.ComputeEventId(pdu, version);
+            bool isCreate = version.RoomIdIsCreateHash && pdu["type"]?.GetValue<string>() == EventTypes.RoomCreate && !pdu.ContainsKey("room_id") && RoomVersion.RoomIdOf(id) == roomId;
+            if (!isCreate && pdu["room_id"]?.GetValue<string>() != roomId) throw Bad(resident, "an event of another room");
             if (!await IsSignedAsync(pdu, version, cancellationToken)) throw Bad(resident, $"event {id} without a valid signature or hash");
             events[id] = pdu;
             if (isState && pdu["state_key"] is not null) stateIds.Add(id);

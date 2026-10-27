@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 
-/// <summary>The <see href="https://spec.matrix.org/latest/rooms/v11/#authorization-rules">authorization rules</see> of room versions 10 and 11: whether an event is allowed given the state it depends on.</summary>
+/// <summary>The <see href="https://spec.matrix.org/latest/rooms/v11/#authorization-rules">authorization rules</see> of room versions 10, 11 and <see href="https://spec.matrix.org/latest/rooms/v12/#authorization-rules">12</see>: whether an event is allowed given the state it depends on.</summary>
 /// <remarks>The caller supplies the state: an event's <c>auth_events</c> when receiving it, or the room's current state when creating it. State events carry their <c>event_id</c>, which v4+ event formats otherwise leave out, as the creator's first join is checked against the create event's ID. Rule numbers follow the spec.</remarks>
 public static class AuthRules
 {
@@ -27,17 +27,24 @@ public static class AuthRules
         // 1. Create
         if (type == AuthEventTypes.Create) return CheckCreate(pdu, version, sender, content);
 
-        // 2. Auth events must include the create event of this room
+        // 2. Auth events must include the create event of this room; from version 12 the room ID names it instead
         if (!state.TryGetValue((AuthEventTypes.Create, ""), out JsonObject? create)) return "No create event.";
         string? roomId = pdu["room_id"]?.GetValue<string>();
-        if (state.Values.Any(e => e["room_id"]?.GetValue<string>() != roomId)) return "An auth event is from another room.";
+        if (version.RoomIdIsCreateHash)
+        {
+            string? createId = create["event_id"]?.GetValue<string>();
+            if (createId is null || roomId != RoomVersion.RoomIdOf(createId)) return "The room ID is not of the create event.";
+            if ((pdu["auth_events"] as JsonArray ?? []).Any(e => e?.GetValue<string>() == createId)) return "The create event must not be an auth event.";
+        }
+        if (state.Values.Any(e => e != create && e["room_id"]?.GetValue<string>() != roomId) || !version.RoomIdIsCreateHash && create["room_id"]?.GetValue<string>() != roomId) return "An auth event is from another room.";
         string creator = version.CreateHasCreator ? create["content"]?["creator"]?.GetValue<string>() ?? "" : create["sender"]?.GetValue<string>() ?? "";
+        IReadOnlyCollection<string>? creators = version.RoomIdIsCreateHash ? Creators(create) : null;
 
         // 3. Unfederated rooms stay on the creator's server
         if (create["content"]?["m.federate"]?.GetValueKind() == JsonValueKind.False && Domain(sender) != Domain(create["sender"]?.GetValue<string>())) return "The room does not federate.";
 
         // 4. Membership
-        PowerLevels levels = new(state.GetValueOrDefault((AuthEventTypes.PowerLevels, ""))?["content"] as JsonObject, creator);
+        PowerLevels levels = new(state.GetValueOrDefault((AuthEventTypes.PowerLevels, ""))?["content"] as JsonObject, creator, creators);
         if (type == AuthEventTypes.Member) return CheckMember(pdu, sender, stateKey, content, state, levels, create, creator, isSignedByServer);
 
         // 5. Everything else needs a joined sender
@@ -53,6 +60,7 @@ public static class AuthRules
         if (stateKey is not null && stateKey.StartsWith('@') && stateKey != sender) return "Cannot set state of another user.";
 
         // 9. Power levels
+        if (type == AuthEventTypes.PowerLevels && creators is not null && content["users"] is JsonObject listed && listed.Any(u => creators.Contains(u.Key))) return "Creators cannot be given a power level.";
         if (type == AuthEventTypes.PowerLevels) return CheckPowerLevels(content, sender, levels, state.GetValueOrDefault((AuthEventTypes.PowerLevels, ""))?["content"] as JsonObject);
 
         // 10. Allowed
@@ -62,9 +70,11 @@ public static class AuthRules
     /// <summary>Rule 1: the create event.</summary>
     private static string? CheckCreate(JsonObject pdu, RoomVersion version, string sender, JsonObject content)
     {
-        // No history, same server as the room ID, known version
+        // No history, same server as the room ID or from version 12 no room ID, known version
         if (pdu["prev_events"] is JsonArray { Count: > 0 }) return "A create event has no previous events.";
-        if (Domain(pdu["room_id"]?.GetValue<string>()) != Domain(sender)) return "The room ID is not of the creator's server.";
+        if (version.RoomIdIsCreateHash && pdu.ContainsKey("room_id")) return "A version 12 create event has no room ID.";
+        if (!version.RoomIdIsCreateHash && Domain(pdu["room_id"]?.GetValue<string>()) != Domain(sender)) return "The room ID is not of the creator's server.";
+        if (version.RoomIdIsCreateHash && content["additional_creators"] is JsonNode additional && (additional is not JsonArray list || list.Any(c => c is not JsonValue v || !v.TryGetValue(out string? id) || !UserId.TryParse(id, out _)))) return "additional_creators must be user IDs.";
         if (content["room_version"]?.GetValue<string>() is string id && RoomVersion.Find(id) is null) return $"Unknown room version {id}.";
         if (version.CreateHasCreator && content["creator"]?.GetValue<string>() is null) return "The create event has no creator.";
         // Done
@@ -211,6 +221,10 @@ public static class AuthRules
         // Done
         return null;
     }
+
+    /// <summary>Return the creators of a version 12 room: the create event's sender and its <c>additional_creators</c>.</summary>
+    public static IReadOnlyCollection<string> Creators(JsonObject create) =>
+        [.. new[] { create["sender"]?.GetValue<string>() }.Concat((create["content"]?["additional_creators"] as JsonArray ?? []).Select(c => c is JsonValue v && v.TryGetValue(out string? id) ? id : null)).OfType<string>().Distinct()];
 
     /// <summary>Return the current membership of <paramref name="userId"/>, or null.</summary>
     private static string? Membership(IReadOnlyDictionary<(string, string), JsonObject> state, string userId) => state.GetValueOrDefault((AuthEventTypes.Member, userId))?["content"]?["membership"]?.GetValue<string>();

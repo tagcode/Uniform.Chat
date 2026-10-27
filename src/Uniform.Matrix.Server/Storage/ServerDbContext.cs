@@ -99,7 +99,7 @@ public sealed class ServerDbContext : DbContext
         modelBuilder.Entity<CurrentStateRow>().HasIndex(s => new { s.Type, s.StateKey, s.Membership });
 
         // Client bookkeeping
-        modelBuilder.Entity<TransactionRow>().HasKey(t => new { t.UserId, t.DeviceId, t.TransactionId });
+        modelBuilder.Entity<TransactionRow>().HasKey(t => new { t.UserId, t.DeviceId, t.TransactionId, t.EventId });
         modelBuilder.Entity<RoomAliasRow>().HasKey(a => a.Alias);
         modelBuilder.Entity<RoomAliasRow>().HasIndex(a => a.RoomId);
         modelBuilder.Entity<ForgottenRoomRow>().HasKey(f => new { f.UserId, f.RoomId });

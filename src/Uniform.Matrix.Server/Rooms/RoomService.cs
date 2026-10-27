@@ -41,6 +41,7 @@ public sealed class RoomService
         // Version, preset and alias
         string versionId = body["room_version"]?.GetValue<string>() ?? RoomVersion.Default.Id;
         RoomVersion version = RoomVersion.Find(versionId) ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.UnsupportedRoomVersion, $"Room version {versionId} is not supported.");
+        if (version.RoomIdIsCreateHash) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.UnsupportedRoomVersion, $"Rooms of version {versionId} can be joined here, but not created yet.");
         bool published = body["visibility"]?.GetValue<string>() == "public";
         string preset = body["preset"]?.GetValue<string>() ?? (published ? "public_chat" : "private_chat");
         if (preset is not ("private_chat" or "public_chat" or "trusted_private_chat")) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Unknown preset {preset}.");
@@ -87,14 +88,26 @@ public sealed class RoomService
         return roomId;
     }
 
-    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID of another server that is not here yet is joined through that server. Returns the room ID.</summary>
-    public async Task<string> JoinAsync(string userId, string roomIdOrAlias, string? reason, CancellationToken cancellationToken)
+    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID that is not here yet is joined through <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>
+    public async Task<string> JoinAsync(string userId, string roomIdOrAlias, string? reason, CancellationToken cancellationToken, IReadOnlyList<string>? via = null)
     {
-        // Rooms of other servers through their server
-        if (RoomServer(roomIdOrAlias) is string resident && resident != options.Value.ServerName && !await ExistsAsync(roomIdOrAlias, cancellationToken))
+        // Rooms not here through other servers; the first that answers decides
+        List<string> residents = [.. (via ?? []).Append(RoomServer(roomIdOrAlias)).OfType<string>().Where(s => s != ServerName).Distinct()];
+        if (roomIdOrAlias.StartsWith('!') && residents.Count > 0 && !await ExistsAsync(roomIdOrAlias, cancellationToken))
         {
-            await remoteJoins.JoinAsync(userId, roomIdOrAlias, resident, await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken), cancellationToken);
-            return roomIdOrAlias;
+            JsonObject content = await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken);
+            for (int i = 0; ; i++)
+            {
+                try
+                {
+                    await remoteJoins.JoinAsync(userId, roomIdOrAlias, residents[i], content, cancellationToken);
+                    return roomIdOrAlias;
+                }
+                catch (MatrixException) when (i < residents.Count - 1)
+                {
+                    // Next server
+                }
+            }
         }
 
         // Resolve, then join unless joined

@@ -8,13 +8,18 @@ public sealed class PowerLevels
 {
     private readonly JsonObject? content;
     private readonly string? creator;
+    private readonly IReadOnlyCollection<string> creators;
 
     /// <summary>Wrap the content of <c>m.room.power_levels</c>, or null when the room has none, in which case only <paramref name="creator"/> has power.</summary>
-    public PowerLevels(JsonObject? content, string? creator)
+    /// <param name="content">Power levels content, or null.</param>
+    /// <param name="creator">Creator, who has 100 without power levels.</param>
+    /// <param name="creators">Creators of room version 12 and later, who always have unlimited power, <see cref="long.MaxValue"/>.</param>
+    public PowerLevels(JsonObject? content, string? creator, IReadOnlyCollection<string>? creators = null)
     {
         // Store sources
         this.content = content;
         this.creator = creator;
+        this.creators = creators ?? [];
     }
 
     /// <summary>Whether the room has a power levels event.</summary>
@@ -28,10 +33,11 @@ public sealed class PowerLevels
     /// <summary>Level needed to invite; 0 by default.</summary>
     public long Invite => Level("invite", 0);
 
-    /// <summary>Return a user's level: from <c>users</c>, else <c>users_default</c>; without power levels, 100 for the creator and 0 for others.</summary>
+    /// <summary>Return a user's level: unlimited for creators of version 12 rooms, else from <c>users</c>, else <c>users_default</c>; without power levels, 100 for the creator and 0 for others.</summary>
     public long UserLevel(string userId)
     {
-        // No event: only the creator has power
+        // Creators of version 12 above all; without an event only the creator has power
+        if (creators.Contains(userId)) return long.MaxValue;
         if (content is null) return userId == creator ? 100 : 0;
         // Return explicit or default level
         return content["users"]?[userId] is JsonNode level ? AsLong(level) : Level("users_default", 0);
