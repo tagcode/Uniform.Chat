@@ -14,6 +14,11 @@ public sealed record FederationOptions
     public bool AllowPrivateAddresses { get; set; }
     /// <summary>How long to wait for another server to answer.</summary>
     public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(30);
+    /// <summary>Key servers (notaries) to ask for other servers' signing keys when those servers cannot be reached, separated by commas, e.g. <c>matrix.org</c>; none by default, as asking tells them which servers this one talks to.</summary>
+    public string? TrustedKeyServers { get; set; }
     /// <summary>How long other servers may cache this server's signing key, announced as <c>valid_until_ts</c>.</summary>
     public TimeSpan KeyValidity { get; set; } = TimeSpan.FromDays(1);
+
+    /// <summary>Return <see cref="TrustedKeyServers"/> as a list.</summary>
+    public IReadOnlyList<string> GetTrustedKeyServers() => (TrustedKeyServers ?? "").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 }

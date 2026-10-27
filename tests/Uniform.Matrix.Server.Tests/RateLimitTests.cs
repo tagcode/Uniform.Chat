@@ -64,4 +64,41 @@ public class RateLimitTests
         // Assert: the registration (an auth probe and the dummy stage) and the two failures used the burst
         Assert.Equal([HttpStatusCode.Forbidden, HttpStatusCode.Forbidden, HttpStatusCode.TooManyRequests], statuses);
     }
+
+    /// <summary>Behind a trusted proxy, logins count per forwarded client address; an untrusted sender's header is ignored.</summary>
+    [Fact]
+    public async Task CountForwardedAddresses()
+    {
+        // Arrange: one login at once per address, nginx at 10.0.0.1
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["RateLimits:LoginBurst"] = "1", ["RateLimits:LoginsPerMinute"] = "1", ["Server:TrustedProxies"] = "10.0.0.1" });
+
+        // Act: two clients through the proxy, then one forging the header from elsewhere, twice
+        int first = await LoginStatusAsync(server, "10.0.0.1", "203.0.113.1");
+        int second = await LoginStatusAsync(server, "10.0.0.1", "203.0.113.2");
+        int again = await LoginStatusAsync(server, "10.0.0.1", "203.0.113.1");
+        int forged = await LoginStatusAsync(server, "198.51.100.7", "203.0.113.3");
+        int forgedAgain = await LoginStatusAsync(server, "198.51.100.7", "203.0.113.4");
+
+        // Assert: each client address has its own bucket; the forger is counted by its own address
+        Assert.Equal([false, false, true, false, true], new[] { first, second, again, forged, forgedAgain }.Select(s => s == 429));
+    }
+
+    /// <summary>Send a login with a wrong password from <paramref name="connection"/> forwarding for <paramref name="client"/>; return the status.</summary>
+    private static async Task<int> LoginStatusAsync(TestHomeserver server, string connection, string client)
+    {
+        // A request with the connection's address and the forwarded header
+        Microsoft.AspNetCore.Http.HttpContext context = await server.SendAsync(http =>
+        {
+            http.Request.Method = "POST";
+            http.Request.Path = "/_matrix/client/v3/login";
+            http.Request.ContentType = "application/json";
+            http.Request.Headers["X-Forwarded-For"] = client;
+            http.Connection.RemoteIpAddress = IPAddress.Parse(connection);
+            byte[] body = System.Text.Encoding.UTF8.GetBytes("{\"type\":\"m.login.password\",\"identifier\":{\"type\":\"m.id.user\",\"user\":\"nobody\"},\"password\":\"x\"}");
+            http.Request.Body = new MemoryStream(body);
+            http.Request.ContentLength = body.Length;
+        });
+        // Return status
+        return context.Response.StatusCode;
+    }
 }

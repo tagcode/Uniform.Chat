@@ -26,11 +26,15 @@ public class LegacyPathTests
         JsonElement sync = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/r0/sync?timeout=0", Ct);
         HttpStatusCode backup = (await http.GetAsync("/_matrix/client/unstable/room_keys/version", Ct)).StatusCode;
         JsonElement protocols = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/r0/thirdparty/protocols", Ct);
+        HttpStatusCode crossSigning = (await http.PostAsJsonAsync("/_matrix/client/unstable/keys/device_signing/upload", new { }, Ct)).StatusCode;
+        JsonElement threepids = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/v3/account/3pid", Ct);
 
         // Assert
         Assert.Equal("m.login.password", flows.GetProperty("flows")[0].GetProperty("type").GetString());
         Assert.True(sync.TryGetProperty("next_batch", out _));
         Assert.Equal(HttpStatusCode.NotFound, backup);
         Assert.Equal(JsonValueKind.Object, protocols.ValueKind);
+        Assert.NotEqual(HttpStatusCode.NotFound, crossSigning);
+        Assert.Equal(0, threepids.GetProperty("threepids").GetArrayLength());
     }
 }

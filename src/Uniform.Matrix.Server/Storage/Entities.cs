@@ -469,3 +469,55 @@ public sealed class RemoteInviteRow
     /// <summary>Stream position of the last change, for sync.</summary>
     public long Stream { get; set; }
 }
+
+/// <summary>A PDU or EDU waiting to be sent to another server, kept so a restart does not lose it; deleted once sent or refused for good.</summary>
+public sealed class FederationOutboxRow
+{
+    /// <summary>Order of queuing.</summary>
+    public long Id { get; set; }
+    /// <summary>Server it goes to.</summary>
+    public required string Destination { get; set; }
+    /// <summary>Whether it is an EDU; otherwise a PDU.</summary>
+    public bool IsEdu { get; set; }
+    /// <summary>The PDU, or the EDU with <c>edu_type</c> and <c>content</c>.</summary>
+    public required string Json { get; set; }
+}
+
+/// <summary>Media of another server, fetched once and kept here; its file and thumbnails are stored under <see cref="LocalId"/>, an ID of this server, as other servers' IDs are not safe as paths.</summary>
+public sealed class RemoteMediaRow
+{
+    /// <summary>Server of the media.</summary>
+    public required string ServerName { get; set; }
+    /// <summary>Media ID on that server.</summary>
+    public required string MediaId { get; set; }
+    /// <summary>ID of the stored file here.</summary>
+    public required string LocalId { get; set; }
+    /// <summary>Content type the other server gave.</summary>
+    public required string ContentType { get; set; }
+    /// <summary>File name the other server gave, or null.</summary>
+    public string? FileName { get; set; }
+    /// <summary>Size in bytes.</summary>
+    public long Size { get; set; }
+    /// <summary>When it was fetched, in milliseconds since the Unix epoch.</summary>
+    public long FetchedTs { get; set; }
+}
+
+/// <summary>How far the federation sender has handed the stream to its queue, so a restart continues there and misses nothing; one row.</summary>
+public sealed class FederationProgressRow
+{
+    /// <summary>Always 1.</summary>
+    public int Id { get; set; }
+    /// <summary>Last stream position handled.</summary>
+    public long Stream { get; set; }
+}
+
+/// <summary>Another server's signed key answer, as <c>/_matrix/key/v2/server</c> gave it, kept so a restart or a server that is down does not stop checking its signatures; the latest per server.</summary>
+public sealed class ServerKeyResponseRow
+{
+    /// <summary>Server the keys are of.</summary>
+    public required string ServerName { get; set; }
+    /// <summary>The answer as received, with the server's signatures.</summary>
+    public required string Json { get; set; }
+    /// <summary>Until when the keys hold, in milliseconds since the Unix epoch, at most a week after fetching.</summary>
+    public long ValidUntilTs { get; set; }
+}

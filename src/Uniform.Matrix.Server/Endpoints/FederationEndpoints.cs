@@ -32,6 +32,12 @@ public static class FederationEndpoints
         routes.MapGet("/_matrix/federation/v1/version", () =>
             MatrixHttp.Json(new JsonObject { ["server"] = new JsonObject { ["name"] = SoftwareName, ["version"] = typeof(FederationEndpoints).Assembly.GetName().Version?.ToString(3) ?? "0.0.0" } })).RequireFederation(signed: false);
 
+        // Key server: keys of this and other servers, each answer signed by this server too
+        routes.MapPost("/_matrix/key/v2/query", async (JsonObject body, ServerKeys keys, RemoteServerKeys remote, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> federation, TimeProvider time, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(new JsonObject { ["server_keys"] = await NotarizeAsync([.. (body["server_keys"] as JsonObject ?? []).Select(s => s.Key).Take(100)], keys, remote, server.CurrentValue.ServerName, time.GetUtcNow() + federation.CurrentValue.KeyValidity, cancellationToken) })).RequireFederation(signed: false);
+        routes.MapGet("/_matrix/key/v2/query/{serverName}", async (string serverName, ServerKeys keys, RemoteServerKeys remote, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> federation, TimeProvider time, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(new JsonObject { ["server_keys"] = await NotarizeAsync([serverName], keys, remote, server.CurrentValue.ServerName, time.GetUtcNow() + federation.CurrentValue.KeyValidity, cancellationToken) })).RequireFederation(signed: false);
+
         // Queries of signed servers
         RouteGroupBuilder federation = routes.MapGroup("/_matrix/federation/v1").RequireFederation();
         federation.MapGet("/query/profile", async (string user_id, string? field, IOptionsMonitor<ServerOptions> server, ProfileService profiles, CancellationToken cancellationToken) =>
@@ -40,25 +46,38 @@ public static class FederationEndpoints
             return MatrixHttp.Json(field is null ? await profiles.GetProfileAsync(user_id, cancellationToken) : await profiles.GetFieldAsync(user_id, field, cancellationToken));
         });
 
-        // Joins of other servers' users
+        // Spaces here, for other servers' previews
+        federation.MapGet("/hierarchy/{roomId}", async (string roomId, bool? suggested_only, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await directory.GetFederationHierarchyAsync(http.GetOrigin(), roomId, suggested_only == true, cancellationToken)));
+
+        // Local aliases for other servers
+        federation.MapGet("/query/directory", async (string room_alias, DirectoryService directory, CancellationToken cancellationToken) =>
+        {
+            (string roomId, IReadOnlyList<string> servers) = await directory.GetLocalAliasAsync(room_alias, cancellationToken);
+            return MatrixHttp.Json(new JsonObject { ["room_id"] = roomId, ["servers"] = new JsonArray([.. servers.Select(s => (JsonNode)s)]) });
+        });
+
+        // Joins and leaves of other servers' users, such as rejected invites
         federation.MapGet("/make_join/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
         {
-            if (!UserId.TryParse(userId, out UserId user) || user.ServerName != http.GetOrigin()) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "The user is not of the asking server.");
-            (JsonObject template, RoomVersion version) = await events.MakeJoinAsync(roomId, userId, cancellationToken);
+            (JsonObject template, RoomVersion version) = await events.MakeMembershipAsync(roomId, AssertOriginUser(http, userId), Memberships.Join, cancellationToken);
             if (!http.Request.Query["ver"].Contains(version.Id)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.IncompatibleRoomVersion, $"The room has version {version.Id}, which the asking server does not support.");
+            return MatrixHttp.Json(new JsonObject { ["event"] = template, ["room_version"] = version.Id });
+        });
+        federation.MapGet("/make_leave/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
+        {
+            (JsonObject template, RoomVersion version) = await events.MakeMembershipAsync(roomId, AssertOriginUser(http, userId), Memberships.Leave, cancellationToken);
             return MatrixHttp.Json(new JsonObject { ["event"] = template, ["room_version"] = version.Id });
         });
         routes.MapPut("/_matrix/federation/v2/send_join/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
         {
-            if (pdu["room_id"]?.GetValue<string>() != roomId) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "The event is of another room.");
-            string origin = http.GetOrigin();
-            Dictionary<string, string> originKeys = [];
-            foreach (string keyId in (pdu["signatures"]?[origin] as JsonObject ?? []).Select(k => k.Key))
-            {
-                if (await keys.GetVerifyKeyAsync(origin, keyId, cancellationToken) is string key) originKeys[keyId] = key;
-            }
-            (List<JsonObject> state, List<JsonObject> authChain) = await events.AcceptJoinAsync(pdu, eventId, origin, originKeys, cancellationToken);
+            (List<JsonObject> state, List<JsonObject> authChain) = await AcceptAsync(http, roomId, eventId, pdu, Memberships.Join, events, keys, cancellationToken);
             return MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["members_omitted"] = false, ["state"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. authChain]) });
+        }).RequireFederation();
+        routes.MapPut("/_matrix/federation/v2/send_leave/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, CancellationToken cancellationToken) =>
+        {
+            await AcceptAsync(http, roomId, eventId, pdu, Memberships.Leave, events, keys, cancellationToken);
+            return MatrixHttp.Json(new JsonObject());
         }).RequireFederation();
 
         // Invites of this server's users to rooms elsewhere
@@ -103,8 +122,8 @@ public static class FederationEndpoints
         federation.MapGet("/user/devices/{userId}", async (string userId, IOptionsMonitor<ServerOptions> server, RemoteDevices devices, CancellationToken cancellationToken) =>
             UserId.TryParse(userId, out UserId user) && user.ServerName == server.CurrentValue.ServerName ? MatrixHttp.Json(await devices.GetUserDevicesAsync(userId, cancellationToken)) : MatrixHttp.Error(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Not a user of this server."));
 
-        // Transactions of events, and EDUs: to-device messages, device list changes, typing and receipts
-        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, RemoteDevices devices, RemoteActivity activity, CancellationToken cancellationToken) =>
+        // Transactions of events, and EDUs: to-device messages, device list changes, typing, receipts and presence
+        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, RemoteEvents events, RemoteDevices devices, RemoteActivity activity, CancellationToken cancellationToken) =>
         {
             string origin = http.GetOrigin();
             foreach (JsonObject edu in (body["edus"] as JsonArray ?? []).OfType<JsonObject>().Take(100))
@@ -116,20 +135,13 @@ public static class FederationEndpoints
                     case "m.device_list_update": await devices.ReceiveDeviceListUpdateAsync(origin, content, cancellationToken); break;
                     case "m.typing": await activity.ReceiveTypingAsync(origin, content, cancellationToken); break;
                     case "m.receipt": await activity.ReceiveReceiptsAsync(origin, content, cancellationToken); break;
+                    case "m.presence": await activity.ReceivePresenceAsync(origin, content, cancellationToken); break;
                 }
             }
             JsonObject results = [];
             foreach (JsonObject pdu in (body["pdus"] as JsonArray ?? []).OfType<JsonObject>().Take(50))
             {
-                Dictionary<string, string> senderKeys = [];
-                if (UserId.TryParse(pdu["sender"]?.GetValue<string>(), out UserId sender))
-                {
-                    foreach (string keyId in (pdu["signatures"]?[sender.ServerName] as JsonObject ?? []).Select(k => k.Key))
-                    {
-                        if (await keys.GetVerifyKeyAsync(sender.ServerName, keyId, cancellationToken) is string key) senderKeys[keyId] = key;
-                    }
-                }
-                (string? eventId, string? error) = await events.AcceptEventAsync(pdu, senderKeys, cancellationToken);
+                (string? eventId, string? error) = await events.AcceptAsync(origin, pdu, cancellationToken);
                 if (eventId is not null) results[eventId] = error is null ? new JsonObject() : new JsonObject { ["error"] = error };
             }
             return MatrixHttp.Json(new JsonObject { ["pdus"] = results });
@@ -138,12 +150,48 @@ public static class FederationEndpoints
         return routes;
     }
 
+    /// <summary>Return <paramref name="userId"/> when it is a user of the asking server; throw <c>M_FORBIDDEN</c> otherwise.</summary>
+    private static string AssertOriginUser(HttpContext http, string userId) =>
+        UserId.TryParse(userId, out UserId user) && user.ServerName == http.GetOrigin() ? userId : throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "The user is not of the asking server.");
+
+    /// <summary>Accept a signed join or leave of the asking server's user, with the origin's keys it was signed with.</summary>
+    private static async Task<(List<JsonObject> State, List<JsonObject> AuthChain)> AcceptAsync(HttpContext http, string roomId, string eventId, JsonObject pdu, string membership, EventSender events, RemoteServerKeys keys, CancellationToken cancellationToken)
+    {
+        // Assert the room, then the keys it names
+        if (pdu["room_id"]?.GetValue<string>() != roomId) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "The event is of another room.");
+        string origin = http.GetOrigin();
+        Dictionary<string, string> originKeys = [];
+        foreach (string keyId in (pdu["signatures"]?[origin] as JsonObject ?? []).Select(k => k.Key))
+        {
+            if (await keys.GetVerifyKeyAsync(origin, keyId, cancellationToken) is string key) originKeys[keyId] = key;
+        }
+        // Return what the endpoint answers
+        return await events.AcceptMembershipAsync(pdu, membership, eventId, origin, originKeys, cancellationToken);
+    }
+
     /// <summary>Return the strings of a JSON array of event IDs.</summary>
     private static IReadOnlyCollection<string> Ids(JsonNode? array) => [.. (array as JsonArray ?? []).Select(i => i?.GetValue<string>()).OfType<string>()];
 
     /// <summary>Return the entries of <paramref name="byUser"/> for users of <paramref name="serverName"/>; other servers ask only about their own.</summary>
     private static JsonObject LocalUsers(JsonObject? byUser, string serverName) =>
         new([.. (byUser ?? []).Where(u => UserId.TryParse(u.Key, out UserId user) && user.ServerName == serverName).Select(u => KeyValuePair.Create(u.Key, u.Value?.DeepClone()))]);
+
+    /// <summary>Return the key answers of <paramref name="serverNames"/>, this server's own and kept or fetched ones of others, each signed by this server too; servers whose keys cannot be had are left out.</summary>
+    private static async Task<JsonArray> NotarizeAsync(IReadOnlyList<string> serverNames, ServerKeys keys, RemoteServerKeys remote, string serverName, DateTimeOffset validUntil, CancellationToken cancellationToken)
+    {
+        // Each server once
+        JsonArray answers = [];
+        foreach (string name in serverNames.Distinct())
+        {
+            if (!ServerNames.TryParse(name, out _, out _)) continue;
+            JsonObject? response = name == serverName ? KeyResponse(keys, serverName, validUntil) : await remote.GetResponseAsync(name, cancellationToken);
+            if (response is null) continue;
+            if (name != serverName) CanonicalJson.AddSignature(response, serverName, keys.KeyId, Ed25519.Sign(keys.Secret, CanonicalJson.SigningForm(response)));
+            answers.Add(response);
+        }
+        // Return answers
+        return answers;
+    }
 
     /// <summary>Return this server's signed key response.</summary>
     public static JsonObject KeyResponse(ServerKeys keys, string serverName, DateTimeOffset validUntil)

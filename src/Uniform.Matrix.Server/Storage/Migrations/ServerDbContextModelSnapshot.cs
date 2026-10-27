@@ -269,6 +269,43 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("FallbackKeys");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.FederationOutboxRow", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsEdu")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Json")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Destination", "Id");
+
+                    b.ToTable("FederationOutbox");
+                });
+
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.FederationProgressRow", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Stream")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FederationProgress");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.FilterRow", b =>
                 {
                     b.Property<string>("UserId")
@@ -553,6 +590,36 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("RemoteInvites");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.RemoteMediaRow", b =>
+                {
+                    b.Property<string>("ServerName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MediaId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FetchedTs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LocalId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ServerName", "MediaId");
+
+                    b.ToTable("RemoteMedia");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.RoomAliasRow", b =>
                 {
                     b.Property<string>("Alias")
@@ -630,6 +697,23 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.HasKey("RoomId");
 
                     b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.ServerKeyResponseRow", b =>
+                {
+                    b.Property<string>("ServerName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Json")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ValidUntilTs")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ServerName");
+
+                    b.ToTable("ServerKeyResponses");
                 });
 
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.StateGroupEntryRow", b =>

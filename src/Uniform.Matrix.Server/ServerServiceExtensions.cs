@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Server;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,16 @@ public static class ServerServiceExtensions
             }));
         }
 
+        // Client addresses from trusted reverse proxies only, which then count for rate limits
+        IReadOnlyList<System.Net.IPAddress> proxies = (builder.Configuration.GetSection(ServerOptions.Section).Get<ServerOptions>() ?? new ServerOptions()).GetTrustedProxies();
+        builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
+        {
+            forwarded.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            forwarded.KnownIPNetworks.Clear();
+            forwarded.KnownProxies.Clear();
+            foreach (System.Net.IPAddress proxy in proxies) forwarded.KnownProxies.Add(proxy);
+        });
+
         // JSON like the rest of the protocol
         builder.Services.ConfigureHttpJsonOptions(json =>
         {
@@ -127,6 +138,7 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<RemoteDevices>();
         builder.Services.AddSingleton<RemoteActivity>();
         builder.Services.AddSingleton<RoomHistory>();
+        builder.Services.AddSingleton<RemoteEvents>();
         builder.Services.AddHostedService<FederationSender>();
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<OpenIdTokens>();
@@ -141,6 +153,9 @@ public static class ServerServiceExtensions
     /// <summary>Add the Matrix middleware and map every endpoint.</summary>
     public static WebApplication MapMatrixServer(this WebApplication app)
     {
+        // Forwarded client addresses first, when proxies are trusted
+        if (app.Services.GetRequiredService<IOptions<ServerOptions>>().Value.GetTrustedProxies().Count > 0) app.UseForwardedHeaders();
+
         // Counting, CORS and errors around every request
         ServerStatus status = app.Services.GetRequiredService<ServerStatus>();
         ILogger logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Matrix.Server.Http");

@@ -71,6 +71,14 @@ public sealed class ServerDbContext : DbContext
     public DbSet<RoomKeyRow> RoomKeys => Set<RoomKeyRow>();
     /// <summary>Pushers of users.</summary>
     public DbSet<PusherRow> Pushers => Set<PusherRow>();
+    /// <summary>Media of other servers kept here.</summary>
+    public DbSet<RemoteMediaRow> RemoteMedia => Set<RemoteMediaRow>();
+    /// <summary>Signed key answers of other servers.</summary>
+    public DbSet<ServerKeyResponseRow> ServerKeyResponses => Set<ServerKeyResponseRow>();
+    /// <summary>How far the federation sender got.</summary>
+    public DbSet<FederationProgressRow> FederationProgress => Set<FederationProgressRow>();
+    /// <summary>PDUs and EDUs waiting for other servers.</summary>
+    public DbSet<FederationOutboxRow> FederationOutbox => Set<FederationOutboxRow>();
     /// <summary>Invites from other servers to rooms not here yet.</summary>
     public DbSet<RemoteInviteRow> RemoteInvites => Set<RemoteInviteRow>();
 
@@ -101,6 +109,10 @@ public sealed class ServerDbContext : DbContext
         modelBuilder.Entity<CurrentStateRow>().HasIndex(s => new { s.Type, s.StateKey, s.Membership });
 
         // Client bookkeeping
+        modelBuilder.Entity<FederationOutboxRow>().HasIndex(o => new { o.Destination, o.Id });
+        modelBuilder.Entity<FederationProgressRow>().Property(p => p.Id).ValueGeneratedNever();
+        modelBuilder.Entity<RemoteMediaRow>().HasKey(m => new { m.ServerName, m.MediaId });
+        modelBuilder.Entity<ServerKeyResponseRow>().HasKey(k => k.ServerName);
         modelBuilder.Entity<RemoteInviteRow>().HasKey(i => new { i.UserId, i.RoomId });
         modelBuilder.Entity<RemoteInviteRow>().HasIndex(i => new { i.UserId, i.Stream });
         modelBuilder.Entity<TransactionRow>().HasKey(t => new { t.UserId, t.DeviceId, t.TransactionId, t.EventId });

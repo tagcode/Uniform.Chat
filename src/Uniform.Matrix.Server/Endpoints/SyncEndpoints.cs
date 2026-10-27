@@ -52,6 +52,16 @@ public static class SyncEndpoints
             SyncFilter parsed = await sync.ResolveFilterAsync(requester.UserId, filter, cancellationToken);
             return MatrixHttp.Json(await sync.GetMessagesAsync(requester, roomId, from, to, dir != "f", Math.Clamp(limit ?? 10, 1, 1000), parsed, cancellationToken));
         });
+        // Relations of an event: edits, reactions, thread replies
+        RouteGroupBuilder v1 = routes.MapGroup("/_matrix/client/v1/rooms/{roomId}").RequireAccessToken();
+        foreach (string pattern in new[] { "/relations/{eventId}", "/relations/{eventId}/{relType}", "/relations/{eventId}/{relType}/{eventType}" })
+        {
+            v1.MapGet(pattern, async (string roomId, string eventId, string? relType, string? eventType, string? from, int? limit, string? dir, HttpContext http, SyncService sync, CancellationToken cancellationToken) =>
+                MatrixHttp.Json(await sync.GetRelationsAsync(http.GetRequester(), roomId, eventId, relType, eventType, from, Math.Clamp(limit ?? 50, 1, 100), dir == "f", cancellationToken)));
+        }
+        v1.MapGet("/timestamp_to_event", async (string roomId, long ts, string? dir, HttpContext http, SyncService sync, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await sync.GetEventAtAsync(http.GetRequester(), roomId, ts, dir != "b", cancellationToken)));
+
         client.MapGet("/rooms/{roomId}/context/{eventId}", async (string roomId, string eventId, int? limit, string? filter, HttpContext http, SyncService sync, CancellationToken cancellationToken) =>
         {
             Requester requester = http.GetRequester();

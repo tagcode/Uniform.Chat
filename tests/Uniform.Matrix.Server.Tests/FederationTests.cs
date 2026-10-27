@@ -2,10 +2,12 @@ namespace Uniform.Matrix.Server.Tests;
 
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
@@ -13,6 +15,7 @@ using Uniform.Matrix.Protocol.Crypto;
 using Uniform.Matrix.Protocol.Server;
 using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Keys;
+using Uniform.Matrix.Server.Storage;
 
 /// <summary>Tests of federation between two servers in memory, <c>a.test</c> and <c>b.test</c>, whose federation clients reach each other through <see cref="Network"/>.</summary>
 public class FederationTests
@@ -45,6 +48,8 @@ public class FederationTests
         public Dictionary<string, HttpMessageHandler> Servers { get; } = [];
         /// <summary>Transactions to fail by host, as if the server were down.</summary>
         public Dictionary<string, int> FailTransactions { get; } = [];
+        /// <summary>Hosts that refuse transactions with 400, so senders drop them and events go missing.</summary>
+        public HashSet<string> RefuseTransactions { get; } = [];
 
         /// <summary>Forward to the server of the host, or fail as an unknown host does.</summary>
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -54,26 +59,48 @@ public class FederationTests
             request.Headers.TryAddWithoutValidation(RawTargetHeader, request.RequestUri.PathAndQuery);
             lock (FailTransactions)
             {
+                if (request.RequestUri.AbsolutePath.Contains("/federation/v1/send/") && RefuseTransactions.Contains(request.RequestUri.Host))
+                {
+                    return Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent("{\"errcode\":\"M_BAD_JSON\",\"error\":\"refused by the test\"}") });
+                }
                 if (request.RequestUri.AbsolutePath.Contains("/federation/v1/send/") && FailTransactions.GetValueOrDefault(request.RequestUri.Host) is int failures and > 0)
                 {
                     FailTransactions[request.RequestUri.Host] = failures - 1;
                     throw new HttpRequestException($"{request.RequestUri.Host} is down");
                 }
             }
-            // Return the server's answer
-            return new HttpMessageInvoker(server, false).SendAsync(request, cancellationToken);
+            // Return the server's answer; a stopped server fails like a closed port
+            return SendToAsync(server, request, cancellationToken);
+        }
+
+        /// <summary>Send to a test server, turning the errors of one that stopped into the connection errors of a real network.</summary>
+        private static async Task<HttpResponseMessage> SendToAsync(HttpMessageHandler server, HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            // Stopped servers throw their own errors
+            try
+            {
+                return await new HttpMessageInvoker(server, false).SendAsync(request, cancellationToken);
+            }
+            catch (Exception ex) when (ex is ObjectDisposedException or InvalidOperationException)
+            {
+                // On error as a refused connection
+                throw new HttpRequestException($"{request.RequestUri!.Host} is not running", ex);
+            }
         }
 
         /// <summary>Keep working when the client factory lets go of the handler.</summary>
         protected override void Dispose(bool disposing) { }
     }
 
-    /// <summary>Start a federating server named <paramref name="serverName"/> on <paramref name="network"/>.</summary>
-    internal static async Task<TestHomeserver> StartAsync(string serverName, Network network)
+    /// <summary>Start a federating server named <paramref name="serverName"/> on <paramref name="network"/>, in <paramref name="dataDirectory"/> when given, e.g. to restart it, with <paramref name="extra"/> settings.</summary>
+    internal static async Task<TestHomeserver> StartAsync(string serverName, Network network, string? dataDirectory = null, IReadOnlyDictionary<string, string?>? extra = null)
     {
-        // Federation on, its client on the test network
+        // Federation on, its client on the test network; a given data directory outlives the server
+        Dictionary<string, string?> settings = new() { ["Server:ServerName"] = serverName, ["Server:Registration"] = "Open", ["Federation:Enabled"] = "true" };
+        if (dataDirectory is not null) settings["Storage:DataDirectory"] = dataDirectory;
+        foreach ((string key, string? value) in extra ?? new Dictionary<string, string?>()) settings[key] = value;
         TestHomeserver server = await TestHomeserver.StartAsync(
-            new Dictionary<string, string?> { ["Server:ServerName"] = serverName, ["Server:Registration"] = "Open", ["Federation:Enabled"] = "true" },
+            settings,
             configureServices: services =>
             {
                 services.AddHttpClient(FederationClient.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
@@ -202,6 +229,13 @@ public class FederationTests
         Assert.Equal(["thanks for the invite"], atA);
         Assert.True(carolAfter["rooms"]!["leave"]!.AsObject().ContainsKey(roomId));
         Assert.False(carolLater["rooms"]!["invite"]!.AsObject().ContainsKey(roomId));
+        string? carolAtA = null;
+        for (int i = 0; i < 50 && carolAtA != "leave"; i++)
+        {
+            carolAtA = (await alice.TryGetStateEventAsync(roomId, "m.room.member", "@carol:b.test", Ct))?.GetProperty("membership").GetString();
+            if (carolAtA != "leave") await Task.Delay(100, Ct);
+        }
+        Assert.Equal("leave", carolAtA);
     }
 
     /// <summary>A message to a server that is down for a moment arrives once a retry gets through.</summary>
@@ -227,6 +261,135 @@ public class FederationTests
         // Assert
         Assert.Equal(["sent while b was down"], atB);
         Assert.Equal(0, network.FailTransactions["b.test"]);
+    }
+
+    /// <summary>What waits for a server that is down is kept in the outbox until it is sent, so a restart would not lose it.</summary>
+    [Fact]
+    public async Task KeepOutboxUntilSent()
+    {
+        // Arrange: alice of a.test in bob's room, then b.test down for a while
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await WaitForOutboxAsync(a, 0);
+        lock (network.FailTransactions) network.FailTransactions["b.test"] = 2;
+
+        // Act: a message while b is down, then wait for the retry
+        await alice.SendTextAsync(roomId, "kept for b", Ct);
+        int waiting = await WaitForOutboxAsync(a, 1);
+        IReadOnlyList<string> atB = await WaitForBodiesAsync(bob, roomId, 1, attempts: 150);
+        int after = await WaitForOutboxAsync(a, 0);
+
+        // Assert
+        Assert.Equal(1, waiting);
+        Assert.Equal(["kept for b"], atB);
+        Assert.Equal(0, after);
+    }
+
+    /// <summary>What waited for a server that was down is sent after a restart.</summary>
+    [Fact]
+    public async Task ResumeOutboxAfterRestart()
+    {
+        // Arrange: a.test in a data directory of its own, alice in bob's room, b.test down
+        Network network = new();
+        string directory = Directory.CreateTempSubdirectory("matrix-restart-").FullName;
+        try
+        {
+            await using TestHomeserver b = await StartAsync("b.test", network);
+            MatrixClient bob = b.CreateClient();
+            await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+            string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+            await using (TestHomeserver a = await StartAsync("a.test", network, directory))
+            {
+                MatrixClient alice = a.CreateClient();
+                await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+                await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+                await WaitForOutboxAsync(a, 0);
+                lock (network.FailTransactions) network.FailTransactions["b.test"] = 1000;
+
+                // Act: a message while b is down, kept in the outbox, then a.test stops
+                await alice.SendTextAsync(roomId, "survives a restart", Ct);
+                Assert.True(await WaitForOutboxPduAsync(a));
+            }
+            lock (network.FailTransactions) network.FailTransactions["b.test"] = 0;
+            await using TestHomeserver restarted = await StartAsync("a.test", network, directory);
+            IReadOnlyList<string> atB = await WaitForBodiesAsync(bob, roomId, 1, attempts: 300);
+
+            // Assert
+            Assert.Equal(["survives a restart"], atB);
+            Assert.Equal(0, await WaitForOutboxAsync(restarted, 0));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    /// <summary>Events that never arrived are fetched with get_missing_events when a later one builds on them, so the history has no gap.</summary>
+    [Fact]
+    public async Task FillGaps()
+    {
+        // Arrange: alice of a.test in bob's room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await WaitForOutboxAsync(b, 0);
+
+        // Act: two messages a.test refuses, which b.test then drops, and one that arrives
+        lock (network.FailTransactions) network.RefuseTransactions.Add("a.test");
+        await bob.SendTextAsync(roomId, "lost one", Ct);
+        await bob.SendTextAsync(roomId, "lost two", Ct);
+        await Task.Delay(500, Ct);
+        await WaitForOutboxAsync(b, 0);
+        lock (network.FailTransactions) network.RefuseTransactions.Remove("a.test");
+        await bob.SendTextAsync(roomId, "after the gap", Ct);
+        IReadOnlyList<string> atA = await WaitForBodiesAsync(alice, roomId, 3, attempts: 100);
+
+        // Assert: all three, in order
+        Assert.Equal(["lost one", "lost two", "after the gap"], atA);
+    }
+
+    /// <summary>Return whether a PDU is in the outbox, waiting a while for one.</summary>
+    private static async Task<bool> WaitForOutboxPduAsync(TestHomeserver server)
+    {
+        // Poll the table
+        IDbContextFactory<ServerDbContext> contexts = server.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>();
+        for (int i = 0; i < 300; i++)
+        {
+            await using ServerDbContext db = await contexts.CreateDbContextAsync(Ct);
+            if (await db.FederationOutbox.AnyAsync(o => !o.IsEdu, Ct)) return true;
+            await Task.Delay(50, Ct);
+        }
+        // Return none
+        return false;
+    }
+
+    /// <summary>Return the number of outbox rows once it is <paramref name="expected"/>, or after a while what it is.</summary>
+    private static async Task<int> WaitForOutboxAsync(TestHomeserver server, int expected)
+    {
+        // Poll the table
+        IDbContextFactory<ServerDbContext> contexts = server.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>();
+        int count = -1;
+        for (int i = 0; i < 300 && count != expected; i++)
+        {
+            await using ServerDbContext db = await contexts.CreateDbContextAsync(Ct);
+            count = await db.FederationOutbox.CountAsync(Ct);
+            if (count != expected) await Task.Delay(50, Ct);
+        }
+        // Return count
+        return count;
     }
 
     /// <summary>Typing and public read receipts of one server's users are seen on the other.</summary>
@@ -307,6 +470,159 @@ public class FederationTests
         Assert.Equal(ErrorCodes.Forbidden, outsider.Errcode);
     }
 
+    /// <summary>A user joins a room by an alias of the other server, which names the room and its servers; unknown aliases are not found.</summary>
+    [Fact]
+    public async Task JoinByRemoteAlias()
+    {
+        // Arrange: bob's room with an alias on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, RoomAliasName = "lobby" }, Ct);
+        using HttpClient aliceHttp = a.CreateHttpClient();
+        aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+
+        // Act
+        JsonObject resolved = (await aliceHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/directory/room/%23lobby%3Ab.test", Ct))!;
+        string joined = await alice.JoinRoomAsync("#lobby:b.test", cancellationToken: Ct);
+        HttpStatusCode unknown = (await aliceHttp.GetAsync("/_matrix/client/v3/directory/room/%23nothing%3Ab.test", Ct)).StatusCode;
+
+        // Assert
+        Assert.Equal(roomId, resolved["room_id"]!.GetValue<string>());
+        Assert.Contains("b.test", resolved["servers"]!.AsArray().Select(s => s!.GetValue<string>()));
+        Assert.Equal(roomId, joined);
+        Assert.Equal(["@alice:a.test", "@bob:b.test"], (await bob.GetJoinedMembersAsync(roomId, Ct)).Keys.Order());
+        Assert.Equal(HttpStatusCode.NotFound, unknown);
+    }
+
+    /// <summary>A version 12 room, whose ID names no server, is joined through <c>via</c>, and messages flow both ways.</summary>
+    [Fact]
+    public async Task JoinVersion12Room()
+    {
+        // Arrange: bob's version 12 room on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, RoomVersion = "12" }, Ct);
+
+        // Act
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
+        await bob.SendTextAsync(roomId, "from b", Ct);
+        await WaitForBodiesAsync(alice, roomId, 1);
+        await alice.SendTextAsync(roomId, "from a", Ct);
+        IReadOnlyList<string> atB = await WaitForBodiesAsync(bob, roomId, 2);
+
+        // Assert
+        Assert.DoesNotContain(":", roomId);
+        Assert.Equal(["from b", "from a"], atB);
+    }
+
+    /// <summary>A user who syncs on one server is seen online on the other, with their status message.</summary>
+    [Fact]
+    public async Task SharePresence()
+    {
+        // Arrange: alice of a.test in bob's room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        using HttpClient aliceHttp = a.CreateHttpClient();
+        aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        using HttpClient bobHttp = b.CreateHttpClient();
+        bobHttp.DefaultRequestHeaders.Authorization = new("Bearer", bob.AccessToken);
+
+        // Act: alice sets a status, then bob syncs until he sees it
+        await aliceHttp.PutAsJsonAsync("/_matrix/client/v3/presence/%40alice%3Aa.test/status", new { presence = "online", status_msg = "cooking" }, Ct);
+        JsonObject? seen = null;
+        for (int i = 0; i < 50 && seen is null; i++)
+        {
+            JsonObject sync = (await bobHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
+            seen = (sync["presence"]?["events"] as JsonArray ?? []).OfType<JsonObject>().FirstOrDefault(e => e["sender"]!.GetValue<string>() == "@alice:a.test" && e["content"]?["status_msg"]?.GetValue<string>() == "cooking");
+            if (seen is null) await Task.Delay(100, Ct);
+        }
+
+        // Assert
+        Assert.NotNull(seen);
+        Assert.Equal("online", seen["content"]!["presence"]!.GetValue<string>());
+    }
+
+    /// <summary>A user downloads and thumbnails media of the other server, which is fetched once through the federation media API and kept; unknown media is not found.</summary>
+    [Fact]
+    public async Task FetchRemoteMedia()
+    {
+        // Arrange: bob's image on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        byte[] image = MediaTests.Png(64, 48, transparent: false);
+        MxcUri uri = await bob.UploadMediaAsync(new MemoryStream(image), "image/png", "photo.png", Ct);
+        using HttpClient aliceHttp = a.CreateHttpClient();
+        aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        string path = $"b.test/{uri.MediaId}";
+
+        // Act: download twice, with b.test refusing everything the second time, then a thumbnail
+        using HttpResponseMessage first = await aliceHttp.GetAsync($"/_matrix/client/v1/media/download/{path}", Ct);
+        byte[] firstBytes = await first.Content.ReadAsByteArrayAsync(Ct);
+        network.Servers.Remove("b.test", out HttpMessageHandler? bHandler);
+        using HttpResponseMessage cached = await aliceHttp.GetAsync($"/_matrix/client/v1/media/download/{path}", Ct);
+        byte[] cachedBytes = await cached.Content.ReadAsByteArrayAsync(Ct);
+        using HttpResponseMessage thumbnail = await aliceHttp.GetAsync($"/_matrix/client/v1/media/thumbnail/{path}?width=32&height=32&method=scale", Ct);
+        network.Servers["b.test"] = bHandler!;
+        HttpStatusCode unknown = (await aliceHttp.GetAsync("/_matrix/client/v1/media/download/b.test/nothing", Ct)).StatusCode;
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(image, firstBytes);
+        Assert.Equal("image/png", first.Content.Headers.ContentType?.MediaType);
+        Assert.Contains("photo.png", first.Content.Headers.ContentDisposition?.ToString());
+        Assert.Equal(image, cachedBytes);
+        Assert.Equal(HttpStatusCode.OK, thumbnail.StatusCode);
+        Assert.StartsWith("image/", thumbnail.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(HttpStatusCode.NotFound, unknown);
+    }
+
+    /// <summary>Another server sees a public room's hierarchy, with private children it has no member in listed as inaccessible.</summary>
+    [Fact]
+    public async Task ServeHierarchy()
+    {
+        // Arrange: bob's public room on b.test with a public and a private child
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string space = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Home" }, Ct);
+        string open = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Kitchen" }, Ct);
+        string closed = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PrivateChat }, Ct);
+        foreach (string child in new[] { open, closed }) await bob.SendStateEventAsync(space, "m.space.child", new { via = new[] { "b.test" } }, child, Ct);
+
+        // Act
+        JsonNode? hierarchy = await a.Services.GetRequiredService<FederationClient>().SendAsync(HttpMethod.Get, "b.test", $"/_matrix/federation/v1/hierarchy/{Uri.EscapeDataString(space)}", null, Ct);
+
+        // Assert
+        Assert.Equal("Home", hierarchy!["room"]!["name"]!.GetValue<string>());
+        Assert.Equal(2, hierarchy["room"]!["children_state"]!.AsArray().Count);
+        Assert.Equal([open], hierarchy["children"]!.AsArray().Select(c => c!["room_id"]!.GetValue<string>()));
+        Assert.Equal([closed], hierarchy["inaccessible_children"]!.AsArray().Select(c => c!.GetValue<string>()));
+    }
+
     /// <summary>Return the message bodies of a room, oldest first, once there are <paramref name="count"/>; fail after a few seconds.</summary>
     private static async Task<IReadOnlyList<string>> WaitForBodiesAsync(MatrixClient client, string roomId, int count, int attempts = 50)
     {
@@ -364,6 +680,39 @@ public class FederationTests
         Assert.True(Ed25519.Verify(keys.PublicKey, CanonicalJson.SigningForm(response), CanonicalJson.GetSignature(response, "b.test", keys.KeyId)!));
         Assert.True(response["valid_until_ts"]!.GetValue<long>() > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
         Assert.Equal("Uniform.Matrix", version["server"]!["name"]!.GetValue<string>());
+    }
+
+    /// <summary>A key server answers for others with their own signature and its own; a server that cannot reach the origin checks its requests with keys from the key server, and keeps them.</summary>
+    [Fact]
+    public async Task UseKeyServer()
+    {
+        // Arrange: c.test knows a.test's keys; b.test trusts c.test as its key server
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver c = await StartAsync("c.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network, extra: new Dictionary<string, string?> { ["Federation:TrustedKeyServers"] = "c.test" });
+        await b.CreateClient().RegisterAsync("bob", "password", cancellationToken: Ct);
+        ServerKeys aKeys = a.Services.GetRequiredService<ServerKeys>();
+        ServerKeys cKeys = c.Services.GetRequiredService<ServerKeys>();
+        using HttpClient cHttp = c.CreateHttpClient();
+        JsonObject notarized = (await (await cHttp.PostAsJsonAsync("/_matrix/key/v2/query", new JsonObject { ["server_keys"] = new JsonObject { ["a.test"] = new JsonObject() } }, Ct)).Content.ReadFromJsonAsync<JsonObject>(Ct))!;
+
+        // Act: a.test goes away, then signs a request to b.test anyway
+        network.Servers.Remove("a.test", out _);
+        using HttpClient bHttp = b.CreateHttpClient();
+        const string uri = "/_matrix/federation/v1/query/profile?user_id=%40bob%3Ab.test";
+        HttpStatusCode viaKeyServer = await SendAsync(bHttp, uri, FederationAuth.Sign("GET", uri, "a.test", "b.test", null, aKeys.KeyId, aKeys.Secret).ToString());
+        IDbContextFactory<ServerDbContext> contexts = b.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>();
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(Ct);
+        bool kept = await db.ServerKeyResponses.AnyAsync(k => k.ServerName == "a.test", Ct);
+
+        // Assert: the answer has both signatures
+        JsonObject entry = notarized["server_keys"]![0]!.AsObject();
+        Assert.Equal("a.test", entry["server_name"]!.GetValue<string>());
+        Assert.True(Ed25519.Verify(aKeys.PublicKey, CanonicalJson.SigningForm(entry), CanonicalJson.GetSignature(entry, "a.test", aKeys.KeyId)!));
+        Assert.True(Ed25519.Verify(cKeys.PublicKey, CanonicalJson.SigningForm(entry), CanonicalJson.GetSignature(entry, "c.test", cKeys.KeyId)!));
+        Assert.Equal(HttpStatusCode.OK, viaKeyServer);
+        Assert.True(kept);
     }
 
     /// <summary>Unsigned requests, requests for another destination and signatures that do not match are refused with <c>M_UNAUTHORIZED</c>.</summary>

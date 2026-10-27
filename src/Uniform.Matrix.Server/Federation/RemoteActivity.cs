@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Rooms;
 using Uniform.Matrix.Server.Storage;
 
-/// <summary><see href="https://spec.matrix.org/latest/server-server-api/#typing-notifications">Typing</see> and <see href="https://spec.matrix.org/latest/server-server-api/#receipts">read receipts</see> with other servers: local users' ones go to the room's other servers as EDUs, and theirs are shown here.</summary>
+/// <summary><see href="https://spec.matrix.org/latest/server-server-api/#typing-notifications">Typing</see>, <see href="https://spec.matrix.org/latest/server-server-api/#receipts">read receipts</see> and received <see href="https://spec.matrix.org/latest/server-server-api/#presence">presence</see> with other servers: local users' ones go to the room's other servers as EDUs, and theirs are shown here.</summary>
 /// <remarks>Only public read receipts leave this server; private ones and the fully read marker stay. Remote typing ends after <see cref="RemoteTypingTimeout"/> unless renewed, as servers do not send an end when a client goes away.</remarks>
 public sealed class RemoteActivity
 {
@@ -19,19 +20,21 @@ public sealed class RemoteActivity
     private readonly FederationQueue queue;
     private readonly TypingService typing;
     private readonly ReceiptService receipts;
+    private readonly PresenceService presence;
     private readonly IOptionsMonitor<ServerOptions> server;
     private readonly IOptionsMonitor<FederationOptions> options;
     private readonly TimeProvider time;
     private readonly ILogger<RemoteActivity> logger;
 
     /// <summary>Create the service.</summary>
-    public RemoteActivity(IDbContextFactory<ServerDbContext> contexts, FederationQueue queue, TypingService typing, ReceiptService receipts, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<RemoteActivity> logger)
+    public RemoteActivity(IDbContextFactory<ServerDbContext> contexts, FederationQueue queue, TypingService typing, ReceiptService receipts, PresenceService presence, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<RemoteActivity> logger)
     {
         // Store dependencies
         this.contexts = contexts;
         this.queue = queue;
         this.typing = typing;
         this.receipts = receipts;
+        this.presence = presence;
         this.server = server;
         this.options = options;
         this.time = time;
@@ -93,6 +96,18 @@ public sealed class RemoteActivity
                     logger.LogDebug("Receipt of {UserId} in {RoomId} ignored: {Error}", userId, roomId, ex.Message);
                 }
             }
+        }
+    }
+
+    /// <summary>Show the presence of an <c>m.presence</c> EDU of <paramref name="origin"/>'s users.</summary>
+    public async Task ReceivePresenceAsync(string origin, JsonObject content, CancellationToken cancellationToken)
+    {
+        // Each push of a user of the origin
+        foreach (JsonObject push in (content["push"] as JsonArray ?? []).OfType<JsonObject>())
+        {
+            if (!UserId.TryParse(push["user_id"]?.GetValue<string>(), out UserId user) || user.ServerName != origin || push["presence"]?.GetValue<string>() is not string state) continue;
+            string? status = push["status_msg"] is JsonValue value && value.TryGetValue(out string? text) ? text : null;
+            await presence.SetRemoteAsync(user.ToString(), state, status, push["last_active_ago"]?.GetValue<long>() ?? 0, cancellationToken);
         }
     }
 

@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Server;
@@ -21,9 +22,10 @@ public sealed class RoomService
     private readonly TimeProvider time;
     private readonly RemoteJoins remoteJoins;
     private readonly RemoteInvites remoteInvites;
+    private readonly ILogger<RoomService> logger;
 
     /// <summary>Create the service.</summary>
-    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time, RemoteJoins remoteJoins, RemoteInvites remoteInvites)
+    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time, RemoteJoins remoteJoins, RemoteInvites remoteInvites, ILogger<RoomService> logger)
     {
         // Store dependencies
         this.contexts = contexts;
@@ -32,6 +34,7 @@ public sealed class RoomService
         this.time = time;
         this.remoteJoins = remoteJoins;
         this.remoteInvites = remoteInvites;
+        this.logger = logger;
     }
 
     /// <summary>Server name of local rooms and users.</summary>
@@ -43,30 +46,42 @@ public sealed class RoomService
         // Version, preset and alias
         string versionId = body["room_version"]?.GetValue<string>() ?? RoomVersion.Default.Id;
         RoomVersion version = RoomVersion.Find(versionId) ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.UnsupportedRoomVersion, $"Room version {versionId} is not supported.");
-        if (version.RoomIdIsCreateHash) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.UnsupportedRoomVersion, $"Rooms of version {versionId} can be joined here, but not created yet.");
         bool published = body["visibility"]?.GetValue<string>() == "public";
         string preset = body["preset"]?.GetValue<string>() ?? (published ? "public_chat" : "private_chat");
         if (preset is not ("private_chat" or "public_chat" or "trusted_private_chat")) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Unknown preset {preset}.");
         string? alias = body["room_alias_name"]?.GetValue<string>() is string aliasName ? $"#{aliasName}:{ServerName}" : null;
         List<string> invites = [.. (body["invite"] as JsonArray ?? []).Select(i => i!.GetValue<string>())];
 
-        // Room row and alias first, so the alias cannot be taken meanwhile
-        string roomId = $"!{string.Concat(RandomNumberGenerator.GetItems<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 18))}:{ServerName}";
-        await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
-        {
-            if (alias is not null && await db.RoomAliases.AnyAsync(a => a.Alias == alias, cancellationToken)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.RoomInUse, "The room alias is already taken.");
-            db.Rooms.Add(new RoomRow { RoomId = roomId, Version = version.Id, Creator = requester.UserId, CreatedTs = time.GetUtcNow().ToUnixTimeMilliseconds(), Published = published });
-            if (alias is not null) db.RoomAliases.Add(new RoomAliasRow { Alias = alias, RoomId = roomId, Creator = requester.UserId });
-            await db.SaveChangesAsync(cancellationToken);
-        }
-
-        // Create, join, power levels
+        // Create content; from version 12 the room ID is its hash, so the room is stored with its create event
         JsonObject create = body["creation_content"]?.DeepClone() as JsonObject ?? [];
         create["room_version"] = version.Id;
         if (version.CreateHasCreator) create["creator"] = requester.UserId;
-        await SendStateAsync(roomId, requester.UserId, EventTypes.RoomCreate, "", create, cancellationToken);
+        await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
+        {
+            if (alias is not null && await db.RoomAliases.AnyAsync(a => a.Alias == alias, cancellationToken)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.RoomInUse, "The room alias is already taken.");
+        }
+        string roomId;
+        if (version.RoomIdIsCreateHash) roomId = await sender.CreateHashedRoomAsync(version, requester.UserId, create, published, cancellationToken);
+        else
+        {
+            roomId = $"!{string.Concat(RandomNumberGenerator.GetItems<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 18))}:{ServerName}";
+            await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
+            {
+                db.Rooms.Add(new RoomRow { RoomId = roomId, Version = version.Id, Creator = requester.UserId, CreatedTs = time.GetUtcNow().ToUnixTimeMilliseconds(), Published = published });
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            await SendStateAsync(roomId, requester.UserId, EventTypes.RoomCreate, "", create, cancellationToken);
+        }
+
+        // Alias, then join and power levels
+        await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
+        {
+            if (alias is not null && await db.RoomAliases.AnyAsync(a => a.Alias == alias, cancellationToken)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.RoomInUse, "The room alias is already taken.");
+            if (alias is not null) db.RoomAliases.Add(new RoomAliasRow { Alias = alias, RoomId = roomId, Creator = requester.UserId });
+            await db.SaveChangesAsync(cancellationToken);
+        }
         await SendStateAsync(roomId, requester.UserId, EventTypes.RoomMember, requester.UserId, await MemberContentAsync(requester.UserId, Memberships.Join, null, cancellationToken), cancellationToken);
-        await SendStateAsync(roomId, requester.UserId, EventTypes.RoomPowerLevels, "", PowerLevelsContent(requester.UserId, preset, invites, body["power_level_content_override"] as JsonObject), cancellationToken);
+        await SendStateAsync(roomId, requester.UserId, EventTypes.RoomPowerLevels, "", PowerLevelsContent(requester.UserId, version.RoomIdIsCreateHash, preset, invites, body["power_level_content_override"] as JsonObject), cancellationToken);
         if (alias is not null) await SendStateAsync(roomId, requester.UserId, EventTypes.RoomCanonicalAlias, "", new JsonObject { ["alias"] = alias }, cancellationToken);
 
         // Preset state
@@ -90,9 +105,16 @@ public sealed class RoomService
         return roomId;
     }
 
-    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID that is not here yet is joined through the server that invited the user, <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>
+    /// <summary>Join a room by ID or alias; already joined users stay joined. Aliases of other servers are asked from them. A room ID that is not here yet is joined through the server that invited the user, <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>
     public async Task<string> JoinAsync(string userId, string roomIdOrAlias, string? reason, CancellationToken cancellationToken, IReadOnlyList<string>? via = null)
     {
+        // Aliases of other servers to their room and its servers
+        if (roomIdOrAlias.StartsWith('#') && roomIdOrAlias.IndexOf(':') is int aliasColon and > 1 && roomIdOrAlias[(aliasColon + 1)..] != ServerName)
+        {
+            (string aliasRoomId, IReadOnlyList<string> aliasServers) = await remoteJoins.ResolveAliasAsync(roomIdOrAlias, roomIdOrAlias[(aliasColon + 1)..], cancellationToken);
+            return await JoinAsync(userId, aliasRoomId, reason, cancellationToken, [.. aliasServers, .. via ?? []]);
+        }
+
         // Rooms not here through other servers; the first that answers decides
         string? inviting = roomIdOrAlias.StartsWith('!') ? await remoteInvites.GetInvitingServerAsync(userId, roomIdOrAlias, cancellationToken) : null;
         List<string> residents = [.. new[] { inviting }.Concat(via ?? []).Append(RoomServer(roomIdOrAlias)).OfType<string>().Where(s => s != ServerName).Distinct()];
@@ -162,9 +184,17 @@ public sealed class RoomService
     /// <summary>Leave a room; leaving a room one is not in does nothing.</summary>
     public async Task LeaveAsync(string userId, string roomId, string? reason, CancellationToken cancellationToken)
     {
-        // An invite from another server to a room not here is rejected here only, for now
-        if (!await ExistsAsync(roomId, cancellationToken) && await remoteInvites.GetInvitingServerAsync(userId, roomId, cancellationToken) is not null)
+        // An invite from another server to a room not here is rejected through that server; a server that cannot be reached is not waited for
+        if (!await ExistsAsync(roomId, cancellationToken) && await remoteInvites.GetInvitingServerAsync(userId, roomId, cancellationToken) is string inviting)
         {
+            try
+            {
+                await remoteJoins.RejectInviteAsync(userId, roomId, inviting, reason, cancellationToken);
+            }
+            catch (MatrixException ex)
+            {
+                logger.LogInformation("Rejecting the invite of {UserId} to {RoomId} could not reach {Server}: {Error}", userId, roomId, inviting, ex.Message);
+            }
             await remoteInvites.EndAsync(userId, roomId, joined: false, cancellationToken);
             return;
         }
@@ -358,10 +388,10 @@ public sealed class RoomService
     }
 
     /// <summary>Return the default power levels of a new room, with the client's overrides.</summary>
-    private static JsonObject PowerLevelsContent(string creator, string preset, IReadOnlyList<string> invites, JsonObject? overrides)
+    private static JsonObject PowerLevelsContent(string creator, bool creatorAboveLevels, string preset, IReadOnlyList<string> invites, JsonObject? overrides)
     {
-        // Creator at 100, invitees too in trusted private chats
-        JsonObject users = new() { [creator] = 100 };
+        // Creator at 100, unless creators outrank levels as from version 12; invitees too in trusted private chats
+        JsonObject users = creatorAboveLevels ? [] : new JsonObject { [creator] = 100 };
         if (preset == "trusted_private_chat") foreach (string invitee in invites) users[invitee] = 100;
         JsonObject content = new()
         {
@@ -382,15 +412,29 @@ public sealed class RoomService
         return content;
     }
 
-    /// <summary>Return the room's power levels from its current state.</summary>
+    /// <summary>Return the room's power levels from its current state, with the creators of version 12 rooms above them.</summary>
     private static async Task<PowerLevels> GetPowerLevelsAsync(ServerDbContext dbContext, RoomRow room, CancellationToken cancellationToken)
     {
         // Current power levels event, if any
-        string? id = (await dbContext.CurrentState.AsNoTracking().SingleOrDefaultAsync(s => s.RoomId == room.RoomId && s.Type == EventTypes.RoomPowerLevels && s.StateKey == "", cancellationToken))?.EventId;
-        JsonObject? content = id is null ? null : JsonNode.Parse((await dbContext.Events.AsNoTracking().SingleAsync(e => e.EventId == id, cancellationToken)).Json)!["content"] as JsonObject;
+        JsonObject? content = await CurrentContentAsync(dbContext, room.RoomId, EventTypes.RoomPowerLevels, cancellationToken);
+        IReadOnlyCollection<string>? creators = null;
+        if (RoomVersion.Find(room.Version)?.RoomIdIsCreateHash == true && await CurrentEventAsync(dbContext, room.RoomId, EventTypes.RoomCreate, cancellationToken) is JsonObject create) creators = AuthRules.Creators(create);
         // Return levels
-        return new PowerLevels(content, room.Creator);
+        return new PowerLevels(content, room.Creator, creators);
     }
+
+    /// <summary>Return the current state event of a type with an empty state key, or null.</summary>
+    private static async Task<JsonObject?> CurrentEventAsync(ServerDbContext dbContext, string roomId, string type, CancellationToken cancellationToken)
+    {
+        // State row, then its event
+        string? id = (await dbContext.CurrentState.AsNoTracking().SingleOrDefaultAsync(s => s.RoomId == roomId && s.Type == type && s.StateKey == "", cancellationToken))?.EventId;
+        // Return event
+        return id is null ? null : JsonNode.Parse((await dbContext.Events.AsNoTracking().SingleAsync(e => e.EventId == id, cancellationToken)).Json) as JsonObject;
+    }
+
+    /// <summary>Return the content of the current state event of a type with an empty state key, or null.</summary>
+    private static async Task<JsonObject?> CurrentContentAsync(ServerDbContext dbContext, string roomId, string type, CancellationToken cancellationToken) =>
+        (await CurrentEventAsync(dbContext, roomId, type, cancellationToken))?["content"] as JsonObject;
 
     /// <summary>Return the state a user may see, as event IDs; throw <c>M_FORBIDDEN</c> when they never were a member.</summary>
     private static async Task<Dictionary<(string Type, string StateKey), string>> GetVisibleStateAsync(ServerDbContext dbContext, string userId, string roomId, CancellationToken cancellationToken)

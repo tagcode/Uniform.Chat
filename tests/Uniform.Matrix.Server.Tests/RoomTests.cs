@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
@@ -246,6 +247,109 @@ public class RoomTests
         // Assert
         Assert.Equal(first, retry);
         Assert.NotEqual(first, other);
+    }
+
+    /// <summary>A version 12 room gets its ID from its create event's hash, has the creator outside the power levels with full power, and works like other rooms.</summary>
+    [Fact]
+    public async Task CreateVersion12Room()
+    {
+        // Arrange
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = server.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+
+        // Act: create, invite and join, write, change the topic
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { RoomVersion = "12", Name = "Twelve", Invite = ["@bob:test.local"] }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await bob.SendTextAsync(roomId, "hello twelve", Ct);
+        await alice.SendStateEventAsync(roomId, "m.room.topic", new { topic = "numbers" }, cancellationToken: Ct);
+        JsonElement? levels = await alice.TryGetStateEventAsync(roomId, "m.room.power_levels", cancellationToken: Ct);
+        JsonElement? create = await alice.TryGetStateEventAsync(roomId, "m.room.create", cancellationToken: Ct);
+
+        // Assert: no server in the ID, creator not listed, everything allowed
+        Assert.StartsWith("!", roomId);
+        Assert.DoesNotContain(":", roomId);
+        Assert.Equal("12", create?.GetProperty("room_version").GetString());
+        Assert.False(levels?.GetProperty("users").TryGetProperty("@alice:test.local", out _));
+        Assert.Equal(["@alice:test.local", "@bob:test.local"], (await alice.GetJoinedMembersAsync(roomId, Ct)).Keys.Order());
+    }
+
+    /// <summary>A public room's summary is seen by anyone logged in, a private one only by members; a space lists its children.</summary>
+    [Fact]
+    public async Task SummarizeRoomsAndSpaces()
+    {
+        // Arrange: alice's public space with a public and a private child, bob outside
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = server.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        using HttpClient aliceHttp = server.CreateHttpClient();
+        aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        using HttpResponseMessage created = await aliceHttp.PostAsJsonAsync("/_matrix/client/v3/createRoom", new { preset = "public_chat", name = "Home", creation_content = new { type = "m.space" } }, Ct);
+        string space = (await created.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("room_id").GetString()!;
+        string open = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Kitchen" }, Ct);
+        string closed = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PrivateChat, Name = "Safe" }, Ct);
+        foreach (string child in new[] { open, closed }) await alice.SendStateEventAsync(space, "m.space.child", new { via = new[] { "test.local" } }, child, Ct);
+        using HttpClient bobHttp = server.CreateHttpClient();
+        bobHttp.DefaultRequestHeaders.Authorization = new("Bearer", bob.AccessToken);
+
+        // Act
+        JsonElement summary = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/room_summary/{Uri.EscapeDataString(open)}", Ct);
+        HttpStatusCode hidden = (await bobHttp.GetAsync($"/_matrix/client/v1/room_summary/{Uri.EscapeDataString(closed)}", Ct)).StatusCode;
+        JsonElement asBob = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{Uri.EscapeDataString(space)}/hierarchy", Ct);
+        JsonElement asAlice = await aliceHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{Uri.EscapeDataString(space)}/hierarchy", Ct);
+
+        // Assert
+        Assert.Equal("Kitchen", summary.GetProperty("name").GetString());
+        Assert.Equal("leave", summary.GetProperty("membership").GetString());
+        Assert.Equal(HttpStatusCode.NotFound, hidden);
+        Assert.Equal([space, open], asBob.GetProperty("rooms").EnumerateArray().Select(r => r.GetProperty("room_id").GetString()));
+        List<string?> aliceSees = [.. asAlice.GetProperty("rooms").EnumerateArray().Select(r => r.GetProperty("room_id").GetString())];
+        Assert.Equal(space, aliceSees[0]);
+        Assert.Equal(new[] { closed, open }.Order(StringComparer.Ordinal), aliceSees.Skip(1).Order(StringComparer.Ordinal));
+        Assert.Equal("m.space", asAlice.GetProperty("rooms")[0].GetProperty("room_type").GetString());
+    }
+
+    /// <summary>Relations list an event's reactions and edits, filtered by type; the event at a time is found; reports are accepted.</summary>
+    [Fact]
+    public async Task ListRelationsAndFindByTime()
+    {
+        // Arrange: a message with a reaction and an edit
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest(), Ct);
+        string message = await alice.SendTextAsync(roomId, "hello", Ct);
+        using HttpClient http = server.CreateHttpClient();
+        http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        string room = Uri.EscapeDataString(roomId);
+        string reaction = await SendRawAsync(http, room, "m.reaction", new JsonObject { ["m.relates_to"] = new JsonObject { ["rel_type"] = "m.annotation", ["event_id"] = message, ["key"] = "👍" } });
+        string edit = await SendRawAsync(http, room, "m.room.message", new JsonObject { ["msgtype"] = "m.text", ["body"] = "* hi", ["m.new_content"] = new JsonObject { ["msgtype"] = "m.text", ["body"] = "hi" }, ["m.relates_to"] = new JsonObject { ["rel_type"] = "m.replace", ["event_id"] = message } });
+
+        // Act
+        JsonElement all = await http.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/relations/{Uri.EscapeDataString(message)}", Ct);
+        JsonElement reactions = await http.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/relations/{Uri.EscapeDataString(message)}/m.annotation", Ct);
+        JsonElement atTime = await http.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/timestamp_to_event?ts={DateTimeOffset.UtcNow.AddMinutes(1).ToUnixTimeMilliseconds()}&dir=b", Ct);
+        HttpStatusCode report = (await http.PostAsJsonAsync($"/_matrix/client/v3/rooms/{room}/report/{Uri.EscapeDataString(edit)}", new { reason = "test" }, Ct)).StatusCode;
+
+        // Assert: newest first
+        Assert.Equal([edit, reaction], all.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        Assert.Equal([reaction], reactions.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        Assert.Equal(edit, atTime.GetProperty("event_id").GetString());
+        Assert.Equal(HttpStatusCode.OK, report);
+    }
+
+    /// <summary>Send an event of any type as JSON; return its ID.</summary>
+    private static async Task<string> SendRawAsync(HttpClient http, string room, string type, JsonObject content)
+    {
+        // PUT with a fresh transaction
+        using HttpResponseMessage response = await http.PutAsJsonAsync($"/_matrix/client/v3/rooms/{room}/send/{type}/{Guid.NewGuid():N}", content, Ct);
+        response.EnsureSuccessStatusCode();
+        // Return ID
+        return (await response.Content.ReadFromJsonAsync<JsonElement>(Ct)).GetProperty("event_id").GetString()!;
     }
 
     /// <summary>Send a text with a transaction ID; return the event ID.</summary>

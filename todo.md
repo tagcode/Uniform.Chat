@@ -57,18 +57,16 @@ URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 ## Milestone 2: federation
 A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users and receiving their invites (`invite` v2, signed by both servers), encryption across servers (keys, one-time keys, to-device, device list updates), typing and read receipts, retrying transactions with backoff, the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
 
+Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`.
+
 Next:
-- Store remote keys in the database, old keys too, and ask notary servers (`/_matrix/key/v2/query`) for keys of servers that are down; serve `/_matrix/key/v2/query` ourselves.
+- Make version 12 the default for new rooms once our clients send `via` servers when joining by room ID (eight server tests join by ID alone).
 - SRV lookup (`_matrix-fed._tcp`), which needs a small DNS client.
-- Creating version 12 rooms here (joining them works): build the create event before the room's row, as the room ID is its hash; then make 12 the default. Server-side power checks outside the auth rules (e.g. `CanSendStateAsync`) should count version 12 creators too.
-- Presence between servers (`m.presence` EDUs); keeping the outgoing queue across restarts.
-- Checking received auth chains with the auth rules, state resolution v2, backfill, `get_missing_events`.
-- Telling the inviting server when an invite is rejected (`make_leave`/`send_leave`).
-- Joining by remote alias (`query/directory`), leaving (`make_leave`/`send_leave`).
-- Sliding sync (MSC4186), so Element X and SchildiChat Next can log in.
-- EDUs: typing, receipts, presence, device lists and to-device messages.
-- Remote media, directory queries, room ACLs, `/_matrix/federation/v1/publicRooms`.
-- A real test against Synapse and the federation tester.
+- Checking received events against the state before them, auth chains with the auth rules, state resolution v2; gaps of more than 20 missing events.
+- Sliding sync: per-list timeline limits, left rooms, more list filters, keeping connections across restarts.
+- A review list for reports, which are only logged now; hierarchies and summaries of rooms on other servers.
+- Room ACLs, `/_matrix/federation/v1/publicRooms`, threads.
+- Element X calls through Element Call against a LiveKit server.
 
 Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
 
@@ -88,5 +86,7 @@ Keep the test server's registration closed and rate limits on, since unfinished 
 
 - The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?
 
-# Sliding sync 
-- Sliding sync, so Element X and SchildiChat Next can log in to Edict.
+# Documents readable from github pages
+
+- How does github pages work?
+

@@ -114,41 +114,83 @@ public sealed class EventSender
         return new JsonArray([.. state.Values.Select(e => (JsonNode)new JsonObject { ["type"] = e["type"]?.DeepClone(), ["state_key"] = e["state_key"]?.DeepClone(), ["sender"] = e["sender"]?.DeepClone(), ["content"] = e["content"]?.DeepClone() })]);
     }
 
-    /// <summary>Return an unsigned join event of <paramref name="userId"/> for another server to sign, as <c>make_join</c> answers, with the room version.</summary>
-    public async Task<(JsonObject Template, RoomVersion Version)> MakeJoinAsync(string roomId, string userId, CancellationToken cancellationToken)
+    /// <summary>Create a room whose ID is its create event's hash, as from room version 12: build and sign the create event first, then store the room under the ID it gives.</summary>
+    /// <param name="version">Room version with <see cref="RoomVersion.RoomIdIsCreateHash"/>.</param>
+    /// <param name="creator">Local user creating the room.</param>
+    /// <param name="content">Create event content, with <c>room_version</c>.</param>
+    /// <param name="published">Whether the room is listed in the public directory.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public Task<string> CreateHashedRoomAsync(RoomVersion version, string creator, JsonObject content, bool published, CancellationToken cancellationToken) => stream.WriteAsync(async position =>
+    {
+        // The create event, without a room ID
+        JsonObject pdu = new()
+        {
+            ["auth_events"] = new JsonArray(),
+            ["content"] = content.DeepClone(),
+            ["depth"] = 1L,
+            ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(),
+            ["prev_events"] = new JsonArray(),
+            ["sender"] = creator,
+            ["state_key"] = "",
+            ["type"] = EventTypes.RoomCreate,
+        };
+        string serverName = options.Value.ServerName;
+        EventFormat.HashAndSign(pdu, version, serverName, keys.KeyId, keys.Secret);
+        string eventId = EventFormat.ComputeEventId(pdu, version);
+        string roomId = RoomVersion.RoomIdOf(eventId);
+        string? rejection = AuthRules.Check(pdu, version, new Dictionary<(string, string), JsonObject>());
+        if (rejection is not null) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, rejection);
+
+        // Room under that ID, then its first event
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        RoomRow room = new() { RoomId = roomId, Version = version.Id, Creator = creator, CreatedTs = pdu["origin_server_ts"]!.GetValue<long>(), Published = published };
+        db.Rooms.Add(room);
+        await db.SaveChangesAsync(cancellationToken);
+        await StoreAsync(db, room, version, pdu, eventId, position, null, cancellationToken);
+        // Return room ID
+        return roomId;
+    }, cancellationToken);
+
+    /// <summary>Return an unsigned membership event of <paramref name="userId"/> for another server to sign, as <c>make_join</c> and <c>make_leave</c> answer, with the room version.</summary>
+    /// <param name="roomId">Room here.</param>
+    /// <param name="userId">User of the asking server.</param>
+    /// <param name="membership"><c>join</c>, or <c>leave</c> to reject an invite or leave.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<(JsonObject Template, RoomVersion Version)> MakeMembershipAsync(string roomId, string userId, string membership, CancellationToken cancellationToken)
     {
         // Built on the current state and extremities, unsigned
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        EventDraft draft = new() { RoomId = roomId, Sender = userId, Type = EventTypes.RoomMember, StateKey = userId, Content = new JsonObject { ["membership"] = Memberships.Join } };
+        EventDraft draft = new() { RoomId = roomId, Sender = userId, Type = EventTypes.RoomMember, StateKey = userId, Content = new JsonObject { ["membership"] = membership } };
         (_, RoomVersion version, JsonObject pdu, Dictionary<(string, string), JsonObject> authState) = await BuildAsync(db, draft, cancellationToken);
 
-        // Assert the rules would let the user join, other than the signature
+        // Assert the rules would allow it, other than the signature
         string? rejection = AuthRules.Check(pdu, version, authState, (_, _) => true);
         if (rejection is not null) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, rejection);
         // Return template
         return (pdu, version);
     }
 
-    /// <summary>Accept a join event that another server built from <see cref="MakeJoinAsync"/> and signed; return the state before it and its auth chain, as <c>send_join</c> answers.</summary>
+    /// <summary>Accept a membership event that another server built from <see cref="MakeMembershipAsync"/> and signed; for a join return the state before it and its auth chain, as <c>send_join</c> answers, for a leave nothing.</summary>
     /// <param name="pdu">The signed event.</param>
+    /// <param name="membership"><c>join</c> or <c>leave</c>, which the event must be.</param>
     /// <param name="eventId">Event ID from the URL, which must match the event.</param>
     /// <param name="origin">Server that sent it, which must be the joining user's.</param>
     /// <param name="originKeys">Public keys of <paramref name="origin"/> by key ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public Task<(List<JsonObject> State, List<JsonObject> AuthChain)> AcceptJoinAsync(JsonObject pdu, string eventId, string origin, IReadOnlyDictionary<string, string> originKeys, CancellationToken cancellationToken) =>
-        stream.WriteAsync(position => AcceptJoinAtAsync(pdu, eventId, origin, originKeys, position, cancellationToken), cancellationToken);
+    public Task<(List<JsonObject> State, List<JsonObject> AuthChain)> AcceptMembershipAsync(JsonObject pdu, string membership, string eventId, string origin, IReadOnlyDictionary<string, string> originKeys, CancellationToken cancellationToken) =>
+        stream.WriteAsync(position => AcceptMembershipAtAsync(pdu, membership, eventId, origin, originKeys, position, cancellationToken), cancellationToken);
 
-    /// <summary>Check and store a remote join at stream <paramref name="position"/>.</summary>
-    private async Task<(List<JsonObject> State, List<JsonObject> AuthChain)> AcceptJoinAtAsync(JsonObject pdu, string eventId, string origin, IReadOnlyDictionary<string, string> originKeys, long position, CancellationToken cancellationToken)
+    /// <summary>Check and store a remote join or leave at stream <paramref name="position"/>.</summary>
+    private async Task<(List<JsonObject> State, List<JsonObject> AuthChain)> AcceptMembershipAtAsync(JsonObject pdu, string membership, string eventId, string origin, IReadOnlyDictionary<string, string> originKeys, long position, CancellationToken cancellationToken)
     {
-        // Assert a join of a user of the origin, in a room here, with the ID it claims
+        // Assert the membership of a user of the origin, in a room here, with the ID it claims
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         string? roomId = pdu["room_id"]?.GetValue<string>();
         string? sender = pdu["sender"]?.GetValue<string>();
         RoomRow room = await db.Rooms.SingleOrDefaultAsync(r => r.RoomId == roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room.");
         RoomVersion version = RoomVersion.Find(room.Version)!;
-        if (pdu["type"]?.GetValue<string>() != EventTypes.RoomMember || pdu["state_key"]?.GetValue<string>() != sender || pdu["content"]?["membership"]?.GetValue<string>() != Memberships.Join) throw Invalid("The event is not a join.");
-        if (!UserId.TryParse(sender, out UserId user) || user.ServerName != origin) throw Invalid("The joining user is not of the sending server.");
+        if (pdu["type"]?.GetValue<string>() != EventTypes.RoomMember || pdu["state_key"]?.GetValue<string>() != sender || pdu["content"]?["membership"]?.GetValue<string>() != membership) throw Invalid($"The event is not a {membership}.");
+        if (!UserId.TryParse(sender, out UserId user) || user.ServerName != origin) throw Invalid("The user is not of the sending server.");
         if (EventFormat.ComputeEventId(pdu, version) != eventId) throw Invalid("The event ID does not match the event.");
         if (!EventFormat.HasValidContentHash(pdu)) throw Invalid("The content hash does not match.");
 
@@ -158,9 +200,9 @@ public sealed class EventSender
         string? rejection = AuthRules.Check(pdu, version, authState, (e, server) => server == origin && originKeys.Any(k => EventFormat.HasValidSignature(e, version, origin, k.Key, k.Value)));
         if (rejection is not null) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, rejection);
 
-        // State before the join, and the auth events behind it
-        List<JsonObject> state = await LoadEventsAsync(db, [.. (await StateGroups.LoadAsync(db, room.CurrentStateGroup, cancellationToken)).Values], cancellationToken);
-        List<JsonObject> authChain = await LoadAuthChainAsync(db, state, cancellationToken);
+        // For a join, the state before it and the auth events behind it
+        List<JsonObject> state = membership == Memberships.Join ? await LoadEventsAsync(db, [.. (await StateGroups.LoadAsync(db, room.CurrentStateGroup, cancellationToken)).Values], cancellationToken) : [];
+        List<JsonObject> authChain = membership == Memberships.Join ? await LoadAuthChainAsync(db, state, cancellationToken) : [];
         pdu.Remove("unsigned");
         await StoreAsync(db, room, version, pdu, eventId, position, null, cancellationToken);
         // Return state and chain

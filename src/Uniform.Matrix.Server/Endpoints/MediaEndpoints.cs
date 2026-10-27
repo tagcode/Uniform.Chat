@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Media;
 
@@ -38,6 +41,13 @@ public static class MediaEndpoints
 
         // The deprecated unauthenticated reads, when the setting allows them
         MapReads(routes.MapGroup("/_matrix/media/v3"), requireSetting: true);
+
+        // Local media for other servers, as multipart: metadata, then the file
+        RouteGroupBuilder federation = routes.MapGroup("/_matrix/federation/v1/media").RequireFederation();
+        federation.MapGet("/download/{mediaId}", async (string mediaId, long? timeout_ms, MediaService media, CancellationToken cancellationToken) =>
+            Multipart(await media.GetLocalAsync(mediaId, Wait(media, false, timeout_ms), cancellationToken)));
+        federation.MapGet("/thumbnail/{mediaId}", async (string mediaId, int width, int height, string? method, long? timeout_ms, MediaService media, IOptions<ServerOptions> server, CancellationToken cancellationToken) =>
+            Multipart(await media.GetThumbnailAsync(server.Value.ServerName, mediaId, width, height, method ?? Thumbnailer.Scale, Wait(media, false, timeout_ms), cancellationToken)));
         // Return routes
         return routes;
     }
@@ -47,14 +57,18 @@ public static class MediaEndpoints
     {
         // Downloads, with an optional file name to save as
         group.MapGet("/download/{serverName}/{mediaId}", async (string serverName, string mediaId, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
-            Send(http, await media.GetAsync(serverName, mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
+            Send(http, await media.GetAsync(Source(media, requireSetting, serverName), mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
         group.MapGet("/download/{serverName}/{mediaId}/{fileName}", async (string serverName, string mediaId, string fileName, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
-            Send(http, await media.GetAsync(serverName, mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), fileName));
+            Send(http, await media.GetAsync(Source(media, requireSetting, serverName), mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), fileName));
 
         // Thumbnails
         group.MapGet("/thumbnail/{serverName}/{mediaId}", async (string serverName, string mediaId, int width, int height, string? method, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
-            Send(http, await media.GetThumbnailAsync(serverName, mediaId, width, height, method ?? Thumbnailer.Scale, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
+            Send(http, await media.GetThumbnailAsync(Source(media, requireSetting, serverName), mediaId, width, height, method ?? Thumbnailer.Scale, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
     }
+
+    /// <summary>Return <paramref name="serverName"/>; the unauthenticated reads serve only local media, so nobody without an account can make this server fetch from others.</summary>
+    private static string Source(MediaService media, bool requireSetting, string serverName) =>
+        !requireSetting || media.IsLocal(serverName) ? serverName : throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media of other servers is only served to logged-in users, at /_matrix/client/v1/media.");
 
     /// <summary>Return how long to wait for content that is not uploaded yet: <c>timeout_ms</c>, 20 seconds by default and at most a minute; throw <c>M_NOT_FOUND</c> for unauthenticated reads while they are off.</summary>
     private static TimeSpan Wait(MediaService media, bool requireSetting, long? timeoutMs)
@@ -102,6 +116,23 @@ public static class MediaEndpoints
 
     /// <summary>Return the upload limit.</summary>
     private static IResult Config(MediaService media) => MatrixHttp.Json(new JsonObject { ["m.upload.size"] = media.MaxUploadSize });
+
+    /// <summary>Return a stored file as the federation media API sends it: <c>multipart/mixed</c> with empty metadata, then the file with its type and name.</summary>
+    private static IResult Multipart(MediaService.StoredFile file)
+    {
+        // A boundary that the file cannot be confused with, as parts are not escaped
+        string boundary = "uniform" + Guid.NewGuid().ToString("N");
+        ContentDispositionHeaderValue disposition = new("attachment");
+        if (file.FileName is string name) disposition.SetHttpFileName(name);
+        // Return the parts as they stream
+        return Results.Stream(async body =>
+        {
+            byte[] head = System.Text.Encoding.UTF8.GetBytes($"--{boundary}\r\nContent-Type: application/json\r\n\r\n{{}}\r\n--{boundary}\r\nContent-Type: {file.ContentType}\r\nContent-Disposition: {disposition}\r\n\r\n");
+            await body.WriteAsync(head);
+            await using (FileStream content = File.OpenRead(file.Path)) await content.CopyToAsync(body);
+            await body.WriteAsync(System.Text.Encoding.UTF8.GetBytes($"\r\n--{boundary}--\r\n"));
+        }, $"multipart/mixed; boundary={boundary}");
+    }
 
     /// <summary>Send a stored file, inline only for types browsers show safely.</summary>
     private static IResult Send(HttpContext http, MediaService.StoredFile file, string? fileName)

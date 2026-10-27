@@ -112,6 +112,71 @@ public sealed class SyncService
         };
     }
 
+    /// <summary>Return the events that relate to <paramref name="eventId"/>, such as edits, reactions and thread replies, as <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidrelationseventid">/relations</see> answers; newest first unless <paramref name="forwards"/>.</summary>
+    /// <param name="requester">Who asks; only events they can see are returned.</param>
+    /// <param name="roomId">Room of the event.</param>
+    /// <param name="eventId">Event related to.</param>
+    /// <param name="relationType">Only this <c>rel_type</c>, e.g. <c>m.annotation</c>, or all.</param>
+    /// <param name="eventType">Only this event type, or all.</param>
+    /// <param name="from">Token to continue from, as <c>next_batch</c> gave it.</param>
+    /// <param name="limit">Most events.</param>
+    /// <param name="forwards">Oldest first.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<JsonObject> GetRelationsAsync(Requester requester, string roomId, string eventId, string? relationType, string? eventType, string? from, int limit, bool forwards, CancellationToken cancellationToken)
+    {
+        // Visible parent event
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        CurrentStateRow member = await GetMemberAsync(db, requester.UserId, roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Not a member of the room.");
+        Visibility visibility = new(db, cache, requester.UserId, member.Membership);
+        EventRow parent = await db.Events.AsNoTracking().SingleOrDefaultAsync(e => e.EventId == eventId && e.RoomId == roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Event not found.");
+        if (!await visibility.CanSeeAsync(parent, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Event not found.");
+
+        // Candidates by text, then by their relation, from the token on
+        long? position = from is null ? null : ParseToken(from);
+        string needle = $"\"event_id\":\"{eventId}\"";
+        IQueryable<EventRow> query = db.Events.AsNoTracking().Where(e => e.RoomId == roomId && e.Stream > parent.Stream && e.Json.Contains(needle));
+        if (position is long p) query = forwards ? query.Where(e => e.Stream >= p) : query.Where(e => e.Stream < p);
+        if (eventType is not null) query = query.Where(e => e.Type == eventType);
+        List<EventRow> related = [];
+        bool more = false;
+        foreach (EventRow row in await (forwards ? query.OrderBy(e => e.Stream) : query.OrderByDescending(e => e.Stream)).Take(500).ToListAsync(cancellationToken))
+        {
+            JsonNode? relatesTo = JsonNode.Parse(row.Json)?["content"]?["m.relates_to"];
+            if (relatesTo?["event_id"]?.GetValue<string>() != eventId || relationType is not null && relatesTo["rel_type"]?.GetValue<string>() != relationType) continue;
+            if (!await visibility.CanSeeAsync(row, cancellationToken)) continue;
+            if (related.Count == limit)
+            {
+                more = true;
+                break;
+            }
+            related.Add(row);
+        }
+
+        // Page with a token to the next
+        JsonObject response = new() { ["chunk"] = new JsonArray([.. await FormatAsync(db, requester, related, cancellationToken)]) };
+        if (more) response["next_batch"] = Token(forwards ? related[^1].Stream + 1 : related[^1].Stream);
+        // Return page
+        return response;
+    }
+
+    /// <summary>Return the event closest to <paramref name="timestamp"/> in the direction asked, as <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidtimestamp_to_event">timestamp_to_event</see> answers; throw <c>M_NOT_FOUND</c> when there is none.</summary>
+    public async Task<JsonObject> GetEventAtAsync(Requester requester, string roomId, long timestamp, bool forwards, CancellationToken cancellationToken)
+    {
+        // Member's visible events by time
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        CurrentStateRow member = await GetMemberAsync(db, requester.UserId, roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Not a member of the room.");
+        Visibility visibility = new(db, cache, requester.UserId, member.Membership);
+        IQueryable<EventRow> query = db.Events.AsNoTracking().Where(e => e.RoomId == roomId && e.Stream > 0);
+        query = forwards ? query.Where(e => e.OriginServerTs >= timestamp).OrderBy(e => e.OriginServerTs) : query.Where(e => e.OriginServerTs <= timestamp).OrderByDescending(e => e.OriginServerTs);
+        foreach (EventRow row in await query.Take(50).ToListAsync(cancellationToken))
+        {
+            // Return the first visible one
+            if (await visibility.CanSeeAsync(row, cancellationToken)) return new JsonObject { ["event_id"] = row.EventId, ["origin_server_ts"] = row.OriginServerTs };
+        }
+        // On error not found
+        throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "No event at that time.");
+    }
+
     /// <summary>Store a filter of <paramref name="userId"/>; return its ID.</summary>
     public async Task<string> CreateFilterAsync(string userId, JsonObject filter, CancellationToken cancellationToken)
     {

@@ -25,7 +25,7 @@ public class MediaTests
     }
 
     /// <summary>Return a PNG of the given size, opaque or with a transparent left half.</summary>
-    private static byte[] Png(int width, int height, bool transparent)
+    internal static byte[] Png(int width, int height, bool transparent)
     {
         // Gradient pixels
         byte[] pixels = new byte[width * height * 4];

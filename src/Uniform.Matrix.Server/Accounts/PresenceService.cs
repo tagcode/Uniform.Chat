@@ -9,13 +9,15 @@ using Uniform.Matrix.Server.Storage;
 using Uniform.Matrix.Server.Sync;
 
 /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#presence">Presence</see>, kept in memory: what users set, and online while they sync.</summary>
-/// <remarks>Each change takes a <see cref="ServerStream"/> position, so waiting syncs wake and incremental syncs send <c>m.presence</c> to everyone who shares a room. Syncing marks a user online unless <c>set_presence</c> says otherwise; a user who has not synced for <see cref="OfflineAfter"/> goes offline. Presence is lost on restart, and users start offline.</remarks>
+/// <remarks>Each change takes a <see cref="ServerStream"/> position, so waiting syncs wake and incremental syncs send <c>m.presence</c> to everyone who shares a room. Syncing marks a user online unless <c>set_presence</c> says otherwise; a user who has not synced for <see cref="OfflineAfter"/> goes offline. Users of other servers get their presence from their server, see <see cref="SetRemoteAsync"/>. Presence is lost on restart, and users start offline.</remarks>
 public sealed class PresenceService : IDisposable
 {
     /// <summary>How long after their last sync or presence update a user counts as offline.</summary>
     public static readonly TimeSpan OfflineAfter = TimeSpan.FromMinutes(2);
     /// <summary>How long after their last activity a user still counts as currently active.</summary>
     public static readonly TimeSpan ActiveFor = TimeSpan.FromMinutes(1);
+    /// <summary>How long a user of another server keeps their presence here without an update from their server, which normally tells when they go offline.</summary>
+    public static readonly TimeSpan RemoteOfflineAfter = TimeSpan.FromHours(1);
     private const string Online = "online";
     private const string Offline = "offline";
     private const string Unavailable = "unavailable";
@@ -41,6 +43,10 @@ public sealed class PresenceService : IDisposable
         public bool Chosen { get; set; }
         /// <summary>Stream position of the last change that others see.</summary>
         public long Changed { get; set; }
+        /// <summary>Whether the user is of another server, whose presence comes from there.</summary>
+        public bool Remote { get; set; }
+        /// <summary>When the other server last told about a remote user.</summary>
+        public DateTimeOffset Updated { get; set; }
     }
 
     /// <summary>Create the service and its timer, which takes idle users offline.</summary>
@@ -112,6 +118,45 @@ public sealed class PresenceService : IDisposable
         }
     }
 
+    /// <summary>Set the presence of another server's user from an <c>m.presence</c> EDU of their server.</summary>
+    /// <param name="userId">User of the sending server.</param>
+    /// <param name="presence"><c>online</c>, <c>unavailable</c> or <c>offline</c>; other values are ignored.</param>
+    /// <param name="status">Status message, or null.</param>
+    /// <param name="lastActiveAgo">Milliseconds since the user was last active.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task SetRemoteAsync(string userId, string presence, string? status, long lastActiveAgo, CancellationToken cancellationToken)
+    {
+        // Assert a known state
+        if (!States.Contains(presence)) return;
+
+        // Change; a new position only when others would see a difference
+        DateTimeOffset now = time.GetUtcNow();
+        bool changed;
+        lock (gate)
+        {
+            Entry entry = GetEntry(userId);
+            changed = entry.State != presence || entry.Status != status;
+            entry.State = presence;
+            entry.Status = status;
+            entry.LastActive = now - TimeSpan.FromMilliseconds(Math.Max(0, lastActiveAgo));
+            entry.Remote = true;
+            entry.Updated = now;
+        }
+        // Done
+        if (changed) await PublishAsync([userId], cancellationToken);
+    }
+
+    /// <summary>Return the presence of users of this server that changed after <paramref name="since"/> up to <paramref name="until"/>, for other servers.</summary>
+    public IReadOnlyList<(string UserId, JsonObject Content)> GetLocalChanges(long since, long until)
+    {
+        // Local users only, as other servers tell about their own
+        lock (gate)
+        {
+            // Return changes
+            return [.. users.Where(u => !u.Value.Remote && u.Value.Changed > since && u.Value.Changed <= until).Select(u => (u.Key, Content(u.Value)))];
+        }
+    }
+
     /// <summary>Return <c>m.presence</c> events of the user and of everyone sharing a joined room with them that changed after <paramref name="since"/>; for initial syncs (null), of everyone known.</summary>
     public async Task<IReadOnlyList<JsonObject>> GetEventsAsync(ServerDbContext dbContext, string userId, long? since, long until, CancellationToken cancellationToken)
     {
@@ -139,7 +184,7 @@ public sealed class PresenceService : IDisposable
         List<string> expired = [];
         lock (gate)
         {
-            foreach ((string userId, Entry entry) in users.Where(u => u.Value.State != Offline && now - u.Value.LastActive >= OfflineAfter))
+            foreach ((string userId, Entry entry) in users.Where(u => u.Value.State != Offline && (u.Value.Remote ? now - u.Value.Updated >= RemoteOfflineAfter : now - u.Value.LastActive >= OfflineAfter)))
             {
                 entry.State = Offline;
                 entry.Chosen = false;

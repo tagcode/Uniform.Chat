@@ -30,6 +30,13 @@ public sealed record ServerOptions
     [Secret]
     public string? RegistrationTokens { get; set; }
 
+    /// <summary>Addresses of reverse proxies whose <c>X-Forwarded-For</c> and <c>X-Forwarded-Proto</c> headers are believed, separated by commas, e.g. <c>192.168.1.2</c>; without them, the proxy's own address counts for rate limits and logs.</summary>
+    [RestartRequired]
+    public string? TrustedProxies { get; set; }
+
+    /// <summary>Return <see cref="TrustedProxies"/> as addresses; throw <see cref="FormatException"/> for one that is not an IP address.</summary>
+    public IReadOnlyList<System.Net.IPAddress> GetTrustedProxies() => [.. (TrustedProxies ?? "").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(System.Net.IPAddress.Parse)];
+
     /// <summary>Return the registration tokens as a list.</summary>
     public IReadOnlyList<string> GetRegistrationTokens() => (RegistrationTokens ?? "").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 }

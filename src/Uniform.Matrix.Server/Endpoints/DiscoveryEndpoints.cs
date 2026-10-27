@@ -28,6 +28,9 @@ public static class DiscoveryEndpoints
             if (CallEndpoints.Transports(calls.CurrentValue) is { Count: > 0 } transports) wellKnown["org.matrix.msc4143.rtc_foci"] = transports;
             return MatrixHttp.Json(wellKnown);
         });
+        // No e-mail addresses or phone numbers on accounts
+        routes.MapGet("/_matrix/client/v3/account/3pid", () => MatrixHttp.Json(new JsonObject { ["threepids"] = new JsonArray() })).RequireAccessToken();
+
         // No threads yet; clients list a room's threads
         routes.MapGet("/_matrix/client/v1/rooms/{roomId}/threads", (string roomId) => MatrixHttp.Json(new JsonObject { ["chunk"] = new JsonArray() })).RequireAccessToken();
 

@@ -84,6 +84,44 @@ public sealed class FederationClient
         throw new MatrixException((int)status is >= 400 and < 500 ? status : HttpStatusCode.BadGateway, errorCode, message);
     }
 
+    /// <summary>Send a GET to <paramref name="destination"/> and hand a successful answer to <paramref name="read"/> while its body streams, e.g. to store media; errors come back as <see cref="MatrixException"/> as in <see cref="SendAsync"/>.</summary>
+    /// <param name="destination">Server name.</param>
+    /// <param name="pathAndQuery">Escaped path and query.</param>
+    /// <param name="read">Reads the answer; it runs within the time limit.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="signed">Whether to sign; the legacy media downloads are not signed.</param>
+    public async Task<T> DownloadAsync<T>(string destination, string pathAndQuery, Func<HttpResponseMessage, CancellationToken, Task<T>> read, CancellationToken cancellationToken, bool signed = true)
+    {
+        // Assert federation is on, and another server
+        if (!options.CurrentValue.Enabled) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Federation is off on this server.");
+        string origin = server.CurrentValue.ServerName;
+        if (destination == origin) throw new InvalidOperationException("Federation requests go to other servers.");
+        ServerAddress address = await resolver.ResolveAsync(destination, cancellationToken);
+
+        // Request signed over exactly the path and query sent
+        using HttpRequestMessage request = new(HttpMethod.Get, new Uri(address.BaseAddress, pathAndQuery));
+        request.Headers.Host = address.HostHeader;
+        if (signed) request.Headers.TryAddWithoutValidation("Authorization", FederationAuth.Sign("GET", pathAndQuery, origin, destination, null, keys.KeyId, keys.Secret).ToString());
+
+        // Headers first, then the body to the reader, all within the time limit
+        using CancellationTokenSource timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(options.CurrentValue.RequestTimeout);
+        try
+        {
+            using HttpResponseMessage response = await httpClients.CreateClient(HttpClientName).SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
+            if (response.IsSuccessStatusCode) return await read(response, timeout.Token);
+            JsonNode? json = Parse(await response.Content.ReadAsStringAsync(timeout.Token));
+            HttpStatusCode status = response.StatusCode;
+            // On error throw the other server's code
+            throw new MatrixException((int)status is >= 400 and < 500 ? status : HttpStatusCode.BadGateway, json?["errcode"]?.GetValue<string>() ?? ErrorCodes.Unknown, json?["error"]?.GetValue<string>() ?? $"{destination} answered {(int)status}.");
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException && !cancellationToken.IsCancellationRequested)
+        {
+            logger.LogInformation("Cannot download from {Destination}: {Error}", destination, ex.Message);
+            throw new MatrixException(HttpStatusCode.BadGateway, ErrorCodes.Unknown, $"Cannot reach {destination}.");
+        }
+    }
+
     /// <summary>Return the HTTP handler of the federation client: it connects only to public addresses unless <see cref="FederationOptions.AllowPrivateAddresses"/> is on.</summary>
     public static SocketsHttpHandler CreateHandler(IOptionsMonitor<FederationOptions> options)
     {

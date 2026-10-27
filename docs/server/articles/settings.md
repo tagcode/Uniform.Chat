@@ -14,6 +14,7 @@ Settings come from these places; later ones override earlier ones:
 | `Server:ServerName` | `localhost` | The name in user IDs and room aliases, such as `example.org` in `@alice:example.org`. Choose it before creating accounts: changing it later leaves every existing account and room behind. ↻ |
 | `Server:PublicBaseUrl` | not set | The address clients should use, such as `https://matrix.example.org`. When set, the server announces it at `/.well-known/matrix/client`. |
 | `Server:Registration` | `Disabled` | Who can create accounts: `Disabled`, `Open` (anyone), or `Token` (anyone with a registration token). |
+| `Server:TrustedProxies` | not set | Addresses of reverse proxies, such as nginx, whose `X-Forwarded-For` header gives the client's address, separated by commas. Set it when the server runs behind a proxy, so rate limits count each client instead of the proxy. Other senders' headers are ignored. ↻ |
 | `Server:RegistrationTokens` | not set | Tokens for `Token` registration, separated by commas. |
 | `Media:MaxUploadSize` | `52428800` | Largest file users can upload, in bytes (50 MiB). |
 | `Media:AllowUnauthenticatedDownloads` | `false` | Also serve files at the old `/_matrix/media/v3` download addresses, which need no login, for older clients. Anyone with a link can then fetch a file, so leave it off unless a client needs it. |
@@ -31,8 +32,9 @@ Settings come from these places; later ones override earlier ones:
 | `RateLimits:WritesPerSecond` | `10` | Writes per login allowed each second after the burst. ↻ |
 | `RateLimits:LoginBurst` | `20` | Logins and registrations from one address allowed at once. Behind a reverse proxy every request comes from the proxy's address, so these limits are shared by everyone. ↻ |
 | `RateLimits:LoginsPerMinute` | `10` | Logins and registrations from one address allowed each minute after the burst. ↻ |
-| `Federation:Enabled` | `false` | Talk to other Matrix servers. Unfinished: today it serves this server's signing key, answers profile queries, shows users of other servers their profiles, lets users join rooms of other servers by room ID, invite users of other servers and talk with them; other servers' users can join rooms here. Invites from other servers are not received yet. Rooms of version 12, which Synapse now creates by default, can be joined, but not yet created here. Needs HTTPS with a real certificate. |
+| `Federation:Enabled` | `false` | Talk to other Matrix servers: profiles, joining their rooms by ID or alias, invites both ways, messages, files and images, end-to-end encryption, typing, read receipts and presence. Still being built: received events are checked against the room's current state only, and state differences between servers are not resolved yet. Needs HTTPS with a real certificate. |
 | `Federation:AllowPrivateAddresses` | `false` | Also reach servers at private and local network addresses. Off, so remote server names cannot make the server reach machines inside your network. |
+| `Federation:TrustedKeyServers` | not set | Key servers to ask for other servers' signing keys when those servers cannot be reached, separated by commas, such as `matrix.org`. Asking tells the key server which servers this one talks to, so none are asked by default. |
 | `Federation:RequestTimeout` | `00:00:30` | How long to wait for another server to answer. |
 | `Federation:KeyValidity` | `1.00:00:00` | How long other servers may keep this server's signing key before asking again. |
 | `Federation:WellKnownServer` | not set | Where other servers should connect, served as `/.well-known/matrix/server`, such as `example.org:443` when a reverse proxy on port 443 forwards to this server. Needed when the server name has no port and the server is not on port 8448. |

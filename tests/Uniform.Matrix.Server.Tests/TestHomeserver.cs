@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Server.Tests;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,13 +62,17 @@ internal sealed class TestHomeserver : IAsyncDisposable
     /// <summary>Return an HTTP handler into the server, e.g. for other test servers to reach it.</summary>
     public HttpMessageHandler CreateHandler() => app.GetTestServer().CreateHandler();
 
+    /// <summary>Send one request built by <paramref name="configure"/>, e.g. to set the connection's address; return the finished context.</summary>
+    public Task<HttpContext> SendAsync(Action<HttpContext> configure) => app.GetTestServer().SendAsync(configure, TestContext.Current.CancellationToken);
+
     /// <summary>Return a Matrix client to the server, not logged in.</summary>
     public MatrixClient CreateClient() => new(CreateHttpClient(), BaseAddress);
 
     /// <summary>Stop the server and delete its data.</summary>
     public async ValueTask DisposeAsync()
     {
-        // Stop, then remove files
+        // Stop the background services first, as disposing alone leaves them running; then remove files
+        await app.StopAsync(CancellationToken.None);
         await app.DisposeAsync();
         Directory.Delete(directory, recursive: true);
     }
