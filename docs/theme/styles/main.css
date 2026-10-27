@@ -337,6 +337,7 @@ body .toc {
 .expand-stub {
    position: absolute;
    left: -20px;
+   top: -2px;
 }
 
 /* More margin to leaf nodes, as there is no expand-stub */

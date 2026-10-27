@@ -171,12 +171,13 @@ public sealed class AccountService
         if (updated == 0) throw NoDevice();
     }
 
-    /// <summary>Delete devices of <paramref name="userId"/> with their tokens, keys and waiting messages; unknown device IDs are ignored.</summary>
+    /// <summary>Delete devices of <paramref name="userId"/> with their tokens, pushers, keys and waiting messages; unknown device IDs are ignored.</summary>
     public async Task DeleteDevicesAsync(string userId, IReadOnlyCollection<string> deviceIds, CancellationToken cancellationToken)
     {
-        // Tokens first, then devices, then their keys
+        // Tokens and pushers first, then devices, then their keys
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         await db.AccessTokens.Where(t => t.UserId == userId && deviceIds.Contains(t.DeviceId)).ExecuteDeleteAsync(cancellationToken);
+        await db.Pushers.Where(p => p.UserId == userId && p.DeviceId != null && deviceIds.Contains(p.DeviceId)).ExecuteDeleteAsync(cancellationToken);
         await db.Devices.Where(d => d.UserId == userId && deviceIds.Contains(d.DeviceId)).ExecuteDeleteAsync(cancellationToken);
         await keys.DeleteDevicesAsync(userId, deviceIds, cancellationToken);
     }

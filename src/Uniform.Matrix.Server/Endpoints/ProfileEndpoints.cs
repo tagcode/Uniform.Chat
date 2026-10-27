@@ -30,9 +30,9 @@ public static class ProfileEndpoints
 
         // Presence
         client.MapGet("/presence/{userId}/status", (string userId, PresenceService presence) => MatrixHttp.Json(presence.Get(userId)));
-        client.MapPut("/presence/{userId}/status", (string userId, JsonObject body, HttpContext http, PresenceService presence) =>
+        client.MapPut("/presence/{userId}/status", async (string userId, JsonObject body, HttpContext http, PresenceService presence, CancellationToken cancellationToken) =>
         {
-            presence.Set(http.GetOwnRequester(userId).UserId, Text(body, "presence") ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing presence."), Text(body, "status_msg"));
+            await presence.SetAsync(http.GetOwnRequester(userId).UserId, Text(body, "presence") ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing presence."), Text(body, "status_msg"), cancellationToken);
             return MatrixHttp.Json(new JsonObject());
         });
         // Return routes

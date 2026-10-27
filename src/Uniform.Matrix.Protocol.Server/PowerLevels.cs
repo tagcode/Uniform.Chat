@@ -53,7 +53,7 @@ public sealed class PowerLevels
     internal static long AsLong(JsonNode node) => TryGetInteger(node, out long value) ? value : 0;
 
     /// <summary>Read a JSON integer, whether parsed or built from a .NET number; fractions and other kinds are not integers.</summary>
-    internal static bool TryGetInteger(JsonNode node, out long value)
+    public static bool TryGetInteger(JsonNode node, out long value)
     {
         // Numbers only, through their JSON form
         value = 0;

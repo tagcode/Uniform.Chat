@@ -240,6 +240,33 @@ public sealed class ReceiptRow
     public long Stream { get; set; }
 }
 
+/// <summary>A <see href="https://spec.matrix.org/latest/client-server-api/#push-notifications">pusher</see>: where to send push notifications of a user, usually a push gateway that wakes a phone app.</summary>
+public sealed class PusherRow
+{
+    /// <summary>Owner.</summary>
+    public required string UserId { get; set; }
+    /// <summary>App the pusher is for, e.g. <c>io.element.android</c>.</summary>
+    public required string AppId { get; set; }
+    /// <summary>Key the gateway uses to reach the device, e.g. a Firebase token.</summary>
+    public required string PushKey { get; set; }
+    /// <summary>Kind: <c>http</c>, or <c>email</c>, which is stored but not sent.</summary>
+    public required string Kind { get; set; }
+    /// <summary>Name of the app for people.</summary>
+    public required string AppDisplayName { get; set; }
+    /// <summary>Name of the device for people.</summary>
+    public required string DeviceDisplayName { get; set; }
+    /// <summary>Profile tag of the device, or null.</summary>
+    public string? ProfileTag { get; set; }
+    /// <summary>Preferred language, e.g. <c>en</c>.</summary>
+    public required string Lang { get; set; }
+    /// <summary>The pusher's <c>data</c> as JSON: the gateway <c>url</c> and <c>format</c>, and whatever else the app put there.</summary>
+    public required string DataJson { get; set; }
+    /// <summary>Device that set the pusher; logging it out deletes the pusher.</summary>
+    public string? DeviceId { get; set; }
+    /// <summary>When it was set, in milliseconds since the Unix epoch, sent to the gateway as <c>pushkey_ts</c>.</summary>
+    public long CreatedTs { get; set; }
+}
+
 /// <summary>A named counter of the server, such as the last <see cref="Sync.ServerStream"/> position.</summary>
 public sealed class CounterRow
 {

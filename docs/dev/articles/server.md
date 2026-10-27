@@ -53,11 +53,35 @@ Room state is stored as state groups: each state event makes a new group that re
 
 | Folder | Services |
 |---|---|
-| `Accounts/` | `AccountService` (register, log in, devices, passwords), `UserInteractiveAuth`, `AccountDataService` (account data and tags), `ProfileService`, `PresenceService`, `AdminService` (the dashboard's user and room windows) |
+| `Accounts/` | `AccountService` (register, log in, devices, passwords), `UserInteractiveAuth`, `AccountDataService` (account data and tags), `PushRuleService` (push rules and unread counts), `PusherService` and `PushNotifier` (pushers and push gateways), `ProfileService`, `PresenceService`, `AdminService` (the dashboard's user and room windows) |
 | `Rooms/` | `RoomService` (create, join, invite, leave, state, redact, read), `EventSender`, `ReceiptService`, `TypingService` (in memory), `DirectoryService` (aliases, public rooms, user search) |
 | `Sync/` | `SyncService`, `ServerStream`, `SyncFilter`, `Visibility` |
 | `Encryption/` | `DeviceKeyService` (device, one-time, fallback and cross-signing keys, signatures), `ToDeviceService` (to-device messages and device lists), `KeyBackupService` |
-| `Media/` | `MediaService` (files under `media/` in the data directory), `Thumbnailer` |
+| `Media/` | `UrlPreviewService` (page previews), `MediaService` (files under `media/` in the data directory; media reserved with `/media/v1/create` is a row with an empty content type until its file arrives, and downloads wait for it up to `timeout_ms`), `Thumbnailer` |
+
+## Push rules and unread counts
+
+Each user's [push rules](https://spec.matrix.org/latest/client-server-api/#push-rules) are stored as the `m.push_rules` account data that clients sync, and changed through `/pushrules`. `PushRuleService` merges them with `PushRules.Defaults` (in `Uniform.Matrix.Protocol.Server`) on every read: a stored default rule keeps only its `enabled` and `actions`, so changes to the defaults reach users who customised their rules. User rules come before the defaults of their kind, except that `.m.rule.master` stays first. Initial syncs always carry `m.push_rules`, also for users who never changed a rule.
+
+`notification_count` and `highlight_count` in sync are worked out when the sync is built, not stored per event: the room's events by others after the user's read receipt (or their own latest event, whichever is later) go through `PushRules.Evaluate`, newest first and at most `PushRuleService.MaxCounted` of them. The evaluator implements the condition kinds of the spec (`event_match` with globs and word boundaries for `content.body`, `event_property_is`, `event_property_contains`, `contains_display_name`, `room_member_count`, `sender_notification_permission`) and skips the deprecated name-based mention rules for events with `m.mentions`. Encrypted messages count through `.m.rule.encrypted`, but the server cannot see mentions inside them; clients highlight those themselves.
+
+## Pushers
+
+[Pushers](https://spec.matrix.org/latest/client-server-api/#push-notifications) say where a user's notifications go, usually a push gateway that wakes a phone app. `PusherService` keeps them in the `Pushers` table; each belongs to the device that set it and goes when that device logs out. `PushNotifier` is a background service that follows `ServerStream`: for each new event it runs the push rules of the room's joined members (and of the invitee of an invite) with `PushRuleService.DecideAsync`, and posts a notification in the [push gateway API](https://spec.matrix.org/latest/push-gateway-api/) format to each of their http pushers, with the tweaks of the deciding rule and the user's unread count across rooms. The `event_id_only` format leaves out the content and names. Push keys the gateway rejects are deleted; failing gateways are logged and skipped. Events from before the server started are not pushed.
+
+Gateway URLs come from users, so the gateway client (`PushNotifier.CreateHandler`) connects only to public addresses unless `Push:AllowPrivateGateways` is on. It checks the very addresses it connects to, in `SocketsHttpHandler.ConnectCallback`, so a host name cannot resolve to a public address for a check and a private one for the request.
+
+## URL previews
+
+`UrlPreviewService` answers `preview_url` when `UrlPreviews:Enabled` is on: it fetches the page, reads its OpenGraph `og:` tags with AngleSharp (the page's `<title>` and description when there are none), fetches `og:image` and stores it as media of the user who asked, and returns it as an `mxc://` URI with `matrix:image:size`. A link to an image previews as that image. Pages and images are read up to `UrlPreviews:MaxSize` within `UrlPreviews:Timeout`, and results are cached per address for `UrlPreviews:CacheDuration`. The HTTP client is the same kind as for push gateways (`PublicAddresses.CreateHandler`): only public addresses, checked on every connection including redirects, unless `UrlPreviews:AllowPrivateAddresses` is on.
+
+## Rate limits
+
+`RateLimits.AddMatrixRateLimits` (in `Http/`) sets up ASP.NET Core's rate limiter with two token-bucket policies, which endpoints opt into with `RequireRateLimiting`: `RateLimits.Writes` per access token, on room creation, invites, sending, state, redactions and uploads; and `RateLimits.Logins` per client address, on `/login` and `/register`. A refused request gets 429 with `M_LIMIT_EXCEEDED`, `retry_after_ms` and a `Retry-After` header; `MatrixClient` waits that long and retries. The `RateLimits:*` settings are read at startup. Reads and sync are not limited. Client addresses come from the connection, as forwarded headers are not read yet, so behind a reverse proxy the login limits are shared by all users.
+
+## Presence
+
+`PresenceService` keeps presence in memory, like typing: each change takes a `ServerStream` position, and sync sends `m.presence` for the user and everyone sharing a joined room with them. A sync marks the user online, or idle with `set_presence=unavailable`; `set_presence=offline` changes nothing. A state chosen with the presence API, such as `unavailable` or `offline` to appear away, is not changed by syncing. A timer takes users offline once they have not synced for `PresenceService.OfflineAfter` (2 minutes), which wakes the syncs of the people who see them. Presence is lost on restart.
 
 The server never sees private keys. It checks that uploaded device keys, cross-signing keys and signatures are signed as the spec requires, hands out each one-time key once, and stores encrypted backups as they come.
 
@@ -74,4 +98,4 @@ string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Name = "Kitc
 
 ## Not yet covered
 
-Federation, presence in sync, push rules and notifications, room upgrades, threads and relations, search, URL previews, rate limits, sliding sync, and PostgreSQL.
+Federation, email pushers (stored but not sent), room upgrades, threads and relations, search, sliding sync, and PostgreSQL.

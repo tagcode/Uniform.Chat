@@ -40,6 +40,12 @@ public static class ServerServiceExtensions
         builder.Services.AddOptionSection<ServerOptions>(builder.Configuration, ServerOptions.Section);
         builder.Services.AddOptionSection<ServerStorageOptions>(builder.Configuration, ServerStorageOptions.Section);
         builder.Services.AddOptionSection<MediaOptions>(builder.Configuration, MediaOptions.Section);
+        builder.Services.AddOptionSection<PushOptions>(builder.Configuration, PushOptions.Section);
+        builder.Services.AddOptionSection<UrlPreviewOptions>(builder.Configuration, UrlPreviewOptions.Section);
+        builder.Services.AddOptionSection<RateLimitOptions>(builder.Configuration, RateLimitOptions.Section);
+
+        // Rate limits, read once as the limiter is built at start
+        builder.Services.AddMatrixRateLimits(builder.Configuration.GetSection(RateLimitOptions.Section).Get<RateLimitOptions>() ?? new RateLimitOptions());
 
         // JSON like the rest of the protocol
         builder.Services.ConfigureHttpJsonOptions(json =>
@@ -71,12 +77,25 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<RoomService>();
         builder.Services.AddSingleton<SyncService>();
         builder.Services.AddSingleton<AccountDataService>();
+        builder.Services.AddSingleton<PushRuleService>();
+        builder.Services.AddSingleton<PusherService>();
+        builder.Services.AddHostedService<PushNotifier>();
+        builder.Services.AddHttpClient(PushNotifier.HttpClientName).ConfigurePrimaryHttpMessageHandler(services => PushNotifier.CreateHandler(services.GetRequiredService<IOptionsMonitor<PushOptions>>()));
         builder.Services.AddSingleton<ReceiptService>();
         builder.Services.AddSingleton<TypingService>();
         builder.Services.AddSingleton<ProfileService>();
         builder.Services.AddSingleton<PresenceService>();
         builder.Services.AddSingleton<DirectoryService>();
         builder.Services.AddSingleton<MediaService>();
+        builder.Services.AddSingleton<UrlPreviewService>();
+        builder.Services.AddHttpClient(UrlPreviewService.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (URL preview)")).ConfigurePrimaryHttpMessageHandler(services =>
+        {
+            // Public addresses only, also after redirects, which are few
+            IOptionsMonitor<UrlPreviewOptions> previews = services.GetRequiredService<IOptionsMonitor<UrlPreviewOptions>>();
+            SocketsHttpHandler handler = PublicAddresses.CreateHandler(() => previews.CurrentValue.AllowPrivateAddresses, "UrlPreviews:AllowPrivateAddresses");
+            handler.MaxAutomaticRedirections = 5;
+            return handler;
+        });
         builder.Services.AddSingleton<DeviceKeyService>();
         builder.Services.AddSingleton<ToDeviceService>();
         builder.Services.AddSingleton<KeyBackupService>();
@@ -103,6 +122,9 @@ public static class ServerServiceExtensions
             }
         });
 
+        // Rate limits inside the error handling, so refusals are counted like other answers
+        app.UseRateLimiter();
+
         // Endpoints by spec area
         app.MapDiscovery();
         app.MapAccounts();
@@ -110,6 +132,8 @@ public static class ServerServiceExtensions
         app.MapRooms();
         app.MapSync();
         app.MapAccountData();
+        app.MapPushRules();
+        app.MapPushers();
         app.MapActivity();
         app.MapProfiles();
         app.MapDirectory();

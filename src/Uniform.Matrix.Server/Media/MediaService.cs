@@ -41,30 +41,79 @@ public sealed class MediaService
     /// <summary>Largest upload in bytes.</summary>
     public long MaxUploadSize => media.CurrentValue.MaxUploadSize;
 
+    /// <summary>Whether the deprecated unauthenticated downloads are served, see <see cref="MediaOptions.AllowUnauthenticatedDownloads"/>.</summary>
+    public bool AllowUnauthenticatedDownloads => media.CurrentValue.AllowUnauthenticatedDownloads;
+
     /// <summary>Store an upload of <paramref name="userId"/>; return its <c>mxc://</c> URI. Throws <c>M_TOO_LARGE</c> past <see cref="MaxUploadSize"/>.</summary>
     public async Task<string> UploadAsync(string userId, Stream content, string contentType, string? fileName, CancellationToken cancellationToken)
+    {
+        // A new ID, then the file and its row
+        string mediaId = RandomNumberGenerator.GetString(IdAlphabet, MediaIdLength);
+        long size = await StoreFileAsync(mediaId, content, cancellationToken);
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        db.Media.Add(new MediaRow { MediaId = mediaId, UserId = userId, ContentType = contentType, FileName = fileName, Size = size, CreatedTs = time.GetUtcNow().ToUnixTimeMilliseconds() });
+        await db.SaveChangesAsync(cancellationToken);
+        // Return URI
+        return $"mxc://{server.Value.ServerName}/{mediaId}";
+    }
+
+    /// <summary>Reserve an <c>mxc://</c> URI for content <paramref name="userId"/> uploads later with <see cref="UploadPendingAsync"/>; return it and when it expires, in milliseconds since 1970. Throws <c>M_LIMIT_EXCEEDED</c> past <see cref="MediaOptions.MaxPendingUploads"/>.</summary>
+    /// <remarks>A pending row has an empty content type until its content arrives.</remarks>
+    public async Task<(string ContentUri, long ExpiresAt)> CreatePendingAsync(string userId, CancellationToken cancellationToken)
+    {
+        // Assert room for another pending upload
+        long now = time.GetUtcNow().ToUnixTimeMilliseconds();
+        long lifetime = (long)media.CurrentValue.PendingUploadLifetime.TotalMilliseconds;
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        int pending = await db.Media.CountAsync(m => m.UserId == userId && m.ContentType == "" && m.CreatedTs > now - lifetime, cancellationToken);
+        if (pending >= media.CurrentValue.MaxPendingUploads) throw new MatrixException(HttpStatusCode.TooManyRequests, ErrorCodes.LimitExceeded, "Too many media are waiting for their content; upload them first.");
+
+        // Row without content
+        string mediaId = RandomNumberGenerator.GetString(IdAlphabet, MediaIdLength);
+        db.Media.Add(new MediaRow { MediaId = mediaId, UserId = userId, ContentType = "", CreatedTs = now });
+        await db.SaveChangesAsync(cancellationToken);
+        // Return URI and expiry
+        return ($"mxc://{server.Value.ServerName}/{mediaId}", now + lifetime);
+    }
+
+    /// <summary>Upload the content of media created with <see cref="CreatePendingAsync"/>: only by its creator, once, and before it expires.</summary>
+    public async Task UploadPendingAsync(string userId, string serverName, string mediaId, Stream content, string contentType, string? fileName, CancellationToken cancellationToken)
+    {
+        // Assert own pending media that has not expired
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        MediaRow row = await FindRowAsync(db, serverName, mediaId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media not found.");
+        if (row.UserId != userId) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Only the creator of the media may upload its content.");
+        if (row.ContentType != "") throw new MatrixException(HttpStatusCode.Conflict, ErrorCodes.CannotOverwriteMedia, "The media already has content.");
+        if (row.CreatedTs + (long)media.CurrentValue.PendingUploadLifetime.TotalMilliseconds < time.GetUtcNow().ToUnixTimeMilliseconds()) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "The media expired before its content was uploaded.");
+
+        // File first, then mark the row uploaded
+        row.Size = await StoreFileAsync(mediaId, content, cancellationToken);
+        row.ContentType = contentType;
+        row.FileName = fileName;
+        // Done
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>Copy <paramref name="content"/> to the file of <paramref name="mediaId"/> through a temporary file; return its size. Throws <c>M_TOO_LARGE</c> past <see cref="MaxUploadSize"/>.</summary>
+    private async Task<long> StoreFileAsync(string mediaId, Stream content, CancellationToken cancellationToken)
     {
         // Copy to a temporary file, counting bytes
         Directory.CreateDirectory(directory);
         string temporary = Path.Combine(directory, $"upload-{Guid.NewGuid():N}.tmp");
-        long size;
         try
         {
+            long size;
             await using (FileStream file = new(temporary, FileMode.CreateNew, FileAccess.Write))
             {
                 size = await CopyLimitedAsync(content, file, MaxUploadSize, cancellationToken);
             }
 
-            // Move into place under a new ID
-            string mediaId = RandomNumberGenerator.GetString(IdAlphabet, MediaIdLength);
+            // Move into place
             string path = FilePath(mediaId);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.Move(temporary, path);
-            await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-            db.Media.Add(new MediaRow { MediaId = mediaId, UserId = userId, ContentType = contentType, FileName = fileName, Size = size, CreatedTs = time.GetUtcNow().ToUnixTimeMilliseconds() });
-            await db.SaveChangesAsync(cancellationToken);
-            // Return URI
-            return $"mxc://{server.Value.ServerName}/{mediaId}";
+            // Return size
+            return size;
         }
         finally
         {
@@ -72,21 +121,21 @@ public sealed class MediaService
         }
     }
 
-    /// <summary>Return a stored file; throw <c>M_NOT_FOUND</c> for unknown media and media of other servers.</summary>
-    public async Task<StoredFile> GetAsync(string serverName, string mediaId, CancellationToken cancellationToken)
+    /// <summary>Return a stored file; throw <c>M_NOT_FOUND</c> for unknown media and media of other servers. Media whose content is not uploaded yet is waited for up to <paramref name="timeout"/>, then throws <c>M_NOT_YET_UPLOADED</c>.</summary>
+    public async Task<StoredFile> GetAsync(string serverName, string mediaId, TimeSpan timeout, CancellationToken cancellationToken)
     {
         // Local media only
-        MediaRow row = await FindAsync(serverName, mediaId, cancellationToken);
+        MediaRow row = await FindAsync(serverName, mediaId, timeout, cancellationToken);
         // Return file
         return new StoredFile(FilePath(row.MediaId), row.ContentType, row.FileName);
     }
 
     /// <summary>Return a thumbnail, making it on first request; throw <c>M_UNKNOWN</c> (400) when the media is not an image that can be thumbnailed.</summary>
-    public async Task<StoredFile> GetThumbnailAsync(string serverName, string mediaId, int width, int height, string method, CancellationToken cancellationToken)
+    public async Task<StoredFile> GetThumbnailAsync(string serverName, string mediaId, int width, int height, string method, TimeSpan timeout, CancellationToken cancellationToken)
     {
         // Assert a size and an image
         if (width <= 0 || height <= 0) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "width and height must be positive.");
-        MediaRow row = await FindAsync(serverName, mediaId, cancellationToken);
+        MediaRow row = await FindAsync(serverName, mediaId, timeout, cancellationToken);
         if (!Thumbnailer.CanThumbnail(row.ContentType)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.Unknown, $"Cannot make thumbnails of {row.ContentType}.");
 
         // Made before
@@ -107,16 +156,30 @@ public sealed class MediaService
         return new StoredFile(path, thumbnail.ContentType, null);
     }
 
-    /// <summary>Return the row of local media; throw <c>M_NOT_FOUND</c> otherwise.</summary>
-    private async Task<MediaRow> FindAsync(string serverName, string mediaId, CancellationToken cancellationToken)
+    /// <summary>Return the row of local media with content, waiting up to <paramref name="timeout"/> for pending content; throw <c>M_NOT_FOUND</c> or <c>M_NOT_YET_UPLOADED</c> otherwise.</summary>
+    private async Task<MediaRow> FindAsync(string serverName, string mediaId, TimeSpan timeout, CancellationToken cancellationToken)
+    {
+        // Poll while the content is pending; uploads are rare enough not to need a signal
+        DateTimeOffset end = time.GetUtcNow() + timeout;
+        while (true)
+        {
+            await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+            MediaRow? row = await FindRowAsync(db, serverName, mediaId, cancellationToken);
+            if (row is null) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media not found.");
+            if (row.ContentType != "") return File.Exists(FilePath(mediaId)) ? row : throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media not found.");
+            if (time.GetUtcNow() >= end) throw new MatrixException(HttpStatusCode.GatewayTimeout, ErrorCodes.NotYetUploaded, "The media's content has not been uploaded yet.");
+            await Task.Delay(TimeSpan.FromMilliseconds(250), time, cancellationToken);
+        }
+    }
+
+    /// <summary>Return the row of local media, pending or not, or null; throw <c>M_NOT_FOUND</c> for IDs this server does not make and for other servers.</summary>
+    private async Task<MediaRow?> FindRowAsync(ServerDbContext db, string serverName, string mediaId, CancellationToken cancellationToken)
     {
         // IDs as this server makes them, as they become paths; other servers need federation
         if (mediaId.Length != MediaIdLength || !mediaId.All(IdAlphabet.Contains)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media not found.");
         if (serverName != server.Value.ServerName) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media of other servers needs federation, which is not supported yet.");
-        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        MediaRow? row = await db.Media.AsNoTracking().SingleOrDefaultAsync(m => m.MediaId == mediaId, cancellationToken);
-        // Return row, also when its file went missing
-        return row is not null && File.Exists(FilePath(mediaId)) ? row : throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Media not found.");
+        // Return row
+        return await db.Media.SingleOrDefaultAsync(m => m.MediaId == mediaId, cancellationToken);
     }
 
     /// <summary>Copy up to <paramref name="limit"/> bytes; throw <c>M_TOO_LARGE</c> when there are more.</summary>
@@ -130,7 +193,7 @@ public sealed class MediaService
             int read = await source.ReadAsync(buffer, cancellationToken);
             if (read == 0) return total;
             total += read;
-            if (total > limit) throw new MatrixException(HttpStatusCode.RequestEntityTooLarge, "M_TOO_LARGE", $"Uploads are at most {limit} bytes.");
+            if (total > limit) throw new MatrixException(HttpStatusCode.RequestEntityTooLarge, ErrorCodes.TooLarge, $"Uploads are at most {limit} bytes.");
             await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
         }
     }

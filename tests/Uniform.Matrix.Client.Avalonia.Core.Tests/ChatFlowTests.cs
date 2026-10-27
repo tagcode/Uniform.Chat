@@ -306,6 +306,7 @@ public class ChatFlowTests
                 Assert.DoesNotContain(notifier.Shown, n => n.Body == "just chatting");
                 Assert.Equal("bob", notifier.Shown.Single(n => n.Body == "psst").Title);
             }
+            await WaitUntilAsync(() => chat.UnreadRooms > 0 && chat.Rooms.Any(r => r.RoomId == direct && r.HasUnread), "the unread badge of the direct chat");
         }
         finally
         {

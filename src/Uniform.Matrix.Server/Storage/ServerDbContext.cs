@@ -69,6 +69,8 @@ public sealed class ServerDbContext : DbContext
     public DbSet<KeyBackupVersionRow> KeyBackupVersions => Set<KeyBackupVersionRow>();
     /// <summary>Backed-up room keys.</summary>
     public DbSet<RoomKeyRow> RoomKeys => Set<RoomKeyRow>();
+    /// <summary>Pushers of users.</summary>
+    public DbSet<PusherRow> Pushers => Set<PusherRow>();
 
     /// <summary>Keys and indexes.</summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,6 +80,8 @@ public sealed class ServerDbContext : DbContext
         modelBuilder.Entity<DeviceRow>().HasKey(d => new { d.UserId, d.DeviceId });
         modelBuilder.Entity<AccessTokenRow>().HasKey(t => t.TokenHash);
         modelBuilder.Entity<AccessTokenRow>().HasIndex(t => new { t.UserId, t.DeviceId });
+        modelBuilder.Entity<PusherRow>().HasKey(p => new { p.UserId, p.AppId, p.PushKey });
+        modelBuilder.Entity<PusherRow>().HasIndex(p => new { p.AppId, p.PushKey });
         modelBuilder.Entity<ProfileRow>().HasKey(p => p.UserId);
 
         // Rooms and the event graph

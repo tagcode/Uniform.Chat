@@ -48,4 +48,10 @@ public static class ErrorCodes
     public const string RoomInUse = "M_ROOM_IN_USE";
     /// <summary>The initial state of a new room is invalid.</summary>
     public const string InvalidRoomState = "M_INVALID_ROOM_STATE";
+    /// <summary>The upload is larger than the server allows.</summary>
+    public const string TooLarge = "M_TOO_LARGE";
+    /// <summary>Media was created with <c>/media/v1/create</c>, but its content has not been uploaded yet.</summary>
+    public const string NotYetUploaded = "M_NOT_YET_UPLOADED";
+    /// <summary>The media already has content, which cannot be replaced.</summary>
+    public const string CannotOverwriteMedia = "M_CANNOT_OVERWRITE_MEDIA";
 }

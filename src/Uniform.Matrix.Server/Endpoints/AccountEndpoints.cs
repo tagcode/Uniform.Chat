@@ -22,10 +22,10 @@ public static class AccountEndpoints
         // Login
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3");
         client.MapGet("/login", () => MatrixHttp.Json(new LoginFlowsResponse { Flows = [new LoginFlow { Type = AuthTypes.Password }] }));
-        client.MapPost("/login", LoginAsync);
+        client.MapPost("/login", LoginAsync).RequireRateLimiting(RateLimits.Logins);
 
         // Registration
-        client.MapPost("/register", RegisterAsync);
+        client.MapPost("/register", RegisterAsync).RequireRateLimiting(RateLimits.Logins);
         client.MapGet("/register/available", async (string username, AccountService accounts, CancellationToken cancellationToken) => await accounts.IsAvailableAsync(username, cancellationToken)
             ? MatrixHttp.Json(new JsonObject { ["available"] = true })
             : MatrixHttp.Error(HttpStatusCode.BadRequest, ErrorCodes.UserInUse, "The user ID is already taken."));

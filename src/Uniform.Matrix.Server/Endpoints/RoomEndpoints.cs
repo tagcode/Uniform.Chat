@@ -18,7 +18,7 @@ public static class RoomEndpoints
     {
         // Creation and the user's rooms
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3").RequireAccessToken();
-        client.MapPost("/createRoom", async (JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => MatrixHttp.Json(new JsonObject { ["room_id"] = await rooms.CreateRoomAsync(http.GetRequester(), body, cancellationToken) }));
+        client.MapPost("/createRoom", async (JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => MatrixHttp.Json(new JsonObject { ["room_id"] = await rooms.CreateRoomAsync(http.GetRequester(), body, cancellationToken) })).RequireRateLimiting(RateLimits.Writes);
         client.MapGet("/joined_rooms", async (HttpContext http, RoomService rooms, CancellationToken cancellationToken) => MatrixHttp.Json(new JsonObject { ["joined_rooms"] = new JsonArray([.. (await rooms.GetJoinedRoomsAsync(http.GetRequester().UserId, cancellationToken)).Select(r => (JsonNode)r)]) }));
 
         // Own membership
@@ -28,18 +28,18 @@ public static class RoomEndpoints
         client.MapPost("/rooms/{roomId}/forget", async (string roomId, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => { await rooms.ForgetAsync(http.GetRequester().UserId, roomId, cancellationToken); return Empty(); });
 
         // Others' membership
-        client.MapPost("/rooms/{roomId}/invite", async (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => { await rooms.InviteAsync(http.GetRequester().UserId, roomId, Target(body), body["reason"]?.GetValue<string>(), isDirect: false, cancellationToken); return Empty(); });
+        client.MapPost("/rooms/{roomId}/invite", async (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => { await rooms.InviteAsync(http.GetRequester().UserId, roomId, Target(body), body["reason"]?.GetValue<string>(), isDirect: false, cancellationToken); return Empty(); }).RequireRateLimiting(RateLimits.Writes);
         client.MapPost("/rooms/{roomId}/kick", (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => ChangeAsync(http, rooms, roomId, body, Memberships.Leave, cancellationToken));
         client.MapPost("/rooms/{roomId}/ban", (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => ChangeAsync(http, rooms, roomId, body, Memberships.Ban, cancellationToken));
         client.MapPost("/rooms/{roomId}/unban", (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => ChangeAsync(http, rooms, roomId, body, Memberships.Leave, cancellationToken));
 
         // Messages, state, redaction
         client.MapPut("/rooms/{roomId}/send/{eventType}/{txnId}", async (string roomId, string eventType, string txnId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) =>
-            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SendMessageAsync(http.GetRequester(), roomId, eventType, body, txnId, cancellationToken) }));
+            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SendMessageAsync(http.GetRequester(), roomId, eventType, body, txnId, cancellationToken) })).RequireRateLimiting(RateLimits.Writes);
         client.MapPut("/rooms/{roomId}/state/{eventType}/{stateKey?}", async (string roomId, string eventType, string? stateKey, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) =>
-            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SetStateAsync(http.GetRequester(), roomId, eventType, stateKey ?? "", body, cancellationToken) }));
+            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SetStateAsync(http.GetRequester(), roomId, eventType, stateKey ?? "", body, cancellationToken) })).RequireRateLimiting(RateLimits.Writes);
         client.MapPut("/rooms/{roomId}/redact/{eventId}/{txnId}", async (string roomId, string eventId, string txnId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) =>
-            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.RedactAsync(http.GetRequester(), roomId, eventId, body["reason"]?.GetValue<string>(), txnId, cancellationToken) }));
+            MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.RedactAsync(http.GetRequester(), roomId, eventId, body["reason"]?.GetValue<string>(), txnId, cancellationToken) })).RequireRateLimiting(RateLimits.Writes);
 
         // Reading
         client.MapGet("/rooms/{roomId}/state", async (string roomId, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => MatrixHttp.Json(new JsonArray([.. await rooms.GetStateAsync(http.GetRequester(), roomId, cancellationToken)])));

@@ -64,3 +64,12 @@ public sealed record UploadResponse
     /// <summary>Content URI of the uploaded media.</summary>
     public required string ContentUri { get; init; }
 }
+
+/// <summary>Response of <see href="https://spec.matrix.org/latest/client-server-api/#post_matrixmediav1create">creating media</see> before uploading its content.</summary>
+public sealed record CreateMediaResponse
+{
+    /// <summary>The reserved <c>mxc://</c> URI.</summary>
+    public required string ContentUri { get; init; }
+    /// <summary>When the URI can no longer be uploaded to, in milliseconds since 1970.</summary>
+    public long? UnusedExpiresAt { get; init; }
+}

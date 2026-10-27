@@ -1,16 +1,18 @@
 namespace Uniform.Matrix.Server.Endpoints;
 
+using System.Net;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Net.Http.Headers;
+using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Media;
 
-/// <summary>The <see href="https://spec.matrix.org/latest/client-server-api/#content-repository">content repository</see>: uploads, and the authenticated downloads and thumbnails of <c>/_matrix/client/v1/media</c>.</summary>
-/// <remarks>The unauthenticated <c>/_matrix/media/v3</c> downloads are not served, as the spec deprecates them; uploads still use the v3 path.</remarks>
+/// <summary>The <see href="https://spec.matrix.org/latest/client-server-api/#content-repository">content repository</see>: uploads, including media created first and uploaded later, and the authenticated downloads and thumbnails of <c>/_matrix/client/v1/media</c>.</summary>
+/// <remarks>The unauthenticated <c>/_matrix/media/v3</c> downloads, which the spec deprecates, answer only while <see cref="Configuration.MediaOptions.AllowUnauthenticatedDownloads"/> is on; uploads still use the v3 path.</remarks>
 public static class MediaEndpoints
 {
     // Files are sandboxed so an uploaded page cannot run scripts on the server's origin
@@ -20,20 +22,71 @@ public static class MediaEndpoints
     /// <summary>Map the media endpoints.</summary>
     public static IEndpointRouteBuilder MapMedia(this IEndpointRouteBuilder routes)
     {
-        // Upload and limits
+        // Upload, upload of created media, and limits
         RouteGroupBuilder upload = routes.MapGroup("/_matrix/media/v3").RequireAccessToken();
-        upload.MapPost("/upload", UploadAsync);
+        upload.MapPost("/upload", UploadAsync).RequireRateLimiting(RateLimits.Writes);
+        upload.MapPut("/upload/{serverName}/{mediaId}", UploadPendingAsync).RequireRateLimiting(RateLimits.Writes);
         upload.MapGet("/config", (MediaService media) => Config(media));
+        upload.MapGet("/preview_url", PreviewAsync);
+        routes.MapGroup("/_matrix/media/v1").RequireAccessToken().MapPost("/create", CreateAsync).RequireRateLimiting(RateLimits.Writes);
 
         // Authenticated reads
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v1/media").RequireAccessToken();
         client.MapGet("/config", (MediaService media) => Config(media));
-        client.MapGet("/download/{serverName}/{mediaId}", async (string serverName, string mediaId, HttpContext http, MediaService media, CancellationToken cancellationToken) => Send(http, await media.GetAsync(serverName, mediaId, cancellationToken), null));
-        client.MapGet("/download/{serverName}/{mediaId}/{fileName}", async (string serverName, string mediaId, string fileName, HttpContext http, MediaService media, CancellationToken cancellationToken) => Send(http, await media.GetAsync(serverName, mediaId, cancellationToken), fileName));
-        client.MapGet("/thumbnail/{serverName}/{mediaId}", async (string serverName, string mediaId, int width, int height, string? method, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
-            Send(http, await media.GetThumbnailAsync(serverName, mediaId, width, height, method ?? Thumbnailer.Scale, cancellationToken), null));
+        client.MapGet("/preview_url", PreviewAsync);
+        MapReads(client, requireSetting: false);
+
+        // The deprecated unauthenticated reads, when the setting allows them
+        MapReads(routes.MapGroup("/_matrix/media/v3"), requireSetting: true);
         // Return routes
         return routes;
+    }
+
+    /// <summary>Map downloads and thumbnails; with <paramref name="requireSetting"/>, they answer only while <see cref="MediaService.AllowUnauthenticatedDownloads"/> is on, checked per request so the setting applies at once.</summary>
+    private static void MapReads(RouteGroupBuilder group, bool requireSetting)
+    {
+        // Downloads, with an optional file name to save as
+        group.MapGet("/download/{serverName}/{mediaId}", async (string serverName, string mediaId, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
+            Send(http, await media.GetAsync(serverName, mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
+        group.MapGet("/download/{serverName}/{mediaId}/{fileName}", async (string serverName, string mediaId, string fileName, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
+            Send(http, await media.GetAsync(serverName, mediaId, Wait(media, requireSetting, timeout_ms), cancellationToken), fileName));
+
+        // Thumbnails
+        group.MapGet("/thumbnail/{serverName}/{mediaId}", async (string serverName, string mediaId, int width, int height, string? method, long? timeout_ms, HttpContext http, MediaService media, CancellationToken cancellationToken) =>
+            Send(http, await media.GetThumbnailAsync(serverName, mediaId, width, height, method ?? Thumbnailer.Scale, Wait(media, requireSetting, timeout_ms), cancellationToken), null));
+    }
+
+    /// <summary>Return how long to wait for content that is not uploaded yet: <c>timeout_ms</c>, 20 seconds by default and at most a minute; throw <c>M_NOT_FOUND</c> for unauthenticated reads while they are off.</summary>
+    private static TimeSpan Wait(MediaService media, bool requireSetting, long? timeoutMs)
+    {
+        // Unauthenticated reads look absent while off, as servers that froze them answer
+        if (requireSetting && !media.AllowUnauthenticatedDownloads) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unauthenticated media downloads are off on this server; use /_matrix/client/v1/media.");
+        // Return wait
+        return TimeSpan.FromMilliseconds(Math.Clamp(timeoutMs ?? 20_000, 0, 60_000));
+    }
+
+    /// <summary>Return the preview of the page at <c>url</c>; <c>ts</c>, the time the client would like the preview from, is not used.</summary>
+    private static async Task<IResult> PreviewAsync(string? url, HttpContext http, UrlPreviewService previews, CancellationToken cancellationToken) =>
+        MatrixHttp.Json(await previews.GetPreviewAsync(http.GetRequester().UserId, url ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "url is missing."), cancellationToken));
+
+    /// <summary>Reserve an <c>mxc://</c> URI whose content is uploaded later.</summary>
+    private static async Task<IResult> CreateAsync(HttpContext http, MediaService media, CancellationToken cancellationToken)
+    {
+        // Pending media of the requester
+        (string uri, long expires) = await media.CreatePendingAsync(http.GetRequester().UserId, cancellationToken);
+        // Return URI and expiry
+        return MatrixHttp.Json(new JsonObject { ["content_uri"] = uri, ["unused_expires_at"] = expires });
+    }
+
+    /// <summary>Upload the content of created media; the content type comes from the header, the file name from the query.</summary>
+    private static async Task<IResult> UploadPendingAsync(string serverName, string mediaId, string? filename, HttpContext http, MediaService media, CancellationToken cancellationToken)
+    {
+        // The repository's limit, not the web server's default
+        if (http.Features.Get<IHttpMaxRequestBodySizeFeature>() is { IsReadOnly: false } limit) limit.MaxRequestBodySize = media.MaxUploadSize + 1;
+        string contentType = http.Request.ContentType ?? "application/octet-stream";
+        await media.UploadPendingAsync(http.GetRequester().UserId, serverName, mediaId, http.Request.Body, contentType, string.IsNullOrEmpty(filename) ? null : filename, cancellationToken);
+        // Done
+        return MatrixHttp.Json(new JsonObject());
     }
 
     /// <summary>Store the request body as a new upload; the content type comes from the header, the file name from the query.</summary>

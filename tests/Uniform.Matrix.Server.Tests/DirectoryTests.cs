@@ -1,6 +1,7 @@
 namespace Uniform.Matrix.Server.Tests;
 
 using System.Net;
+using Microsoft.Extensions.Time.Testing;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
@@ -68,6 +69,45 @@ public class DirectoryTests
         Assert.Equal("unavailable", away.Presence);
         Assert.Equal("lunch", away.StatusMsg);
         Assert.Equal("offline", never.Presence);
+    }
+
+    /// <summary>Syncing marks a user online for the people sharing a room; a chosen status reaches them; strangers see nothing; a user who stops syncing goes offline.</summary>
+    [Fact]
+    public async Task PresenceInSync()
+    {
+        // Arrange: Alice and Bob share a room, Carol does not; a fake clock moves time on
+        FakeTimeProvider clock = new(DateTimeOffset.UtcNow);
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open, clock);
+        MatrixClient alice = await UserAsync(server, "alice");
+        MatrixClient bob = await UserAsync(server, "bob");
+        MatrixClient carol = await UserAsync(server, "carol");
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+
+        // Act: Alice syncs, which marks her online
+        await alice.SyncAsync(timeout: TimeSpan.Zero, cancellationToken: Ct);
+        SyncResponse bobFirst = await bob.SyncAsync(timeout: TimeSpan.Zero, cancellationToken: Ct);
+        SyncResponse carolFirst = await carol.SyncAsync(timeout: TimeSpan.Zero, cancellationToken: Ct);
+
+        // Assert: Bob sees her online, Carol does not see her
+        PresenceEvent online = Assert.Single(bobFirst.Presence.Events, e => e.Sender == alice.UserId);
+        Assert.Equal("online", online.Content.GetProperty("presence").GetString());
+        Assert.True(online.Content.GetProperty("currently_active").GetBoolean());
+        Assert.DoesNotContain(carolFirst.Presence.Events, e => e.Sender == alice.UserId);
+
+        // Act and assert: a chosen status reaches Bob's incremental sync, and stays while Alice syncs
+        await alice.SetPresenceAsync("unavailable", "lunch", Ct);
+        await alice.SyncAsync(timeout: TimeSpan.Zero, cancellationToken: Ct);
+        SyncResponse bobNext = await bob.SyncAsync(bobFirst.NextBatch, TimeSpan.Zero, cancellationToken: Ct);
+        PresenceEvent away = Assert.Single(bobNext.Presence.Events, e => e.Sender == alice.UserId);
+        Assert.Equal("unavailable", away.Content.GetProperty("presence").GetString());
+        Assert.Equal("lunch", away.Content.GetProperty("status_msg").GetString());
+
+        // Act and assert: no syncs for longer than the limit takes her offline, which wakes Bob's waiting sync
+        Task<SyncResponse> waiting = bob.SyncAsync(bobNext.NextBatch, TimeSpan.FromSeconds(30), cancellationToken: Ct);
+        clock.Advance(TimeSpan.FromMinutes(3));
+        SyncResponse bobLast = await waiting.WaitAsync(TimeSpan.FromSeconds(20), Ct);
+        Assert.Equal("offline", Assert.Single(bobLast.Presence.Events, e => e.Sender == alice.UserId).Content.GetProperty("presence").GetString());
     }
 
     /// <summary>Aliases are created by members, resolve, list per room, are unique, and are deleted by their creator but not by others.</summary>

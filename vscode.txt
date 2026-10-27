@@ -60,6 +60,9 @@ dotnet:
 
     dotnet build
 
+docfx:
+    dotnet docfx docs/server/docfx.json
+
 C#:
     F2          Rename class
 

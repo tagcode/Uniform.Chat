@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Protocol.Client;
 
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Uniform.Matrix.Protocol.Core;
 
 // Media upload and download.
@@ -58,6 +59,42 @@ public sealed partial class MatrixClient
         UploadResponse result = await response.Content.ReadFromJsonAsync<UploadResponse>(MatrixJson.Options, cancellationToken) ?? throw new InvalidOperationException("Empty upload response");
         // Return content URI
         return MxcUri.Parse(result.ContentUri);
+    }
+
+    /// <summary>Return the server's <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1mediapreview_url">preview</see> of a web page as JSON: <c>og:title</c>, <c>og:description</c>, and <c>og:image</c> as an <c>mxc://</c> URI with <c>matrix:image:size</c>; throws <see cref="MatrixException"/> when the server has previews off.</summary>
+    public Task<JsonElement> GetUrlPreviewAsync(Uri url, CancellationToken cancellationToken = default) =>
+        SendAsync<JsonElement>(HttpMethod.Get, WithQuery("_matrix/client/v1/media/preview_url", [("url", url.AbsoluteUri)]), body: null, authenticated: true, cancellationToken);
+
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#post_matrixmediav1create">Reserve a content URI</see> whose content is uploaded later with <see cref="UploadMediaToAsync"/>, e.g. to send a message before a large file is up; return it and when it expires.</summary>
+    public async Task<(MxcUri ContentUri, DateTimeOffset ExpiresAt)> CreateMediaAsync(CancellationToken cancellationToken = default)
+    {
+        // Reserve
+        CreateMediaResponse result = await SendAsync<CreateMediaResponse>(HttpMethod.Post, "_matrix/media/v1/create", new { }, authenticated: true, cancellationToken);
+        // Return URI and expiry
+        return (MxcUri.Parse(result.ContentUri), DateTimeOffset.FromUnixTimeMilliseconds(result.UnusedExpiresAt ?? 0));
+    }
+
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#put_matrixmediav3uploadservernamemediaid">Upload the content</see> of a URI from <see cref="CreateMediaAsync"/>; only once, by the user who created it.</summary>
+    /// <param name="contentUri">The reserved URI.</param>
+    /// <param name="content">Media bytes; buffered in memory when not seekable, as rate-limit retries resend it.</param>
+    /// <param name="contentType">MIME type, e.g. <c>image/png</c>.</param>
+    /// <param name="fileName">File name to store with the media.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task UploadMediaToAsync(MxcUri contentUri, Stream content, string contentType, string? fileName = null, CancellationToken cancellationToken = default)
+    {
+        // Make body resendable
+        Stream body = content;
+        if (!content.CanSeek)
+        {
+            body = new MemoryStream();
+            await content.CopyToAsync(body, cancellationToken);
+        }
+        long start = content.CanSeek ? content.Position : 0;
+
+        // Upload to the reserved URI
+        string path = WithQuery($"_matrix/media/v3/upload/{Escape(contentUri.ServerName)}/{Escape(contentUri.MediaId)}", [("filename", fileName)]);
+        // Done
+        using HttpResponseMessage response = await SendRawAsync(HttpMethod.Put, path, () => CreateStreamContent(body, start, contentType), authenticated: true, HttpCompletionOption.ResponseContentRead, cancellationToken);
     }
 
     /// <summary>Upload <paramref name="content"/> and send it to <paramref name="roomId"/> as an image, video, audio or file message by <paramref name="contentType"/>; return the event ID.</summary>

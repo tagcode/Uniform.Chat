@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Protocol.Client;
 
@@ -26,8 +28,8 @@ internal sealed class TestHomeserver : IAsyncDisposable
     /// <summary>Base address clients use.</summary>
     public Uri BaseAddress { get; } = new("http://localhost/");
 
-    /// <summary>Start a server; <paramref name="settings"/> override configuration, e.g. <c>Server:PublicBaseUrl</c>.</summary>
-    public static async Task<TestHomeserver> StartAsync(IReadOnlyDictionary<string, string?>? settings = null)
+    /// <summary>Start a server; <paramref name="settings"/> override configuration, e.g. <c>Server:PublicBaseUrl</c>, <paramref name="time"/> replaces the clock, e.g. with a fake one to move time on, and <paramref name="configureServices"/> changes services, e.g. the HTTP handler of push gateways.</summary>
+    public static async Task<TestHomeserver> StartAsync(IReadOnlyDictionary<string, string?>? settings = null, TimeProvider? time = null, Action<IServiceCollection>? configureServices = null)
     {
         // Configuration with a private data directory
         string directory = Directory.CreateTempSubdirectory("matrix-server-").FullName;
@@ -41,6 +43,8 @@ internal sealed class TestHomeserver : IAsyncDisposable
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(new TestOutputLoggerProvider());
         builder.AddMatrixServer();
+        if (time is not null) builder.Services.Replace(ServiceDescriptor.Singleton(time));
+        configureServices?.Invoke(builder.Services);
         WebApplication app = builder.Build();
         app.MapMatrixServer();
         await app.StartAsync(TestContext.Current.CancellationToken);

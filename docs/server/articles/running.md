@@ -3,7 +3,7 @@
 The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform.Matrix clients or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
 
 > [!NOTE]
-> The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, typing, read receipts, room tags, room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is not there yet, so only users of this server can talk to each other.
+> The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, presence, typing, read receipts, unread counts, push rules and push notifications through push gateways, room tags, previews of linked pages (when turned on), room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is not there yet, so only users of this server can talk to each other.
 
 ## Requirements
 
@@ -154,6 +154,21 @@ Settings come from these places; later ones override earlier ones:
 | `Server:Registration` | `Disabled` | Who can create accounts: `Disabled`, `Open` (anyone), or `Token` (anyone with a registration token). |
 | `Server:RegistrationTokens` | not set | Tokens for `Token` registration, separated by commas. |
 | `Media:MaxUploadSize` | `52428800` | Largest file users can upload, in bytes (50 MiB). |
+| `Media:AllowUnauthenticatedDownloads` | `false` | Also serve files at the old `/_matrix/media/v3` download addresses, which need no login, for older clients. Anyone with a link can then fetch a file, so leave it off unless a client needs it. |
+| `Media:PendingUploadLifetime` | `1.00:00:00` | How long a client may take to upload a file it reserved an address for first. |
+| `Media:MaxPendingUploads` | `10` | How many reserved addresses a user may have waiting for their files. |
+| `Push:AllowPrivateGateways` | `false` | Send push notifications also to gateways at private and local network addresses, such as a push gateway on this machine. Off, so accounts cannot make the server reach machines inside your network. |
+| `Push:GatewayTimeout` | `00:00:10` | How long to wait for a push gateway to answer. |
+| `UrlPreviews:Enabled` | `false` | Make previews of linked pages (title, description and image) for clients that ask. Off by default: fetching tells the linked site that someone on this server posted the link, and in encrypted rooms it shows the server what was linked. |
+| `UrlPreviews:AllowPrivateAddresses` | `false` | Also preview pages at private and local network addresses. Off, so accounts cannot make the server reach machines inside your network. |
+| `UrlPreviews:MaxSize` | `2097152` | Most bytes read of a page or its image (2 MiB). |
+| `UrlPreviews:Timeout` | `00:00:10` | How long to wait for a page. |
+| `UrlPreviews:CacheDuration` | `01:00:00` | How long a preview is reused for the same address. |
+| `RateLimits:Enabled` | `true` | Limit how fast clients may write and log in. Clients that go over get an error telling them how long to wait; well-behaved clients wait and retry. ↻ |
+| `RateLimits:WriteBurst` | `50` | Writes per login allowed at once: messages, state changes, invites, new rooms and uploads. ↻ |
+| `RateLimits:WritesPerSecond` | `10` | Writes per login allowed each second after the burst. ↻ |
+| `RateLimits:LoginBurst` | `20` | Logins and registrations from one address allowed at once. Behind a reverse proxy every request comes from the proxy's address, so these limits are shared by everyone. ↻ |
+| `RateLimits:LoginsPerMinute` | `10` | Logins and registrations from one address allowed each minute after the burst. ↻ |
 | `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
 | `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](#run-without-the-dashboard). ↻ |

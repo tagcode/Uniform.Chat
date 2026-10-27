@@ -16,6 +16,7 @@ using Uniform.Matrix.Protocol.Core;
 /// <item><description>MatrixClient.Events.cs: room history, sending, redaction, typing and read markers.</description></item>
 /// <item><description>MatrixClient.Profile.cs: profiles and presence.</description></item>
 /// <item><description>MatrixClient.AccountData.cs: account data, tags, ignored users and direct rooms.</description></item>
+/// <item><description>MatrixClient.PushRules.cs: push rules and pushers.</description></item>
 /// <item><description>MatrixClient.Directory.cs: public room directory and user directory.</description></item>
 /// <item><description>MatrixClient.Media.cs: media upload and download, file messages.</description></item>
 /// <item><description>MatrixClient.Devices.cs: devices and user-interactive auth.</description></item>
@@ -25,7 +26,7 @@ using Uniform.Matrix.Protocol.Core;
 /// <example><code><![CDATA[
 /// MatrixClient client = new(http, new Uri("https://matrix.org"));
 /// await client.LoginWithPasswordAsync("@alice:matrix.org", password);
-/// await foreach (SyncResponse sync in client.SyncLoopAsync(ct: ct))
+/// await foreach (SyncResponse sync in client.SyncLoopAsync(cancellationToken: cancellationToken))
 ///     foreach ((string roomId, JoinedRoom room) in sync.Rooms.Join)
 ///         foreach (ClientEvent ev in room.Timeline.Events)
 ///             if (ev.TryGetContent(out MessageContent? message)) Console.WriteLine($"{ev.Sender}: {message.Body}");

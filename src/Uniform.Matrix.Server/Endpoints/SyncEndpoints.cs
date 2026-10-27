@@ -20,9 +20,10 @@ public static class SyncEndpoints
     {
         // Sync
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3").RequireAccessToken();
-        client.MapGet("/sync", async (string? since, string? filter, long? timeout, bool? full_state, HttpContext http, SyncService sync, CancellationToken cancellationToken) =>
+        client.MapGet("/sync", async (string? since, string? filter, long? timeout, bool? full_state, string? set_presence, HttpContext http, SyncService sync, PresenceService presence, CancellationToken cancellationToken) =>
         {
             Requester requester = http.GetRequester();
+            await presence.TouchAsync(requester.UserId, set_presence, cancellationToken);
             SyncFilter parsed = await sync.ResolveFilterAsync(requester.UserId, filter, cancellationToken);
             TimeSpan wait = TimeSpan.FromMilliseconds(Math.Clamp(timeout ?? 0, 0, MaxTimeoutMs));
             return MatrixHttp.Json(await sync.SyncAsync(requester, since, wait, parsed, full_state == true, cancellationToken));

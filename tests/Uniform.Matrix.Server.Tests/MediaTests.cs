@@ -176,4 +176,57 @@ public class MediaTests
         // Return decoded
         return (ImageResult.FromMemory(bytes.ToArray(), StbImageSharp.ColorComponents.RedGreenBlueAlpha), download.ContentType);
     }
+
+    /// <summary>Created media is uploaded later by its creator only, once; a download waits for the content, or answers that it is not uploaded yet.</summary>
+    [Fact]
+    public async Task CreateThenUpload()
+    {
+        // Arrange
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient alice = await UserAsync(server, "alice");
+        MatrixClient bob = await UserAsync(server, "bob");
+        byte[] text = Encoding.UTF8.GetBytes("later");
+
+        // Act: reserve, try a download before the content, then upload while another download waits
+        (MxcUri uri, DateTimeOffset expires) = await alice.CreateMediaAsync(Ct);
+        using HttpClient http = server.CreateHttpClient();
+        http.DefaultRequestHeaders.Authorization = new("Bearer", bob.AccessToken);
+        HttpResponseMessage early = await http.GetAsync($"/_matrix/client/v1/media/download/{uri.ServerName}/{uri.MediaId}?timeout_ms=0", Ct);
+        Task<HttpResponseMessage> waiting = http.GetAsync($"/_matrix/client/v1/media/download/{uri.ServerName}/{uri.MediaId}?timeout_ms=10000", Ct);
+        MatrixException notOwner = await Assert.ThrowsAsync<MatrixException>(() => bob.UploadMediaToAsync(uri, new MemoryStream(text), "text/plain", cancellationToken: Ct));
+        await alice.UploadMediaToAsync(uri, new MemoryStream(text), "text/plain", "later.txt", Ct);
+        HttpResponseMessage late = await waiting;
+        MatrixException again = await Assert.ThrowsAsync<MatrixException>(() => alice.UploadMediaToAsync(uri, new MemoryStream(text), "text/plain", cancellationToken: Ct));
+
+        // Assert
+        Assert.True(expires > DateTimeOffset.UtcNow);
+        Assert.Equal(HttpStatusCode.GatewayTimeout, early.StatusCode);
+        Assert.Contains(ErrorCodes.NotYetUploaded, await early.Content.ReadAsStringAsync(Ct));
+        Assert.Equal(ErrorCodes.Forbidden, notOwner.Errcode);
+        Assert.Equal(HttpStatusCode.OK, late.StatusCode);
+        Assert.Equal(text, await late.Content.ReadAsByteArrayAsync(Ct));
+        Assert.Equal(ErrorCodes.CannotOverwriteMedia, again.Errcode);
+    }
+
+    /// <summary>The unauthenticated legacy downloads are off by default, and serve files without a token when the setting allows them.</summary>
+    [Fact]
+    public async Task LegacyDownloads()
+    {
+        // Arrange: one server with the setting off, one with it on
+        await using TestHomeserver off = await TestHomeserver.StartAsync(Open);
+        await using TestHomeserver on = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open", ["Media:AllowUnauthenticatedDownloads"] = "true" });
+        MxcUri offUri = await (await UserAsync(off, "alice")).UploadMediaAsync(new MemoryStream([1, 2, 3]), "application/octet-stream", cancellationToken: Ct);
+        MxcUri onUri = await (await UserAsync(on, "alice")).UploadMediaAsync(new MemoryStream([1, 2, 3]), "application/octet-stream", cancellationToken: Ct);
+
+        // Act: no access token
+        using HttpClient offHttp = off.CreateHttpClient();
+        using HttpClient onHttp = on.CreateHttpClient();
+        HttpResponseMessage refused = await offHttp.GetAsync($"/_matrix/media/v3/download/{offUri.ServerName}/{offUri.MediaId}", Ct);
+        HttpResponseMessage served = await onHttp.GetAsync($"/_matrix/media/v3/download/{onUri.ServerName}/{onUri.MediaId}", Ct);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, refused.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, served.StatusCode);
+        Assert.Equal([1, 2, 3], await served.Content.ReadAsByteArrayAsync(Ct));
+    }
 }

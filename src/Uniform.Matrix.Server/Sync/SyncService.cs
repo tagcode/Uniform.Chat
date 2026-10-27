@@ -19,16 +19,20 @@ public sealed class SyncService
     private readonly ServerStream stream;
     private readonly StateCache cache;
     private readonly TypingService typing;
+    private readonly PushRuleService pushRules;
+    private readonly PresenceService presence;
     private readonly TimeProvider time;
 
     /// <summary>Create the service.</summary>
-    public SyncService(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, StateCache cache, TypingService typing, TimeProvider time)
+    public SyncService(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, StateCache cache, TypingService typing, PushRuleService pushRules, PresenceService presence, TimeProvider time)
     {
         // Store dependencies
         this.contexts = contexts;
         this.stream = stream;
         this.cache = cache;
         this.typing = typing;
+        this.pushRules = pushRules;
+        this.presence = presence;
         this.time = time;
     }
 
@@ -152,6 +156,7 @@ public sealed class SyncService
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         List<CurrentStateRow> memberships = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == requester.UserId).ToListAsync(cancellationToken);
         HashSet<string> forgotten = [.. await db.ForgottenRooms.AsNoTracking().Where(f => f.UserId == requester.UserId).Select(f => f.RoomId).ToListAsync(cancellationToken)];
+        JsonObject ruleset = await pushRules.GetRulesetAsync(requester.UserId, cancellationToken);
 
         // One section per room with something to say
         JsonObject join = [], invite = [], leave = [];
@@ -162,19 +167,23 @@ public sealed class SyncService
             {
                 case Memberships.Join:
                     bool initial = from is null || fullState || member.Stream > from;
-                    if (await BuildRoomAsync(db, requester, member, initial ? null : from, current, filter, cancellationToken) is JsonObject joined) join[member.RoomId] = joined;
+                    if (await BuildRoomAsync(db, requester, member, initial ? null : from, current, filter, ruleset, cancellationToken) is JsonObject joined) join[member.RoomId] = joined;
                     break;
                 case Memberships.Invite when from is null || member.Stream > from:
                     invite[member.RoomId] = new JsonObject { ["invite_state"] = new JsonObject { ["events"] = new JsonArray([.. await StrippedStateAsync(db, member, cancellationToken)]) } };
                     break;
                 case Memberships.Leave or Memberships.Ban when from is null ? filter.IncludeLeave : member.Stream > from:
-                    if (await BuildRoomAsync(db, requester, member, from, member.Stream, filter, cancellationToken) is JsonObject left) leave[member.RoomId] = left;
+                    if (await BuildRoomAsync(db, requester, member, from, member.Stream, filter, ruleset, cancellationToken) is JsonObject left) leave[member.RoomId] = left;
                     break;
             }
         }
 
-        // Global account data, the device's messages and keys, and key changes of others
-        IReadOnlyList<JsonObject> accountData = await AccountDataEventsAsync(db, requester.UserId, "", from, current, cancellationToken);
+        // Global account data with the push rules as they apply now, always in initial syncs; the device's messages and keys, and key changes of others
+        List<JsonObject> accountData = [.. await AccountDataEventsAsync(db, requester.UserId, "", from, current, cancellationToken)];
+        JsonObject pushRulesEvent = new() { ["type"] = PushRuleService.AccountDataType, ["content"] = new JsonObject { ["global"] = ruleset.DeepClone() } };
+        int storedRules = accountData.FindIndex(e => e["type"]?.GetValue<string>() == PushRuleService.AccountDataType);
+        if (storedRules >= 0) accountData[storedRules] = pushRulesEvent;
+        else if (from is null) accountData.Add(pushRulesEvent);
         IReadOnlyList<JsonObject> toDevice = await ToDeviceService.TakeAsync(db, requester.UserId, requester.DeviceId, from, current, cancellationToken);
         (IReadOnlyList<string> changedUsers, IReadOnlyList<string> leftUsers) = from is long since ? await ToDeviceService.GetDeviceListsAsync(db, requester.UserId, since, current, cancellationToken) : ([], []);
         JsonNode keyCounts = (await DeviceKeyService.CountOneTimeKeysAsync(db, requester.UserId, requester.DeviceId, cancellationToken))["one_time_key_counts"]!.DeepClone();
@@ -184,7 +193,7 @@ public sealed class SyncService
             ["next_batch"] = Token(current),
             ["rooms"] = new JsonObject { ["join"] = join, ["invite"] = invite, ["leave"] = leave, ["knock"] = new JsonObject() },
             ["account_data"] = new JsonObject { ["events"] = new JsonArray([.. accountData]) },
-            ["presence"] = new JsonObject { ["events"] = new JsonArray() },
+            ["presence"] = new JsonObject { ["events"] = new JsonArray([.. await presence.GetEventsAsync(db, requester.UserId, from, current, cancellationToken)]) },
             ["to_device"] = new JsonObject { ["events"] = new JsonArray([.. toDevice]) },
             ["device_lists"] = new JsonObject { ["changed"] = new JsonArray([.. changedUsers.Select(u => (JsonNode)u)]), ["left"] = new JsonArray([.. leftUsers.Select(u => (JsonNode)u)]) },
             ["device_one_time_keys_count"] = keyCounts,
@@ -192,8 +201,8 @@ public sealed class SyncService
         };
     }
 
-    /// <summary>Build a joined or left room's section: timeline, state, account data, ephemeral events and summary; null when nothing changed since <paramref name="from"/>.</summary>
-    private async Task<JsonObject?> BuildRoomAsync(ServerDbContext dbContext, Requester requester, CurrentStateRow member, long? from, long until, SyncFilter filter, CancellationToken cancellationToken)
+    /// <summary>Build a joined or left room's section: timeline, state, account data, ephemeral events, unread counts by <paramref name="ruleset"/> and summary; null when nothing changed since <paramref name="from"/>.</summary>
+    private async Task<JsonObject?> BuildRoomAsync(ServerDbContext dbContext, Requester requester, CurrentStateRow member, long? from, long until, SyncFilter filter, JsonObject ruleset, CancellationToken cancellationToken)
     {
         // Anything new: events, account data, or receipts and typing of joined rooms
         string roomId = member.RoomId;
@@ -240,7 +249,8 @@ public sealed class SyncService
         };
         if (!joined) return section;
         section["ephemeral"] = new JsonObject { ["events"] = new JsonArray([.. ephemeral]) };
-        section["unread_notifications"] = new JsonObject { ["notification_count"] = 0, ["highlight_count"] = 0 };
+        (int notifications, int highlights) = await PushRuleService.CountUnreadAsync(dbContext, ruleset, requester.UserId, roomId, cancellationToken);
+        section["unread_notifications"] = new JsonObject { ["notification_count"] = notifications, ["highlight_count"] = highlights };
         section["summary"] = new JsonObject
         {
             ["m.heroes"] = new JsonArray([.. heroes.Select(h => (JsonNode)h)]),
@@ -369,9 +379,10 @@ public sealed class SyncService
     /// <summary>Return whether a response tells the client anything new.</summary>
     private static bool HasContent(JsonObject response)
     {
-        // Any room section or account data
+        // Any room section, account data, presence or device news
         JsonNode rooms = response["rooms"]!;
         if (response["account_data"]!["events"]!.AsArray().Count > 0 || response["to_device"]!["events"]!.AsArray().Count > 0) return true;
+        if (response["presence"]!["events"]!.AsArray().Count > 0) return true;
         if (response["device_lists"]!["changed"]!.AsArray().Count > 0 || response["device_lists"]!["left"]!.AsArray().Count > 0) return true;
         // Return result
         return rooms["join"]!.AsObject().Count + rooms["invite"]!.AsObject().Count + rooms["leave"]!.AsObject().Count > 0;

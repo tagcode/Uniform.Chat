@@ -8,6 +8,7 @@
     <Project Path="src/Uniform.Matrix.Gui.Terminal/Uniform.Matrix.Gui.Terminal.csproj" />
     <Project Path="src/Uniform.Matrix.Client/Uniform.Matrix.Client.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Terminal/Uniform.Matrix.Client.Terminal.csproj" />
+    <Project Path="src/Uniform.Matrix.Client.Android/Uniform.Matrix.Client.Android.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Avalonia.Core/Uniform.Matrix.Client.Avalonia.Core.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Desktop/Uniform.Matrix.Client.Desktop.csproj" />
     <Project Path="src/Uniform.Matrix.Server/Uniform.Matrix.Server.csproj" />

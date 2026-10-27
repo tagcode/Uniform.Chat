@@ -44,17 +44,15 @@ How it works is in `docs/dev/articles/server.md`. Tests run our own `MatrixClien
 ## Milestone 1: standalone homeserver (done, except compatibility)
 - Element Web smoke test against the server.
 - Complement client-server tests. Needs Go, and Docker access for the user (the docker group, or rootless Docker).
-- Presence in sync; presence is stored but not sent yet.
-- Unread counts: sync sends `notification_count` and `highlight_count` as 0, so clients show no unread badges; needs push rule evaluation.
-- Media: legacy unauthenticated downloads, asynchronous uploads (`/media/v1/create`).
+- Email pushers: they are stored, but no email is sent.
+- Forwarded headers from a trusted reverse proxy (a known-proxies setting), so login rate limits count each client address instead of the proxy's.
 
 ## Later
-PostgreSQL in production, admin API, rate limits, URL previews, push gateway, sliding sync (MSC4186), room version 12, OpenTelemetry.
+PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), sliding sync (MSC4186), room version 12, OpenTelemetry.
 
-URL previews:
-- Server: `GET /_matrix/client/v1/media/preview_url?url=...&ts=...`. Fetch the page, parse OpenGraph (`og:title`, `og:description`, `og:image`) with AngleSharp, store `og:image` in the media repository and return it as an `mxc://` URI. Cache results per URL.
-- Safety: refuse private and internal IP ranges (SSRF), limit size, time and redirects; configurable allow and deny lists, off by default like Synapse's `url_preview_enabled`.
-- Client: show `[title — description]` and the `og:image` as a preview under messages with links; a `Ui:UrlPreviews` setting, later off by default in encrypted rooms.
+URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
+- Server: allow and deny lists of hosts.
+- Clients: show `[title — description]` and the `og:image` under messages with links, with `MatrixClient.GetUrlPreviewAsync`; a `Ui:UrlPreviews` setting, off by default in encrypted rooms.
 
 ## Milestone 2: federation
 A public name is only needed for federating with real servers, a Synapse test server or the open network. Synapse has to reach our server and validate its certificate. When we get there, it needs:
