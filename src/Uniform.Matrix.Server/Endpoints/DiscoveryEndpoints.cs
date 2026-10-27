@@ -17,8 +17,8 @@ public static class DiscoveryEndpoints
     /// <summary>Map <c>/_matrix/client/versions</c>, <c>/.well-known/matrix/client</c> and <c>/.well-known/matrix/server</c>.</summary>
     public static IEndpointRouteBuilder MapDiscovery(this IEndpointRouteBuilder routes)
     {
-        // Versions, no auth needed; delayed events for calls
-        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool> { ["org.matrix.msc4140"] = true } }));
+        // Versions, no auth needed; delayed events for calls, and sliding sync
+        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool> { ["org.matrix.msc4140"] = true, ["org.matrix.simplified_msc3575"] = true } }));
 
         // Well-known only with a configured public address, with the call service when there is one
         routes.MapGet("/.well-known/matrix/client", (IOptionsMonitor<ServerOptions> options, IOptionsMonitor<CallOptions> calls) =>
@@ -28,6 +28,9 @@ public static class DiscoveryEndpoints
             if (CallEndpoints.Transports(calls.CurrentValue) is { Count: > 0 } transports) wellKnown["org.matrix.msc4143.rtc_foci"] = transports;
             return MatrixHttp.Json(wellKnown);
         });
+        // No threads yet; clients list a room's threads
+        routes.MapGet("/_matrix/client/v1/rooms/{roomId}/threads", (string roomId) => MatrixHttp.Json(new JsonObject { ["chunk"] = new JsonArray() })).RequireAccessToken();
+
         // No bridges to other networks; clients ask before showing a directory of them
         routes.MapGet("/_matrix/client/v3/thirdparty/protocols", () => MatrixHttp.Json(new JsonObject())).RequireAccessToken();
 

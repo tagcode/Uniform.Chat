@@ -97,6 +97,7 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<EventSender>();
         builder.Services.AddSingleton<RoomService>();
         builder.Services.AddSingleton<SyncService>();
+        builder.Services.AddSingleton<SlidingSyncService>();
         builder.Services.AddSingleton<AccountDataService>();
         builder.Services.AddSingleton<PushRuleService>();
         builder.Services.AddSingleton<PusherService>();
@@ -122,7 +123,10 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<RemoteServerKeys>();
         builder.Services.AddSingleton<RemoteJoins>();
         builder.Services.AddSingleton<RemoteInvites>();
+        builder.Services.AddSingleton<FederationQueue>();
         builder.Services.AddSingleton<RemoteDevices>();
+        builder.Services.AddSingleton<RemoteActivity>();
+        builder.Services.AddSingleton<RoomHistory>();
         builder.Services.AddHostedService<FederationSender>();
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<OpenIdTokens>();

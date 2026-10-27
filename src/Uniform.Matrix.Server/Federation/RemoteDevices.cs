@@ -16,6 +16,7 @@ public sealed class RemoteDevices
 {
     private readonly DeviceKeyService keys;
     private readonly FederationClient federation;
+    private readonly FederationQueue queue;
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly ServerStream stream;
     private readonly IOptionsMonitor<ServerOptions> server;
@@ -24,11 +25,12 @@ public sealed class RemoteDevices
     private readonly ILogger<RemoteDevices> logger;
 
     /// <summary>Create the service.</summary>
-    public RemoteDevices(DeviceKeyService keys, FederationClient federation, IDbContextFactory<ServerDbContext> contexts, ServerStream stream, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<RemoteDevices> logger)
+    public RemoteDevices(DeviceKeyService keys, FederationClient federation, FederationQueue queue, IDbContextFactory<ServerDbContext> contexts, ServerStream stream, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<RemoteDevices> logger)
     {
         // Store dependencies
         this.keys = keys;
         this.federation = federation;
+        this.queue = queue;
         this.contexts = contexts;
         this.stream = stream;
         this.server = server;
@@ -96,17 +98,19 @@ public sealed class RemoteDevices
         return result;
     }
 
-    /// <summary>Send the remote users' part of a to-device request to their servers, one EDU per server; failures are logged, as the client cannot retry them.</summary>
-    public async Task SendToDeviceAsync(string sender, string type, string messageId, JsonObject messages, CancellationToken cancellationToken)
+    /// <summary>Queue the remote users' part of a to-device request for their servers, one EDU per server.</summary>
+    public Task SendToDeviceAsync(string sender, string type, string messageId, JsonObject messages, CancellationToken cancellationToken)
     {
         // Remote users by server
         (_, Dictionary<string, JsonObject> remote) = Split(messages);
-        if (remote.Count == 0 || !options.CurrentValue.Enabled) return;
+        if (remote.Count == 0 || !options.CurrentValue.Enabled) return Task.CompletedTask;
         foreach ((string serverName, JsonObject users) in remote)
         {
             JsonObject edu = new() { ["edu_type"] = "m.direct_to_device", ["content"] = new JsonObject { ["sender"] = sender, ["type"] = type, ["message_id"] = messageId, ["messages"] = users } };
-            await SendEdusAsync(serverName, [edu], cancellationToken);
+            queue.EnqueueEdu(serverName, edu);
         }
+        // Done
+        return Task.CompletedTask;
     }
 
     /// <summary>Queue the to-device messages of an <c>m.direct_to_device</c> EDU from <paramref name="origin"/> for local devices.</summary>
@@ -155,23 +159,6 @@ public sealed class RemoteDevices
         if (found["self_signing_keys"]?[userId] is JsonNode selfSigning) answer["self_signing_key"] = selfSigning.DeepClone();
         // Return devices
         return answer;
-    }
-
-    /// <summary>Send EDUs to a server in a transaction of their own; log failures.</summary>
-    public async Task SendEdusAsync(string destination, IReadOnlyList<JsonObject> edus, CancellationToken cancellationToken)
-    {
-        // A transaction with EDUs only
-        string origin = server.CurrentValue.ServerName;
-        JsonObject transaction = new() { ["origin"] = origin, ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(), ["pdus"] = new JsonArray(), ["edus"] = new JsonArray([.. edus.Select(e => (JsonNode)e.DeepClone())]) };
-        try
-        {
-            await federation.SendAsync(HttpMethod.Put, destination, $"/_matrix/federation/v1/send/edu{time.GetUtcNow().ToUnixTimeMilliseconds()}{Random.Shared.Next(1000)}", transaction, cancellationToken);
-        }
-        catch (MatrixException ex)
-        {
-            // On error log
-            logger.LogInformation("Sending EDUs to {Destination} failed: {Error}", destination, ex.Message);
-        }
     }
 
     /// <summary>Split a request keyed by user ID into the local users and the others by server.</summary>

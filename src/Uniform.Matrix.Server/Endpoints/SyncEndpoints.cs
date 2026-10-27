@@ -20,6 +20,15 @@ public static class SyncEndpoints
     {
         // Sync
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3").RequireAccessToken();
+        // Simplified sliding sync of newer clients such as Element X
+        routes.MapPost("/_matrix/client/unstable/org.matrix.simplified_msc3575/sync", async (string? pos, long? timeout, JsonObject body, HttpContext http, SlidingSyncService sliding, PresenceService presence, CancellationToken cancellationToken) =>
+        {
+            Requester requester = http.GetRequester();
+            await presence.TouchAsync(requester.UserId, null, cancellationToken);
+            TimeSpan wait = TimeSpan.FromMilliseconds(Math.Clamp(timeout ?? 0, 0, MaxTimeoutMs));
+            return MatrixHttp.Json(await sliding.SyncAsync(requester, pos, wait, body, cancellationToken));
+        }).RequireAccessToken();
+
         client.MapGet("/sync", async (string? since, string? filter, long? timeout, bool? full_state, string? set_presence, HttpContext http, SyncService sync, PresenceService presence, CancellationToken cancellationToken) =>
         {
             Requester requester = http.GetRequester();

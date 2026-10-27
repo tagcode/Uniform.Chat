@@ -11,26 +11,24 @@ using Uniform.Matrix.Server.Storage;
 using Uniform.Matrix.Server.Sync;
 
 /// <summary>Sends new room events to the other servers in each room as <see href="https://spec.matrix.org/latest/server-server-api/#transactions">transactions</see>: events of local users, and joins of remote users that this server accepted as the room's server; and device changes of local users as <c>m.device_list_update</c> EDUs.</summary>
-/// <remarks>Follows the <see cref="ServerStream"/> like <see cref="Accounts.PushNotifier"/>; one transaction per event and server, without retries yet, so a server that is down misses the event until backfill exists. Events from before the server started are not sent.</remarks>
+/// <remarks>Follows the <see cref="ServerStream"/> like <see cref="Accounts.PushNotifier"/> and hands what it finds to the <see cref="FederationQueue"/>, which batches and retries. Events from before the server started are not sent.</remarks>
 public sealed class FederationSender : BackgroundService
 {
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly ServerStream stream;
-    private readonly FederationClient federation;
-    private readonly RemoteDevices devices;
+    private readonly FederationQueue queue;
     private readonly IOptionsMonitor<ServerOptions> server;
     private readonly IOptionsMonitor<FederationOptions> options;
     private readonly TimeProvider time;
     private readonly ILogger<FederationSender> logger;
 
     /// <summary>Create the sender.</summary>
-    public FederationSender(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, FederationClient federation, RemoteDevices devices, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<FederationSender> logger)
+    public FederationSender(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, FederationQueue queue, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<FederationSender> logger)
     {
         // Store dependencies
         this.contexts = contexts;
         this.stream = stream;
-        this.federation = federation;
-        this.devices = devices;
+        this.queue = queue;
         this.server = server;
         this.options = options;
         this.time = time;
@@ -87,7 +85,7 @@ public sealed class FederationSender : BackgroundService
 
             // One transaction per server, named by stream position
             JsonObject pdu = JsonNode.Parse(row.Json)!.AsObject();
-            foreach (string destination in destinations) await SendAsync(destination, $"{row.Stream}", pdu, cancellationToken);
+            foreach (string destination in destinations) queue.EnqueuePdu(destination, pdu);
         }
 
         // Device changes of local users to the servers that share a room with them; without a history the other server fetches the whole list
@@ -100,23 +98,7 @@ public sealed class FederationSender : BackgroundService
             destinations.Remove(serverName);
             string deviceId = await db.Devices.AsNoTracking().Where(d => d.UserId == change.UserId).Select(d => d.DeviceId).FirstOrDefaultAsync(cancellationToken) ?? "";
             JsonObject edu = new() { ["edu_type"] = "m.device_list_update", ["content"] = new JsonObject { ["user_id"] = change.UserId, ["device_id"] = deviceId, ["stream_id"] = change.Stream, ["prev_id"] = new JsonArray() } };
-            foreach (string destination in destinations) await devices.SendEdusAsync(destination, [edu], cancellationToken);
-        }
-    }
-
-    /// <summary>Send one PDU to a server; log failures.</summary>
-    private async Task SendAsync(string destination, string transactionId, JsonObject pdu, CancellationToken cancellationToken)
-    {
-        // The transaction
-        JsonObject transaction = new() { ["origin"] = server.CurrentValue.ServerName, ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(), ["pdus"] = new JsonArray(pdu.DeepClone()) };
-        try
-        {
-            await federation.SendAsync(HttpMethod.Put, destination, $"/_matrix/federation/v1/send/{Uri.EscapeDataString(transactionId)}", transaction, cancellationToken);
-        }
-        catch (MatrixException ex)
-        {
-            // On error log and go on
-            logger.LogInformation("Sending to {Destination} failed: {Error}", destination, ex.Message);
+            foreach (string destination in destinations) queue.EnqueueEdu(destination, edu);
         }
     }
 }

@@ -22,6 +22,7 @@ public sealed class DeviceKeyService
     public const string UserSigning = "user_signing";
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly ServerStream stream;
+    private readonly SemaphoreSlim uploads = new(1, 1);
 
     /// <summary>Create the service.</summary>
     public DeviceKeyService(IDbContextFactory<ServerDbContext> contexts, ServerStream stream)
@@ -33,6 +34,21 @@ public sealed class DeviceKeyService
 
     /// <summary>Store <see href="https://spec.matrix.org/latest/client-server-api/#post_matrixclientv3keysupload">uploaded keys</see> of the requester's device; return the counts of its unclaimed one-time keys by algorithm.</summary>
     public async Task<JsonObject> UploadAsync(Requester requester, JsonObject? deviceKeys, JsonObject? oneTimeKeys, JsonObject? fallbackKeys, CancellationToken cancellationToken)
+    {
+        // One upload at a time, as clients send them in parallel and both would add the same rows
+        await uploads.WaitAsync(cancellationToken);
+        try
+        {
+            return await UploadOneAsync(requester, deviceKeys, oneTimeKeys, fallbackKeys, cancellationToken);
+        }
+        finally
+        {
+            uploads.Release();
+        }
+    }
+
+    /// <summary>Store one upload, see <see cref="UploadAsync"/>.</summary>
+    private async Task<JsonObject> UploadOneAsync(Requester requester, JsonObject? deviceKeys, JsonObject? oneTimeKeys, JsonObject? fallbackKeys, CancellationToken cancellationToken)
     {
         // Device keys of this device, signed by itself
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);

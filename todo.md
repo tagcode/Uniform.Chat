@@ -55,15 +55,15 @@ URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 - Clients: show `[title — description]` and the `og:image` under messages with links, with `MatrixClient.GetUrlPreviewAsync`; a `Ui:UrlPreviews` setting, off by default in encrypted rooms.
 
 ## Milestone 2: federation
-A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users (`invite` v2, signed by both servers), the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
+A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users and receiving their invites (`invite` v2, signed by both servers), encryption across servers (keys, one-time keys, to-device, device list updates), typing and read receipts, retrying transactions with backoff, the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
 
 Next:
 - Store remote keys in the database, old keys too, and ask notary servers (`/_matrix/key/v2/query`) for keys of servers that are down; serve `/_matrix/key/v2/query` ourselves.
 - SRV lookup (`_matrix-fed._tcp`), which needs a small DNS client.
 - Creating version 12 rooms here (joining them works): build the create event before the room's row, as the room ID is its hash; then make 12 the default. Server-side power checks outside the auth rules (e.g. `CanSendStateAsync`) should count version 12 creators too.
-- Retrying transactions to servers that are down, with backoff; EDUs (typing, receipts, presence, device lists, to-device).
+- Presence between servers (`m.presence` EDUs); keeping the outgoing queue across restarts.
 - Checking received auth chains with the auth rules, state resolution v2, backfill, `get_missing_events`.
-- Receiving invites from other servers: store the invite and its stripped state for a room not here yet, and show it in sync. Then an in-memory test of inviting across servers.
+- Telling the inviting server when an invite is rejected (`make_leave`/`send_leave`).
 - Joining by remote alias (`query/directory`), leaving (`make_leave`/`send_leave`).
 - Sliding sync (MSC4186), so Element X and SchildiChat Next can log in.
 - EDUs: typing, receipts, presence, device lists and to-device messages.

@@ -150,7 +150,7 @@ public sealed class SyncService
     }
 
     /// <summary>Build one response from <paramref name="from"/> (exclusive) to <paramref name="current"/>.</summary>
-    private async Task<JsonObject> BuildAsync(Requester requester, long? from, long current, SyncFilter filter, bool fullState, CancellationToken cancellationToken)
+    internal async Task<JsonObject> BuildAsync(Requester requester, long? from, long current, SyncFilter filter, bool fullState, CancellationToken cancellationToken)
     {
         // The user's rooms, minus forgotten ones
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);

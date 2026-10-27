@@ -65,6 +65,32 @@ public static class FederationEndpoints
         routes.MapPut("/_matrix/federation/v2/invite/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject body, HttpContext http, RemoteInvites invites, CancellationToken cancellationToken) =>
             MatrixHttp.Json(await invites.ReceiveAsync(http.GetOrigin(), roomId, eventId, body, cancellationToken))).RequireFederation();
 
+        // History for servers filling gaps: missing events, backfill, single events and state at an event
+        federation.MapPost("/get_missing_events/{roomId}", async (string roomId, JsonObject body, HttpContext http, RoomHistory history, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(new JsonObject
+            {
+                ["events"] = await history.GetMissingEventsAsync(http.GetOrigin(), roomId, Ids(body["earliest_events"]), Ids(body["latest_events"]), (int)(body["limit"]?.GetValue<long>() ?? 10), body["min_depth"]?.GetValue<long>() ?? 0, cancellationToken),
+            }));
+        federation.MapGet("/backfill/{roomId}", async (string roomId, int? limit, HttpContext http, RoomHistory history, IOptionsMonitor<ServerOptions> server, TimeProvider time, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(new JsonObject
+            {
+                ["origin"] = server.CurrentValue.ServerName,
+                ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(),
+                ["pdus"] = await history.BackfillAsync(http.GetOrigin(), roomId, [.. http.Request.Query["v"].OfType<string>()], limit ?? 10, cancellationToken),
+            }));
+        federation.MapGet("/event/{eventId}", async (string eventId, HttpContext http, RoomHistory history, IOptionsMonitor<ServerOptions> server, TimeProvider time, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["origin_server_ts"] = time.GetUtcNow().ToUnixTimeMilliseconds(), ["pdus"] = new JsonArray(await history.GetEventAsync(http.GetOrigin(), eventId, cancellationToken)) }));
+        federation.MapGet("/state_ids/{roomId}", async (string roomId, string event_id, HttpContext http, RoomHistory history, CancellationToken cancellationToken) =>
+        {
+            (_, _, List<string> stateIds, List<string> chainIds) = await history.GetStateAsync(http.GetOrigin(), roomId, event_id, cancellationToken);
+            return MatrixHttp.Json(new JsonObject { ["pdu_ids"] = new JsonArray([.. stateIds.Select(i => (JsonNode)i)]), ["auth_chain_ids"] = new JsonArray([.. chainIds.Select(i => (JsonNode)i)]) });
+        });
+        federation.MapGet("/state/{roomId}", async (string roomId, string event_id, HttpContext http, RoomHistory history, CancellationToken cancellationToken) =>
+        {
+            (List<JsonObject> state, List<JsonObject> chain, _, _) = await history.GetStateAsync(http.GetOrigin(), roomId, event_id, cancellationToken);
+            return MatrixHttp.Json(new JsonObject { ["pdus"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. chain]) });
+        });
+
         // Keys and devices of this server's users, for encrypting to them
         federation.MapPost("/user/keys/query", async (JsonObject body, IOptionsMonitor<ServerOptions> server, DeviceKeyService keys, CancellationToken cancellationToken) =>
         {
@@ -77,8 +103,8 @@ public static class FederationEndpoints
         federation.MapGet("/user/devices/{userId}", async (string userId, IOptionsMonitor<ServerOptions> server, RemoteDevices devices, CancellationToken cancellationToken) =>
             UserId.TryParse(userId, out UserId user) && user.ServerName == server.CurrentValue.ServerName ? MatrixHttp.Json(await devices.GetUserDevicesAsync(userId, cancellationToken)) : MatrixHttp.Error(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Not a user of this server."));
 
-        // Transactions of events, to-device messages and device list changes from other servers
-        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, RemoteDevices devices, CancellationToken cancellationToken) =>
+        // Transactions of events, and EDUs: to-device messages, device list changes, typing and receipts
+        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, RemoteDevices devices, RemoteActivity activity, CancellationToken cancellationToken) =>
         {
             string origin = http.GetOrigin();
             foreach (JsonObject edu in (body["edus"] as JsonArray ?? []).OfType<JsonObject>().Take(100))
@@ -88,6 +114,8 @@ public static class FederationEndpoints
                 {
                     case "m.direct_to_device": await devices.ReceiveToDeviceAsync(origin, content, cancellationToken); break;
                     case "m.device_list_update": await devices.ReceiveDeviceListUpdateAsync(origin, content, cancellationToken); break;
+                    case "m.typing": await activity.ReceiveTypingAsync(origin, content, cancellationToken); break;
+                    case "m.receipt": await activity.ReceiveReceiptsAsync(origin, content, cancellationToken); break;
                 }
             }
             JsonObject results = [];
@@ -109,6 +137,9 @@ public static class FederationEndpoints
         // Return routes
         return routes;
     }
+
+    /// <summary>Return the strings of a JSON array of event IDs.</summary>
+    private static IReadOnlyCollection<string> Ids(JsonNode? array) => [.. (array as JsonArray ?? []).Select(i => i?.GetValue<string>()).OfType<string>()];
 
     /// <summary>Return the entries of <paramref name="byUser"/> for users of <paramref name="serverName"/>; other servers ask only about their own.</summary>
     private static JsonObject LocalUsers(JsonObject? byUser, string serverName) =>
