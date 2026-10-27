@@ -16,6 +16,8 @@ public static class ErrorCodes
 {
     /// <summary>Access denied, e.g. wrong password or missing permission.</summary>
     public const string Forbidden = "M_FORBIDDEN";
+    /// <summary>The request is not, or not correctly, signed by the server it says it is from.</summary>
+    public const string Unauthorized = "M_UNAUTHORIZED";
     /// <summary>Access token is not recognized; the session has ended.</summary>
     public const string UnknownToken = "M_UNKNOWN_TOKEN";
     /// <summary>No access token was given.</summary>

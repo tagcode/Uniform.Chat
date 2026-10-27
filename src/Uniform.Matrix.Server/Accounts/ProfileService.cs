@@ -3,11 +3,14 @@ namespace Uniform.Matrix.Server.Accounts;
 using System.Net;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Rooms;
 using Uniform.Matrix.Server.Storage;
 
-/// <summary><see href="https://spec.matrix.org/latest/client-server-api/#profiles">Profiles</see> of local users: display name and avatar.</summary>
+/// <summary><see href="https://spec.matrix.org/latest/client-server-api/#profiles">Profiles</see>: display name and avatar of local users, and of other servers' users through federation.</summary>
 /// <remarks>Changing a profile also updates the user's member event in each joined room, as other members see names from there.</remarks>
 public sealed class ProfileService
 {
@@ -18,18 +21,25 @@ public sealed class ProfileService
     private const int MaxDisplayNameLength = 256;
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly RoomService rooms;
+    private readonly FederationClient federation;
+    private readonly IOptionsMonitor<ServerOptions> server;
 
     /// <summary>Create the service.</summary>
-    public ProfileService(IDbContextFactory<ServerDbContext> contexts, RoomService rooms)
+    public ProfileService(IDbContextFactory<ServerDbContext> contexts, RoomService rooms, FederationClient federation, IOptionsMonitor<ServerOptions> server)
     {
         // Store dependencies
         this.contexts = contexts;
         this.rooms = rooms;
+        this.federation = federation;
+        this.server = server;
     }
 
-    /// <summary>Return the profile of a local user, with unset fields left out; throw <c>M_NOT_FOUND</c> for unknown users.</summary>
+    /// <summary>Return the profile of a user, with unset fields left out; throw <c>M_NOT_FOUND</c> for unknown users. Users of other servers are asked from their server.</summary>
     public async Task<JsonObject> GetProfileAsync(string userId, CancellationToken cancellationToken)
     {
+        // Other servers' users from their server
+        if (UserId.TryParse(userId, out UserId parsed) && parsed.ServerName != server.CurrentValue.ServerName) return await GetRemoteProfileAsync(userId, parsed.ServerName, cancellationToken);
+
         // Existing user
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         if (!await db.Users.AnyAsync(u => u.UserId == userId && !u.Deactivated, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown user.");
@@ -39,6 +49,20 @@ public sealed class ProfileService
         JsonObject profile = [];
         if (row?.DisplayName is string name) profile[DisplayName] = name;
         if (row?.AvatarUrl is string avatar) profile[AvatarUrl] = avatar;
+        // Return profile
+        return profile;
+    }
+
+    /// <summary>Return the profile of a user of <paramref name="serverName"/> through federation, with only the known fields.</summary>
+    private async Task<JsonObject> GetRemoteProfileAsync(string userId, string serverName, CancellationToken cancellationToken)
+    {
+        // Query, keeping only string fields the client API has
+        JsonNode? answer = await federation.SendAsync(HttpMethod.Get, serverName, $"/_matrix/federation/v1/query/profile?user_id={Uri.EscapeDataString(userId)}", null, cancellationToken);
+        JsonObject profile = [];
+        foreach (string field in new[] { DisplayName, AvatarUrl })
+        {
+            if (answer?[field] is JsonValue value && value.TryGetValue(out string? text)) profile[field] = text;
+        }
         // Return profile
         return profile;
     }

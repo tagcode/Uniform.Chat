@@ -58,6 +58,9 @@ internal sealed class TestHomeserver : IAsyncDisposable
     /// <summary>Return an HTTP client to the server.</summary>
     public HttpClient CreateHttpClient() => app.GetTestClient();
 
+    /// <summary>Return an HTTP handler into the server, e.g. for other test servers to reach it.</summary>
+    public HttpMessageHandler CreateHandler() => app.GetTestServer().CreateHandler();
+
     /// <summary>Return a Matrix client to the server, not logged in.</summary>
     public MatrixClient CreateClient() => new(CreateHttpClient(), BaseAddress);
 

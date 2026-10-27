@@ -85,6 +85,19 @@ Gateway URLs come from users, so the gateway client (`PushNotifier.CreateHandler
 
 The server never sees private keys. It checks that uploaded device keys, cross-signing keys and signatures are signed as the spec requires, hands out each one-time key once, and stores encrypted backups as they come.
 
+## Federation
+
+Federation is being built, behind `Federation:Enabled`. In `Federation/`:
+
+- `ServerResolver` finds other servers as the spec's [server name resolution](https://spec.matrix.org/latest/server-server-api/#resolving-server-names) says: IP literals and names with a port directly, otherwise `/.well-known/matrix/server` delegation, else port 8448. SRV records are not looked up yet.
+- `FederationClient` sends requests signed with `FederationAuth` (in `Uniform.Matrix.Protocol.Server`) as an `X-Matrix` authorization, through the same public-addresses-only handler as push gateways and URL previews.
+- `RemoteServerKeys` fetches other servers' keys from their `/_matrix/key/v2/server`, accepts them only when every listed key signed the response, and caches them in memory until `valid_until_ts`, at most a week.
+- `ServerAuthentication` is middleware on endpoints marked `RequireFederation()`: it buffers the body, checks the signature over the raw request target, and gives the endpoint the origin with `GetOrigin()`.
+
+`FederationEndpoints` serves `/_matrix/key/v2/server`, `/_matrix/federation/v1/version` and `query/profile`, and `ProfileService` asks other servers for their users' profiles. `FederationTests` run two servers in memory whose federation clients reach each other through a test handler.
+
+HTTPS comes from `TlsCertificate` (in `Http/`), which reads the PEM files of `Tls:*`, sends the intermediates with the certificate (other servers check the chain) and reads the files again within a minute of a renewal.
+
 ## Testing
 
 `Uniform.Matrix.Server.Tests` start the whole server in memory with `TestHomeserver` (ASP.NET Core's test server, a temporary data directory) and drive it with our own `MatrixClient`. Server logs go to the test output. `EncryptionTests` run two of our `OlmMachine`s against it: messages between users, recovery from backup, key forwarding and emoji verification.
@@ -98,4 +111,4 @@ string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Name = "Kitc
 
 ## Not yet covered
 
-Federation, email pushers (stored but not sent), room upgrades, threads and relations, search, sliding sync, and PostgreSQL.
+Most of federation (joins, events, state resolution, EDUs, remote media), email pushers (stored but not sent), room upgrades, threads and relations, search, sliding sync, and PostgreSQL.

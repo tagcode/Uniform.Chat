@@ -30,6 +30,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <!-- Tests sign requests with the server key -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Uniform.Matrix.Server.Tests" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Protocol.Server\Uniform.Matrix.Protocol.Server.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />

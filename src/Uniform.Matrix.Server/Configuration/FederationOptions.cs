@@ -1,0 +1,17 @@
+namespace Uniform.Matrix.Server.Configuration;
+
+/// <summary><see href="https://spec.matrix.org/latest/server-server-api/">Federation</see> with other homeservers, configuration section <see cref="Section"/>.</summary>
+public sealed record FederationOptions
+{
+    /// <summary>Configuration section name.</summary>
+    public const string Section = "Federation";
+
+    /// <summary>Whether to talk to other servers and answer them; off while federation is unfinished.</summary>
+    public bool Enabled { get; set; }
+    /// <summary>Whether to reach servers at private, loopback and link-local addresses; off, so remote names cannot make the server reach machines inside its network.</summary>
+    public bool AllowPrivateAddresses { get; set; }
+    /// <summary>How long to wait for another server to answer.</summary>
+    public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(30);
+    /// <summary>How long other servers may cache this server's signing key, announced as <c>valid_until_ts</c>.</summary>
+    public TimeSpan KeyValidity { get; set; } = TimeSpan.FromDays(1);
+}

@@ -169,6 +169,12 @@ Settings come from these places; later ones override earlier ones:
 | `RateLimits:WritesPerSecond` | `10` | Writes per login allowed each second after the burst. ↻ |
 | `RateLimits:LoginBurst` | `20` | Logins and registrations from one address allowed at once. Behind a reverse proxy every request comes from the proxy's address, so these limits are shared by everyone. ↻ |
 | `RateLimits:LoginsPerMinute` | `10` | Logins and registrations from one address allowed each minute after the burst. ↻ |
+| `Federation:Enabled` | `false` | Talk to other Matrix servers. Unfinished: today it serves this server's signing key and answers profile queries, and shows users of other servers their profiles. Needs HTTPS with a real certificate. |
+| `Federation:AllowPrivateAddresses` | `false` | Also reach servers at private and local network addresses. Off, so remote server names cannot make the server reach machines inside your network. |
+| `Federation:RequestTimeout` | `00:00:30` | How long to wait for another server to answer. |
+| `Federation:KeyValidity` | `1.00:00:00` | How long other servers may keep this server's signing key before asking again. |
+| `Tls:CertificatePath` | not set | Certificate file for `https://` addresses in `Urls`, with its intermediate certificates, such as [certbot](https://github.com/certbot/certbot)'s `fullchain.pem`. A renewed file is picked up within a minute, without a restart. ↻ |
+| `Tls:KeyPath` | not set | Private key of the certificate, such as [certbot](https://github.com/certbot/certbot)'s `privkey.pem`. Keep it readable only by the account that runs the server. ↻ |
 | `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
 | `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](#run-without-the-dashboard). ↻ |
@@ -176,7 +182,14 @@ Settings come from these places; later ones override earlier ones:
 ↻ marks options that take effect after a restart.
 
 > [!WARNING]
-> The server speaks plain HTTP. Keep it on `localhost`, or put a reverse proxy such as Caddy or nginx in front of it for HTTPS before letting other computers connect. Listening on all interfaces (`--Urls=http://0.0.0.0:8008`) without one sends passwords unencrypted.
+> Without `Tls:*` the server speaks plain HTTP. Keep it on `localhost`, or give it a certificate, or put a reverse proxy such as Caddy or nginx in front of it, before letting other computers connect. Listening on all interfaces (`--Urls=http://0.0.0.0:8008`) without HTTPS sends passwords unencrypted.
+
+To serve HTTPS itself, point the server at a certificate, for example [certbot](https://github.com/certbot/certbot)'s files, and use `https://` addresses:
+
+```bash
+./Uniform.Matrix.Server.Host --Urls="https://0.0.0.0:8448" \
+  --Tls:CertificatePath=/path/to/fullchain.pem --Tls:KeyPath=/path/to/privkey.pem
+```
 
 ## Accounts
 

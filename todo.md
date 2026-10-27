@@ -55,12 +55,17 @@ URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 - Clients: show `[title — description]` and the `og:image` under messages with links, with `MatrixClient.GetUrlPreviewAsync`; a `Ui:UrlPreviews` setting, off by default in encrypted rooms.
 
 ## Milestone 2: federation
-A public name is only needed for federating with real servers, a Synapse test server or the open network. Synapse has to reach our server and validate its certificate. When we get there, it needs:
-- a subdomain, e.g. matrix.example.org, pointing at the machine running the test server;
-- one TCP port forwarded through NAT and the firewall: 8448, the federation default, or 443 with `.well-known/matrix/server` delegation;
-- a TLS certificate, most easily from a reverse proxy like Caddy that gets Let's Encrypt certificates by itself; Kestrel can also use a certificate file.
+A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, all behind `Federation:Enabled`.
 
-Keep that server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
+Next:
+- Store remote keys in the database, old keys too, and ask notary servers (`/_matrix/key/v2/query`) for keys of servers that are down; serve `/_matrix/key/v2/query` ourselves.
+- SRV lookup (`_matrix-fed._tcp`), which needs a small DNS client.
+- Joining remote rooms (`make_join`/`send_join`), receiving and sending transactions (`/send`), event checks with auth chains and state resolution v2, backfill, `get_missing_events`, invites over federation.
+- EDUs: typing, receipts, presence, device lists and to-device messages.
+- Remote media, directory queries, room ACLs, `/_matrix/federation/v1/publicRooms`.
+- A real test against Synapse and the federation tester.
+
+Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
 
 # Voice calls
 

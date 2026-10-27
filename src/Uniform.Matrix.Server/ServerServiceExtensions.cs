@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Encryption;
 using Uniform.Matrix.Server.Endpoints;
+using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Keys;
 using Uniform.Matrix.Server.Media;
@@ -43,9 +45,27 @@ public static class ServerServiceExtensions
         builder.Services.AddOptionSection<PushOptions>(builder.Configuration, PushOptions.Section);
         builder.Services.AddOptionSection<UrlPreviewOptions>(builder.Configuration, UrlPreviewOptions.Section);
         builder.Services.AddOptionSection<RateLimitOptions>(builder.Configuration, RateLimitOptions.Section);
+        builder.Services.AddOptionSection<TlsOptions>(builder.Configuration, TlsOptions.Section);
+        builder.Services.AddOptionSection<FederationOptions>(builder.Configuration, FederationOptions.Section);
 
         // Rate limits, read once as the limiter is built at start
         builder.Services.AddMatrixRateLimits(builder.Configuration.GetSection(RateLimitOptions.Section).Get<RateLimitOptions>() ?? new RateLimitOptions());
+
+        // HTTPS from PEM files when set; the handshake sends the chain, which other servers check
+        if (builder.Configuration.GetSection(TlsOptions.Section).Get<TlsOptions>()?.CertificatePath is not null)
+        {
+            builder.Services.AddSingleton<TlsCertificate>();
+            builder.Services.AddOptions<KestrelServerOptions>().Configure<TlsCertificate>((kestrel, certificate) => kestrel.ConfigureHttpsDefaults(https =>
+            {
+                https.ServerCertificateSelector = (_, _) => certificate.Certificate;
+                https.OnAuthenticate = (_, ssl) =>
+                {
+                    ssl.ServerCertificateSelectionCallback = null;
+                    ssl.ServerCertificate = null;
+                    ssl.ServerCertificateContext = certificate.Context;
+                };
+            }));
+        }
 
         // JSON like the rest of the protocol
         builder.Services.ConfigureHttpJsonOptions(json =>
@@ -96,6 +116,10 @@ public static class ServerServiceExtensions
             handler.MaxAutomaticRedirections = 5;
             return handler;
         });
+        builder.Services.AddSingleton<ServerResolver>();
+        builder.Services.AddSingleton<FederationClient>();
+        builder.Services.AddSingleton<RemoteServerKeys>();
+        builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<DeviceKeyService>();
         builder.Services.AddSingleton<ToDeviceService>();
         builder.Services.AddSingleton<KeyBackupService>();
@@ -125,6 +149,9 @@ public static class ServerServiceExtensions
         // Rate limits inside the error handling, so refusals are counted like other answers
         app.UseRateLimiter();
 
+        // Signatures of other servers, checked before their endpoints read the body
+        app.UseServerAuthentication();
+
         // Endpoints by spec area
         app.MapDiscovery();
         app.MapAccounts();
@@ -140,6 +167,7 @@ public static class ServerServiceExtensions
         app.MapMedia();
         app.MapKeys();
         app.MapKeyBackup();
+        app.MapFederation();
 
         // Addresses in the log once listening
         app.Lifetime.ApplicationStarted.Register(() => logger.LogInformation("Serving {ServerName} at {Addresses}", app.Services.GetRequiredService<IOptions<ServerOptions>>().Value.ServerName, string.Join(", ", app.Urls)));
