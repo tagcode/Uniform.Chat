@@ -25,7 +25,7 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 </pre>
 
-- User guide: [Getting started](docs/terminal/articles/getting-started.md), [Interface](docs/terminal/articles/interface.md)
+- User guide: [Getting started](docs/terminal/articles/getting-started.md), [Interface](docs/terminal/articles/interface.md), [Settings](docs/terminal/articles/settings.md)
 - Developer guide: [Architecture](docs/dev/articles/architecture.md), [Using the protocol client](docs/dev/articles/using-client.md)
 
 ## Desktop and Android client
@@ -34,7 +34,7 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 
 ![The desktop client](docs/desktop/images/desktop.png)
 
-- User guide: [Getting started](docs/desktop/articles/getting-started.md), [Using the app](docs/desktop/articles/using.md)
+- User guide: [Getting started](docs/desktop/articles/getting-started.md), [Rooms](docs/desktop/articles/rooms.md), [Messages and files](docs/desktop/articles/messages.md)
 
 ## Server
 
@@ -55,7 +55,7 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 └──────────────────────────────────────────────────────────────────────────────────┘
 </pre>
 
-- User guide: [Running the server](docs/server/articles/running.md)
+- User guide: [Installing](docs/server/articles/install.md), [Settings](docs/server/articles/settings.md)
 - Developer guide: [Server](docs/dev/articles/server.md), [Architecture](docs/dev/articles/architecture.md)
 
 ## Libraries

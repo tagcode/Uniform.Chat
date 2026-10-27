@@ -47,6 +47,7 @@ public static class ServerServiceExtensions
         builder.Services.AddOptionSection<RateLimitOptions>(builder.Configuration, RateLimitOptions.Section);
         builder.Services.AddOptionSection<TlsOptions>(builder.Configuration, TlsOptions.Section);
         builder.Services.AddOptionSection<FederationOptions>(builder.Configuration, FederationOptions.Section);
+        builder.Services.AddOptionSection<CallOptions>(builder.Configuration, CallOptions.Section);
 
         // Rate limits, read once as the limiter is built at start
         builder.Services.AddMatrixRateLimits(builder.Configuration.GetSection(RateLimitOptions.Section).Get<RateLimitOptions>() ?? new RateLimitOptions());
@@ -122,6 +123,8 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<RemoteJoins>();
         builder.Services.AddHostedService<FederationSender>();
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
+        builder.Services.AddSingleton<OpenIdTokens>();
+        builder.Services.AddSingleton<DelayedEvents>();
         builder.Services.AddSingleton<DeviceKeyService>();
         builder.Services.AddSingleton<ToDeviceService>();
         builder.Services.AddSingleton<KeyBackupService>();
@@ -170,6 +173,7 @@ public static class ServerServiceExtensions
         app.MapKeys();
         app.MapKeyBackup();
         app.MapFederation();
+        app.MapCalls();
 
         // Addresses in the log once listening
         app.Lifetime.ApplicationStarted.Register(() => logger.LogInformation("Serving {ServerName} at {Addresses}", app.Services.GetRequiredService<IOptions<ServerOptions>>().Value.ServerName, string.Join(", ", app.Urls)));

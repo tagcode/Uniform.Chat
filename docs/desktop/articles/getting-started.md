@@ -48,7 +48,7 @@ Enter your full user ID, such as `@alice:matrix.org`, and your password. The ser
 
 The app remembers the account, so the next start opens the chat without asking. *⋮ → Sign out* logs the device out on the server and forgets the account.
 
-Next, see [Using the app](using.md).
+Next, see [Rooms](rooms.md) and [Messages and files](messages.md).
 
 ## Where things are kept
 

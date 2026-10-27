@@ -26,6 +26,15 @@ public static class AppDirectories
     /// <summary>Configuration directory: <c>$XDG_CONFIG_HOME/&lt;name&gt;</c> or <c>~/.config/&lt;name&gt;</c>.</summary>
     public static string Config(string applicationName) => Path.Combine(Base("XDG_CONFIG_HOME", ".config"), Name(applicationName));
 
+    /// <summary>Return <paramref name="path"/> with a leading <c>~</c> or <c>~/</c> replaced by the home directory, as shells do only at the start of a word, e.g. not in <c>--Tls:KeyPath=~/key.pem</c>.</summary>
+    public static string ExpandHome(string path)
+    {
+        // Only the user's own home
+        if (path != "~" && !path.StartsWith("~/") && !path.StartsWith("~" + Path.DirectorySeparatorChar)) return path;
+        // Return expanded
+        return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), path[1..].TrimStart('/', Path.DirectorySeparatorChar));
+    }
+
     /// <summary>Return the XDG variable's directory, or its default under the home directory.</summary>
     private static string Base(string variable, string fallback)
     {

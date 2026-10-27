@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server.Configuration;
 
 /// <summary>The server's HTTPS certificate from the PEM files of <see cref="TlsOptions"/>, with its intermediates, read again when the files change.</summary>
@@ -22,16 +23,25 @@ public sealed class TlsCertificate
     private (DateTime Certificate, DateTime Key) loadedWriteTimes;
     private DateTimeOffset nextCheck;
 
-    /// <summary>Create from the configured files; throw when they are not set or cannot be read, so a bad path stops the start.</summary>
+    /// <summary>Create from the configured files, with <c>~</c> as the home directory; throw <see cref="TlsCertificateException"/> when they are not set or cannot be read, so a bad path stops the start.</summary>
     public TlsCertificate(IOptions<TlsOptions> options, TimeProvider time, ILogger<TlsCertificate> logger)
     {
         // Assert both files are set
-        certificatePath = options.Value.CertificatePath ?? throw new InvalidOperationException("Tls:CertificatePath is not set.");
-        keyPath = options.Value.KeyPath ?? throw new InvalidOperationException("Tls:KeyPath is not set.");
+        certificatePath = AppDirectories.ExpandHome(options.Value.CertificatePath ?? throw new TlsCertificateException("Tls:CertificatePath is not set."));
+        keyPath = AppDirectories.ExpandHome(options.Value.KeyPath ?? throw new TlsCertificateException("Tls:KeyPath is not set; it is needed with Tls:CertificatePath."));
         this.time = time;
         this.logger = logger;
-        // Load now
-        context = Load();
+
+        // Load now, telling which setting is wrong
+        try
+        {
+            context = Load();
+        }
+        catch (Exception ex) when (ex is IOException or CryptographicException or UnauthorizedAccessException)
+        {
+            string setting = !File.Exists(certificatePath) ? $"Tls:CertificatePath {certificatePath}" : !File.Exists(keyPath) ? $"Tls:KeyPath {keyPath}" : $"Tls:CertificatePath {certificatePath} with Tls:KeyPath {keyPath}";
+            throw new TlsCertificateException($"Cannot read the TLS certificate from {setting}: {ex.Message}", ex);
+        }
     }
 
     /// <summary>Get the certificate and its chain for a TLS handshake, read again first when the files have changed.</summary>
@@ -93,3 +103,6 @@ public sealed class TlsCertificate
         return names is null ? [certificate.GetNameInfo(X509NameType.SimpleName, false)] : names.EnumerateDnsNames();
     }
 }
+
+/// <summary>The TLS certificate of <see cref="TlsOptions"/> is not set right or cannot be read.</summary>
+public sealed class TlsCertificateException(string message, Exception? innerException = null) : Exception(message, innerException);

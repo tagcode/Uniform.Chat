@@ -25,7 +25,7 @@ You can also give them on the command line, which skips the question: `--Matrix:
 
 The window has a menu bar, a room list, the messages of the selected room and its members. Type a message and press Enter to send it; see [Interface](interface.md) for menus, keys and `/commands`.
 
-Settings can be changed in File → Settings, which saves them to `~/.config/uniform-matrix-client-terminal/settings.json`; see [Settings](interface.md#settings). They can also go in `appsettings.json` next to the program, for example `"Matrix": { "UserId": "@alice:matrix.org" }`. Command-line options override both.
+Settings can be changed in File → Settings, which saves them to `~/.config/uniform-matrix-client-terminal/settings.json`; see [Settings](settings.md), which also lists every command-line parameter. They can also go in `appsettings.json` next to the program, for example `"Matrix": { "UserId": "@alice:matrix.org" }`. Command-line options override both.
 
 Each run writes its own log under `~/.local/share/uniform-matrix-client-terminal/logs/`; View → Logs shows them.
 

@@ -11,6 +11,7 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Http;
 
 // Read appsettings.json next to the executable, not from the working directory
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory });
@@ -29,8 +30,19 @@ if (!dashboard) builder.Logging.AddSimpleConsole(console => console.SingleLine =
 builder.Logging.AddFilter<ConsoleLoggerProvider>("Microsoft.Extensions.Hosting.Internal.Host", LogLevel.Critical);
 builder.Logging.AddFilter<ConsoleLoggerProvider>(StartupCategory, LogLevel.None);
 
+// A bad TLS certificate stops the build, before logging works; tell it in short
+WebApplication app;
+try
+{
+    app = builder.Build();
+}
+catch (Exception exception) when (FindTlsError(exception) is TlsCertificateException tls)
+{
+    WriteTlsError(tls);
+    return 1;
+}
+
 // No dashboard: serve until stopped
-WebApplication app = builder.Build();
 app.MapMatrixServer();
 if (!dashboard)
 {
@@ -68,6 +80,33 @@ static async Task<bool> StartAsync(WebApplication app)
         // On error stop
         return false;
     }
+    catch (Exception exception) when (FindTlsError(exception) is TlsCertificateException tls)
+    {
+        app.Services.GetRequiredService<ILoggerFactory>().CreateLogger(StartupCategory).LogError("{Error}", tls.Message);
+        WriteTlsError(tls);
+        // On error stop
+        return false;
+    }
+}
+
+// Tell what is wrong with the certificate, and how the paths look
+static void WriteTlsError(TlsCertificateException tls)
+{
+    // Message, then an example
+    Console.Error.WriteLine(tls.Message);
+    Console.Error.WriteLine("Check the paths, e.g. --Tls:CertificatePath=/etc/letsencrypt/live/example.org/fullchain.pem --Tls:KeyPath=/etc/letsencrypt/live/example.org/privkey.pem");
+}
+
+// Return the TLS certificate error inside an exception from starting, as Kestrel wraps it; null for other errors
+static TlsCertificateException? FindTlsError(Exception exception)
+{
+    // Down the inner exceptions
+    for (Exception? current = exception; current is not null; current = current.InnerException)
+    {
+        if (current is TlsCertificateException tls) return tls;
+    }
+    // Return none
+    return null;
 }
 
 /// <summary>The program's start-up messages.</summary>

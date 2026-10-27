@@ -85,3 +85,6 @@ Keep the test server's registration closed and rate limits on, since unfinished 
 # Uniform.Matrix.Client.Desktop
 
 - The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?
+
+ # Terminal client
+- "Uniform.Matrix.Client.Terminal --help" should list the application parameters especially "Matrix:UserId" (with example @alice:matrix.org) and "Matrix:Password". These application parameters should be listed in the application user documentation too. Also, break down the user documentations into smaller .md files accoding to topic.

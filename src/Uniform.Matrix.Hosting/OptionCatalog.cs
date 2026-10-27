@@ -164,13 +164,14 @@ public sealed partial class OptionCatalog
         return Whitespace().Replace(text, " ").Trim();
     }
 
-    /// <summary>Return the readable part of a documentation ID: <c>T:A.B.Type</c> becomes <c>Type</c>, <c>P:A.B.Type.Member</c> becomes <c>Type.Member</c>.</summary>
+    /// <summary>Return the readable part of a documentation ID for people changing settings: <c>T:A.B.Type</c> becomes <c>Type</c>, a property of an options type or an enum value just its name, e.g. <c>DataDirectory</c> or <c>Blocks</c>, and other members <c>Type.Member</c>.</summary>
     private static string ShortName(string id)
     {
         // Drop the kind prefix and namespace
         string[] parts = id[(id.IndexOf(':') + 1)..].Split('(')[0].Split('.');
-        // Return last one or two parts
-        return id.StartsWith("T:") ? parts[^1] : string.Join('.', parts[^2..]);
+        if (id.StartsWith("T:")) return parts[^1];
+        // Return the setting or value name alone, else type and member
+        return id.StartsWith("F:") || id.StartsWith("P:") && parts[^2].EndsWith("Options") ? parts[^1] : string.Join('.', parts[^2..]);
     }
 
     /// <summary>Run of whitespace.</summary>

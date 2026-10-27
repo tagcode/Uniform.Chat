@@ -8,6 +8,11 @@ A chat app for [Matrix](https://matrix.org), the open chat protocol, for Windows
 > The app is in early development.
 
 - [Getting started](articles/getting-started.md): install, sign in, and where your data is kept.
-- [Using the app](articles/using.md): rooms, messages, files, security, notifications and settings.
+- [Rooms](articles/rooms.md): the room list, joining and creating rooms.
+- [Messages and files](articles/messages.md): writing, replies, reactions and files.
+- [Security](articles/security.md): encryption, recovery key and verification.
+- [Notifications](articles/notifications.md): when and how the app tells you about messages.
+- [Settings](articles/settings.md): what can be changed.
+- [Phones and narrow windows](articles/phones.md): the one-pane layout.
 
 There is also a client for the text terminal; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/terminal/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/server/index.md).

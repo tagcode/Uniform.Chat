@@ -1,4 +1,14 @@
 - name: Getting started
   href: getting-started.md
-- name: Using the app
-  href: using.md
+- name: Rooms
+  href: rooms.md
+- name: Messages and files
+  href: messages.md
+- name: Security
+  href: security.md
+- name: Notifications
+  href: notifications.md
+- name: Settings
+  href: settings.md
+- name: Phones and narrow windows
+  href: phones.md

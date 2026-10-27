@@ -17,16 +17,18 @@ HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicati
 // User settings file below environment and command line, and changes applied in the settings window on top
 builder.AddSettings();
 
-// Without a user ID and a console to ask in, show help instead of a stack trace
+// Help when asked, and without a user ID and a console to ask in, instead of a stack trace
 string userIdKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.UserId)}";
 string homeserverKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.Homeserver)}";
 string? userId = builder.Configuration[userIdKey];
 bool hasUserId = UserId.TryParse(userId, out _);
-if (!hasUserId && !Usage.CanAsk)
+bool askedForHelp = Usage.IsHelp(args);
+if (askedForHelp || !hasUserId && !Usage.CanAsk)
 {
-    Console.Error.WriteLine(Usage.Text(userId, SettingsStore.DefaultPath(builder.Environment.ApplicationName)));
+    OptionCatalog settings = new([new OptionSection(MatrixOptions.Section, typeof(MatrixOptions)), new OptionSection(StorageOptions.Section, typeof(StorageOptions)), new OptionSection(UiOptions.Section, typeof(UiOptions))]);
+    (askedForHelp ? Console.Out : Console.Error).WriteLine(Usage.Text(userId, askedForHelp, SettingsStore.DefaultPath(builder.Environment.ApplicationName), [.. settings.GetAll(builder.Configuration).Where(o => o.Key == "Logging:LogLevel:Default" || !o.Key.StartsWith("Logging:"))]));
     Usage.WaitIfOwnConsole();
-    return 2;
+    return askedForHelp ? 0 : 2;
 }
 
 // Terminal UI; created first so the first sign-in and the password prompt can use it

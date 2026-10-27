@@ -6,6 +6,12 @@ A chat client for [Matrix](https://matrix.org), the open chat protocol, that run
 > The client is in early development.
 
 - [Getting started](articles/getting-started.md): install, run and log in.
-- [Interface](articles/interface.md): menus, keys, commands, encryption, files and settings.
+- [Interface](articles/interface.md): the window, menus and keys.
+- [Messages](articles/messages.md): formatting, replies, edits, reactions and more.
+- [Files and images](articles/files.md): sending, saving and image previews.
+- [Encryption and devices](articles/encryption.md): recovery key, key backup and verification.
+- [Room administration](articles/rooms.md): names, avatars, kicks, bans and power levels.
+- [Commands](articles/commands.md): the `/commands` of the input line.
+- [Settings](articles/settings.md): command-line parameters, the settings file and logs.
 
 There is also a graphical app for Windows, Linux and Android; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/desktop/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/server/index.md).

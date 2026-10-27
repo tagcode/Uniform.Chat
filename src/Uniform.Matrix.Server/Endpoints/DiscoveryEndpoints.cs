@@ -1,5 +1,6 @@
 namespace Uniform.Matrix.Server.Endpoints;
 
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
@@ -16,13 +17,17 @@ public static class DiscoveryEndpoints
     /// <summary>Map <c>/_matrix/client/versions</c> and <c>/.well-known/matrix/client</c>.</summary>
     public static IEndpointRouteBuilder MapDiscovery(this IEndpointRouteBuilder routes)
     {
-        // Versions, no auth needed
-        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool>() }));
+        // Versions, no auth needed; delayed events for calls
+        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool> { ["org.matrix.msc4140"] = true } }));
 
-        // Well-known only with a configured public address
-        routes.MapGet("/.well-known/matrix/client", (IOptionsMonitor<ServerOptions> options) => options.CurrentValue.PublicBaseUrl is string url
-            ? MatrixHttp.Json(new WellKnownClient { Homeserver = new WellKnownServer { BaseUrl = url } })
-            : MatrixHttp.Error(System.Net.HttpStatusCode.NotFound, ErrorCodes.NotFound, "No public base URL configured."));
+        // Well-known only with a configured public address, with the call service when there is one
+        routes.MapGet("/.well-known/matrix/client", (IOptionsMonitor<ServerOptions> options, IOptionsMonitor<CallOptions> calls) =>
+        {
+            if (options.CurrentValue.PublicBaseUrl is not string url) return MatrixHttp.Error(System.Net.HttpStatusCode.NotFound, ErrorCodes.NotFound, "No public base URL configured.");
+            JsonObject wellKnown = new() { ["m.homeserver"] = new JsonObject { ["base_url"] = url } };
+            if (CallEndpoints.Transports(calls.CurrentValue) is { Count: > 0 } transports) wellKnown["org.matrix.msc4143.rtc_foci"] = transports;
+            return MatrixHttp.Json(wellKnown);
+        });
         // Return routes
         return routes;
     }

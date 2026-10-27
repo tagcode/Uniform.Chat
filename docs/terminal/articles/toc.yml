@@ -2,3 +2,15 @@
   href: getting-started.md
 - name: Interface
   href: interface.md
+- name: Messages
+  href: messages.md
+- name: Files and images
+  href: files.md
+- name: Encryption and devices
+  href: encryption.md
+- name: Room administration
+  href: rooms.md
+- name: Commands
+  href: commands.md
+- name: Settings
+  href: settings.md

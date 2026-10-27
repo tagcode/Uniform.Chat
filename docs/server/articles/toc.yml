@@ -1,2 +1,16 @@
-- name: Running the server
-  href: running.md
+- name: Installing
+  href: install.md
+- name: Run with the dashboard
+  href: dashboard.md
+- name: Run without the dashboard
+  href: service.md
+- name: Settings
+  href: settings.md
+- name: Accounts
+  href: accounts.md
+- name: Connecting clients
+  href: clients.md
+- name: Files
+  href: files.md
+- name: Troubleshooting
+  href: troubleshooting.md
