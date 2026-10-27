@@ -169,7 +169,7 @@ Settings come from these places; later ones override earlier ones:
 | `RateLimits:WritesPerSecond` | `10` | Writes per login allowed each second after the burst. ↻ |
 | `RateLimits:LoginBurst` | `20` | Logins and registrations from one address allowed at once. Behind a reverse proxy every request comes from the proxy's address, so these limits are shared by everyone. ↻ |
 | `RateLimits:LoginsPerMinute` | `10` | Logins and registrations from one address allowed each minute after the burst. ↻ |
-| `Federation:Enabled` | `false` | Talk to other Matrix servers. Unfinished: today it serves this server's signing key and answers profile queries, and shows users of other servers their profiles. Needs HTTPS with a real certificate. |
+| `Federation:Enabled` | `false` | Talk to other Matrix servers. Unfinished: today it serves this server's signing key, answers profile queries, shows users of other servers their profiles, and lets users join rooms of other servers by room ID (messages after the join do not flow yet). Needs HTTPS with a real certificate. |
 | `Federation:AllowPrivateAddresses` | `false` | Also reach servers at private and local network addresses. Off, so remote server names cannot make the server reach machines inside your network. |
 | `Federation:RequestTimeout` | `00:00:30` | How long to wait for another server to answer. |
 | `Federation:KeyValidity` | `1.00:00:00` | How long other servers may keep this server's signing key before asking again. |

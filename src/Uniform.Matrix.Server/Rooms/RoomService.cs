@@ -9,6 +9,7 @@ using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Server;
 using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Storage;
 
 /// <summary>Rooms of local users: creation, membership, messages and state, redaction, and what a user may read.</summary>
@@ -18,15 +19,17 @@ public sealed class RoomService
     private readonly EventSender sender;
     private readonly IOptions<ServerOptions> options;
     private readonly TimeProvider time;
+    private readonly RemoteJoins remoteJoins;
 
     /// <summary>Create the service.</summary>
-    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time)
+    public RoomService(IDbContextFactory<ServerDbContext> contexts, EventSender sender, IOptions<ServerOptions> options, TimeProvider time, RemoteJoins remoteJoins)
     {
         // Store dependencies
         this.contexts = contexts;
         this.sender = sender;
         this.options = options;
         this.time = time;
+        this.remoteJoins = remoteJoins;
     }
 
     /// <summary>Server name of local rooms and users.</summary>
@@ -84,9 +87,16 @@ public sealed class RoomService
         return roomId;
     }
 
-    /// <summary>Join a room by ID or local alias; already joined users stay joined. Returns the room ID.</summary>
+    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID of another server that is not here yet is joined through that server. Returns the room ID.</summary>
     public async Task<string> JoinAsync(string userId, string roomIdOrAlias, string? reason, CancellationToken cancellationToken)
     {
+        // Rooms of other servers through their server
+        if (RoomServer(roomIdOrAlias) is string resident && resident != options.Value.ServerName && !await ExistsAsync(roomIdOrAlias, cancellationToken))
+        {
+            await remoteJoins.JoinAsync(userId, roomIdOrAlias, resident, await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken), cancellationToken);
+            return roomIdOrAlias;
+        }
+
         // Resolve, then join unless joined
         string roomId = await ResolveAsync(roomIdOrAlias, cancellationToken);
         if (await GetMembershipAsync(roomId, userId, cancellationToken) == Memberships.Join) return roomId;
@@ -193,6 +203,18 @@ public sealed class RoomService
         PowerLevels levels = await GetPowerLevelsAsync(db, room, cancellationToken);
         // Return verdict
         return levels.UserLevel(userId) >= levels.EventLevel(type, isState: true);
+    }
+
+    /// <summary>Return the server of a room ID, e.g. <c>b.org</c> of <c>!abc:b.org</c>; null for aliases and malformed IDs.</summary>
+    private static string? RoomServer(string roomIdOrAlias) => roomIdOrAlias.StartsWith('!') && roomIdOrAlias.IndexOf(':') is int colon and > 1 ? roomIdOrAlias[(colon + 1)..] : null;
+
+    /// <summary>Return whether the room is on this server.</summary>
+    private async Task<bool> ExistsAsync(string roomId, CancellationToken cancellationToken)
+    {
+        // Any row
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        // Return whether found
+        return await db.Rooms.AnyAsync(r => r.RoomId == roomId, cancellationToken);
     }
 
     /// <summary>Return the room ID of a room ID or local alias; throw <c>M_NOT_FOUND</c> for unknown rooms.</summary>

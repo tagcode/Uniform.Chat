@@ -94,7 +94,9 @@ Federation is being built, behind `Federation:Enabled`. In `Federation/`:
 - `RemoteServerKeys` fetches other servers' keys from their `/_matrix/key/v2/server`, accepts them only when every listed key signed the response, and caches them in memory until `valid_until_ts`, at most a week.
 - `ServerAuthentication` is middleware on endpoints marked `RequireFederation()`: it buffers the body, checks the signature over the raw request target, and gives the endpoint the origin with `GetOrigin()`.
 
-`FederationEndpoints` serves `/_matrix/key/v2/server`, `/_matrix/federation/v1/version` and `query/profile`, and `ProfileService` asks other servers for their users' profiles. `FederationTests` run two servers in memory whose federation clients reach each other through a test handler.
+`FederationEndpoints` serves `/_matrix/key/v2/server`, `/_matrix/federation/v1/version`, `query/profile`, `make_join` and `send_join` (v2), and `ProfileService` asks other servers for their users' profiles.
+
+Joins: `RoomService.JoinAsync` sends joins of room IDs of other servers that are not here to `RemoteJoins`, which asks the room's server for a `make_join` template, signs it, sends it with `send_join`, checks the content hash and the sender server's signature of every returned event, and stores the room with `EventSender.StoreJoinedRoomAsync`. The returned state and auth chain get negative stream positions, so they sort as history before the join and never count as new. On the resident side `EventSender.MakeJoinAsync` builds the template and `AcceptJoinAsync` checks the signed join (its ID, hash, origin and the auth rules) before storing it like a local event. Auth chains are not yet checked against the auth rules, and events after the join need `/send`, which is not there yet. `FederationTests` run two servers in memory whose federation clients reach each other through a test handler.
 
 HTTPS comes from `TlsCertificate` (in `Http/`), which reads the PEM files of `Tls:*`, sends the intermediates with the certificate (other servers check the chain) and reads the files again within a minute of a renewal.
 

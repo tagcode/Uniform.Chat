@@ -13,6 +13,8 @@ using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Keys;
+using Uniform.Matrix.Server.Rooms;
+using Uniform.Matrix.Protocol.Server;
 
 /// <summary>The <see href="https://spec.matrix.org/latest/server-server-api/">server-server API</see> that other servers call: this server's keys and version, and queries.</summary>
 public static class FederationEndpoints
@@ -36,6 +38,27 @@ public static class FederationEndpoints
             if (!UserId.TryParse(user_id, out UserId userId) || userId.ServerName != server.CurrentValue.ServerName) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Not a user of this server.");
             return MatrixHttp.Json(field is null ? await profiles.GetProfileAsync(user_id, cancellationToken) : await profiles.GetFieldAsync(user_id, field, cancellationToken));
         });
+
+        // Joins of other servers' users
+        federation.MapGet("/make_join/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
+        {
+            if (!UserId.TryParse(userId, out UserId user) || user.ServerName != http.GetOrigin()) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "The user is not of the asking server.");
+            (JsonObject template, RoomVersion version) = await events.MakeJoinAsync(roomId, userId, cancellationToken);
+            if (!http.Request.Query["ver"].Contains(version.Id)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.IncompatibleRoomVersion, $"The room has version {version.Id}, which the asking server does not support.");
+            return MatrixHttp.Json(new JsonObject { ["event"] = template, ["room_version"] = version.Id });
+        });
+        routes.MapPut("/_matrix/federation/v2/send_join/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
+        {
+            if (pdu["room_id"]?.GetValue<string>() != roomId) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "The event is of another room.");
+            string origin = http.GetOrigin();
+            Dictionary<string, string> originKeys = [];
+            foreach (string keyId in (pdu["signatures"]?[origin] as JsonObject ?? []).Select(k => k.Key))
+            {
+                if (await keys.GetVerifyKeyAsync(origin, keyId, cancellationToken) is string key) originKeys[keyId] = key;
+            }
+            (List<JsonObject> state, List<JsonObject> authChain) = await events.AcceptJoinAsync(pdu, eventId, origin, originKeys, cancellationToken);
+            return MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["members_omitted"] = false, ["state"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. authChain]) });
+        }).RequireFederation();
         // Return routes
         return routes;
     }

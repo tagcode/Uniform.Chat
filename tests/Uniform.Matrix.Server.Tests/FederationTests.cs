@@ -3,6 +3,9 @@ namespace Uniform.Matrix.Server.Tests;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
@@ -16,6 +19,25 @@ public class FederationTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
+    /// <summary>Header that carries the request target as sent, which the test server does not keep but Kestrel does.</summary>
+    private const string RawTargetHeader = "X-Test-Raw-Target";
+
+    /// <summary>Gives requests their raw target from <see cref="RawTargetHeader"/>, as Kestrel would, so signatures are checked over the target as sent.</summary>
+    private sealed class RawTargetFilter : IStartupFilter
+    {
+        /// <summary>Set the raw target before the server's pipeline.</summary>
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => app =>
+        {
+            // From the header, when the network set one
+            app.Use(async (context, nextMiddleware) =>
+            {
+                if (context.Request.Headers[RawTargetHeader] is [string raw] && context.Features.Get<IHttpRequestFeature>() is IHttpRequestFeature request) request.RawTarget = raw;
+                await nextMiddleware(context);
+            });
+            next(app);
+        };
+    }
+
     /// <summary>Routes requests by host name to test servers; servers join after starting, as each needs the other.</summary>
     private sealed class Network : HttpMessageHandler
     {
@@ -27,6 +49,7 @@ public class FederationTests
         {
             // By host, whatever the port
             if (!Servers.TryGetValue(request.RequestUri!.Host, out HttpMessageHandler? server)) throw new HttpRequestException($"No such host {request.RequestUri.Host}");
+            request.Headers.TryAddWithoutValidation(RawTargetHeader, request.RequestUri.PathAndQuery);
             // Return the server's answer
             return new HttpMessageInvoker(server, false).SendAsync(request, cancellationToken);
         }
@@ -41,7 +64,11 @@ public class FederationTests
         // Federation on, its client on the test network
         TestHomeserver server = await TestHomeserver.StartAsync(
             new Dictionary<string, string?> { ["Server:ServerName"] = serverName, ["Server:Registration"] = "Open", ["Federation:Enabled"] = "true" },
-            configureServices: services => services.AddHttpClient(FederationClient.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network));
+            configureServices: services =>
+            {
+                services.AddHttpClient(FederationClient.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
+                services.AddTransient<IStartupFilter, RawTargetFilter>();
+            });
         network.Servers[serverName] = server.CreateHandler();
         // Return server
         return server;
@@ -70,6 +97,56 @@ public class FederationTests
         Assert.Equal("Bob of B", profile.DisplayName);
         Assert.Equal(ErrorCodes.NotFound, missing.Errcode);
         Assert.Equal(HttpStatusCode.BadGateway, unreachable.StatusCode);
+    }
+
+    /// <summary>A user of one server joins a room of the other: both servers then have them as a member, and the joining server has the room's state.</summary>
+    [Fact]
+    public async Task JoinRemoteRoom()
+    {
+        // Arrange: bob's public room on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Kitchen" }, Ct);
+
+        // Act
+        string joined = await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        string again = await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+
+        // Assert: membership on both sides, the state here
+        Assert.Equal([roomId, roomId], [joined, again]);
+        Assert.Contains(roomId, await alice.GetJoinedRoomsAsync(Ct));
+        Assert.Equal(["@alice:a.test", "@bob:b.test"], (await alice.GetJoinedMembersAsync(roomId, Ct)).Keys.Order());
+        Assert.Equal(["@alice:a.test", "@bob:b.test"], (await bob.GetJoinedMembersAsync(roomId, Ct)).Keys.Order());
+        Assert.Equal("Kitchen", (await alice.TryGetStateEventAsync(roomId, "m.room.name", cancellationToken: Ct))?.GetProperty("name").GetString());
+    }
+
+    /// <summary>Joining a room the other server does not have, or a private room, fails with that server's error.</summary>
+    [Fact]
+    public async Task RefuseRemoteJoins()
+    {
+        // Arrange: bob's private room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string privateRoom = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PrivateChat }, Ct);
+
+        // Act
+        MatrixException unknown = await Assert.ThrowsAsync<MatrixException>(() => alice.JoinRoomAsync("!nothing:b.test", cancellationToken: Ct));
+        MatrixException forbidden = await Assert.ThrowsAsync<MatrixException>(() => alice.JoinRoomAsync(privateRoom, cancellationToken: Ct));
+
+        // Assert
+        Assert.Equal(ErrorCodes.NotFound, unknown.Errcode);
+        Assert.Equal(ErrorCodes.Forbidden, forbidden.Errcode);
+        Assert.DoesNotContain(privateRoom, await alice.GetJoinedRoomsAsync(Ct));
     }
 
     /// <summary>The key response names the server and is signed by its key.</summary>

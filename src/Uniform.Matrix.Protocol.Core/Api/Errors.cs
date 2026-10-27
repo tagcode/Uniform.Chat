@@ -46,6 +46,8 @@ public static class ErrorCodes
     public const string UserDeactivated = "M_USER_DEACTIVATED";
     /// <summary>The server does not support the requested room version.</summary>
     public const string UnsupportedRoomVersion = "M_UNSUPPORTED_ROOM_VERSION";
+    /// <summary>The room's version is not one the joining server supports.</summary>
+    public const string IncompatibleRoomVersion = "M_INCOMPATIBLE_ROOM_VERSION";
     /// <summary>The room alias is already taken.</summary>
     public const string RoomInUse = "M_ROOM_IN_USE";
     /// <summary>The initial state of a new room is invalid.</summary>
