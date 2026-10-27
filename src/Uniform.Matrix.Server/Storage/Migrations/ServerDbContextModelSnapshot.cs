@@ -511,6 +511,48 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("Receipts");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.RemoteInviteRow", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RoomId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EventJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Membership")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RoomVersion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("Stream")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StrippedStateJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId", "RoomId");
+
+                    b.HasIndex("UserId", "Stream");
+
+                    b.ToTable("RemoteInvites");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.RoomAliasRow", b =>
                 {
                     b.Property<string>("Alias")

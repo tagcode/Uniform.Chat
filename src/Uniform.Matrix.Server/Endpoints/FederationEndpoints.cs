@@ -10,6 +10,7 @@ using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Encryption;
 using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Keys;
@@ -60,9 +61,35 @@ public static class FederationEndpoints
             return MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["members_omitted"] = false, ["state"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. authChain]) });
         }).RequireFederation();
 
-        // Transactions of events from other servers; EDUs are not used yet
-        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, CancellationToken cancellationToken) =>
+        // Invites of this server's users to rooms elsewhere
+        routes.MapPut("/_matrix/federation/v2/invite/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject body, HttpContext http, RemoteInvites invites, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await invites.ReceiveAsync(http.GetOrigin(), roomId, eventId, body, cancellationToken))).RequireFederation();
+
+        // Keys and devices of this server's users, for encrypting to them
+        federation.MapPost("/user/keys/query", async (JsonObject body, IOptionsMonitor<ServerOptions> server, DeviceKeyService keys, CancellationToken cancellationToken) =>
         {
+            JsonObject result = await keys.QueryAsync("", LocalUsers(body["device_keys"] as JsonObject, server.CurrentValue.ServerName), cancellationToken);
+            result.Remove("user_signing_keys");
+            return MatrixHttp.Json(result);
+        });
+        federation.MapPost("/user/keys/claim", async (JsonObject body, IOptionsMonitor<ServerOptions> server, DeviceKeyService keys, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await keys.ClaimAsync(LocalUsers(body["one_time_keys"] as JsonObject, server.CurrentValue.ServerName), cancellationToken)));
+        federation.MapGet("/user/devices/{userId}", async (string userId, IOptionsMonitor<ServerOptions> server, RemoteDevices devices, CancellationToken cancellationToken) =>
+            UserId.TryParse(userId, out UserId user) && user.ServerName == server.CurrentValue.ServerName ? MatrixHttp.Json(await devices.GetUserDevicesAsync(userId, cancellationToken)) : MatrixHttp.Error(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Not a user of this server."));
+
+        // Transactions of events, to-device messages and device list changes from other servers
+        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, RemoteDevices devices, CancellationToken cancellationToken) =>
+        {
+            string origin = http.GetOrigin();
+            foreach (JsonObject edu in (body["edus"] as JsonArray ?? []).OfType<JsonObject>().Take(100))
+            {
+                if (edu["content"] is not JsonObject content) continue;
+                switch (edu["edu_type"]?.GetValue<string>())
+                {
+                    case "m.direct_to_device": await devices.ReceiveToDeviceAsync(origin, content, cancellationToken); break;
+                    case "m.device_list_update": await devices.ReceiveDeviceListUpdateAsync(origin, content, cancellationToken); break;
+                }
+            }
             JsonObject results = [];
             foreach (JsonObject pdu in (body["pdus"] as JsonArray ?? []).OfType<JsonObject>().Take(50))
             {
@@ -82,6 +109,10 @@ public static class FederationEndpoints
         // Return routes
         return routes;
     }
+
+    /// <summary>Return the entries of <paramref name="byUser"/> for users of <paramref name="serverName"/>; other servers ask only about their own.</summary>
+    private static JsonObject LocalUsers(JsonObject? byUser, string serverName) =>
+        new([.. (byUser ?? []).Where(u => UserId.TryParse(u.Key, out UserId user) && user.ServerName == serverName).Select(u => KeyValuePair.Create(u.Key, u.Value?.DeepClone()))]);
 
     /// <summary>Return this server's signed key response.</summary>
     public static JsonObject KeyResponse(ServerKeys keys, string serverName, DateTimeOffset validUntil)

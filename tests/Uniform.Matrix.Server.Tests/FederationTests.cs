@@ -39,7 +39,7 @@ public class FederationTests
     }
 
     /// <summary>Routes requests by host name to test servers; servers join after starting, as each needs the other.</summary>
-    private sealed class Network : HttpMessageHandler
+    internal sealed class Network : HttpMessageHandler
     {
         /// <summary>Servers by host name.</summary>
         public Dictionary<string, HttpMessageHandler> Servers { get; } = [];
@@ -59,7 +59,7 @@ public class FederationTests
     }
 
     /// <summary>Start a federating server named <paramref name="serverName"/> on <paramref name="network"/>.</summary>
-    private static async Task<TestHomeserver> StartAsync(string serverName, Network network)
+    internal static async Task<TestHomeserver> StartAsync(string serverName, Network network)
     {
         // Federation on, its client on the test network
         TestHomeserver server = await TestHomeserver.StartAsync(
@@ -150,6 +150,48 @@ public class FederationTests
         Assert.Equal(["hello from b"], atA);
         Assert.Equal(["hello from b", "hi from a"], atB);
         Assert.Equal(["hello from b", "hi from a"], await WaitForBodiesAsync(alice, roomId, 2));
+    }
+
+    /// <summary>A user invited from another server sees the invite with the room's name, joins through the inviting server and talks; another rejects, and the invite ends as left.</summary>
+    [Fact]
+    public async Task InviteAcrossServers()
+    {
+        // Arrange: alice's private room on a.test, bob and carol on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        MatrixClient carol = b.CreateClient();
+        await carol.RegisterAsync("carol", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PrivateChat, Name = "Plans" }, Ct);
+        using HttpClient bobHttp = b.CreateHttpClient();
+        bobHttp.DefaultRequestHeaders.Authorization = new("Bearer", bob.AccessToken);
+        using HttpClient carolHttp = b.CreateHttpClient();
+        carolHttp.DefaultRequestHeaders.Authorization = new("Bearer", carol.AccessToken);
+
+        // Act: invites, bob's view, bob joins and writes; carol rejects
+        await alice.InviteAsync(roomId, "@bob:b.test", cancellationToken: Ct);
+        await alice.InviteAsync(roomId, "@carol:b.test", cancellationToken: Ct);
+        JsonObject bobSync = (await bobHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
+        JsonObject carolBefore = (await carolHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await bob.SendTextAsync(roomId, "thanks for the invite", Ct);
+        IReadOnlyList<string> atA = await WaitForBodiesAsync(alice, roomId, 1);
+        await carol.LeaveRoomAsync(roomId, cancellationToken: Ct);
+        JsonObject carolAfter = (await carolHttp.GetFromJsonAsync<JsonObject>($"/_matrix/client/v3/sync?timeout=0&since={carolBefore["next_batch"]}", Ct))!;
+        JsonObject carolLater = (await carolHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
+
+        // Assert
+        JsonArray inviteState = bobSync["rooms"]!["invite"]![roomId]!["invite_state"]!["events"]!.AsArray();
+        Assert.Contains(inviteState, e => e!["type"]!.GetValue<string>() == "m.room.name" && e["content"]!["name"]!.GetValue<string>() == "Plans");
+        Assert.Contains(inviteState, e => e!["type"]!.GetValue<string>() == "m.room.member" && e["state_key"]!.GetValue<string>() == "@bob:b.test" && e["sender"]!.GetValue<string>() == "@alice:a.test");
+        Assert.Equal(["@alice:a.test", "@bob:b.test"], (await alice.GetJoinedMembersAsync(roomId, Ct)).Keys.Order());
+        Assert.Equal(["thanks for the invite"], atA);
+        Assert.True(carolAfter["rooms"]!["leave"]!.AsObject().ContainsKey(roomId));
+        Assert.False(carolLater["rooms"]!["invite"]!.AsObject().ContainsKey(roomId));
     }
 
     /// <summary>Return the message bodies of a room, oldest first, once there are <paramref name="count"/>; fail after a few seconds.</summary>

@@ -90,11 +90,12 @@ public sealed class RoomService
         return roomId;
     }
 
-    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID that is not here yet is joined through <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>
+    /// <summary>Join a room by ID or local alias; already joined users stay joined. A room ID that is not here yet is joined through the server that invited the user, <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>
     public async Task<string> JoinAsync(string userId, string roomIdOrAlias, string? reason, CancellationToken cancellationToken, IReadOnlyList<string>? via = null)
     {
         // Rooms not here through other servers; the first that answers decides
-        List<string> residents = [.. (via ?? []).Append(RoomServer(roomIdOrAlias)).OfType<string>().Where(s => s != ServerName).Distinct()];
+        string? inviting = roomIdOrAlias.StartsWith('!') ? await remoteInvites.GetInvitingServerAsync(userId, roomIdOrAlias, cancellationToken) : null;
+        List<string> residents = [.. new[] { inviting }.Concat(via ?? []).Append(RoomServer(roomIdOrAlias)).OfType<string>().Where(s => s != ServerName).Distinct()];
         if (roomIdOrAlias.StartsWith('!') && residents.Count > 0 && !await ExistsAsync(roomIdOrAlias, cancellationToken))
         {
             JsonObject content = await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken);
@@ -103,6 +104,7 @@ public sealed class RoomService
                 try
                 {
                     await remoteJoins.JoinAsync(userId, roomIdOrAlias, residents[i], content, cancellationToken);
+                    await remoteInvites.EndAsync(userId, roomIdOrAlias, joined: true, cancellationToken);
                     return roomIdOrAlias;
                 }
                 catch (MatrixException) when (i < residents.Count - 1)
@@ -116,6 +118,7 @@ public sealed class RoomService
         string roomId = await ResolveAsync(roomIdOrAlias, cancellationToken);
         if (await GetMembershipAsync(roomId, userId, cancellationToken) == Memberships.Join) return roomId;
         await SendStateAsync(roomId, userId, EventTypes.RoomMember, userId, await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken), cancellationToken);
+        await remoteInvites.EndAsync(userId, roomId, joined: true, cancellationToken);
         // Return room
         return roomId;
     }
@@ -159,10 +162,18 @@ public sealed class RoomService
     /// <summary>Leave a room; leaving a room one is not in does nothing.</summary>
     public async Task LeaveAsync(string userId, string roomId, string? reason, CancellationToken cancellationToken)
     {
+        // An invite from another server to a room not here is rejected here only, for now
+        if (!await ExistsAsync(roomId, cancellationToken) && await remoteInvites.GetInvitingServerAsync(userId, roomId, cancellationToken) is not null)
+        {
+            await remoteInvites.EndAsync(userId, roomId, joined: false, cancellationToken);
+            return;
+        }
+
         // Only from invite, join or knock
         string? membership = await GetMembershipAsync(roomId, userId, cancellationToken);
         if (membership is null or Memberships.Leave or Memberships.Ban) return;
         await SetMembershipAsync(userId, roomId, userId, Memberships.Leave, reason, cancellationToken);
+        await remoteInvites.EndAsync(userId, roomId, joined: true, cancellationToken);
     }
 
     /// <summary>Forget a room the user has left, so it disappears from their sync.</summary>

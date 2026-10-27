@@ -48,6 +48,9 @@ public static class EventFormat
         CanonicalJson.AddSignature(pdu, serverName, keyId, signature);
     }
 
+    /// <summary>Add the server's signature to an event another server built and hashed, such as an invite of this server's user.</summary>
+    public static void Sign(JsonObject pdu, RoomVersion version, string serverName, string keyId, string secret) => CanonicalJson.AddSignature(pdu, serverName, keyId, Ed25519.Sign(secret, SigningForm(pdu, version)));
+
     /// <summary>Return whether <paramref name="serverName"/>'s key <paramref name="keyId"/> validly signed the redacted event.</summary>
     public static bool HasValidSignature(JsonObject pdu, RoomVersion version, string serverName, string keyId, string publicKey) =>
         CanonicalJson.GetSignature(pdu, serverName, keyId) is string signature && Ed25519.Verify(publicKey, SigningForm(pdu, version), signature);

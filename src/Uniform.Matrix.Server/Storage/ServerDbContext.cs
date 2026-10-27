@@ -71,6 +71,8 @@ public sealed class ServerDbContext : DbContext
     public DbSet<RoomKeyRow> RoomKeys => Set<RoomKeyRow>();
     /// <summary>Pushers of users.</summary>
     public DbSet<PusherRow> Pushers => Set<PusherRow>();
+    /// <summary>Invites from other servers to rooms not here yet.</summary>
+    public DbSet<RemoteInviteRow> RemoteInvites => Set<RemoteInviteRow>();
 
     /// <summary>Keys and indexes.</summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -99,6 +101,8 @@ public sealed class ServerDbContext : DbContext
         modelBuilder.Entity<CurrentStateRow>().HasIndex(s => new { s.Type, s.StateKey, s.Membership });
 
         // Client bookkeeping
+        modelBuilder.Entity<RemoteInviteRow>().HasKey(i => new { i.UserId, i.RoomId });
+        modelBuilder.Entity<RemoteInviteRow>().HasIndex(i => new { i.UserId, i.Stream });
         modelBuilder.Entity<TransactionRow>().HasKey(t => new { t.UserId, t.DeviceId, t.TransactionId, t.EventId });
         modelBuilder.Entity<RoomAliasRow>().HasKey(a => a.Alias);
         modelBuilder.Entity<RoomAliasRow>().HasIndex(a => a.RoomId);

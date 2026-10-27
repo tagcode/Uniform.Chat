@@ -10,25 +10,27 @@ using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Storage;
 using Uniform.Matrix.Server.Sync;
 
-/// <summary>Sends new room events to the other servers in each room as <see href="https://spec.matrix.org/latest/server-server-api/#transactions">transactions</see>: events of local users, and joins of remote users that this server accepted as the room's server.</summary>
+/// <summary>Sends new room events to the other servers in each room as <see href="https://spec.matrix.org/latest/server-server-api/#transactions">transactions</see>: events of local users, and joins of remote users that this server accepted as the room's server; and device changes of local users as <c>m.device_list_update</c> EDUs.</summary>
 /// <remarks>Follows the <see cref="ServerStream"/> like <see cref="Accounts.PushNotifier"/>; one transaction per event and server, without retries yet, so a server that is down misses the event until backfill exists. Events from before the server started are not sent.</remarks>
 public sealed class FederationSender : BackgroundService
 {
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly ServerStream stream;
     private readonly FederationClient federation;
+    private readonly RemoteDevices devices;
     private readonly IOptionsMonitor<ServerOptions> server;
     private readonly IOptionsMonitor<FederationOptions> options;
     private readonly TimeProvider time;
     private readonly ILogger<FederationSender> logger;
 
     /// <summary>Create the sender.</summary>
-    public FederationSender(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, FederationClient federation, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<FederationSender> logger)
+    public FederationSender(IDbContextFactory<ServerDbContext> contexts, ServerStream stream, FederationClient federation, RemoteDevices devices, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, TimeProvider time, ILogger<FederationSender> logger)
     {
         // Store dependencies
         this.contexts = contexts;
         this.stream = stream;
         this.federation = federation;
+        this.devices = devices;
         this.server = server;
         this.options = options;
         this.time = time;
@@ -86,6 +88,19 @@ public sealed class FederationSender : BackgroundService
             // One transaction per server, named by stream position
             JsonObject pdu = JsonNode.Parse(row.Json)!.AsObject();
             foreach (string destination in destinations) await SendAsync(destination, $"{row.Stream}", pdu, cancellationToken);
+        }
+
+        // Device changes of local users to the servers that share a room with them; without a history the other server fetches the whole list
+        List<DeviceListChangeRow> changes = await db.DeviceListChanges.AsNoTracking().Where(c => c.Stream > from && c.Stream <= until).ToListAsync(cancellationToken);
+        foreach (DeviceListChangeRow change in changes.Where(c => UserId.TryParse(c.UserId, out UserId user) && user.ServerName == serverName))
+        {
+            List<string> rooms = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == change.UserId && s.Membership == Memberships.Join).Select(s => s.RoomId).ToListAsync(cancellationToken);
+            List<string> members = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.Membership == Memberships.Join && rooms.Contains(s.RoomId)).Select(s => s.StateKey).Distinct().ToListAsync(cancellationToken);
+            HashSet<string> destinations = [.. members.Select(m => UserId.TryParse(m, out UserId member) ? member.ServerName : null).OfType<string>()];
+            destinations.Remove(serverName);
+            string deviceId = await db.Devices.AsNoTracking().Where(d => d.UserId == change.UserId).Select(d => d.DeviceId).FirstOrDefaultAsync(cancellationToken) ?? "";
+            JsonObject edu = new() { ["edu_type"] = "m.device_list_update", ["content"] = new JsonObject { ["user_id"] = change.UserId, ["device_id"] = deviceId, ["stream_id"] = change.Stream, ["prev_id"] = new JsonArray() } };
+            foreach (string destination in destinations) await devices.SendEdusAsync(destination, [edu], cancellationToken);
         }
     }
 

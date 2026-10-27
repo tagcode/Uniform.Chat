@@ -50,6 +50,46 @@ public class EncryptionTests
         Assert.DoesNotContain(secret, stored.Content.GetRawText());
     }
 
+    /// <summary>A user's message in an encrypted room on another server is read by the invited user: keys, one-time keys and the room key go between the servers.</summary>
+    [Fact]
+    public async Task ExchangeEncryptedMessageAcrossServers()
+    {
+        // Arrange: alice's encrypted room on a.test, bob of b.test invited and joined
+        FederationTests.Network network = new();
+        await using TestHomeserver a = await FederationTests.StartAsync("a.test", network);
+        await using TestHomeserver b = await FederationTests.StartAsync("b.test", network);
+        using Device alice = await Device.RegisterAsync(a, "alice");
+        using Device bob = await Device.RegisterAsync(b, "bob");
+        string roomId = await CreateEncryptedRoomAsync(alice.Client, bob.Client);
+        await bob.SyncAsync();
+        await bob.Client.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await bob.SyncAsync();
+        await alice.SyncAsync();
+
+        // Act
+        string secret = $"secret {Guid.NewGuid():N}";
+        EncryptedContent content = await alice.Machine.EncryptRoomEventAsync(roomId, EventTypes.RoomMessage, Text(secret), [alice.UserId, bob.UserId], cancellationToken: Ct);
+        string eventId = await alice.Client.SendEventAsync(roomId, EventTypes.RoomEncrypted, content, cancellationToken: Ct);
+        RoomEventDecryption? result = null;
+        for (int round = 0; round < 20 && result?.Status != DecryptionStatus.Decrypted; round++)
+        {
+            await bob.SyncAsync();
+            try
+            {
+                result = await bob.Machine.DecryptRoomEventAsync(roomId, await bob.Client.GetEventAsync(roomId, eventId, Ct), Ct);
+            }
+            catch (MatrixException)
+            {
+                // The event is still on its way to b.test
+            }
+        }
+
+        // Assert
+        Assert.Equal(DecryptionStatus.Decrypted, result?.Status);
+        Assert.True(result!.Event.TryGetContent(out MessageContent? message));
+        Assert.Equal(secret, message.Body);
+    }
+
     /// <summary>Claiming takes each one-time key once, then keeps giving the fallback key; syncs reports the counts and the used fallback.</summary>
     [Fact]
     public async Task ClaimKeys()

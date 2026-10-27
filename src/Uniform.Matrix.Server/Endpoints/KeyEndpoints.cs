@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Encryption;
+using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Storage;
 using Uniform.Matrix.Server.Sync;
@@ -23,9 +24,9 @@ public static class KeyEndpoints
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3").RequireAccessToken();
         client.MapPost("/keys/upload", async (JsonObject body, HttpContext http, DeviceKeyService keys, CancellationToken cancellationToken) =>
             MatrixHttp.Json(await keys.UploadAsync(http.GetRequester(), body["device_keys"] as JsonObject, body["one_time_keys"] as JsonObject, (body["fallback_keys"] ?? body["org.matrix.msc2732.fallback_keys"]) as JsonObject, cancellationToken)));
-        client.MapPost("/keys/query", async (JsonObject body, HttpContext http, DeviceKeyService keys, CancellationToken cancellationToken) =>
+        client.MapPost("/keys/query", async (JsonObject body, HttpContext http, RemoteDevices keys, CancellationToken cancellationToken) =>
             MatrixHttp.Json(await keys.QueryAsync(http.GetRequester().UserId, body["device_keys"] as JsonObject ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing device_keys."), cancellationToken)));
-        client.MapPost("/keys/claim", async (JsonObject body, DeviceKeyService keys, CancellationToken cancellationToken) =>
+        client.MapPost("/keys/claim", async (JsonObject body, RemoteDevices keys, CancellationToken cancellationToken) =>
             MatrixHttp.Json(await keys.ClaimAsync(body["one_time_keys"] as JsonObject ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing one_time_keys."), cancellationToken)));
         client.MapGet("/keys/changes", async (string from, string to, HttpContext http, IDbContextFactory<ServerDbContext> contexts, CancellationToken cancellationToken) =>
         {
@@ -45,9 +46,12 @@ public static class KeyEndpoints
         client.MapPost("/keys/signatures/upload", async (JsonObject body, HttpContext http, DeviceKeyService keys, CancellationToken cancellationToken) => MatrixHttp.Json(await keys.UploadSignaturesAsync(http.GetRequester().UserId, body, cancellationToken)));
 
         // To-device messages
-        client.MapPut("/sendToDevice/{eventType}/{txnId}", async (string eventType, string txnId, JsonObject body, HttpContext http, ToDeviceService toDevice, CancellationToken cancellationToken) =>
+        client.MapPut("/sendToDevice/{eventType}/{txnId}", async (string eventType, string txnId, JsonObject body, HttpContext http, ToDeviceService toDevice, RemoteDevices remote, CancellationToken cancellationToken) =>
         {
-            await toDevice.SendAsync(http.GetRequester(), eventType, txnId, body["messages"] as JsonObject ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing messages."), cancellationToken);
+            Requester requester = http.GetRequester();
+            JsonObject messages = body["messages"] as JsonObject ?? throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing messages.");
+            await toDevice.SendAsync(requester, eventType, txnId, messages, cancellationToken);
+            await remote.SendToDeviceAsync(requester.UserId, eventType, $"{requester.DeviceId}_{txnId}", messages, cancellationToken);
             return MatrixHttp.Json(new JsonObject());
         });
         // Return routes

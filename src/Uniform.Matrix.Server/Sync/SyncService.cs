@@ -178,6 +178,15 @@ public sealed class SyncService
             }
         }
 
+        // Invites from other servers to rooms not here yet, and their rejections once; once the room is here, its own state says it
+        long invitesSince = from ?? -1;
+        foreach (RemoteInviteRow remote in await db.RemoteInvites.AsNoTracking().Where(i => i.UserId == requester.UserId && i.Stream > invitesSince && i.Stream <= current).ToListAsync(cancellationToken))
+        {
+            if (!filter.IncludesRoom(remote.RoomId) || memberships.Any(m => m.RoomId == remote.RoomId)) continue;
+            if (remote.Membership == Memberships.Invite) invite[remote.RoomId] = new JsonObject { ["invite_state"] = new JsonObject { ["events"] = RemoteInviteState(remote) } };
+            else if (from is not null) leave[remote.RoomId] = new JsonObject { ["timeline"] = new JsonObject { ["events"] = new JsonArray() }, ["state"] = new JsonObject { ["events"] = new JsonArray() } };
+        }
+
         // Global account data with the push rules as they apply now, always in initial syncs; the device's messages and keys, and key changes of others
         List<JsonObject> accountData = [.. await AccountDataEventsAsync(db, requester.UserId, "", from, current, cancellationToken)];
         JsonObject pushRulesEvent = new() { ["type"] = PushRuleService.AccountDataType, ["content"] = new JsonObject { ["global"] = ruleset.DeepClone() } };
@@ -313,6 +322,17 @@ public sealed class SyncService
         HashSet<string> senders = [.. events.Select(e => e.Sender), requester.UserId];
         // Return events
         return await LoadFormattedAsync(dbContext, requester, senders.Select(s => state.GetValueOrDefault((EventTypes.RoomMember, s))).OfType<string>(), cancellationToken);
+    }
+
+    /// <summary>Return the stripped state of an invite from another server: what that server sent, and the invite itself.</summary>
+    private static JsonArray RemoteInviteState(RemoteInviteRow remote)
+    {
+        // Sent state without the invitee's own membership, then the invite
+        JsonArray events = [.. (JsonNode.Parse(remote.StrippedStateJson) as JsonArray ?? []).OfType<JsonObject>().Where(e => !(e["type"]?.GetValue<string>() == EventTypes.RoomMember && e["state_key"]?.GetValue<string>() == remote.UserId)).Select(e => e.DeepClone())];
+        JsonObject invite = JsonNode.Parse(remote.EventJson)!.AsObject();
+        events.Add(new JsonObject { ["type"] = EventTypes.RoomMember, ["state_key"] = remote.UserId, ["sender"] = remote.Sender, ["content"] = invite["content"]?.DeepClone() });
+        // Return events
+        return events;
     }
 
     /// <summary>Return the invite's stripped state: key room events and the invite itself, without IDs.</summary>

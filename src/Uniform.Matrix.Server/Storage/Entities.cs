@@ -446,3 +446,26 @@ public sealed class RoomKeyRow
     /// <summary>Whether the key came from a verified device.</summary>
     public bool IsVerified { get; set; }
 }
+
+/// <summary>An invite from another server to a room not on this server yet, with the room's stripped state; joining the room or rejecting the invite ends it.</summary>
+public sealed class RemoteInviteRow
+{
+    /// <summary>Invited local user.</summary>
+    public required string UserId { get; set; }
+    /// <summary>Room on the other server.</summary>
+    public required string RoomId { get; set; }
+    /// <summary>Invite event ID.</summary>
+    public required string EventId { get; set; }
+    /// <summary>Who invited, a user of the other server.</summary>
+    public required string Sender { get; set; }
+    /// <summary>Room version.</summary>
+    public required string RoomVersion { get; set; }
+    /// <summary>The invite PDU, signed by both servers.</summary>
+    public required string EventJson { get; set; }
+    /// <summary>Stripped state events the inviting server sent, as a JSON array.</summary>
+    public required string StrippedStateJson { get; set; }
+    /// <summary><c>invite</c>, or <c>leave</c> once rejected.</summary>
+    public required string Membership { get; set; }
+    /// <summary>Stream position of the last change, for sync.</summary>
+    public long Stream { get; set; }
+}
