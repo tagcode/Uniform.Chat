@@ -88,7 +88,7 @@ Server → Rooms lists every room with its name, alias, joined members, and whet
 
 ### Logs window
 
-File → Logs shows the log of this session, and lets you open earlier sessions. Each start writes its own file in `logs` under the data folder. The newest 20 are kept.
+File → Logs shows the log of this session, and lets you open earlier sessions. Each start writes its own file in `logs` under the data folder. The newest 20 are kept. Changes made in the Users and Rooms windows are logged, such as `Admin created user @alice:localhost`, so the log also shows what was done; passwords never appear in it.
 
 ## Run without the dashboard
 
@@ -219,7 +219,7 @@ To back up the server, stop it and copy the whole folder. Keep `signing.key` wit
 
 | Message | Meaning |
 |---|---|
-| `Failed to bind to address http://127.0.0.1:8008: address already in use` | Another program, perhaps another copy of the server, uses the port. Stop it, or choose another port with `--Urls=http://localhost:8009`. |
+| `Cannot listen on http://localhost:8008: the address is already in use` | Another program, perhaps another copy of the server, uses the port. Stop it, or choose another port with `--Urls=http://localhost:8009`. |
 | `M_FORBIDDEN: Registration is disabled.` | Set `Server:Registration` to `Open` or `Token`. |
 | `M_USER_IN_USE` | The user name is taken; choose another. |
 | `... is not an ed25519 signing key.` | `signing.key` was changed or damaged. Restore it from a backup. |

@@ -86,6 +86,3 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
-# Matrix server
-- When application starts, and bind address is reserved, don't show full stack trace.
-- Have user management actions leave a log entry at Information level.

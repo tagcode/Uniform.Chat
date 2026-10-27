@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Server.Accounts;
 using System.Net;
 using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Storage;
 
@@ -47,17 +48,20 @@ public sealed record AdminRoom
 }
 
 /// <summary>Server administration for the operator: accounts, passwords, admin rights and the room directory, without an access token.</summary>
+/// <remarks>Each change is logged at Information level, so the session log shows what the operator did; passwords are never logged.</remarks>
 public sealed class AdminService
 {
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly AccountService accounts;
+    private readonly ILogger<AdminService> logger;
 
     /// <summary>Create the service.</summary>
-    public AdminService(IDbContextFactory<ServerDbContext> contexts, AccountService accounts)
+    public AdminService(IDbContextFactory<ServerDbContext> contexts, AccountService accounts, ILogger<AdminService> logger)
     {
         // Store dependencies
         this.contexts = contexts;
         this.accounts = accounts;
+        this.logger = logger;
     }
 
     /// <summary>Return every local account, by user ID.</summary>
@@ -87,8 +91,10 @@ public sealed class AdminService
     {
         // Assert a password
         if (string.IsNullOrEmpty(password)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "A password is required.");
+        string userId = (await accounts.RegisterAsync(localpart, password, deviceId: null, deviceName: null, inhibitLogin: true, admin, cancellationToken)).UserId;
+        logger.LogInformation("Admin created user {UserId}{Admin}", userId, admin ? " with server admin rights" : "");
         // Return user ID
-        return (await accounts.RegisterAsync(localpart, password, deviceId: null, deviceName: null, inhibitLogin: true, admin, cancellationToken)).UserId;
+        return userId;
     }
 
     /// <summary>Set a new password and log out every device of the user.</summary>
@@ -99,6 +105,7 @@ public sealed class AdminService
         await AssertUserAsync(userId, cancellationToken);
         await accounts.ChangePasswordAsync(userId, password, keepDeviceId: null, cancellationToken);
         await accounts.LogoutAllAsync(userId, cancellationToken);
+        logger.LogInformation("Admin reset the password of {UserId} and logged out its devices", userId);
     }
 
     /// <summary>Give or take server admin rights.</summary>
@@ -108,6 +115,7 @@ public sealed class AdminService
         await AssertUserAsync(userId, cancellationToken);
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         await db.Users.Where(u => u.UserId == userId).ExecuteUpdateAsync(u => u.SetProperty(x => x.Admin, admin), cancellationToken);
+        logger.LogInformation(admin ? "Admin gave server admin rights to {UserId}" : "Admin took server admin rights from {UserId}", userId);
     }
 
     /// <summary>Deactivate an account, logging out every device, or reactivates it.</summary>
@@ -120,6 +128,7 @@ public sealed class AdminService
             await db.Users.Where(u => u.UserId == userId).ExecuteUpdateAsync(u => u.SetProperty(x => x.Deactivated, deactivated), cancellationToken);
         }
         if (deactivated) await accounts.LogoutAllAsync(userId, cancellationToken);
+        logger.LogInformation(deactivated ? "Admin deactivated {UserId} and logged out its devices" : "Admin reactivated {UserId}", userId);
     }
 
     /// <summary>Return every room, most members first.</summary>
@@ -156,6 +165,7 @@ public sealed class AdminService
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         int updated = await db.Rooms.Where(r => r.RoomId == roomId).ExecuteUpdateAsync(r => r.SetProperty(x => x.Published, published), cancellationToken);
         if (updated == 0) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room.");
+        logger.LogInformation(published ? "Admin listed room {RoomId} in the public room directory" : "Admin removed room {RoomId} from the public room directory", roomId);
     }
 
     /// <summary>Throw <c>M_NOT_FOUND</c> unless the account exists.</summary>
