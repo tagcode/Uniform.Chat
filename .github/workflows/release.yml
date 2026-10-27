@@ -61,7 +61,7 @@ jobs:
       # Packing builds the whole solution, the Android app too
       - run: dotnet workload install android
       - run: dotnet pack Uniform.Matrix.slnx -c Release -o artifacts -p:Version=${{ needs.version.outputs.version }} -p:ContinuousIntegrationBuild=true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: nuget
           path: artifacts/*.*nupkg
@@ -86,7 +86,7 @@ jobs:
             dotnet docfx "docs/$guide/docfx.json"
             mkdir -p guides && cp -r "docs/$guide/_site" "guides/$guide"
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: guides
           path: guides
@@ -135,7 +135,7 @@ jobs:
               tar -czf "release/$name.tar.gz" -C publish "$name"
             fi
           done
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: apps-${{ matrix.rid }}
           path: release/*

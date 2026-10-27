@@ -13,8 +13,9 @@
     <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <!-- EF Core and the JSON records use reflection, so the code is not trimmed -->
+    <!-- EF Core and the JSON records use reflection, so the code is not trimmed; ahead-of-time compilation needs trimming, so it is off too -->
     <PublishTrimmed>false</PublishTrimmed>
+    <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
 
   <!-- Package -->
