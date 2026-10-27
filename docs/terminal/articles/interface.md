@@ -25,9 +25,11 @@ Messages you write are stored first and sent in order, so they survive a lost co
 
 ## Encryption
 
-Messages in encrypted rooms are encrypted on your device before they leave it, and only the devices of the people in the room can read them; the server only sees ciphertext. The room's frame shows `[encrypted]`.
+[!include[](../../shared/encryption.md)]
 
-- New rooms and direct chats are encrypted by default. Room → Enable encryption turns it on for an existing room; it cannot be turned off again.
+In the terminal client, the room's frame shows `[encrypted]`.
+
+- Room → Enable encryption turns it on for an existing room.
 - File → Encryption shows this device's ID and fingerprint, and whether cross-signing, key backup and the recovery key are set up. Other clients, such as Element, list the same fingerprint for this session.
 - A message that arrived before its key shows `[encrypted message; the key has not arrived]` and is decrypted as soon as the key comes. Your other verified devices are asked for missing keys automatically.
 - Files sent to encrypted rooms are encrypted too; previews and Save file decrypt them on this device.
@@ -35,19 +37,14 @@ Messages in encrypted rooms are encrypted on your device before they leave it, a
 
 ### Recovery key and key backup
 
-The recovery key lets a new login prove it is you and read messages from before it existed.
-
-- **Set up recovery** (File → Encryption) creates your cross-signing keys, a key backup on the server and the recovery key. It is offered only when your account has no cross-signing yet; if another client set it up, use that client's recovery key instead. The server may ask for your password. Write the recovery key down or copy it: it is shown once.
-- While a backup is on, new room keys are uploaded to it, encrypted so the server cannot read them.
-- **Recover** (File → Encryption, or `/recover`) on a new login asks for the recovery key, or the passphrase if you set one in another client. It verifies this device, restores the key backup and decrypts the stored messages that were waiting for keys.
+- **Set up recovery** (File → Encryption) is offered only when your account has no cross-signing yet. The server may ask for your password.
+- While a backup is on, new room keys are uploaded to it.
+- **Recover** (File → Encryption, or `/recover`) on a new sign-in asks for the recovery key, or the passphrase if you set one in another client. It verifies this device, restores the key backup and decrypts the stored messages that were waiting for keys.
 
 ### Verifying devices
 
-Verification compares seven emoji on two devices to prove that no one is in between.
-
 - File → Verify, `/verify`, or Verify in File → Devices starts verifying your other device. `/verify @user:server` verifies another person.
-- Accept on the other device. Both show the same emoji; choose **They match** on both. If they differ, choose **They don't match**; the verification is cancelled and nothing is trusted.
-- After verifying your own device, it is signed with your cross-signing key, and a new device receives the cross-signing and backup keys, so it does not need the recovery key.
+- Accept on the other device. When both show the same emoji, choose **They match** on both; if they differ, choose **They don't match**.
 - File → Devices shows each device as verified, cross-signed (verified through your cross-signing keys) or unverified. Room keys and secrets are shared only with your verified or cross-signed devices.
 
 ## Formatting

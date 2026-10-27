@@ -1,0 +1,5 @@
+Messages in encrypted rooms are encrypted on your device before they leave it, and only the devices of the people in the room can read them; the server only sees ciphertext. New private rooms and direct chats are encrypted from the start, and encryption cannot be turned off for a room again.
+
+The **recovery key** lets a new sign-in prove it is you and read messages from before it existed. Setting up recovery creates three things: cross-signing keys, which vouch for your devices; a backup of message keys on the server, encrypted so the server cannot read it; and the recovery key itself, which is shown once. Write it down or copy it somewhere safe. If you set up recovery in another app, such as Element, use that app's recovery key or passphrase.
+
+**Verification** compares seven emoji on two devices to prove that no one is in between. Both devices must show the same emoji in the same order; if they differ, cancel, and nothing is trusted. A device you verified receives the cross-signing and backup keys, so it does not need the recovery key. You can also verify other people, so you know their devices are really theirs.

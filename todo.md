@@ -75,11 +75,6 @@ Keep that server's registration closed and rate limits on, since unfinished soft
   - 1:1 calls: `m.call.*` events, `/voip/turnServer` on the server, and a TURN server such as coturn.
   - Group calls: MatrixRTC with a LiveKit SFU, announced in `.well-known`.
 
-# Docfx theme
-
-
-- Offline guides in the release archives: the top bar and search load files by script, which browsers block for pages opened from disk; the sidebar and links work.
-
 # UserManagement 
 
 - Separate user management out into Uniform.UserManagement that is agnostic of Uniform.Matrix.*
@@ -88,4 +83,4 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 
 # Uniform.Matrix.Client.Desktop
 
-- The look and feel of avalonia based GUI is kinda off. Perhaps MAUI or WinUI has better touch?
+- The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?

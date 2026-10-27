@@ -37,29 +37,33 @@ src/
     State/                               RoomStore and Room: client-side room state built from sync
     Formatting/                          Markdown to HTML for sending, HTML to text and event descriptions for display
     MatrixKeyTransport.cs,               EncryptedMedia.cs  Encryption over a MatrixClient
-  Uniform.Matrix.Client.Terminal/          Terminal client app
+  Uniform.Matrix.Client.Terminal/        Terminal client app
     Configuration/                       Display options
     Ui/                                  Main window, message log, image previews, client dialogs
-  Uniform.Matrix.Client.Avalonia.Core/               Avalonia app shared by desktop and Android: views, view models, services
+  Uniform.Matrix.Client.Avalonia.Core/   Avalonia app shared by desktop and Android: views, view models, services
     Services/                            One engine host per sign-in, remembered account, UI dispatcher
     ViewModels/                          Login, chat, room list items, message list
     Views/                               Windows and views in XAML, rich text, styles
-  Uniform.Matrix.Client.Desktop/           Windows and Linux entry point, Linux menu entry installer
-  Uniform.Matrix.Client.Android/           Android entry point, manifest and resources; not in the solution
+  Uniform.Matrix.Client.Desktop/         Windows and Linux entry point, Linux menu entry installer
+  Uniform.Matrix.Client.Android/         Android entry point, manifest and resources; not in the solution
   Uniform.Matrix.Protocol.Server/        Room versions, event format, hashing, signing, redaction, auth rules
   Uniform.Matrix.Server/                 Homeserver engine: AddMatrixServer, endpoints, services, storage
-  Uniform.Matrix.Server.Host/              Server app, with or without the dashboard
+  Uniform.Matrix.Server.Host/            Server app, with or without the dashboard
 tests/
   Uniform.Matrix.Protocol.Tests/         API and canonical JSON unit tests, live tests against the test server
   Uniform.Matrix.Protocol.Crypto.Tests/  Olm, Megolm, oracle, protocol and live encryption tests
   Uniform.Matrix.Hosting.Tests/          Settings and log file tests
   Uniform.Matrix.Client.Tests/           Room state, stores, services and rich text tests
-  Uniform.Matrix.Client.Terminal.Tests/    Option registration, message log and image tests
-  Uniform.Matrix.Client.Avalonia.Core.Tests/         View models against the in-memory server, headless rendering
+  Uniform.Matrix.Client.Terminal.Tests/  Option registration, message log and image tests
+  Uniform.Matrix.Client.Avalonia.Core.Tests/  View models against the in-memory server, headless rendering
   Uniform.Matrix.Protocol.Server.Tests/  Event format and auth rule tests
   Uniform.Matrix.Server.Tests/           Server through our own client, in memory
 docs/
-  user/                                  End-user DocFX site
+  desktop/                               User guide of the desktop and Android app
+  terminal/                              User guide of the terminal client
+  server/                                User guide of the server
+  shared/                                Text included by more than one guide
+  theme/                                 Changes to DocFX's statictoc template, for all sites
   dev/                                   This site
 ```
 

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
+    ],
+    "resource": [
+      { "files": [ "images/**" ] }
+    ],
+    "output": "_site",
+    "template": [ "statictoc", "../theme" ],
+    "globalMetadata": {
+      "_appFooter": "<span></span>",
+      "_appTitle": "Uniform.Matrix App Guide",
+      "_appName": "Uniform.Matrix App",
+      "_enableSearch": true
+    }
+  }
+}

@@ -25,16 +25,16 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 </pre>
 
-- User guide: [Getting started](docs/client/articles/getting-started.md), [Interface](docs/client/articles/interface.md)
+- User guide: [Getting started](docs/terminal/articles/getting-started.md), [Interface](docs/terminal/articles/interface.md)
 - Developer guide: [Architecture](docs/dev/articles/architecture.md), [Using the protocol client](docs/dev/articles/using-client.md)
 
 ## Desktop and Android client
 
 `Uniform.Matrix.Client.Desktop` and `Uniform.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
 
-![The desktop client](docs/client/images/desktop.png)
+![The desktop client](docs/desktop/images/desktop.png)
 
-- User guide: [Desktop and Android app](docs/client/articles/desktop.md)
+- User guide: [Getting started](docs/desktop/articles/getting-started.md), [Using the app](docs/desktop/articles/using.md)
 
 ## Server
 

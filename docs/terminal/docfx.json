@@ -4,15 +4,12 @@
     "content": [
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
-    "resource": [
-      { "files": [ "images/**" ] }
-    ],
     "output": "_site",
     "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
       "_appFooter": "<span></span>",
-      "_appTitle": "Uniform.Matrix Client Guide",
-      "_appName": "Uniform.Matrix Client",
+      "_appTitle": "Uniform.Matrix Terminal Client Guide",
+      "_appName": "Uniform.Matrix Terminal",
       "_enableSearch": true
     }
   }

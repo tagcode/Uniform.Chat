@@ -84,12 +84,15 @@ dotnet tool restore
 # Developer guide and API reference
 dotnet docfx docs/dev/docfx.json --serve
 
-# User guides of the clients and of the server
-dotnet docfx docs/client/docfx.json --serve
+# User guides: the desktop and Android app, the terminal client, the server
+dotnet docfx docs/desktop/docfx.json --serve
+dotnet docfx docs/terminal/docfx.json --serve
 dotnet docfx docs/server/docfx.json --serve
 ```
 
-`--serve` hosts the site at <http://localhost:8080>. Output goes to `docs/*/_site/`, and generated API files go to `docs/dev/api/`; both are ignored by git. The three sites use DocFX's built-in `statictoc` template, which writes the table of contents into every page, so the guides also work opened from disk. `docs/theme` holds only what differs from it, as each `docfx.json` layers it on top (`"template": [ "statictoc", "../theme" ]`): the logo, `logo_blue.svg` (the source of the logo and app icons), the favicon, `styles/main.css` with the dark look, and `styles/main.js` with the table of contents highlighting. The top of `main.css` also keeps a few styles of the older DocFX version the theme was made with; when upgrading DocFX, rebuild and look at the sites, as files of the built-in template change under it. The release archives carry them that way: the client guide in the desktop and terminal client archives, the server guide in the server archive, each as a `docs` folder.
+`--serve` hosts the site at <http://localhost:8080>. Output goes to `docs/*/_site/`, and generated API files go to `docs/dev/api/`; both are ignored by git. Each app has its own guide, named like its release archive: `docs/desktop` (which also covers Android), `docs/terminal` and `docs/server`. Text that more than one guide needs, such as how encryption, the recovery key and verification work, is written once in `docs/shared` and included with `[!include[](../../shared/encryption.md)]`; `docs/shared` is not a site of its own.
+
+All sites use DocFX's built-in `statictoc` template, which writes the table of contents into every page, so the guides also work opened from disk. `docs/theme` holds only what differs from it, as each `docfx.json` layers it on top (`"template": [ "statictoc", "../theme" ]`): the logo, `logo_blue.svg` (the source of the logo and app icons), the favicon, `styles/main.css` with the dark look, and `styles/main.js` with the table of contents highlighting. The top of `main.css` also keeps a few styles of the older DocFX version the theme was made with; when upgrading DocFX, rebuild and look at the sites, as files of the built-in template change under it. The release archives carry them that way: each archive has its own app's guide as a `docs` folder.
 
 ## Releasing
 

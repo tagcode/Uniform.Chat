@@ -1,8 +1,4 @@
-- name: Terminal client
-  items:
-  - name: Getting started
-    href: getting-started.md
-  - name: Interface
-    href: interface.md
-- name: Desktop and Android app
-  href: desktop.md
+- name: Getting started
+  href: getting-started.md
+- name: Interface
+  href: interface.md

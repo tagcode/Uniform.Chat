@@ -9,4 +9,4 @@ Accounts, rooms, messages, sync, profiles, typing, receipts, the room directory,
 
 - [Running the server](articles/running.md): start the homeserver with or without its dashboard, settings, and creating accounts.
 
-For apps to chat with, see the [client guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/client/index.md).
+For apps to chat with, see the guides of the [app for Windows, Linux and Android](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/desktop/index.md) and the [terminal client](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/terminal/index.md).

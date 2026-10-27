@@ -1,45 +1,4 @@
-# Desktop and Android app
-
-Uniform.Matrix also comes as a graphical app for Windows, Linux and Android. It uses the same engine as the terminal client, so messages, encryption and the outbox work the same way.
-
-![The desktop app with a room open](../images/desktop.png)
-
-> [!NOTE]
-> The graphical app is newer than the terminal client. It covers everyday chatting and encryption; notifications on Windows and Android are still to come.
-
-## Install
-
-### Windows
-
-Download `uniform-matrix-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases), unpack it anywhere and run `Uniform.Matrix.Client.Desktop.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
-
-### Linux
-
-Download `uniform-matrix-desktop-<version>-linux-x64.tar.gz` (or `linux-arm64`), unpack it and run the app:
-
-```bash
-tar -xzf uniform-matrix-desktop-*-linux-x64.tar.gz
-cd uniform-matrix-desktop-*-linux-x64
-./Uniform.Matrix.Client.Desktop
-```
-
-To add it to the application menu, run `./install-desktop-entry.sh` in the same folder. Run it again if you move the folder, and `./install-desktop-entry.sh --uninstall` removes the entry.
-
-### Android
-
-There is no store release yet. To try it, build and install it on a phone connected with USB debugging; see [Building and testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/building-and-testing.md).
-
-### From source
-
-```bash
-dotnet run --project src/Uniform.Matrix.Client.Desktop
-```
-
-## Sign in
-
-Enter your full user ID, such as `@alice:matrix.org`, and your password. The server is found from the user ID; give its address only when it has no discovery file, for example `http://localhost:8008` for a server on your own computer.
-
-The app remembers the account, so the next start opens the chat without asking. *⋮ → Sign out* logs the device out on the server and forgets the account.
+# Using the app
 
 ## Rooms
 
@@ -85,11 +44,13 @@ Images show a preview in the room; click it to open the image. Under a file or i
 
 ## Security
 
+[!include[](../../shared/encryption.md)]
+
 *⋮ → Security and recovery* at the top of the room list shows this device's encryption keys and the account's state, and offers what is missing:
 
-- **Set up recovery**, when the account has none yet: it creates cross-signing keys, a backup of message keys and a recovery key. The server may ask for your password first. Write the recovery key down or copy it somewhere safe; it is shown only once.
+- **Set up recovery**, when the account has none yet. The server may ask for your password first.
 - **Unlock encrypted history**: messages sent before this device signed in are encrypted with keys the device does not have. Enter the recovery key or passphrase, from this app or another one such as Element, and choose *Recover*. The app restores the keys from the backup, shows the messages, and verifies this device.
-- **Verify with another device**: compare emoji with another device where you are signed in. Accept the request there, check that both show the same emoji in the same order, and choose *They match* on both.
+- **Verify with another device** where you are signed in: accept the request there, and when both show the same emoji, choose *They match* on both.
 
 When another device asks to verify this one, the app shows the request; choose *Accept* and compare the emoji the same way.
 
@@ -110,12 +71,3 @@ Windows and Android do not show notifications yet.
 ## Phones and narrow windows
 
 On phones, and in windows narrower than 720 pixels, the room list and the room take the whole width in turn. Back, or *‹* in the room header, returns to the list.
-
-## Where things are kept
-
-| What | Desktop | Android |
-|---|---|---|
-| Messages, keys and files | `~/.local/share/uniform-matrix-client-desktop/` | the app's private storage |
-| Remembered account and settings | `~/.config/uniform-matrix-client-desktop/settings.json` | the app's private storage |
-
-On Windows, `~` is your user folder, for example `C:\Users\alice`. Uninstalling on Android removes everything; Android backups are turned off, so encryption keys never leave the phone.
