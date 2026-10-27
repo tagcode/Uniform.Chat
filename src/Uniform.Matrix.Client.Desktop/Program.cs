@@ -12,9 +12,6 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        // Data and settings of the app's earlier name move to the new name once
-        foreach (string move in AppDirectories.MoveFromPreviousName("Durum.Matrix.Client.Desktop", "Uniform.Matrix.Client.Desktop")) Console.Error.WriteLine($"Moved {move}");
-
         // Notifications where the platform has them so far
         App.Platform = GuiPlatform.Desktop() with { Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null };
         // Return exit code
