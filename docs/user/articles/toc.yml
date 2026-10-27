@@ -2,5 +2,7 @@
   href: getting-started.md
 - name: Interface
   href: interface.md
+- name: Desktop and Android app
+  href: desktop.md
 - name: Running the server
   href: server.md

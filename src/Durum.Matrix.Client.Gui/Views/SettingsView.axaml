@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Durum.Matrix.Client.Gui.ViewModels"
+             x:Class="Durum.Matrix.Client.Gui.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <StackPanel Spacing="12" MinWidth="300">
+    <TextBlock Classes="title" Text="Settings" />
+
+    <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Theme" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Themes}" SelectedIndex="{Binding ThemeIndex}" HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Text size" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding TextSizeIndex}" HorizontalAlignment="Stretch">
+        <ComboBoxItem Content="Small" />
+        <ComboBoxItem Content="Normal" />
+        <ComboBoxItem Content="Large" />
+      </ComboBox>
+
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Notifications" VerticalAlignment="Center" IsVisible="{Binding CanNotify}" />
+      <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding Notifications}" IsVisible="{Binding CanNotify}" OnContent="Direct messages, mentions, invites" OffContent="Off" />
+    </Grid>
+
+    <TextBlock Classes="hint" TextWrapping="Wrap" Text="Changes are saved right away." />
+  </StackPanel>
+</UserControl>

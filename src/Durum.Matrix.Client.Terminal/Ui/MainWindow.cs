@@ -739,10 +739,14 @@ public sealed partial class MainWindow : Window
     private void AnswerInvite(string roomId)
     {
         // Ask
-        (string name, string? inviter) = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? (room.DisplayName, room.InviterUserId) : (roomId, null));
+        (string name, string? inviter, bool direct) = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? (room.DisplayName, room.InviterUserId, room.IsDirect) : (roomId, null, false));
         int? answer = MessageBox.Query(app, "Invite", $"{inviter ?? "Someone"} invited you to {name}.", "_Later", "_Reject", "_Join");
-        // Act
-        if (answer == 2) _ = RunSafelyAsync($"Joining {name}", client => client.JoinRoomAsync(roomId));
+        // Act; direct chats are recorded as such, as the inviter did
+        if (answer == 2) _ = RunSafelyAsync($"Joining {name}", async client =>
+        {
+            await client.JoinRoomAsync(roomId);
+            if (direct && inviter is not null) await client.MarkDirectRoomAsync(inviter, roomId);
+        });
         if (answer == 1) _ = RunSafelyAsync($"Rejecting {name}", client => client.LeaveRoomAsync(roomId));
     }
 

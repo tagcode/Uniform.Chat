@@ -146,6 +146,13 @@ public sealed record NameContent
     public string? Name { get; init; }
 }
 
+/// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroomavatar">m.room.avatar</see>.</summary>
+public sealed record RoomAvatarContent
+{
+    /// <summary><c>mxc://</c> URI of the image; null or empty removes the avatar.</summary>
+    public string? Url { get; init; }
+}
+
 /// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroomtopic">m.room.topic</see>.</summary>
 public sealed record TopicContent
 {

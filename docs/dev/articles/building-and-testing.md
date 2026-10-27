@@ -8,6 +8,28 @@ dotnet build
 
 Every library generates its XML documentation file, so public members without doc comments show up as build warnings.
 
+## Desktop and Android app
+
+The desktop app builds with the rest of the solution:
+
+```bash
+dotnet run --project src/Durum.Matrix.Client.Desktop
+```
+
+The Android app is not in `Uniform.Matrix.slnx`, so the solution builds without the Android workload. It needs the workload, the Android SDK and JDK 17:
+
+```bash
+dotnet workload install android
+dotnet build src/Durum.Matrix.Client.Android -t:Install \
+  -p:AndroidSdkDirectory=$HOME/Android/Sdk -p:JavaSdkDirectory=/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+`-t:Install` installs the debug build on the phone connected with USB debugging (`adb devices` lists it). To reach a server running on the computer, forward its port and sign in with `http://localhost:8008`:
+
+```bash
+adb reverse tcp:8008 tcp:8008
+```
+
 ## Native test oracle
 
 The client needs no native code. Tests can compare the managed encryption with native [vodozemac](https://github.com/matrix-org/vodozemac), built from Rust into `vodozemac_ffi`:
@@ -50,6 +72,8 @@ Most live tests use the first account. `LiveSecurityTests` use the second and th
 
 Every live test logs out at the end, so no stale devices are left on the account. Verification requests name the test device, so the account's other sessions are not asked.
 
+`Durum.Matrix.Client.Gui.Tests` drive the app's view models against the in-memory server, with Avalonia's headless platform and Skia rendering, so they need no display. Set `DURUM_SCREENSHOTS` to a folder to save the rendered chat window there. They pin xUnit v3 3.2, as `Avalonia.Headless.XUnit` 12 does not run on xUnit 4.
+
 ## Documentation
 
 DocFX is a local tool pinned in `dotnet-tools.json`.
@@ -75,6 +99,6 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The workflow builds and tests, packs the `Uniform.Matrix.*` libraries with the tag's version, publishes the client and server for `linux-x64`, `linux-arm64`, `win-x64` and `win-arm64` as self-contained single-file apps (`.tar.gz` for Linux, `.zip` for Windows), pushes the packages to NuGet.org, and creates a GitHub release with the archives and `SHA256SUMS.txt`. A tag with a suffix, such as `v0.2.0-alpha.1`, makes a prerelease on both.
+The workflow builds and tests, packs the `Uniform.Matrix.*` libraries with the tag's version, publishes the desktop app, the terminal client and the server for `linux-x64`, `linux-arm64`, `win-x64` and `win-arm64` as self-contained single-file apps (`.tar.gz` for Linux, `.zip` for Windows), pushes the packages to NuGet.org, and creates a GitHub release with the archives and `SHA256SUMS.txt`. A tag with a suffix, such as `v0.2.0-alpha.1`, makes a prerelease on both.
 
 Packages are pushed with [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing): the job exchanges GitHub's OIDC token for a short-lived NuGet API key, so no key is stored. It needs a trusted publishing policy on nuget.org for this repository and `release.yml`, a `release` environment in the repository settings, and the nuget.org user name in the `NUGET_USER` secret.

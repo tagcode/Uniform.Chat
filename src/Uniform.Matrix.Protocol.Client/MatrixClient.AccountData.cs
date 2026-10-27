@@ -86,15 +86,24 @@ public sealed partial class MatrixClient
         IReadOnlyList<InitialStateEvent>? state = encrypted ? [new InitialStateEvent { Type = EventTypes.RoomEncryption, Content = new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm } }] : null;
         CreateRoomRequest request = new() { IsDirect = true, Invite = [userId], Preset = RoomPresets.TrustedPrivateChat, InitialState = state };
         string roomId = await CreateRoomAsync(request, cancellationToken);
-
-        // Record as direct room
-        DirectContent direct = await GetDirectRoomsAsync(cancellationToken);
-        if (!direct.TryGetValue(userId, out List<string>? roomIds)) direct[userId] = roomIds = [];
-        roomIds.Add(roomId);
-        await SetAccountDataAsync(EventTypes.Direct, direct, cancellationToken);
-
+        await MarkDirectRoomAsync(userId, roomId, cancellationToken);
         // Return room ID
         return roomId;
+    }
+
+    /// <summary>Record <paramref name="roomId"/> as a direct chat with <paramref name="userId"/> in <see cref="EventTypes.Direct"/>, e.g. after joining an invite marked <c>is_direct</c>; nothing changes when it is recorded already.</summary>
+    /// <param name="userId">The other person.</param>
+    /// <param name="roomId">Room of the chat.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task MarkDirectRoomAsync(string userId, string roomId, CancellationToken cancellationToken = default)
+    {
+        // Read, add once, write back
+        DirectContent direct = await GetDirectRoomsAsync(cancellationToken);
+        if (!direct.TryGetValue(userId, out List<string>? roomIds)) direct[userId] = roomIds = [];
+        if (roomIds.Contains(roomId)) return;
+        roomIds.Add(roomId);
+        // Done
+        await SetAccountDataAsync(EventTypes.Direct, direct, cancellationToken);
     }
 
     /// <summary>Await <paramref name="task"/>, mapping <see cref="ErrorCodes.NotFound"/> to null.</summary>

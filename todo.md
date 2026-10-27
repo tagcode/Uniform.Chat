@@ -28,6 +28,14 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 - Room administration: kick, ban, power levels, room name and avatar (only the topic can be set now).
 - Files: choose where downloads are saved; paste or drag files in.
 
+## Desktop and Android app
+- Renaming devices, showing who is verified in member lists, and choosing your own reaction emoji.
+- Showing logs in the app, and more settings: Markdown on or off, image previews, the download folder.
+- Notifications on Windows (toast notifications) and Android (UnifiedPush or Firebase, which need a push gateway); clicking a notification to open its room.
+- A full-size image viewer inside the app; avatars of people in the timeline and member list.
+- Room directory, spaces, and leaving or forgetting old rooms.
+- Android: release signing and a Play Store listing; Android builds in the release workflow.
+
 ## Library quality
 - Typed RoomId, EventId and RoomAlias; today these are plain strings (`UserId` and `MxcUri` are typed).
 - Parsing matrix.to links and `matrix:` URIs into IDs.
@@ -42,6 +50,7 @@ How it works is in `docs/dev/articles/server.md`. Tests run our own `MatrixClien
 - Element Web smoke test against the server.
 - Complement client-server tests. Needs Go, and Docker access for the user (the docker group, or rootless Docker).
 - Presence in sync; presence is stored but not sent yet.
+- Unread counts: sync sends `notification_count` and `highlight_count` as 0, so clients show no unread badges; needs push rule evaluation.
 - Media: legacy unauthenticated downloads, asynchronous uploads (`/media/v1/create`).
 
 ## Later
@@ -60,9 +69,37 @@ A public name is only needed for federating with real servers, a Synapse test se
 
 Keep that server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
 
-# Far future
+# Voice calls
 
-- GUI clients with Avalonia for Windows desktop, Linux desktop and Android, on the `Uniform.Matrix.Client` engine.
 - Voice and video calls in the Avalonia client, and in the server:
   - 1:1 calls: `m.call.*` events, `/voip/turnServer` on the server, and a TURN server such as coturn.
   - Group calls: MatrixRTC with a LiveKit SFU, announced in `.well-known`.
+
+# Docfx theme
+
+- Docfx theme is currently full branch of default, but it can be reduced to the diff of default.
+
+# Namespace
+
+- Rename Durum.* to Uniform.*. So everything will be consistent. E.g. Uniform.Matrix.Client.Android.
+
+# UserManagement 
+
+- Separate user management out into Uniform.UserManagement that is agnostic of Uniform.Matrix.*
+- Create Uniform.UserManagement.Gui.Terminal
+- Have Matrix server include Uniform.UserManagement.Gui.Terminal
+
+# User documentation
+- Split the `docs/user` into `docs/server` and `docs/client` documnetation.
+- Include the client documentation as html within the client release files; .tar.gz and .zip.
+- Include the server documentation as html within the server release files; .tar.gz and .zip.
+
+# Matrix client release
+- Include user documentation in the relase .tar.gz and .zip
+
+# Matrix server
+- When application starts, and bind address is reserved, don't show full stack trace.
+- Have user management actions leave a log entry at Information level.
+
+# Matrix Avalonia clients
+- If Durum.Matrix.Client.Gui contains avalonia specific shared implementations, then it should be named Durum.Matrix.Client.Avalonia.Core

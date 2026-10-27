@@ -34,6 +34,9 @@ public sealed class Room
     public string? Name => GetStateContent<NameContent>(EventTypes.RoomName)?.Name is { Length: > 0 } name ? name : null;
     /// <summary>Topic from <see cref="EventTypes.RoomTopic"/>.</summary>
     public string? Topic => GetStateContent<TopicContent>(EventTypes.RoomTopic)?.Topic;
+    /// <summary>Avatar <c>mxc://</c> URI: the room's own from <see cref="EventTypes.RoomAvatar"/>, or the other person's in a direct chat; null when none.</summary>
+    public string? AvatarUrl => GetStateContent<RoomAvatarContent>(EventTypes.RoomAvatar)?.Url is { Length: > 0 } url ? url
+        : DirectUserId is string other && members.TryGetValue(other, out RoomMemberInfo? member) && member.AvatarUrl is { Length: > 0 } memberUrl ? memberUrl : null;
     /// <summary>Main alias from <see cref="EventTypes.RoomCanonicalAlias"/>.</summary>
     public string? CanonicalAlias => GetStateContent<CanonicalAliasContent>(EventTypes.RoomCanonicalAlias)?.Alias is { Length: > 0 } alias ? alias : null;
     /// <summary>Whether the room is end-to-end encrypted; such messages arrive as <see cref="EventTypes.RoomEncrypted"/>.</summary>

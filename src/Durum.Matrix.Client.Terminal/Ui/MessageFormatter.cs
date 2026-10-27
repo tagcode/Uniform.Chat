@@ -66,12 +66,7 @@ public static class MessageFormatter
         {
             EventTypes.RoomMessage => null,
             EventTypes.RoomEncrypted => $"<{nick}> [encrypted message; the key has not arrived]",
-            EventTypes.RoomMember => FormatMember(room, clientEvent),
-            EventTypes.RoomTopic => clientEvent.TryGetContent(out TopicContent? topic) ? $"-!- {nick} changed the topic to: {topic.Topic}" : null,
-            EventTypes.RoomName => clientEvent.TryGetContent(out NameContent? name) ? $"-!- {nick} renamed the room to {name.Name}" : null,
-            EventTypes.RoomCreate => $"-!- {nick} created the room",
-            EventTypes.Reaction => clientEvent.TryGetContent(out ReactionContent? reaction) && reaction.RelatesTo?.Key is string key ? $"-!- {nick} reacted {key}" : null,
-            _ => "",
+            _ => EventText.Describe(room, clientEvent) is string description ? $"-!- {description}" : null,
         };
 
         // Non-message events
@@ -85,33 +80,10 @@ public static class MessageFormatter
         return new TimelineEntry { Text = $"{time} {body}", Kind = kind, Timestamp = clientEvent.OriginServerTs, EventId = clientEvent.EventId, Indent = indent, Event = clientEvent, ImageUri = image };
     }
 
-    /// <summary>Return the visible text of a message: the new content of an edit, rendered from HTML when formatted, without a reply fallback quote.</summary>
+    /// <summary>Return the visible text of a message, see <see cref="EventText.GetText"/>.</summary>
     /// <param name="clientEvent">Message event.</param>
     /// <param name="userName">Display name for a user ID, used for mention pills in formatted messages.</param>
-    public static string? GetText(ClientEvent clientEvent, Func<string, string?>? userName = null)
-    {
-        // Assert message
-        if (clientEvent.Unsigned?.RedactedBecause is not null || !clientEvent.TryGetContent(out MessageContent? message) || message.Body is null) return null;
-
-        // Edits show their new content
-        MessageContent shown = message.RelatesTo?.RelType == RelationTypes.Replace && message.NewContent?.Body is not null ? message.NewContent : message;
-        if (shown.Format == MessageFormats.Html && shown.FormattedBody is { Length: > 0 } html) return HtmlText.ToText(html, userName);
-        // Return plain text
-        return ReferenceEquals(shown, message) ? StripReplyFallback(message.Body) : shown.Body;
-    }
-
-    /// <summary>Remove the <c>&gt; quoted</c> lines older clients put before reply text.</summary>
-    public static string StripReplyFallback(string body)
-    {
-        // Assert quote at start
-        if (!body.StartsWith("> ")) return body;
-        // Drop quote lines and the blank line after them
-        string[] lines = body.Split('\n');
-        int first = Array.FindIndex(lines, l => !l.StartsWith('>'));
-        if (first < 0) return body;
-        // Return remaining text
-        return string.Join('\n', lines[first..]).TrimStart('\n');
-    }
+    public static string? GetText(ClientEvent clientEvent, Func<string, string?>? userName = null) => EventText.GetText(clientEvent, userName);
 
     /// <summary>Shorten <paramref name="text"/> to one line of at most <paramref name="maxColumns"/> columns.</summary>
     public static string Snippet(string text, int maxColumns)
@@ -123,15 +95,6 @@ public static class MessageFormatter
         IReadOnlyList<string> parts = TextWrapper.Wrap(line, maxColumns - 1);
         return parts[0] + "…";
     }
-
-    /// <summary>Format a byte count like <c>12 KB</c>.</summary>
-    public static string FormatSize(long bytes) => bytes switch
-    {
-        < 1024 => $"{bytes} B",
-        < 1024 * 1024 => $"{bytes / 1024.0:F0} KB",
-        < 1024L * 1024 * 1024 => $"{bytes / (1024.0 * 1024):F1} MB",
-        _ => $"{bytes / (1024.0 * 1024 * 1024):F1} GB",
-    };
 
     /// <summary>Format a queued message of the logged-in user as pending or failed.</summary>
     public static TimelineEntry FormatOutbox(OutboxMessage message, string ownNick)
@@ -165,7 +128,7 @@ public static class MessageFormatter
         {
             MessageTypes.Emote => ($" * {nick} {body}", EntryKind.Emote),
             MessageTypes.Notice => ($"-{nick}- {body}", EntryKind.Notice),
-            MessageTypes.Image or MessageTypes.File or MessageTypes.Audio or MessageTypes.Video => ($"<{nick}> [{message.MessageType[2..]}: {message.Filename ?? text}{(message.Info?.Size is long size ? $", {FormatSize(size)}" : "")}]", own ? EntryKind.Own : EntryKind.Message),
+            MessageTypes.Image or MessageTypes.File or MessageTypes.Audio or MessageTypes.Video => ($"<{nick}> [{message.MessageType[2..]}: {message.Filename ?? text}{(message.Info?.Size is long size ? $", {EventText.FormatSize(size)}" : "")}]", own ? EntryKind.Own : EntryKind.Message),
             _ => ($"<{nick}> {body}", own ? EntryKind.Own : mentioned ? EntryKind.Highlight : EntryKind.Message),
         };
     }
@@ -180,32 +143,5 @@ public static class MessageFormatter
         if (target is null || GetText(target, room.GetMemberDisplayName) is not string targetText) return "[re] ";
         // Return quote
         return $"[re {room.GetMemberDisplayName(target.Sender)}: {Snippet(targetText, 30)}] ";
-    }
-
-    /// <summary>Describe a membership change by comparing with the previous content.</summary>
-    private static string? FormatMember(Room room, ClientEvent clientEvent)
-    {
-        // Read new and previous membership
-        if (!clientEvent.TryGetContent(out MemberContent? content) || clientEvent.StateKey is null) return null;
-        MemberContent? previous = clientEvent.Unsigned?.PrevContent is JsonElement { ValueKind: JsonValueKind.Object } prev ? prev.Deserialize<MemberContent>(MatrixJson.Options) : null;
-        string target = content.DisplayName ?? previous?.DisplayName ?? clientEvent.StateKey;
-        string actor = room.GetMemberDisplayName(clientEvent.Sender);
-        string reason = string.IsNullOrEmpty(content.Reason) ? "" : $" ({content.Reason})";
-
-        // Name and avatar changes keep membership
-        if (content.Membership == Memberships.Join && previous?.Membership == Memberships.Join)
-            return previous.DisplayName != content.DisplayName ? $"-!- {previous.DisplayName ?? clientEvent.StateKey} is now known as {target}" : null;
-
-        // Return membership change
-        return content.Membership switch
-        {
-            Memberships.Join => $"-!- {target} joined",
-            Memberships.Invite => $"-!- {actor} invited {target}",
-            Memberships.Leave when clientEvent.Sender == clientEvent.StateKey => previous?.Membership == Memberships.Invite ? $"-!- {target} declined the invite" : $"-!- {target} left{reason}",
-            Memberships.Leave => previous?.Membership == Memberships.Ban ? $"-!- {actor} unbanned {target}" : $"-!- {actor} kicked {target}{reason}",
-            Memberships.Ban => $"-!- {actor} banned {target}{reason}",
-            Memberships.Knock => $"-!- {target} asked to join{reason}",
-            _ => null,
-        };
     }
 }

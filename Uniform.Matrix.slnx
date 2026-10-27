@@ -8,6 +8,8 @@
     <Project Path="src/Uniform.Matrix.Gui.Terminal/Uniform.Matrix.Gui.Terminal.csproj" />
     <Project Path="src/Uniform.Matrix.Client/Uniform.Matrix.Client.csproj" />
     <Project Path="src/Durum.Matrix.Client.Terminal/Durum.Matrix.Client.Terminal.csproj" />
+    <Project Path="src/Durum.Matrix.Client.Gui/Durum.Matrix.Client.Gui.csproj" />
+    <Project Path="src/Durum.Matrix.Client.Desktop/Durum.Matrix.Client.Desktop.csproj" />
     <Project Path="src/Uniform.Matrix.Server/Uniform.Matrix.Server.csproj" />
     <Project Path="src/Durum.Matrix.Server.Host/Durum.Matrix.Server.Host.csproj" />
   </Folder>
@@ -18,6 +20,7 @@
     <Project Path="tests/Uniform.Matrix.Hosting.Tests/Uniform.Matrix.Hosting.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Tests/Uniform.Matrix.Client.Tests.csproj" />
     <Project Path="tests/Durum.Matrix.Client.Terminal.Tests/Durum.Matrix.Client.Terminal.Tests.csproj" />
+    <Project Path="tests/Durum.Matrix.Client.Gui.Tests/Durum.Matrix.Client.Gui.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Server.Tests/Uniform.Matrix.Server.Tests.csproj" />
   </Folder>
 </Solution>

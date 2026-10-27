@@ -2,12 +2,12 @@
 
 A pure .NET implementation of the [Matrix](https://spec.matrix.org/latest/) chat protocol.
 
-There are two applications here, a matrix chat client and a matrix server, both running in a text terminal. They are built from class libraries that can be used independently.
+There are chat clients for the terminal, the desktop (Windows and Linux) and Android, and a matrix server. They are built from class libraries that can be used independently.
 
 > [!NOTE]
 > This is version 0.1, an early pre-release. Expect changes, and do not rely on it for important conversations yet.
 
-## Client
+## Terminal client
 
 `Durum.Matrix.Client.Terminal` is the terminal chat client: rooms, messages, files and image previews, end-to-end encryption with cross-signing, key backup and emoji verification, settings and logs.
 
@@ -27,6 +27,14 @@ There are two applications here, a matrix chat client and a matrix server, both 
 
 - User guide: [Getting started](docs/user/articles/getting-started.md), [Interface](docs/user/articles/interface.md)
 - Developer guide: [Architecture](docs/dev/articles/architecture.md), [Using the protocol client](docs/dev/articles/using-client.md)
+
+## Desktop and Android client
+
+`Durum.Matrix.Client.Desktop` and `Durum.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
+
+![The desktop client](docs/user/images/desktop.png)
+
+- User guide: [Desktop and Android app](docs/user/articles/desktop.md)
 
 ## Server
 

@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Durum.Matrix.Client.Gui.ViewModels"
+             x:Class="Durum.Matrix.Client.Gui.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+  <ScrollViewer>
+    <StackPanel MaxWidth="380" Margin="24" Spacing="12" VerticalAlignment="Center">
+      <Image Source="avares://Durum.Matrix.Client.Gui/Assets/logo.png" Width="96" Height="96" />
+      <TextBlock Classes="title" HorizontalAlignment="Center" Text="Sign in to Matrix" />
+
+      <TextBlock Text="User ID" />
+      <TextBox x:Name="UserIdBox" Text="{Binding UserId}" PlaceholderText="@alice:matrix.org" />
+
+      <TextBlock Text="Password" />
+      <TextBox x:Name="PasswordBox" Text="{Binding Password}" PasswordChar="•" RevealPassword="False" />
+
+      <Expander Header="Server address" HorizontalAlignment="Stretch">
+        <StackPanel Spacing="6">
+          <TextBox Text="{Binding Homeserver}" PlaceholderText="https://matrix.example.org" />
+          <TextBlock Classes="hint" TextWrapping="Wrap"
+                     Text="Leave empty to find the server from your user ID. Needed for servers without discovery, such as http://localhost:8008 on this computer." />
+        </StackPanel>
+      </Expander>
+
+      <TextBlock Classes="error" Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextWrapping="Wrap" />
+      <Button Classes="accent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+              Command="{Binding SignInCommand}" IsDefault="True" Content="Sign in" />
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" HorizontalAlignment="Center"
+                 Text="Your password is used only to sign in; it is not saved." />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

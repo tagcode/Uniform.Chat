@@ -4,6 +4,9 @@
     "content": [
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
     ],
+    "resource": [
+      { "files": [ "images/**" ] }
+    ],
     "output": "_site",
     "template": [ "theme" ],
     "globalMetadata": {

@@ -18,6 +18,7 @@ public sealed class CryptoService : IDisposable
     private readonly AccountPaths paths;
     private readonly ILogger<CryptoService> logger;
     private readonly ConcurrentQueue<(string RoomId, string SessionId)> receivedKeys = new();
+    private readonly TaskCompletionSource started = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private OlmMachine? machine;
 
     /// <summary>Create the service; encryption starts with <see cref="StartAsync"/>.</summary>
@@ -31,6 +32,8 @@ public sealed class CryptoService : IDisposable
 
     /// <summary>Whether encryption works; false before <see cref="StartAsync"/> or when the stored state cannot be read.</summary>
     public bool Available => machine is not null;
+    /// <summary>Completes once <see cref="StartAsync"/> has finished, with or without encryption; check <see cref="Available"/> after it.</summary>
+    public Task WhenStarted => started.Task;
     /// <summary>Why encryption is not available, or null.</summary>
     public string? UnavailableReason { get; private set; } = "Not started.";
     /// <summary>This device's identity keys, when available.</summary>
@@ -63,6 +66,11 @@ public sealed class CryptoService : IDisposable
             machine = null;
             UnavailableReason = $"The stored encryption state cannot be read ({ex.Message}). Was {paths.CryptoKeyPath} replaced?";
             logger.LogWarning("Encryption unavailable: {Reason}", UnavailableReason);
+        }
+        finally
+        {
+            // Waiters go on either way
+            started.TrySetResult();
         }
     }
 

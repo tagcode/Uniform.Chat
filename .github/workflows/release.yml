@@ -1,5 +1,5 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
-# build the apps for Windows and Linux, push the packages to NuGet.org with trusted publishing,
+# build the apps (desktop, terminal client, server) for Windows and Linux, push the packages to NuGet.org with trusted publishing,
 # and create a GitHub release with the app archives.
 name: Release
 
@@ -77,19 +77,22 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows
+      # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows.
+      # desktop is the Avalonia app; its Linux archive has install-desktop-entry.sh for the application menu.
       - name: Publish and archive
         env:
           VERSION: ${{ needs.version.outputs.version }}
           RID: ${{ matrix.rid }}
         run: |
           mkdir -p release
-          for app in client:Durum.Matrix.Client.Terminal server:Durum.Matrix.Server.Host; do
+          for app in desktop:Durum.Matrix.Client.Desktop client:Durum.Matrix.Client.Terminal server:Durum.Matrix.Server.Host; do
             name="durum-${app%%:*}-$VERSION-$RID"
             dotnet publish "src/${app#*:}" -c Release -r "$RID" --self-contained \
               -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true \
               -p:DebugType=embedded -p:IsTransformWebConfigDisabled=true -p:ContinuousIntegrationBuild=true \
               -p:Version="$VERSION" -o "publish/$name"
+            # Our symbols are embedded; native libraries bring large .pdb files of their own
+            rm -f "publish/$name"/*.pdb
             cp -r LICENSE LICENSES THIRD-PARTY-NOTICES.md "publish/$name/"
             if [[ "$RID" == win-* ]]; then
               (cd publish && zip -qr "../release/$name.zip" "$name")

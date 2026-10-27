@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\Durum.Matrix.Client.Gui\Assets\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Package -->
+  <PropertyGroup>
+    <Version>0.1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <!-- Linux notifications over D-Bus; the same version Avalonia uses -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.94.1" />
+  </ItemGroup>
+
+  <!-- Linux: an application menu entry, installed by the user from the unpacked folder -->
+  <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('linux'))">
+    <None Include="Linux\install-desktop-entry.sh" CopyToPublishDirectory="PreserveNewest" Link="install-desktop-entry.sh" />
+    <None Include="..\Durum.Matrix.Client.Gui\Assets\icon.png" CopyToPublishDirectory="PreserveNewest" Link="durum.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Durum.Matrix.Client.Gui\Durum.Matrix.Client.Gui.csproj" />
+  </ItemGroup>
+
+</Project>

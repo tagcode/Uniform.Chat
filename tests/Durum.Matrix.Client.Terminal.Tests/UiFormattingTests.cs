@@ -3,6 +3,7 @@ namespace Durum.Matrix.Client.Terminal.Tests;
 using System.Text.Json;
 using Durum.Matrix.Client.Terminal.Ui;
 using Uniform.Matrix.Client;
+using Uniform.Matrix.Client.Formatting;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Gui.Terminal;
@@ -213,16 +214,16 @@ public class UiFormattingTests
     public void CanFormatHelpers()
     {
         // Assert sizes
-        Assert.Equal("512 B", MessageFormatter.FormatSize(512));
-        Assert.Equal("1.5 MB", MessageFormatter.FormatSize(1_572_864));
+        Assert.Equal("512 B", EventText.FormatSize(512));
+        Assert.Equal("1.5 MB", EventText.FormatSize(1_572_864));
 
         // Assert snippets cut by columns and lines
         Assert.Equal("short", MessageFormatter.Snippet("short\nsecond line", 10));
         Assert.Equal("👍👍…", MessageFormatter.Snippet("👍👍👍👍", 6));
 
         // Assert fallback stripping only applies to leading quotes
-        Assert.Equal("text", MessageFormatter.StripReplyFallback("> quoted\n> more\n\ntext"));
-        Assert.Equal("a > b", MessageFormatter.StripReplyFallback("a > b"));
+        Assert.Equal("text", EventText.StripReplyFallback("> quoted\n> more\n\ntext"));
+        Assert.Equal("a > b", EventText.StripReplyFallback("a > b"));
     }
 
     /// <summary>Common extensions map to MIME types, others to octet-stream.</summary>

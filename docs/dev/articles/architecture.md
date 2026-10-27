@@ -35,11 +35,17 @@ src/
     Storage/                             EF Core SQLite: session, events, outbox, media, encryption state
     Migrations/                          EF Core migrations
     State/                               RoomStore and Room: client-side room state built from sync
-    Formatting/                          Markdown to HTML for sending, HTML to text for display
+    Formatting/                          Markdown to HTML for sending, HTML to text and event descriptions for display
     MatrixKeyTransport.cs,               EncryptedMedia.cs  Encryption over a MatrixClient
   Durum.Matrix.Client.Terminal/          Terminal client app
     Configuration/                       Display options
     Ui/                                  Main window, message log, image previews, client dialogs
+  Durum.Matrix.Client.Gui/               Avalonia app shared by desktop and Android: views, view models, services
+    Services/                            One engine host per sign-in, remembered account, UI dispatcher
+    ViewModels/                          Login, chat, room list items, message list
+    Views/                               Windows and views in XAML, rich text, styles
+  Durum.Matrix.Client.Desktop/           Windows and Linux entry point, Linux menu entry installer
+  Durum.Matrix.Client.Android/           Android entry point, manifest and resources; not in the solution
   Uniform.Matrix.Protocol.Server/        Room versions, event format, hashing, signing, redaction, auth rules
   Uniform.Matrix.Server/                 Homeserver engine: AddMatrixServer, endpoints, services, storage
   Durum.Matrix.Server.Host/              Server app, with or without the dashboard
@@ -49,6 +55,7 @@ tests/
   Uniform.Matrix.Hosting.Tests/          Settings and log file tests
   Uniform.Matrix.Client.Tests/           Room state, stores, services and rich text tests
   Durum.Matrix.Client.Terminal.Tests/    Option registration, message log and image tests
+  Durum.Matrix.Client.Gui.Tests/         View models against the in-memory server, headless rendering
   Uniform.Matrix.Protocol.Server.Tests/  Event format and auth rule tests
   Uniform.Matrix.Server.Tests/           Server through our own client, in memory
 docs/
@@ -65,6 +72,14 @@ Durum.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform.M
     │                              └───────┐
     │                                      ▼
     └──► Uniform.Matrix.Gui.Terminal ──► Uniform.Matrix.Hosting
+```
+
+The graphical app uses the same engine, without the terminal components:
+
+```text
+Durum.Matrix.Client.Desktop ──┐
+                              ├──► Durum.Matrix.Client.Gui ──► Uniform.Matrix.Client ──► …
+Durum.Matrix.Client.Android ──┘
 ```
 
 The server side, which also uses Core through Crypto:
@@ -229,7 +244,43 @@ The terminal app: `Program` calls `AddSettings`, `AddMatrixClient` and registers
 - Terminal.Gui 2.5 does not report F3 when the terminal sends `ESC O R` (most xterm-style terminals do), so message selection is on Ctrl+Up.
 - Reading `Room` state for display goes through `SyncProcessor.Read`, as `RoomStore` is not thread-safe. History and member loading fetch from the server outside the lock and apply inside it.
 
-### Not yet covered
+## Durum.Matrix.Client.Gui
+
+The graphical app, in Avalonia 12 with the Fluent theme and CommunityToolkit.Mvvm. The same views run in a desktop window and as the single view of the Android activity; `GuiPlatform` carries what differs: the application name (and so the data folders), the device name shown to other sessions, whether the screen is always one pane, and extra services.
+
+### Hosts
+
+`AccountPaths` needs `Matrix:UserId` when the services are built, so the app has no host until someone signs in. `ClientConnection.StartAsync` builds a `HostApplicationBuilder` per sign-in: `AddSettings`, the user ID and server from the form as in-memory configuration, `AddMatrixClient`, and `GuiCredentialPrompt`, which returns the form's password or throws `PasswordRequiredException` when a resumed session needs one. Signing out or in again disposes the host and builds a new one. `AccountMemory` keeps the last user ID in the settings file, so the next start resumes without the form. `SettingsViewModel` keeps the theme, text size and notification switch in its `Ui` section and saves on every change; `App` applies the theme as `RequestedThemeVariant` and the text size as Fluent's `ControlContentThemeFontSize`.
+
+### View models
+
+`MainViewModel` switches `Page` between `LoginViewModel`, `ConnectingViewModel` and `ChatViewModel`; `MainView` picks the view by data template.
+
+`ChatViewModel` follows the engine's events on a background task: it reads `SyncProcessor.Changes` and posts each batch to the UI thread through `IUiDispatcher`, where room state is read under `SyncProcessor.Read`. `ConnectionStatus.Changed`, `EventsDecrypted` and `OutboxSender.RoomChanged` are posted the same way. Each posted change runs inside a try/catch that logs, as an exception on the UI thread would end the app.
+
+`MessageList` turns events into `MessageViewModel` items. Edits, deletions and reactions change the item they refer to instead of adding one, also when older history arrives after them. Unsent outbox messages are shown last; their list is reloaded on every outbox change, and a version counter drops loads that finish out of order, so a sent message never comes back as pending.
+
+Room creation, invites, deletions, typing notices, read markers and file uploads call `MatrixClient` directly; messages, replies, edits and reactions go through the outbox. Files to encrypted rooms are encrypted with `UploadEncryptedAsync` and their message is sent through the outbox, which encrypts it.
+
+`SecurityViewModel` shows `GetSecurityStatusAsync` and offers set-up, recovery or verification by what is missing; it waits for `CryptoService.WhenStarted`, as encryption starts after sign-in. Setting up recovery asks for the password only when the server answers with a user-interactive auth challenge. `ChatViewModel` follows `CryptoService.VerificationChanged` and shows one `VerificationViewModel` at a time, so incoming requests and our own requests go through the same panel.
+
+`ChatViewModel` also decides on notifications: new messages in direct chats, messages whose `m.mentions` name the user or the room, and invites that were not in the list before, at most three per sync and none from history or the first sync. They are passed to `GuiPlatform.Notifier` unless the window has the focus on that room. The desktop app sets `FreeDesktopNotifier` on Linux, which calls `org.freedesktop.Notifications.Notify` over the session bus with Tmds.DBus.Protocol, the D-Bus library Avalonia already uses.
+
+### Views
+
+- `ChatView` has the room list and the open room side by side, or one at a time below 720 pixels and always on phones. It keeps the newest message in view while scrolled to the bottom, loads older messages at the top, and goes back to the list on `TopLevel.BackRequested` (Android's back button).
+- `RichText` is a `SelectableTextBlock` that parses a message's `formatted_body` with AngleSharp into inlines: emphasis, code, headings, quotes, lists, links and mention pills; reply fallbacks are dropped. Without HTML it shows the plain body.
+- File dialogs use `TopLevel.StorageProvider`, which is the system picker on both platforms.
+- The message box's keys are handled in the tunnel phase: a multi-line `TextBox` takes Enter and Ctrl+V itself, so a bubbling handler never sees them. Pasting checks the clipboard for files, then an image, and falls back to the box's own text paste.
+- Links: `RichText` records the character range of each link while building its inlines (a `LineBreak` counts as one character) and hit-tests `TextLayout` on click, as Avalonia has no inline hyperlink. Plain-text bodies get their web addresses linked.
+- Bindings are compiled (`x:DataType`), so binding errors fail the build.
+
+### Android
+
+`MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so `AppDirectories` and the engine need no Android code. The activity resizes for the keyboard. The app has internet permission only, and Android backup is off, so encryption keys stay on the device.
+
+## Not yet covered
 
 - Encryption extras: QR code verification, in-room verification requests, dehydrated devices, and key export files.
 - Registration, refresh tokens, push rules, spaces and threads.
+- In the graphical app: renaming devices, and notifications on Windows and Android.

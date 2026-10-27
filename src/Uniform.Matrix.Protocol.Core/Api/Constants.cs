@@ -11,6 +11,8 @@ public static class EventTypes
     public const string RoomName = "m.room.name";
     /// <summary>Room topic, content <see cref="TopicContent"/>.</summary>
     public const string RoomTopic = "m.room.topic";
+    /// <summary>Room avatar, content <see cref="RoomAvatarContent"/>.</summary>
+    public const string RoomAvatar = "m.room.avatar";
     /// <summary>Main room alias, content <see cref="CanonicalAliasContent"/>.</summary>
     public const string RoomCanonicalAlias = "m.room.canonical_alias";
     /// <summary>First event of a room, content <see cref="CreateContent"/>.</summary>

@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Durum.Matrix.Client.Gui.ViewModels"
+             xmlns:views="using:Durum.Matrix.Client.Gui.Views"
+             x:Class="Durum.Matrix.Client.Gui.Views.ChatView"
+             x:DataType="vm:ChatViewModel"
+             Classes.narrow="{Binding IsNarrow}">
+  <UserControl.Resources>
+    <views:SenderColorConverter x:Key="SenderColor" />
+  </UserControl.Resources>
+
+  <!-- Narrow screens show one pane across the whole width; sizes are styles, as a local value would win over them -->
+  <UserControl.Styles>
+    <Style Selector="Border#RoomPanel">
+      <Setter Property="Width" Value="300" />
+    </Style>
+    <Style Selector=".narrow Border#RoomPanel">
+      <Setter Property="Width" Value="NaN" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector=".narrow DockPanel#RoomArea">
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="Auto,*">
+
+    <!-- Rooms -->
+    <Border x:Name="RoomPanel" Grid.Column="0" Classes="sidebar" IsVisible="{Binding ShowRoomList}">
+      <DockPanel>
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="12,10">
+          <Image Grid.Column="0" Source="avares://Durum.Matrix.Client.Gui/Assets/logo.png" Width="28" Height="28" VerticalAlignment="Center" />
+          <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
+            <TextBlock Classes="title" Text="Durum" />
+            <TextBlock Classes="hint" Text="{Binding UserId}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+          <Button Grid.Column="2" Classes="icon" Content="⋮" ToolTip.Tip="Account">
+            <Button.Flyout>
+              <Flyout Placement="BottomEdgeAlignedRight">
+                <StackPanel Width="240" Spacing="8">
+                  <Button Content="Security and recovery…" Command="{Binding OpenSecurityCommand}" HorizontalAlignment="Stretch" />
+                  <Button Content="Settings…" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Stretch" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                  <Separator />
+                  <Button Content="Sign out" Command="{Binding SignOutCommand}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
+        </Grid>
+
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="12,0,12,8">
+          <TextBox Grid.Column="0" Text="{Binding JoinTarget}" PlaceholderText="#room, @user or new name" ToolTip.Tip="Join a room by its address, chat with a user, or create a private room" x:Name="RoomBox" />
+          <Button Grid.Column="1" Margin="6,0,0,0" Content="{Binding OpenTargetText}" Command="{Binding OpenTargetCommand}" />
+        </Grid>
+
+        <TextBlock DockPanel.Dock="Bottom" Classes="status" Text="{Binding StatusText}" IsVisible="{Binding StatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextWrapping="Wrap" />
+
+        <ListBox x:Name="RoomList" ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}" Classes="rooms">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:RoomItemViewModel">
+              <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
+                <Border Grid.Column="0" Classes="avatar" Background="{Binding RoomId, Converter={StaticResource SenderColor}}">
+                  <Panel>
+                    <TextBlock Text="{Binding Initial}" IsVisible="{Binding !HasAvatar}" />
+                    <Image Source="{Binding Avatar}" Stretch="UniformToFill" IsVisible="{Binding HasAvatar}" />
+                  </Panel>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Classes.unread="{Binding HasUnread}" />
+                  <TextBlock Classes="hint" Text="Invitation" IsVisible="{Binding IsInvite}" />
+                  <TextBlock Classes="hint" Text="{Binding Topic}" TextTrimming="CharacterEllipsis" IsVisible="{Binding !IsInvite}" />
+                </StackPanel>
+                <Border Grid.Column="2" Classes="badge" Classes.mention="{Binding IsHighlighted}" IsVisible="{Binding HasUnread}" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding UnreadText}" />
+                </Border>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <!-- Open room -->
+    <DockPanel x:Name="RoomArea" Grid.Column="1" IsVisible="{Binding ShowRoom}" DragDrop.AllowDrop="True">
+      <Border DockPanel.Dock="Top" Classes="header">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <Button Grid.Column="0" Classes="icon" Content="‹" Command="{Binding BackCommand}" IsVisible="{Binding IsNarrow}" ToolTip.Tip="Rooms" />
+          <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
+            <TextBlock Classes="title" Text="{Binding SelectedRoom.Name, FallbackValue='Choose a room'}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Classes="hint" Text="{Binding SelectedRoom.Topic, FallbackValue=''}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+            <TextBlock Classes="hint" VerticalAlignment="Center" Text="🔒 Encrypted" IsVisible="{Binding SelectedRoom.IsEncrypted, FallbackValue=False}" />
+            <Button Classes="icon" Content="⋮" ToolTip.Tip="Room" Command="{Binding LoadMembersCommand}" IsVisible="{Binding !SelectedRoom.IsInvite, FallbackValue=False}">
+              <Button.Flyout>
+                <Flyout Placement="BottomEdgeAlignedRight">
+                  <StackPanel Width="320" Spacing="8">
+                    <TextBlock Classes="subtitle" Text="Topic" />
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBox Grid.Column="0" Text="{Binding TopicDraft}" PlaceholderText="What the room is about" />
+                      <Button Grid.Column="1" Margin="6,0,0,0" Content="Set" Command="{Binding SetTopicCommand}" />
+                    </Grid>
+                    <TextBlock Classes="subtitle" Text="Invite" />
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBox Grid.Column="0" Text="{Binding InviteTarget}" PlaceholderText="@user:server" />
+                      <Button Grid.Column="1" Margin="6,0,0,0" Content="Invite" Command="{Binding InviteCommand}" />
+                    </Grid>
+                    <TextBlock Classes="subtitle" Text="Members" />
+                    <ScrollViewer MaxHeight="240">
+                      <ItemsControl ItemsSource="{Binding Members}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="vm:MemberItem">
+                            <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                              <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
+                              </StackPanel>
+                              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyMemberClick" IsVisible="{Binding CanVerify}" />
+                            </Grid>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </ScrollViewer>
+                    <Separator />
+                    <Button Content="Leave room" Command="{Binding LeaveRoomCommand}" HorizontalAlignment="Stretch" />
+                  </StackPanel>
+                </Flyout>
+              </Button.Flyout>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Invitation -->
+      <Border DockPanel.Dock="Top" Classes="banner" IsVisible="{Binding SelectedRoom.IsInvite, FallbackValue=False}">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock VerticalAlignment="Center" Text="You are invited to this room." />
+          <Button Classes="accent" Content="Join" Command="{Binding AcceptInviteCommand}" />
+          <Button Content="Decline" Command="{Binding DeclineInviteCommand}" />
+        </StackPanel>
+      </Border>
+
+      <!-- Errors and results -->
+      <Border DockPanel.Dock="Top" Classes="notice" IsVisible="{Binding Notice, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Grid.Column="0" Text="{Binding Notice}" TextWrapping="Wrap" VerticalAlignment="Center" />
+          <Button Grid.Column="1" Classes="icon" Content="✕" Command="{Binding DismissNoticeCommand}" />
+        </Grid>
+      </Border>
+
+      <!-- Message box -->
+      <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto" Margin="12,6,12,12" IsVisible="{Binding HasOpenRoom}">
+        <Button Grid.Column="0" Margin="0,0,6,0" Content="📎" ToolTip.Tip="Send a file" Click="OnAttachClick" VerticalAlignment="Bottom" IsEnabled="{Binding !SelectedRoom.IsInvite, FallbackValue=False}" />
+        <TextBox x:Name="ComposerBox" Grid.Column="1" Text="{Binding Composer}" PlaceholderText="Message" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="160" />
+        <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="Send" Command="{Binding SendCommand}" VerticalAlignment="Bottom" />
+      </Grid>
+      <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding IsComposingSpecial}">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Grid.Column="0" Text="{Binding ComposeMode}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+          <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="Cancel (Esc)" Command="{Binding CancelComposeCommand}" />
+        </Grid>
+      </Border>
+      <TextBlock DockPanel.Dock="Bottom" Classes="typing" Text="{Binding TypingText}" IsVisible="{Binding TypingText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+      <!-- Messages -->
+      <Panel>
+        <TextBlock Classes="hint" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Choose a room to start." IsVisible="{Binding !HasOpenRoom}" />
+        <ListBox x:Name="MessageList" ItemsSource="{Binding Messages.Items}" Classes="messages" IsVisible="{Binding HasOpenRoom}" ContextRequested="OnMessageContextRequested">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:MessageViewModel">
+              <DockPanel>
+                <!-- First message of a day -->
+                <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,*" Margin="0,10,0,4" IsVisible="{Binding HasDay}">
+                  <Separator Grid.Column="0" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="hint" Margin="10,0" Text="{Binding Day}" />
+                  <Separator Grid.Column="2" VerticalAlignment="Center" />
+                </Grid>
+                <Panel>
+                  <!-- Membership and state changes -->
+                  <TextBlock Classes="info" IsVisible="{Binding IsInfo}" TextWrapping="Wrap">
+                    <Run Text="{Binding Text}" />
+                    <Run Classes="time" Text="{Binding TimeText}" />
+                  </TextBlock>
+
+                  <!-- Messages -->
+                  <StackPanel IsVisible="{Binding !IsInfo}" Spacing="2" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding ShowHeader}" Margin="0,6,0,0">
+                      <TextBlock Classes="sender" Text="{Binding SenderName}" Foreground="{Binding SenderId, Converter={StaticResource SenderColor}}" />
+                      <TextBlock Classes="time" Text="{Binding TimeText}" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                    <Border Classes="quote" IsVisible="{Binding ReplyQuote, Converter={x:Static ObjectConverters.IsNotNull}}">
+                      <TextBlock Text="{Binding ReplyQuote}" TextTrimming="CharacterEllipsis" />
+                    </Border>
+                    <views:RichText Body="{Binding Text}" Html="{Binding Html}" TextWrapping="Wrap" Classes.highlight="{Binding IsHighlight}" Classes.pending="{Binding IsPending}" />
+                    <Image Source="{Binding Thumbnail}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Stretch="Uniform" Cursor="Hand" ToolTip.Tip="Open" PointerReleased="OnImageReleased" IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Button Classes="link" Content="Open" Click="OnOpenClick" IsVisible="{Binding IsAttachment}" />
+                      <Button Classes="link" Content="Save…" Click="OnSaveClick" IsVisible="{Binding IsAttachment}" />
+                      <TextBlock Classes="hint" Text="(edited)" IsVisible="{Binding IsEdited}" />
+                      <TextBlock Classes="hint" Text="{Binding SendState}" IsVisible="{Binding IsPending}" />
+                      <Border Classes="reactions" IsVisible="{Binding HasReactions}">
+                        <TextBlock Text="{Binding Reactions}" />
+                      </Border>
+                    </StackPanel>
+                  </StackPanel>
+                </Panel>
+              </DockPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <ProgressBar IsIndeterminate="True" VerticalAlignment="Top" IsVisible="{Binding IsLoadingHistory}" />
+      </Panel>
+    </DockPanel>
+
+    <!-- Settings over everything -->
+    <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding IsSettingsOpen}">
+      <Border Classes="card">
+        <Grid RowDefinitions="Auto,*">
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Right" />
+          <ScrollViewer Grid.Row="1">
+            <views:SettingsView DataContext="{Binding Settings}" />
+          </ScrollViewer>
+        </Grid>
+      </Border>
+    </Border>
+
+    <!-- Security panel over everything -->
+    <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding Security, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <Border Classes="card">
+        <Grid RowDefinitions="Auto,*">
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseSecurityCommand}" HorizontalAlignment="Right" />
+          <ScrollViewer Grid.Row="1">
+            <views:SecurityView DataContext="{Binding Security}" />
+          </ScrollViewer>
+        </Grid>
+      </Border>
+    </Border>
+
+    <!-- Verification over everything, also over the security panel -->
+    <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding Verification, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <Border Classes="card">
+        <views:VerificationView DataContext="{Binding Verification}" />
+      </Border>
+    </Border>
+  </Grid>
+</UserControl>
