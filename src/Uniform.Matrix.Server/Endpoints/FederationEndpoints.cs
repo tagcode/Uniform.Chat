@@ -59,6 +59,26 @@ public static class FederationEndpoints
             (List<JsonObject> state, List<JsonObject> authChain) = await events.AcceptJoinAsync(pdu, eventId, origin, originKeys, cancellationToken);
             return MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["members_omitted"] = false, ["state"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. authChain]) });
         }).RequireFederation();
+
+        // Transactions of events from other servers; EDUs are not used yet
+        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, EventSender events, RemoteServerKeys keys, CancellationToken cancellationToken) =>
+        {
+            JsonObject results = [];
+            foreach (JsonObject pdu in (body["pdus"] as JsonArray ?? []).OfType<JsonObject>().Take(50))
+            {
+                Dictionary<string, string> senderKeys = [];
+                if (UserId.TryParse(pdu["sender"]?.GetValue<string>(), out UserId sender))
+                {
+                    foreach (string keyId in (pdu["signatures"]?[sender.ServerName] as JsonObject ?? []).Select(k => k.Key))
+                    {
+                        if (await keys.GetVerifyKeyAsync(sender.ServerName, keyId, cancellationToken) is string key) senderKeys[keyId] = key;
+                    }
+                }
+                (string? eventId, string? error) = await events.AcceptEventAsync(pdu, senderKeys, cancellationToken);
+                if (eventId is not null) results[eventId] = error is null ? new JsonObject() : new JsonObject { ["error"] = error };
+            }
+            return MatrixHttp.Json(new JsonObject { ["pdus"] = results });
+        });
         // Return routes
         return routes;
     }

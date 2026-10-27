@@ -125,6 +125,46 @@ public class FederationTests
         Assert.Equal("Kitchen", (await alice.TryGetStateEventAsync(roomId, "m.room.name", cancellationToken: Ct))?.GetProperty("name").GetString());
     }
 
+    /// <summary>After a join, messages of either server reach the other through transactions.</summary>
+    [Fact]
+    public async Task ExchangeMessages()
+    {
+        // Arrange: alice of a.test in bob's room on b.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+
+        // Act
+        await bob.SendTextAsync(roomId, "hello from b", Ct);
+        IReadOnlyList<string> atA = await WaitForBodiesAsync(alice, roomId, 1);
+        await alice.SendTextAsync(roomId, "hi from a", Ct);
+        IReadOnlyList<string> atB = await WaitForBodiesAsync(bob, roomId, 2);
+
+        // Assert: same history on both servers
+        Assert.Equal(["hello from b"], atA);
+        Assert.Equal(["hello from b", "hi from a"], atB);
+        Assert.Equal(["hello from b", "hi from a"], await WaitForBodiesAsync(alice, roomId, 2));
+    }
+
+    /// <summary>Return the message bodies of a room, oldest first, once there are <paramref name="count"/>; fail after a few seconds.</summary>
+    private static async Task<IReadOnlyList<string>> WaitForBodiesAsync(MatrixClient client, string roomId, int count)
+    {
+        // Poll, as transactions are sent in the background
+        for (int attempt = 0; ; attempt++)
+        {
+            MessagesResponse page = await client.GetMessagesAsync(roomId, limit: 50, cancellationToken: Ct);
+            List<string> bodies = [.. page.Chunk.Where(e => e.Type == "m.room.message").Select(e => e.Content.GetProperty("body").GetString()!).Reverse()];
+            if (bodies.Count >= count || attempt == 50) return bodies;
+            await Task.Delay(100, Ct);
+        }
+    }
+
     /// <summary>Joining a room the other server does not have, or a private room, fails with that server's error.</summary>
     [Fact]
     public async Task RefuseRemoteJoins()

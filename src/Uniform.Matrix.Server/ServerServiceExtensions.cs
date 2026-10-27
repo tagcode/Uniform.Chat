@@ -120,6 +120,7 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<FederationClient>();
         builder.Services.AddSingleton<RemoteServerKeys>();
         builder.Services.AddSingleton<RemoteJoins>();
+        builder.Services.AddHostedService<FederationSender>();
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<DeviceKeyService>();
         builder.Services.AddSingleton<ToDeviceService>();

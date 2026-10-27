@@ -48,19 +48,20 @@ How it works is in `docs/dev/articles/server.md`. Tests run our own `MatrixClien
 - Forwarded headers from a trusted reverse proxy (a known-proxies setting), so login rate limits count each client address instead of the proxy's.
 
 ## Later
-PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), sliding sync (MSC4186), room version 12, OpenTelemetry.
+PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), sliding sync (MSC4186), OpenTelemetry.
 
 URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 - Server: allow and deny lists of hosts.
 - Clients: show `[title — description]` and the `og:image` under messages with links, with `MatrixClient.GetUrlPreviewAsync`; a `Ui:UrlPreviews` setting, off by default in encrypted rooms.
 
 ## Milestone 2: federation
-A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), all behind `Federation:Enabled`.
+A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), all behind `Federation:Enabled`. Tested against a real Synapse: join, and messages both ways.
 
 Next:
 - Store remote keys in the database, old keys too, and ask notary servers (`/_matrix/key/v2/query`) for keys of servers that are down; serve `/_matrix/key/v2/query` ourselves.
 - SRV lookup (`_matrix-fed._tcp`), which needs a small DNS client.
-- Receiving and sending transactions (`/send`), so messages flow after a join; sending local events to the room's other servers.
+- Room version 12 (Synapse's default now): room IDs without a server, creators in the create event; joins then need `via` servers.
+- Retrying transactions to servers that are down, with backoff; EDUs (typing, receipts, presence, device lists, to-device).
 - Checking received auth chains with the auth rules, state resolution v2, backfill, `get_missing_events`.
 - Joining by remote alias (`query/directory`) and through `via` servers, leaving (`make_leave`/`send_leave`), invites over federation.
 - EDUs: typing, receipts, presence, device lists and to-device messages.
