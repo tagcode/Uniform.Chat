@@ -3,9 +3,12 @@ namespace Uniform.Matrix.Client.Terminal;
 using System.Runtime.InteropServices;
 using Uniform.Matrix.Client.Configuration;
 
-/// <summary>Command-line help, shown instead of starting when the user ID is missing or invalid.</summary>
+/// <summary>Command-line help, shown instead of starting when the user ID is missing or invalid and the console is not interactive.</summary>
 internal static class Usage
 {
+    /// <summary>Get whether the console is interactive, so the user can be asked in the window instead of shown this help.</summary>
+    public static bool CanAsk => !Console.IsInputRedirected && !Console.IsOutputRedirected;
+
     /// <summary>Wait for Enter when the program has a console window of its own, as after a double-click on Windows, so the help can be read before it closes.</summary>
     public static void WaitIfOwnConsole()
     {

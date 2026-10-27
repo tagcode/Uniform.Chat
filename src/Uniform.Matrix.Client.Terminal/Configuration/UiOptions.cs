@@ -22,4 +22,8 @@ public sealed record UiOptions
     public ImagePreviewStyle ImagePreviewStyle { get; set; } = ImagePreviewStyle.Blocks;
     /// <summary>Whether the terminal background is dark, so bright pixels get dense characters.</summary>
     public bool DarkBackground { get; set; } = true;
+    /// <summary>Folder that saved files go to; when null, <c>~/Downloads</c> if it exists, otherwise the home folder.</summary>
+    public string? DownloadDirectory { get; set; }
+    /// <summary>Whether Save file asks where to save, starting from <see cref="DownloadDirectory"/>; otherwise files are saved there under a free name.</summary>
+    public bool AskWhereToSave { get; set; } = true;
 }

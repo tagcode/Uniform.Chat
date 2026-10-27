@@ -13,7 +13,7 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 - Threads, related events (`/relations`) and message search.
 - Spaces: the room hierarchy.
 - Knocking, room upgrades and server capabilities.
-- Typed content for power levels, join rules and history visibility.
+- Typed content for join rules and history visibility.
 - Reporting content.
 
 ## Notifications and sync
@@ -22,11 +22,6 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 
 ## Encryption
 - QR code verification, verification requests inside a room, key export files, dehydrated devices.
-
-## Terminal app
-- First start: ask for the user ID in the window instead of the usage text, and remember it after login.
-- Room administration: kick, ban, power levels, room name and avatar (only the topic can be set now).
-- Files: choose where downloads are saved; paste or drag files in.
 
 ## Desktop and Android app
 - Renaming devices, showing who is verified in member lists, and choosing your own reaction emoji.

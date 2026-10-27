@@ -7,7 +7,7 @@ using global::Terminal.Gui.App;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
 
-/// <summary>Modal dialogs of the client: room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
+/// <summary>Modal dialogs of the client: first sign-in, room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
 public static class ClientDialogs
 {
     /// <summary>Let the user search the public room directory; return the alias or ID of the room to join, or null.</summary>
@@ -59,6 +59,58 @@ public static class ClientDialogs
         // Return the selected room when joining
         if (dialog.Result != 1 || list.SelectedItem is not int index || index >= results.Count) return null;
         return results[index].CanonicalAlias ?? results[index].RoomId;
+    }
+
+    /// <summary>Ask for the user ID and, when needed, the server address on first start; return them, or null when cancelled.</summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="userId">User ID to show at first, e.g. an invalid one from the command line.</param>
+    /// <param name="homeserver">Server address to show at first.</param>
+    public static (string UserId, string? Homeserver)? AskSignIn(IApplication app, string? userId, string? homeserver)
+    {
+        // Ask until the entries are valid or the dialog is closed; each round shows what was wrong
+        string id = userId ?? "";
+        string server = homeserver ?? "";
+        string problem = "";
+        while (true)
+        {
+            (bool accepted, id, server) = RunSignIn(app, id, server, problem);
+            if (!accepted) return null;
+            if (!UserId.TryParse(id, out _))
+            {
+                problem = id.Length == 0 ? "Give your user ID." : $"\"{id}\" is not a user ID; it looks like @alice:matrix.org.";
+                continue;
+            }
+            if (server.Length > 0 && !(Uri.TryCreate(server, UriKind.Absolute, out Uri? uri) && uri.Scheme is "https" or "http"))
+            {
+                problem = $"\"{server}\" is not a server address; it looks like https://matrix.example.org.";
+                continue;
+            }
+            // Return entries
+            return (id, server.Length > 0 ? server : null);
+        }
+    }
+
+    /// <summary>Show the sign-in dialog once; return whether it was accepted and the trimmed entries.</summary>
+    private static (bool Accepted, string UserId, string Homeserver) RunSignIn(IApplication app, string userId, string homeserver, string problem)
+    {
+        // Fields with a line for problems; the password is asked for after this, when logging in
+        using Dialog dialog = new() { Title = "Sign in to Matrix", Width = Dim.Percent(60) };
+        Label intro = new() { Text = "Give your full Matrix user ID to start; it is remembered after a successful login.", X = 1, Y = 0, Width = Dim.Fill(1) };
+        Label userLabel = new() { Text = "User ID, e.g. @alice:matrix.org:", X = 1, Y = Pos.Bottom(intro) + 1 };
+        TextField userField = new() { Text = userId, X = 1, Y = Pos.Bottom(userLabel), Width = Dim.Fill(1) };
+        Label serverLabel = new() { Text = "Server address, only when it cannot be found from the user ID:", X = 1, Y = Pos.Bottom(userField) + 1, Width = Dim.Fill(1) };
+        TextField serverField = new() { Text = homeserver, X = 1, Y = Pos.Bottom(serverLabel), Width = Dim.Fill(1) };
+        Label hint = new() { Text = "For example http://localhost:8008 for a server on this computer.", X = 1, Y = Pos.Bottom(serverField), Width = Dim.Fill(1) };
+        Label problemLabel = new() { Text = problem, X = 1, Y = Pos.Bottom(hint) + 1, Width = Dim.Fill(1) };
+        dialog.Add(intro, userLabel, userField, serverLabel, serverField, hint, problemLabel);
+        dialog.AddButton(new Button { Text = "_Quit" });
+        dialog.AddButton(new Button { Text = "_Sign in", IsDefault = true });
+
+        // Run; Enter in a field accepts with the default button
+        userField.SetFocus();
+        app.Run(dialog);
+        // Return entries
+        return (dialog.Result == 1, userField.Text.Trim(), serverField.Text.Trim());
     }
 
     /// <summary>Ask for a reaction from common emoji or typed text; return null when cancelled.</summary>

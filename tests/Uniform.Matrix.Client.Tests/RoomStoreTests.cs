@@ -343,4 +343,24 @@ public class RoomStoreTests
         Assert.Empty(await store.BackfillAsync(client, room, 10, ct));
         Assert.Single(handler.Requests);
     }
+
+    /// <summary>Power levels come from the room's power levels event; without one, only the creator has power.</summary>
+    [Fact]
+    public void ReadPowerLevels()
+    {
+        // Arrange: Bob created the room
+        const string Bob = "@bob:hs.example";
+        RoomStore store = new(Me);
+        Room room = ApplyJoined(store, Joined(state: [Event(EventTypes.RoomCreate, Bob, new { }, stateKey: ""), Member(Bob), Member(Me)]));
+
+        // Act and assert: no event, creator only
+        Assert.Equal(100, room.GetPowerLevel(Bob));
+        Assert.Equal(0, room.GetPowerLevel(Me));
+
+        // Act and assert: the event decides, with users_default for others
+        ApplyJoined(store, Joined(timeline: [Event(EventTypes.RoomPowerLevels, Bob, new { users = new Dictionary<string, int> { [Bob] = 100, [Me] = 50 }, users_default = 10 }, stateKey: "")]));
+        Assert.Equal(50, room.GetPowerLevel(Me));
+        Assert.Equal(10, room.GetPowerLevel("@carol:example.org"));
+        Assert.Equal(50, room.PowerLevels!.GetEventLevel(EventTypes.RoomName, isState: true));
+    }
 }

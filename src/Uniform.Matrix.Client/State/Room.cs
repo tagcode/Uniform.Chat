@@ -32,6 +32,8 @@ public sealed class Room
     public string Membership { get; internal set; } = Memberships.Leave;
     /// <summary>Name from <see cref="EventTypes.RoomName"/>; null when unset.</summary>
     public string? Name => GetStateContent<NameContent>(EventTypes.RoomName)?.Name is { Length: > 0 } name ? name : null;
+    /// <summary>Power levels from <see cref="EventTypes.RoomPowerLevels"/>; null when the room has none.</summary>
+    public PowerLevelsContent? PowerLevels => GetStateContent<PowerLevelsContent>(EventTypes.RoomPowerLevels);
     /// <summary>Topic from <see cref="EventTypes.RoomTopic"/>.</summary>
     public string? Topic => GetStateContent<TopicContent>(EventTypes.RoomTopic)?.Topic;
     /// <summary>Avatar <c>mxc://</c> URI: the room's own from <see cref="EventTypes.RoomAvatar"/>, or the other person's in a direct chat; null when none.</summary>
@@ -127,6 +129,9 @@ public sealed class Room
         // Not found
         return false;
     }
+
+    /// <summary>Return the power level of <paramref name="userId"/>; without power levels, 100 for the room's creator and 0 for others.</summary>
+    public long GetPowerLevel(string userId) => PowerLevels is PowerLevelsContent levels ? levels.GetUserLevel(userId) : userId == GetSender(GetState(EventTypes.RoomCreate)) ? PowerLevelsContent.Admin : 0;
 
     /// <summary>Name to show for <paramref name="userId"/> per <see href="https://spec.matrix.org/latest/client-server-api/#calculating-the-display-name-for-a-user">spec</see>: display name, with the user ID appended when another member shares it.</summary>
     public string GetMemberDisplayName(string userId)

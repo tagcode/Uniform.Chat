@@ -11,7 +11,7 @@
   - You can explain *why* or *what* depending what is relevant. 
   - On last line of a function that returns a value, add comment  `// Done` or `// Return xx` or `// On error xx` even if it is obvious from code itself.
 - Keep `<summary></summary>` and `<param name="serverName"></param>` comments in one line if line width is less than 250 characters.
-- Give consise `<summary>` comments for every public and private class, public and private method, public property and public field.
+- Give concise `<summary>` comments for every public and private class, public and private method, public property and public field.
 - You can use `<see href="">` for urls to give more relevant information, such as specifications.
 - xUnit v3 for tests, with method names like `DoX()` 
 - For simple if-statements, use one-liners without linefeed after condition; E.g. `if (condition) do();`

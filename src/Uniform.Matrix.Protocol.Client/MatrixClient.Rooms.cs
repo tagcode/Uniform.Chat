@@ -94,6 +94,30 @@ public sealed partial class MatrixClient
     public Task<string> SetRoomTopicAsync(string roomId, string topic, CancellationToken cancellationToken = default) =>
         SendStateEventAsync(roomId, EventTypes.RoomTopic, new TopicContent { Topic = topic }, cancellationToken: cancellationToken);
 
+    /// <summary>Set the room avatar to an uploaded image, or remove it with null, via <see cref="SendStateEventAsync"/>.</summary>
+    /// <param name="roomId">Room ID.</param>
+    /// <param name="avatarUrl"><c>mxc://</c> URI of the image, e.g. from <see cref="UploadMediaAsync"/>; null removes the avatar.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public Task<string> SetRoomAvatarAsync(string roomId, MxcUri? avatarUrl, CancellationToken cancellationToken = default) =>
+        SendStateEventAsync(roomId, EventTypes.RoomAvatar, new RoomAvatarContent { Url = avatarUrl?.ToString() }, cancellationToken: cancellationToken);
+
+    /// <summary>Return the room's power levels from the server; null when the room has none.</summary>
+    public async Task<PowerLevelsContent?> GetPowerLevelsAsync(string roomId, CancellationToken cancellationToken = default) =>
+        await TryGetStateEventAsync(roomId, EventTypes.RoomPowerLevels, cancellationToken: cancellationToken) is JsonElement content ? content.Deserialize<PowerLevelsContent>(MatrixJson.Options) : null;
+
+    /// <summary>Give <paramref name="userId"/> <paramref name="level"/> in the room, e.g. <see cref="PowerLevelsContent.Moderator"/>, keeping every other power level as it is.</summary>
+    /// <param name="roomId">Room ID.</param>
+    /// <param name="userId">User to change.</param>
+    /// <param name="level">New level; 0 is an ordinary member.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<string> SetUserPowerLevelAsync(string roomId, string userId, long level, CancellationToken cancellationToken = default)
+    {
+        // Change the current levels; the server checks that we may
+        PowerLevelsContent current = await GetPowerLevelsAsync(roomId, cancellationToken) ?? new PowerLevelsContent();
+        // Return event ID
+        return await SendStateEventAsync(roomId, EventTypes.RoomPowerLevels, current.WithUserLevel(userId, level), cancellationToken: cancellationToken);
+    }
+
     /// <summary>Return <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv3roomsroomidmembers">member events</see> of a room.</summary>
     /// <param name="roomId">Room ID.</param>
     /// <param name="membership">Only members with this membership, see <see cref="Memberships"/>; all when null.</param>

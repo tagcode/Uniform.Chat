@@ -30,6 +30,7 @@ using global::Terminal.Gui.Views;
 /// <item><description>MainWindow.Messages.cs: message actions, replies and edits, typing, nick completion, files and devices.</description></item>
 /// <item><description>MainWindow.Images.cs: inline ASCII previews of images and the image viewer.</description></item>
 /// <item><description>MainWindow.Security.cs: encryption status, recovery and device verification.</description></item>
+/// <item><description>MainWindow.Admin.cs: room administration: name, avatar, kick, ban and power levels.</description></item>
 /// <item><description>MainWindow.Tools.cs: settings and log windows.</description></item>
 /// </list>
 /// </remarks>
@@ -149,6 +150,12 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "Send _file…", HelpText = "Upload a file here", Action = SendFile },
             new MenuItem { Title = "_Invite…", HelpText = "Invite a user here", Action = InviteUser },
             new MenuItem { Title = "Set _topic…", HelpText = "Change the topic", Action = SetTopic },
+            new MenuItem { Title = "Set nam_e…", HelpText = "Change the room name", Action = SetRoomName },
+            new MenuItem { Title = "Set _avatar…", HelpText = "Picture of the room", Action = SetRoomAvatar },
+            new MenuItem { Title = "_Power level…", HelpText = "Make a member admin or moderator", Action = SetPowerLevel },
+            new MenuItem { Title = "_Kick…", HelpText = "Remove a member", Action = KickMember },
+            new MenuItem { Title = "_Ban…", HelpText = "Remove a member for good", Action = BanMember },
+            new MenuItem { Title = "_Unban…", HelpText = "Let a banned user back", Action = UnbanMember },
             new MenuItem { Title = "Enable en_cryption…", HelpText = "Encrypt this room; cannot be undone", Action = EnableEncryption },
             new MenuItem { Title = "_Leave", HelpText = "Leave this room", Action = LeaveRoom },
         ]),
@@ -513,6 +520,9 @@ public sealed partial class MainWindow : Window
         _ = RunSafelyAsync("Enabling encryption", client => client.SendStateEventAsync(roomId, EventTypes.RoomEncryption, new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm }));
     }
 
+    /// <summary>Return the member list mark of a member, as in irssi: <c>@</c> admin, <c>%</c> moderator, <c>+</c> invited.</summary>
+    private static string RolePrefix(long level, string membership) => membership == Memberships.Invite ? "+" : level >= PowerLevelsContent.Admin ? "@" : level >= PowerLevelsContent.Moderator ? "%" : "";
+
     /// <summary>Update the timeline title with room name and topic, and the member list.</summary>
     private void RefreshHeader()
     {
@@ -521,7 +531,11 @@ public sealed partial class MainWindow : Window
         {
             if (r is null || !r.TryGetRoom(currentRoomId, out Room? room)) return ("Matrix", new List<string>());
             string header = room.Topic is { Length: > 0 } topic ? $"{room.DisplayName} — {topic}" : room.DisplayName;
-            List<string> names = [.. room.Members.Values.Where(m => m.IsActive).Select(m => (m.Membership == Memberships.Invite ? "+" : "") + room.GetMemberDisplayName(m.UserId)).Order(StringComparer.CurrentCultureIgnoreCase)];
+            List<string> names = [.. room.Members.Values.Where(m => m.IsActive)
+                .Select(m => (Level: room.GetPowerLevel(m.UserId), Member: m))
+                .OrderByDescending(m => m.Level >= PowerLevelsContent.Admin ? 2 : m.Level >= PowerLevelsContent.Moderator ? 1 : 0)
+                .ThenBy(m => room.GetMemberDisplayName(m.Member.UserId), StringComparer.CurrentCultureIgnoreCase)
+                .Select(m => RolePrefix(m.Level, m.Member.Membership) + room.GetMemberDisplayName(m.Member.UserId))];
             return (room.IsEncrypted ? $"{header} [encrypted]" : header, names);
         });
 
@@ -600,6 +614,9 @@ public sealed partial class MainWindow : Window
         input.Text = "";
         if (text.Length == 0) return;
 
+        // Files dragged or pasted in, checked first as their paths may start with / like commands
+        if (OfferDroppedFiles(text)) return;
+
         // Plain message
         if (!text.StartsWith('/'))
         {
@@ -624,6 +641,14 @@ public sealed partial class MainWindow : Window
             case "join": JoinRoom(argument); break;
             case "leave" or "part": LeaveRoom(); break;
             case "topic": SetTopic(argument); break;
+            case "name": SetRoomName(argument); break;
+            case "avatar": SetRoomAvatar(argument); break;
+            case "kick": KickMember(argument); break;
+            case "ban": BanMember(argument); break;
+            case "unban": UnbanMember(argument); break;
+            case "power": SetPowerLevel(argument); break;
+            case "op": SetPowerLevel(argument.Length > 0 ? $"{argument.Split(' ')[0]} admin" : ""); break;
+            case "deop": SetPowerLevel(argument.Length > 0 ? $"{argument.Split(' ')[0]} member" : ""); break;
             case "invite": InviteUser(argument); break;
             case "nick": _ = RunSafelyAsync("Changing display name", client => client.SetDisplayNameAsync(argument)); break;
             case "msg" or "query": StartDirectChat(argument); break;
@@ -780,6 +805,13 @@ public sealed partial class MainWindow : Window
         "/join #room     join a room",
         "/leave          leave this room",
         "/topic text     set the topic",
+        "/name text      set the room name",
+        "/avatar [file]  set the room picture; /avatar none removes it",
+        "/kick @user [reason]   remove a member",
+        "/ban @user [reason]    remove a member for good",
+        "/unban @user    let a banned user back",
+        "/power @user level     set a power level: number, admin, moderator or member",
+        "/op @user, /deop @user  make admin, or ordinary member",
         "/invite @user   invite a user",
         "/msg @user      start a direct chat",
         "/nick name      set your display name",

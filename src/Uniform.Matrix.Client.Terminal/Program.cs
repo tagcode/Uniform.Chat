@@ -1,6 +1,7 @@
 using Uniform.Matrix.Client.Terminal;
 using Uniform.Matrix.Client.Terminal.Configuration;
 using Uniform.Matrix.Client.Terminal.Ui;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Terminal.Gui.App;
@@ -10,39 +11,68 @@ using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Core;
 
-// Data and settings of the app's earlier name move to the new name once
-foreach (string move in AppDirectories.MoveFromPreviousName("Durum.Matrix.Client.Terminal", "Uniform.Matrix.Client.Terminal")) Console.Error.WriteLine($"Moved {move}");
-
 // Read appsettings.json next to the executable, not from the working directory
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory });
 
 // User settings file below environment and command line, and changes applied in the settings window on top
 builder.AddSettings();
 
-// Assert a user ID before the terminal UI takes over the console; show help instead of a stack trace
-string? userId = builder.Configuration[$"{MatrixOptions.Section}:{nameof(MatrixOptions.UserId)}"];
-if (!UserId.TryParse(userId, out _))
+// Without a user ID and a console to ask in, show help instead of a stack trace
+string userIdKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.UserId)}";
+string homeserverKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.Homeserver)}";
+string? userId = builder.Configuration[userIdKey];
+bool hasUserId = UserId.TryParse(userId, out _);
+if (!hasUserId && !Usage.CanAsk)
 {
     Console.Error.WriteLine(Usage.Text(userId, SettingsStore.DefaultPath(builder.Environment.ApplicationName)));
     Usage.WaitIfOwnConsole();
     return 2;
 }
 
-// Client services and options, then the terminal's own display options
-builder.AddMatrixClient();
-builder.Services.AddOptionSection<UiOptions>(builder.Configuration, UiOptions.Section);
-
-// Terminal UI; created first so the password prompt can use it
+// Terminal UI; created first so the first sign-in and the password prompt can use it
 using IApplication app = Application.Create();
 app.Init();
 builder.Services.AddSingleton(app);
+
+// First start: ask for the user ID in the window; it is saved once the login works
+(string UserId, string? Homeserver)? entered = null;
+if (!hasUserId)
+{
+    entered = ClientDialogs.AskSignIn(app, userId, builder.Configuration[homeserverKey]);
+    if (entered is not var (enteredUserId, enteredHomeserver)) return 0;
+    builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { [userIdKey] = enteredUserId, [homeserverKey] = enteredHomeserver ?? builder.Configuration[homeserverKey] });
+}
+
+// Client services and options, then the terminal's own display options
+builder.AddMatrixClient();
+builder.Services.AddOptionSection<UiOptions>(builder.Configuration, UiOptions.Section);
 builder.Services.AddSingleton<ICredentialPrompt, TuiCredentialPrompt>();
 
 // Start services, run the UI until quit, then stop services
 using IHost host = builder.Build();
 using MainWindow window = ActivatorUtilities.CreateInstance<MainWindow>(host.Services);
 await host.StartAsync();
+if (entered is var (signedInUserId, signedInHomeserver)) _ = RememberSignInAsync(host.Services, app, userIdKey, signedInUserId, homeserverKey, signedInHomeserver);
 app.Run(window);
 await host.StopAsync();
 // Done
 return 0;
+
+// Save the user ID and server address from the first sign-in to the settings file once the login works, so the next start needs no options
+static async Task RememberSignInAsync(IServiceProvider services, IApplication app, string userIdKey, string userId, string homeserverKey, string? homeserver)
+{
+    // A failed or cancelled login saves nothing
+    try
+    {
+        await services.GetRequiredService<ClientSession>().WhenReady;
+    }
+    catch (Exception)
+    {
+        return;
+    }
+
+    // Save on the UI thread, as the settings window uses the same store
+    Dictionary<string, string?> values = new() { [userIdKey] = userId };
+    if (homeserver is not null) values[homeserverKey] = homeserver;
+    app.Invoke(() => services.GetRequiredService<SettingsStore>().Save(values));
+}

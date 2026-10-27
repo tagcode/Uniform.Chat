@@ -43,6 +43,46 @@ public class RoomTests
         Assert.Equal(100, (await alice.TryGetStateEventAsync(roomId, EventTypes.RoomPowerLevels, cancellationToken: Ct))?.GetProperty("users").GetProperty(alice.UserId!).GetInt32());
     }
 
+    /// <summary>A power level change keeps the other levels, including fields the typed content does not name; a moderator can kick, an ordinary member cannot; the room avatar is set and removed.</summary>
+    [Fact]
+    public async Task PowerLevelsAndAvatar()
+    {
+        // Arrange: Alice's public room with Bob and Carol
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient alice = await UserAsync(server, "alice");
+        MatrixClient bob = await UserAsync(server, "bob");
+        MatrixClient carol = await UserAsync(server, "carol");
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await carol.JoinRoomAsync(roomId, cancellationToken: Ct);
+        PowerLevelsContent before = (await alice.GetPowerLevelsAsync(roomId, Ct))!;
+
+        // Act: Bob becomes moderator and kicks Carol, who cannot kick back
+        await alice.SetUserPowerLevelAsync(roomId, bob.UserId!, PowerLevelsContent.Moderator, Ct);
+        MatrixException refused = await Assert.ThrowsAsync<MatrixException>(() => carol.KickAsync(roomId, bob.UserId!, cancellationToken: Ct));
+        await bob.KickAsync(roomId, carol.UserId!, "testing", Ct);
+        PowerLevelsContent after = (await alice.GetPowerLevelsAsync(roomId, Ct))!;
+
+        // Assert: Bob's level changed and nothing else
+        Assert.Equal(ErrorCodes.Forbidden, refused.Errcode);
+        Assert.Equal(PowerLevelsContent.Moderator, after.GetUserLevel(bob.UserId!));
+        Assert.Equal(PowerLevelsContent.Admin, after.GetUserLevel(alice.UserId!));
+        Assert.Equal(before.Events, after.Events);
+        Assert.Equal(before.Extra?.Keys.Order(), after.Extra?.Keys.Order());
+        Assert.DoesNotContain(carol.UserId!, (await alice.GetJoinedMembersAsync(roomId, Ct)).Keys);
+
+        // Act and assert: back to an ordinary member removes the entry
+        await alice.SetUserPowerLevelAsync(roomId, bob.UserId!, 0, Ct);
+        Assert.False((await alice.GetPowerLevelsAsync(roomId, Ct))!.Users!.ContainsKey(bob.UserId!));
+
+        // Act and assert: avatar set, then removed
+        MxcUri image = await alice.UploadMediaAsync(new MemoryStream([1, 2, 3]), "image/png", "a.png", Ct);
+        await alice.SetRoomAvatarAsync(roomId, image, Ct);
+        Assert.Equal(image.ToString(), (await alice.TryGetStateEventAsync(roomId, EventTypes.RoomAvatar, cancellationToken: Ct))?.GetProperty("url").GetString());
+        await alice.SetRoomAvatarAsync(roomId, null, Ct);
+        Assert.False((await alice.TryGetStateEventAsync(roomId, EventTypes.RoomAvatar, cancellationToken: Ct))?.TryGetProperty("url", out _));
+    }
+
     /// <summary>Invite-only rooms need an invite; public rooms with an alias can be joined by the alias.</summary>
     [Fact]
     public async Task JoinRooms()

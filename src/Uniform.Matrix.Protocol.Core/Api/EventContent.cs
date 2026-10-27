@@ -1,5 +1,6 @@
 namespace Uniform.Matrix.Protocol.Core;
 
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 // Content records are lenient (no required members) because other clients may send incomplete content.
@@ -144,6 +145,55 @@ public sealed record NameContent
 {
     /// <summary>Room name.</summary>
     public string? Name { get; init; }
+}
+
+/// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroompower_levels">m.room.power_levels</see>: who may do what in a room, as levels from 0 up, where 100 is usually an admin and 50 a moderator.</summary>
+/// <remarks>Fields this record does not name, such as <c>notifications</c>, are kept in <see cref="Extra"/>, so a changed copy can be sent back without losing them.</remarks>
+public sealed record PowerLevelsContent
+{
+    /// <summary>Usual level of a moderator.</summary>
+    public const long Moderator = 50;
+    /// <summary>Usual level of an admin.</summary>
+    public const long Admin = 100;
+
+    /// <summary>Levels of users by user ID.</summary>
+    public Dictionary<string, long>? Users { get; init; }
+    /// <summary>Level of users not in <see cref="Users"/>; 0 when unset.</summary>
+    public long? UsersDefault { get; init; }
+    /// <summary>Levels needed to send events by type.</summary>
+    public Dictionary<string, long>? Events { get; init; }
+    /// <summary>Level needed to send message events not in <see cref="Events"/>; 0 when unset.</summary>
+    public long? EventsDefault { get; init; }
+    /// <summary>Level needed to send state events not in <see cref="Events"/>; 50 when unset.</summary>
+    public long? StateDefault { get; init; }
+    /// <summary>Level needed to ban; 50 when unset.</summary>
+    public long? Ban { get; init; }
+    /// <summary>Level needed to kick; 50 when unset.</summary>
+    public long? Kick { get; init; }
+    /// <summary>Level needed to delete others' events; 50 when unset.</summary>
+    public long? Redact { get; init; }
+    /// <summary>Level needed to invite; 0 when unset.</summary>
+    public long? Invite { get; init; }
+    /// <summary>Other fields, kept as they are.</summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? Extra { get; init; }
+
+    /// <summary>Return the level of <paramref name="userId"/>.</summary>
+    public long GetUserLevel(string userId) => Users is not null && Users.TryGetValue(userId, out long level) ? level : UsersDefault ?? 0;
+
+    /// <summary>Return the level needed to send an event of <paramref name="eventType"/>; <paramref name="isState"/> chooses the default.</summary>
+    public long GetEventLevel(string eventType, bool isState) => Events is not null && Events.TryGetValue(eventType, out long level) ? level : isState ? StateDefault ?? Moderator : EventsDefault ?? 0;
+
+    /// <summary>Return a copy where <paramref name="userId"/> has <paramref name="level"/>; the default level removes the explicit entry.</summary>
+    public PowerLevelsContent WithUserLevel(string userId, long level)
+    {
+        // Copy the users, then set or remove one
+        Dictionary<string, long> users = Users is null ? [] : new(Users);
+        if (level == (UsersDefault ?? 0)) users.Remove(userId);
+        else users[userId] = level;
+        // Return copy
+        return this with { Users = users };
+    }
 }
 
 /// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroomavatar">m.room.avatar</see>.</summary>

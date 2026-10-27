@@ -165,37 +165,80 @@ public sealed partial class MainWindow
         _ = RunSafelyAsync("Deleting message", client => client.RedactAsync(roomId, clientEvent.EventId));
     }
 
-    /// <summary>Download an attachment into the cache and copy it to the downloads directory.</summary>
+    /// <summary>Download an attachment into the cache and copy it to the download folder, asking where first unless <see cref="UiOptions.AskWhereToSave"/> is off.</summary>
     private async Task SaveAttachmentAsync(MessageContent content)
     {
-        // Download into the cache
-        ShowStatus($"Downloading {content.Filename ?? content.Body}…");
+        // A free name in the download folder, which the user may change
+        string name = AccountPaths.ToSafeName(content.Filename ?? content.Body ?? "download");
+        string path = FreePath(GetDownloadDirectory(), name);
+        if (UiOptions.AskWhereToSave)
+        {
+            if (Dialogs.Ask(app, "Save file", "Save as (a file, or a folder to save into):", path) is not string chosen) return;
+            path = ExpandHome(chosen);
+            if (Directory.Exists(path)) path = FreePath(path, name);
+            else if (File.Exists(path) && !Dialogs.Confirm(app, "Save file", $"{path} exists. Replace it?")) return;
+        }
+
+        // Download into the cache, then copy
+        ShowStatus($"Downloading {name}…");
         await RunSafelyAsync("Saving file", async client =>
         {
             StoredMedia media = await mediaCache.GetAsync(client, content);
-
-            // Copy under a free name
-            string directory = GetDownloadDirectory();
-            string name = AccountPaths.ToSafeName(content.Filename ?? media.FileName ?? content.Body ?? "download");
-            string path = Path.Combine(directory, name);
-            for (int i = 1; File.Exists(path); i++) path = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(name)} ({i}){Path.GetExtension(name)}");
-            File.Copy(mediaCache.GetFullPath(media), path);
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
+            File.Copy(mediaCache.GetFullPath(media), path, overwrite: true);
             app.Invoke(() => { ShowStatus($"Saved {path}"); Dialogs.Info(app, "File saved", path); });
         });
     }
 
-    /// <summary>Return <c>~/Downloads</c> when it exists, otherwise the home directory.</summary>
-    private static string GetDownloadDirectory()
+    /// <summary>Return a path for <paramref name="name"/> in <paramref name="directory"/> that is not taken, adding <c>(1)</c>, <c>(2)</c>… when needed.</summary>
+    private static string FreePath(string directory, string name)
     {
-        // Prefer the usual downloads folder
+        // First free name
+        string path = Path.Combine(directory, name);
+        for (int i = 1; File.Exists(path); i++) path = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(name)} ({i}){Path.GetExtension(name)}");
+        // Return path
+        return path;
+    }
+
+    /// <summary>Return <see cref="UiOptions.DownloadDirectory"/>, or <c>~/Downloads</c> when it exists, otherwise the home folder.</summary>
+    private string GetDownloadDirectory()
+    {
+        // The setting first, then the usual downloads folder
+        if (UiOptions.DownloadDirectory is { Length: > 0 } configured) return ExpandHome(configured);
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         string downloads = Path.Combine(home, "Downloads");
         // Return existing directory
         return Directory.Exists(downloads) ? downloads : home;
     }
 
+    /// <summary>Offer to send the files dragged or pasted into the input line; return whether the line was files, so it is not sent as a message.</summary>
+    private bool OfferDroppedFiles(string text)
+    {
+        // Only lines of nothing but existing files
+        IReadOnlyList<string> files = DroppedFiles.Parse(text, File.Exists);
+        if (files.Count == 0 || currentRoomId is null) return false;
+        string list = string.Join("\n", files.Select(Path.GetFileName));
+        if (!Dialogs.Confirm(app, "Send files", files.Count == 1 ? $"Send {list} to this room?" : $"Send these {files.Count} files to this room?\n\n{list}"))
+        {
+            // Back to the input line, to edit or send as text
+            input.Text = text;
+            return true;
+        }
+        // Done
+        foreach (string file in files) SendFile(file);
+        return true;
+    }
+
     /// <summary>Pick a file and send it to the open room.</summary>
     private void SendFile()
+    {
+        // Assert room, then pick
+        if (currentRoomId is null) return;
+        if (Dialogs.PickFile(app, "Send file") is string path) SendFile(path);
+    }
+
+    /// <summary>Send the file at <paramref name="path"/> to the open room, encrypted when the room is.</summary>
+    private void SendFile(string path)
     {
         // Assert room, and encryption when the room needs it
         if (currentRoomId is not string roomId) return;
@@ -205,8 +248,6 @@ public sealed partial class MainWindow
             Dialogs.Error(app, "Send file", $"This room is encrypted, but encryption is not available on this device.\n\n{crypto.UnavailableReason}");
             return;
         }
-        string? path = Dialogs.PickFile(app, "Send file");
-        if (path is null) return;
 
         // Encrypted rooms: encrypt and upload, then send the message through the outbox, which encrypts it
         string name = Path.GetFileName(path);

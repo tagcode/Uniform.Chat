@@ -17,7 +17,7 @@
 - **Menu bar** (F10 or the mouse) has everything the client can do: File, Room, View and Help.
 - **Rooms** lists invites (`+`), favourites, other rooms and low-priority rooms. Direct chats are marked `@`. The number is the Alt key for the room; unread counts are in brackets, and rooms that mention you are yellow.
 - **Message log** shows the selected room, with its name and topic in the frame. Long lines wrap under the text, own messages are cyan, and messages still being sent say `[sending…]`. A day change is marked with a line.
-- **Members** lists who is in the room; F2 hides it.
+- **Members** lists who is in the room, admins (`@`) and moderators (`%`) first, as in irssi; invited users are marked `+`. F2 hides it.
 - **Input line** sends what you type to the room. Lines starting with `/` are commands.
 - **Status bar** shows key hints, the connection state and who is typing. Others see when you are typing too.
 
@@ -79,7 +79,19 @@ Esc returns to the input line. Replies show what they answer, like `<bob> [re al
 
 ## Files
 
-Room → Send file (or `/upload`) opens a file browser; the file is uploaded and sent as an image, video, audio or file message. Attachments show as `[image: cat.png, 120 KB]`; save them with the Save file action.
+Room → Send file (or `/upload`) opens a file browser; the file is uploaded and sent as an image, video, audio or file message. You can also drag files onto the terminal window, or paste their paths: when the input line holds nothing but paths of existing files, Enter asks whether to send them, and No puts the text back to edit.
+
+Attachments show as `[image: cat.png, 120 KB]`. The Save file action asks where to save, starting with a free name in your downloads folder; give a file, or a folder to save into. The folder is `Ui:DownloadDirectory`, or `~/Downloads` when it is unset; with `Ui:AskWhereToSave` off, files are saved there without asking.
+
+## Room administration
+
+Admins and moderators can change the room and its members from the Room menu or with commands; the server refuses what your power level does not allow.
+
+- **Set name**, **Set topic** and **Set avatar** (an image file; `/avatar none` removes it).
+- **Kick** removes a member, who may join again; **Ban** also stops them joining again, and **Unban** lets them back. A reason is optional.
+- **Power level** makes a member an admin (100), a moderator (50) or an ordinary member (0), or gives any level. Lowering your own level asks first, as you cannot raise it back yourself.
+
+Members can be given by user ID or, when it is unique in the room, by display name.
 
 ## Images
 
@@ -144,7 +156,7 @@ View → Logs (or `/logs`) shows the log of this run and earlier ones; each run 
 | Menu | Items |
 |---|---|
 | File | Encryption, Verify, Devices, Settings, Log out, Quit |
-| Room | Join, Room directory, New room, Direct message, Send file, Invite, Set topic, Enable encryption, Leave |
+| Room | Join, Room directory, New room, Direct message, Send file, Invite, Set topic, Set name, Set avatar, Power level, Kick, Ban, Unban, Enable encryption, Leave |
 | View | Older messages, Members, Select message, Logs, Next room, Previous room |
 | Help | Commands and keys, About |
 
@@ -178,6 +190,13 @@ View → Logs (or `/logs`) shows the log of this run and earlier ones; each run 
 | `/leave` | Leave the current room |
 | `/topic text` | Set the topic |
 | `/invite @user:server` | Invite a user |
+| `/name text` | Set the room name |
+| `/avatar [file]` | Set the room avatar from an image; `/avatar none` removes it |
+| `/kick @user:server [reason]` | Remove a member |
+| `/ban @user:server [reason]` | Remove a member and stop them joining again |
+| `/unban @user:server` | Let a banned user back |
+| `/power @user:server level` | Set a power level: a number, or `admin`, `moderator` or `member` |
+| `/op @user:server`, `/deop @user:server` | Make a member admin, or an ordinary member |
 | `/msg @user:server` | Start a direct chat |
 | `/nick name` | Set your display name |
 | `/list` | Browse public rooms |
