@@ -19,8 +19,9 @@
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
     ],
     "output": "_site",
-    "template": [ "../theme" ],
+    "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
+      "_appFooter": "<span></span>",
       "_appTitle": "Matrix .NET Developer Guide",
       "_appName": "Matrix .NET",
       "_enableSearch": true

@@ -8,8 +8,9 @@
       { "files": [ "images/**" ] }
     ],
     "output": "_site",
-    "template": [ "../theme" ],
+    "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
+      "_appFooter": "<span></span>",
       "_appTitle": "Uniform.Matrix Client Guide",
       "_appName": "Uniform.Matrix Client",
       "_enableSearch": true

@@ -77,7 +77,7 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 
 # Docfx theme
 
-- Docfx theme (`docs/theme`, shared by all three sites) is currently full branch of default, but it can be reduced to the diff of default.
+
 - Offline guides in the release archives: the top bar and search load files by script, which browsers block for pages opened from disk; the sidebar and links work.
 
 # UserManagement 
@@ -86,3 +86,6 @@ Keep that server's registration closed and rate limits on, since unfinished soft
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
+# Uniform.Matrix.Client.Desktop
+
+- The look and feel of avalonia based GUI is kinda off. Perhaps MAUI or WinUI has better touch?

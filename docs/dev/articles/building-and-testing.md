@@ -89,7 +89,7 @@ dotnet docfx docs/client/docfx.json --serve
 dotnet docfx docs/server/docfx.json --serve
 ```
 
-`--serve` hosts the site at <http://localhost:8080>. Output goes to `docs/*/_site/`, and generated API files go to `docs/dev/api/`; both are ignored by git. The three sites share the theme in `docs/theme`, DocFX's `statictoc` template, which writes the table of contents into every page, so the guides also work opened from disk. The release archives carry them that way: the client guide in the desktop and terminal client archives, the server guide in the server archive, each as a `docs` folder.
+`--serve` hosts the site at <http://localhost:8080>. Output goes to `docs/*/_site/`, and generated API files go to `docs/dev/api/`; both are ignored by git. The three sites use DocFX's built-in `statictoc` template, which writes the table of contents into every page, so the guides also work opened from disk. `docs/theme` holds only what differs from it, as each `docfx.json` layers it on top (`"template": [ "statictoc", "../theme" ]`): the logo, `logo_blue.svg` (the source of the logo and app icons), the favicon, `styles/main.css` with the dark look, and `styles/main.js` with the table of contents highlighting. The top of `main.css` also keeps a few styles of the older DocFX version the theme was made with; when upgrading DocFX, rebuild and look at the sites, as files of the built-in template change under it. The release archives carry them that way: the client guide in the desktop and terminal client archives, the server guide in the server archive, each as a `docs` folder.
 
 ## Releasing
 
