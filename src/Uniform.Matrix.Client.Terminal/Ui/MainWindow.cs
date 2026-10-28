@@ -121,6 +121,7 @@ public sealed partial class MainWindow : Window
         processor.EventsDecrypted += roomId => app.Invoke(() => { if (roomId == currentRoomId) _ = ReloadTimelineAsync(roomId); });
         uiOptions.OnChange(_ => app.Invoke(OnUiOptionsChanged));
         crypto.VerificationChanged += v => { VerificationState state = v.State; app.Invoke(() => OnVerificationChanged(v, state)); };
+        crypto.VerificationIgnored += (sender, device, reason) => app.Invoke(() => ShowStatus($"Verification request of {sender} {device} ignored: {reason}"));
         _ = Task.Run(ConsumeSyncChangesAsync);
     }
 
@@ -134,7 +135,7 @@ public sealed partial class MainWindow : Window
     private MenuBar CreateMenuBar() => new([
         new MenuBarItem("_File", [
             new MenuItem { Title = "_Encryption…", HelpText = "Keys, recovery and backup", Action = () => _ = ShowEncryptionAsync() },
-            new MenuItem { Title = "_Verify…", HelpText = "Compare emoji with another device", Action = () => VerifyUser(ownUserId) },
+            new MenuItem { Title = "_Verify this device…", HelpText = "Emoji comparison", Action = () => VerifyUser(ownUserId) },
             new MenuItem { Title = "_Devices…", HelpText = "See and log out sessions", Action = () => _ = ManageDevicesAsync() },
             new MenuItem { Title = "_Settings…", HelpText = "View and change options", Action = ShowSettings },
             new MenuItem { Title = "_Log out…", HelpText = "End the session on the server", Action = LogOut },

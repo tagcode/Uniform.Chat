@@ -367,7 +367,7 @@ public sealed partial class MainWindow
                 Dialogs.Error(app, "Devices", ex.Message);
                 return;
             }
-            Func<string, string>? trust = crypto.Available ? deviceId => TrustLabel(crypto.GetDeviceTrust(ownUserId, deviceId)) : null;
+            Func<string, string>? trust = crypto.Available ? await DeviceTrustLabelsAsync() : null;
             if (ClientDialogs.ChooseDeviceAction(app, devices, client.DeviceId, trust) is not { } choice) return;
             await RunDeviceActionAsync(client, choice.Action, choice.Device, devices);
             if (choice.Action == 4) return;

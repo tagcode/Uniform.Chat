@@ -48,7 +48,7 @@ public sealed partial class MainWindow
         List<(string Label, Action Run)> actions = [("_Close", () => { })];
         if (!security.CrossSigningSetUp) actions.Add(("Set _up recovery", () => _ = SetUpRecoveryAsync()));
         if (security.SecretStorageSetUp && (!security.HasPrivateKeys || !security.BackupUsable)) actions.Add(("_Recover", RecoverWithKey));
-        if (security.CrossSigningSetUp) actions.Add(("_Verify device", () => VerifyUser(ownUserId)));
+        if (security.CrossSigningSetUp) actions.Add(("_Verify this device", () => VerifyUser(ownUserId)));
 
         // Follow-up dialogs run after this one closed
         int? choice = Dialogs.Choose(app, "Encryption", text, [.. actions.Select(a => a.Label)]);
@@ -137,15 +137,53 @@ public sealed partial class MainWindow
         _ = StartVerificationAsync(userId, deviceId: null);
     }
 
+    /// <summary>Return the trust label of each of our devices: <see cref="WarningListSource.NotTrusted"/> for devices the account's current identity has not signed, this one too, else how they are trusted.</summary>
+    private async Task<Func<string, string>> DeviceTrustLabelsAsync()
+    {
+        // Without an identity there is nothing to be trusted under
+        SecurityStatus security = await crypto.GetSecurityStatusAsync();
+        HashSet<string> signed = [.. crypto.GetSignedDevices(ownUserId).Select(d => d.DeviceId)];
+        string? thisDevice = crypto.DeviceId;
+        // Return labels
+        return deviceId =>
+        {
+            if (security.CrossSigningSetUp && !(deviceId == thisDevice ? security.ThisDeviceCrossSigned : signed.Contains(deviceId))) return WarningListSource.NotTrusted;
+            return TrustLabel(crypto.GetDeviceTrust(ownUserId, deviceId));
+        };
+    }
+
+    /// <summary>Return why verifying our own devices from here cannot work, or null when it can: a device can only be vouched for by one the account's current identity has signed.</summary>
+    /// <param name="deviceId">The other device, or null for all of them.</param>
+    private async Task<string?> CannotVerifyOwnAsync(string? deviceId)
+    {
+        // Fine when this device is trusted, or there is no identity yet
+        SecurityStatus security = await crypto.GetSecurityStatusAsync();
+        if (!security.CrossSigningSetUp || security.ThisDeviceCrossSigned) return null;
+        List<string> trusted = [.. crypto.GetSignedDevices(ownUserId).Where(d => d.DeviceId != crypto.DeviceId).Select(d => d.DisplayName is { Length: > 0 } name ? $"{name} ({d.DeviceId})" : d.DeviceId)];
+
+        // A given device must vouch for this one; any trusted device will do otherwise
+        if (deviceId is not null && !crypto.GetSignedDevices(ownUserId).Any(d => d.DeviceId == deviceId)) return $"Neither this device nor {deviceId} is trusted under your current identity, so neither can vouch for the other.\n\nVerify this device with one that is trusted{(trusted.Count > 0 ? $": {string.Join(", ", trusted)}" : "")}, or use your recovery key.";
+        // Return none, or that no device can
+        return deviceId is null && trusted.Count == 0 ? "None of your devices is trusted under your current identity, so none can vouch for this one.\n\nUse your recovery key, or reset your identity on a device you keep." : null;
+    }
+
     /// <summary>Send a verification request; the other device must accept it.</summary>
     private async Task StartVerificationAsync(string userId, string? deviceId)
     {
+        // Our own devices only work when one side is trusted
+        if (userId == ownUserId && crypto.Available && await CannotVerifyOwnAsync(deviceId) is string reason)
+        {
+            Dialogs.Error(app, "Verify", reason);
+            return;
+        }
+
         // Request
         ShowStatus("Sending verification request…");
         await RunSafelyAsync("Verification", async _ =>
         {
             await crypto.RequestVerificationAsync(userId, deviceId);
-            string where = userId == ownUserId ? "your other device" : userId;
+            SecurityStatus security = await crypto.GetSecurityStatusAsync();
+            string where = userId != ownUserId ? userId : security.CrossSigningSetUp && !security.ThisDeviceCrossSigned ? "one of your trusted devices" : "your other device";
             app.Invoke(() => ShowStatus($"Verification requested; accept it on {where}."));
         });
     }

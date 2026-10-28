@@ -128,7 +128,7 @@ public static class ClientDialogs
     /// <param name="app">Running application.</param>
     /// <param name="devices">Devices of the user.</param>
     /// <param name="ownDeviceId">This session's device, which cannot be logged out here.</param>
-    /// <param name="trust">Trust label of a device ID, e.g. <c>verified</c>; null without encryption.</param>
+    /// <param name="trust">Trust label of a device ID, e.g. <c>verified</c>, or <see cref="WarningListSource.NotTrusted"/>, which shows on red; null without encryption.</param>
     public static (int Action, Device? Device)? ChooseDeviceAction(IApplication app, IReadOnlyList<Device> devices, string? ownDeviceId, Func<string, string>? trust = null)
     {
         // List devices, this one first, then by last activity
@@ -136,13 +136,13 @@ public static class ClientDialogs
         ObservableCollection<string> rows = [.. ordered.Select(d => FormatDevice(d, ownDeviceId, trust?.Invoke(d.DeviceId)))];
         using Dialog dialog = new() { Title = $"Devices ({ordered.Count}, * = this device)", Width = Dim.Percent(80), Height = Dim.Percent(70) };
         ListView list = new() { X = 1, Y = 0, Width = Dim.Fill(1), Height = Dim.Fill(1) };
-        list.SetSource(rows);
+        list.Source = new WarningListSource(rows, WarningListSource.NotTrusted);
         dialog.Add(list);
         dialog.AddButton(new Button { Text = "_Close" });
         dialog.AddButton(new Button { Text = "_Rename" });
         dialog.AddButton(new Button { Text = "_Log out device" });
         dialog.AddButton(new Button { Text = "Log out _all others" });
-        if (trust is not null) dialog.AddButton(new Button { Text = "_Verify" });
+        if (trust is not null) dialog.AddButton(new Button { Text = "_Verify selected" });
 
         // Run
         list.SetFocus();
@@ -161,7 +161,7 @@ public static class ClientDialogs
         // Return row; the mark is first so narrow dialogs keep it
         return trust is null
             ? $"{own} {device.DeviceId,-12} {device.DisplayName ?? "",-28} {seen}  {device.LastSeenIp}"
-            : $"{own} {device.DeviceId,-12} {trust,-12} {device.DisplayName ?? "",-28} {seen}  {device.LastSeenIp}";
+            : $"{own} {device.DeviceId,-12} {trust,-13} {device.DisplayName ?? "",-28} {seen}  {device.LastSeenIp}";
     }
 
     /// <summary>Show <paramref name="image"/> in a viewer: real pixels through Kitty or Sixel when the terminal supports them, colored cells otherwise.</summary>

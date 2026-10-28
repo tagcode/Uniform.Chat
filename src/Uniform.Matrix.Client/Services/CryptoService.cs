@@ -46,6 +46,9 @@ public sealed class CryptoService : IDisposable
     /// <summary>Raised when a verification starts, changes or ends; raised off the UI thread.</summary>
     public event Action<Verification>? VerificationChanged;
 
+    /// <summary>Raised when a verification message is dropped, with its sender, device and why, see <see cref="OlmMachine.VerificationIgnored"/>.</summary>
+    public event Action<string, string?, string>? VerificationIgnored;
+
     /// <summary>Load or create the device's encryption account and upload its keys; log and continues without encryption on failure.</summary>
     public async Task StartAsync(MatrixClient client, CancellationToken cancellationToken)
     {
@@ -55,7 +58,17 @@ public sealed class CryptoService : IDisposable
             if (await store.ResetForDeviceAsync(client.DeviceId!, cancellationToken)) logger.LogInformation("Encryption state of a previous device was cleared");
             machine = await OlmMachine.CreateAsync(new MatrixKeyTransport(client), store, client.UserId!, client.DeviceId!, LoadOrCreatePickleKey(), cancellationToken: cancellationToken);
             machine.RoomKeyReceived += (roomId, sessionId) => receivedKeys.Enqueue((roomId, sessionId));
-            machine.VerificationChanged += v => VerificationChanged?.Invoke(v);
+            machine.VerificationChanged += v =>
+            {
+                string sentTo = v.WeRequested && v.State == VerificationState.Requested ? $", sent to {(v.RequestedDeviceIds.Count == 0 ? "no device" : string.Join(", ", v.RequestedDeviceIds))}" : "";
+                logger.LogInformation("Verification {TransactionId} with {UserId} {DeviceId}: {State}{SentTo}{Cancel}", v.TransactionId, v.OtherUserId, v.OtherDeviceId ?? "(any device)", v.State, sentTo, v.CancelCode is null ? "" : $" ({v.CancelCode}: {v.CancelReason})");
+                VerificationChanged?.Invoke(v);
+            };
+            machine.VerificationIgnored += (sender, device, reason) =>
+            {
+                logger.LogWarning("Verification message of {UserId} {DeviceId} ignored: {Reason}", sender, device ?? "(no device)", reason);
+                VerificationIgnored?.Invoke(sender, device, reason);
+            };
             machine.SecretReceived += name => logger.LogInformation("Received secret {Name} from another device", name);
             await machine.UploadInitialKeysAsync(cancellationToken);
             UnavailableReason = null;
@@ -137,6 +150,9 @@ public sealed class CryptoService : IDisposable
 
     /// <summary>Restore keys from secret storage with the recovery key and import the backup. See <see cref="OlmMachine.RecoverAsync"/>.</summary>
     public Task<RecoveryResult> RecoverAsync(string recoveryKey, CancellationToken cancellationToken = default) => Machine.RecoverAsync(recoveryKey, cancellationToken);
+
+    /// <summary>Return the user's devices signed by their current self-signing key, which can vouch for others of the account, whether or not this device trusts the identity; none when encryption is off.</summary>
+    public IReadOnlyList<DeviceInfo> GetSignedDevices(string userId) => machine is null ? [] : [.. machine.GetDevices(userId).Where(machine.IsSignedByIdentity)];
 
     /// <summary>Return the trust of a known device, or null when the device is unknown or encryption is off.</summary>
     public DeviceTrust? GetDeviceTrust(string userId, string deviceId) =>

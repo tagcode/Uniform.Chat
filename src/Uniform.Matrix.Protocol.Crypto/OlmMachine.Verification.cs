@@ -63,6 +63,9 @@ public sealed class Verification
 
     /// <summary>Devices our request went to, so the others can be told when one accepts.</summary>
     internal List<string> RequestedDevices { get; } = [];
+
+    /// <summary>Get the devices our request went to, before one of them accepted; empty for requests of others.</summary>
+    public IReadOnlyList<string> RequestedDeviceIds => RequestedDevices;
     /// <summary>Content of the start message, ours or theirs.</summary>
     internal JsonObject? StartContent { get; set; }
     /// <summary>Whether we sent the start message.</summary>
@@ -119,6 +122,9 @@ public sealed partial class OlmMachine
 
     /// <summary>Raised when a verification starts, changes state or ends; handlers run inside the machine, so marshal UI work.</summary>
     public event Action<Verification>? VerificationChanged;
+
+    /// <summary>Raised when a verification message is dropped, with its sender, the sending device if known, and why; for logs, as the other side gets no answer.</summary>
+    public event Action<string, string?, string>? VerificationIgnored;
 
     /// <summary>Verifications in progress, ours and incoming; safe to read from <see cref="VerificationChanged"/>.</summary>
     public IReadOnlyList<Verification> Verifications => [.. verifications.Values.Where(v => v.State is not (VerificationState.Done or VerificationState.Cancelled))];
@@ -226,7 +232,12 @@ public sealed partial class OlmMachine
     private async Task HandleVerificationEventAsync(string type, string sender, JsonObject content, CancellationToken cancellationToken)
     {
         // New requests
-        if (content["transaction_id"]?.GetValue<string>() is not string transactionId) return;
+        string? fromDevice = content["from_device"]?.GetValue<string>();
+        if (content["transaction_id"]?.GetValue<string>() is not string transactionId)
+        {
+            Ignored(sender, fromDevice, $"{type} has no transaction ID");
+            return;
+        }
         if (type == EventTypes.KeyVerificationRequest)
         {
             await ReceiveRequestAsync(sender, transactionId, content, cancellationToken);
@@ -234,10 +245,21 @@ public sealed partial class OlmMachine
         }
 
         // Messages of a known verification, from its other side
-        if (!verifications.TryGetValue(transactionId, out Verification? verification) || verification.OtherUserId != sender) return;
-        if (verification.State is VerificationState.Done or VerificationState.Cancelled) return;
-        string? fromDevice = content["from_device"]?.GetValue<string>();
-        if (verification.OtherDeviceId is not null && fromDevice is not null && fromDevice != verification.OtherDeviceId) return;
+        if (!verifications.TryGetValue(transactionId, out Verification? verification) || verification.OtherUserId != sender)
+        {
+            Ignored(sender, fromDevice, $"{type} is of an unknown verification {transactionId}");
+            return;
+        }
+        if (verification.State is VerificationState.Done or VerificationState.Cancelled)
+        {
+            Ignored(sender, fromDevice, $"{type} arrived after verification {transactionId} ended as {verification.State}");
+            return;
+        }
+        if (verification.OtherDeviceId is not null && fromDevice is not null && fromDevice != verification.OtherDeviceId)
+        {
+            Ignored(sender, fromDevice, $"{type} is from another device than {verification.OtherDeviceId}, which took verification {transactionId}");
+            return;
+        }
         try
         {
             if (type == EventTypes.KeyVerificationReady) await ReceiveReadyAsync(verification, fromDevice, cancellationToken);
@@ -254,18 +276,38 @@ public sealed partial class OlmMachine
         }
     }
 
+    /// <summary>Raise <see cref="VerificationIgnored"/>.</summary>
+    private void Ignored(string sender, string? fromDevice, string reason) => VerificationIgnored?.Invoke(sender, fromDevice, reason);
+
     /// <summary>Record an incoming request from a known device, when recent and for SAS.</summary>
     private async Task ReceiveRequestAsync(string sender, string transactionId, JsonObject content, CancellationToken cancellationToken)
     {
         // Not our own request, not stale, SAS supported
-        if (content["from_device"]?.GetValue<string>() is not string fromDevice || (sender == UserId && fromDevice == DeviceId) || verifications.ContainsKey(transactionId)) return;
+        string? fromDevice = content["from_device"]?.GetValue<string>();
+        if (fromDevice is null || (sender == UserId && fromDevice == DeviceId) || verifications.ContainsKey(transactionId))
+        {
+            if (fromDevice is null) Ignored(sender, null, "the request names no device");
+            return;
+        }
         DateTimeOffset sent = DateTimeOffset.FromUnixTimeMilliseconds(content["timestamp"]?.GetValue<long>() ?? 0);
-        if (time.GetUtcNow() - sent > RequestLifetime || sent - time.GetUtcNow() > TimeSpan.FromMinutes(5)) return;
-        if (content["methods"] is not JsonArray methods || !methods.Any(m => m?.GetValue<string>() == SasMethod)) return;
+        if (time.GetUtcNow() - sent > RequestLifetime || sent - time.GetUtcNow() > TimeSpan.FromMinutes(5))
+        {
+            Ignored(sender, fromDevice, $"the request is from {sent:u}, outside the {RequestLifetime.TotalMinutes:0} minutes a request lasts; check the clocks");
+            return;
+        }
+        if (content["methods"] is not JsonArray methods || !methods.Any(m => m?.GetValue<string>() == SasMethod))
+        {
+            Ignored(sender, fromDevice, $"the request offers {string.Join(", ", (content["methods"] as JsonArray ?? []).Select(m => m?.ToString()))}, not emoji ({SasMethod})");
+            return;
+        }
 
         // Known device only
         await RefreshDeviceListAsync(sender, cancellationToken);
-        if (!GetDevices(sender).Any(d => d.DeviceId == fromDevice)) return;
+        if (!GetDevices(sender).Any(d => d.DeviceId == fromDevice))
+        {
+            Ignored(sender, fromDevice, "the device is not in the user's device list, or its keys are not validly signed");
+            return;
+        }
         Verification verification = new(transactionId, sender, fromDevice, weRequested: false);
         verifications[transactionId] = verification;
         Changed(verification);

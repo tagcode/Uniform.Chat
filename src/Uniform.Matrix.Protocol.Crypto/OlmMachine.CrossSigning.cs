@@ -67,6 +67,9 @@ public sealed partial class OlmMachine
         return crossSigned ? DeviceTrust.CrossSigned : DeviceTrust.Unverified;
     }
 
+    /// <summary>Return whether <paramref name="device"/> is signed by its owner's current self-signing key, whether or not this device trusts that identity; such a device can vouch for others of the same account.</summary>
+    public bool IsSignedByIdentity(DeviceInfo device) => GetIdentity(device.UserId)?.SelfSigningKey is string selfSigning && device.SignedBySelfSigningKey == selfSigning;
+
     /// <summary>Return whether a user's cross-signing identity is trusted: verified directly, our own with its private key here, or signed by our trusted user-signing key.</summary>
     public bool IsIdentityTrusted(UserIdentity identity)
     {

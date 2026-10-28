@@ -29,5 +29,5 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/logs` | Read this and earlier session logs |
 | `/encryption` | Show encryption, recovery and backup state |
 | `/recover` | Unlock older messages with the recovery key |
-| `/verify [@user:server]` | Verify your other device, or a user, with emoji |
+| `/verify [@user:server]` | Verify this device with your other devices, or a user, with emoji |
 | `/quit` | Exit |

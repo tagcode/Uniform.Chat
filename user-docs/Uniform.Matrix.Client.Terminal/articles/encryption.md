@@ -24,7 +24,8 @@ In the terminal client, the room's frame shows `[encrypted]`.
 
 ### Verifying devices
 
-- File → Verify, `/verify`, or Verify in File → Devices starts verifying your other device. `/verify @user:server` verifies another person.
+- File → Verify this device (or `/verify`) asks your other devices to verify this one: accept on a device that is already trusted and compare the emoji. *Verify selected* in File → Devices verifies the device you pick. `/verify @user:server` verifies another person.
+- File → Devices marks devices that your current identity has not signed as *Not trusted*, on red. Only a trusted device can vouch for another, so verify an untrusted device with a trusted one, or use your recovery key.
 - Accept on the other device. When both show the same emoji, choose **They match** on both; if they differ, choose **They don't match**.
 - File → Devices shows each device as verified, cross-signed (verified through your cross-signing keys) or unverified. Room keys and secrets are shared only with your verified or cross-signed devices.
 
