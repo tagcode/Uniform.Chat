@@ -1,3 +1,7 @@
+---
+title: Track rooms
+uid: Uniform.Matrix.Client.TrackRooms.Article
+---
 # Track rooms
 
 Room state is in the `Uniform.Matrix.Client` library (`using Uniform.Matrix.Client.State;`), which builds on the protocol client:

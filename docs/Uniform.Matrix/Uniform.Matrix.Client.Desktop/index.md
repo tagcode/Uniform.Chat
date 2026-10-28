@@ -1,6 +1,10 @@
+---
+title: Uniform.Matrix.Client.Desktop
+uid: Uniform.Matrix.Client.Desktop.Article
+---
 # Uniform.Matrix.Client.Desktop
 
-The Windows and Linux entry point of the graphical app in [Uniform.Matrix.Client.Avalonia.Core](../Uniform.Matrix.Client.Avalonia.Core/index.md): it starts Avalonia with a desktop window, and on Linux sets `FreeDesktopNotifier` as the app's notifier and ships `install-desktop-entry.sh`, which adds the app to the application menu.
+The Windows and Linux entry point of the graphical app in [Uniform.Matrix.Client.Avalonia.Core](../Uniform.Matrix.Client.Avalonia.Core/index.md): it starts Avalonia with a desktop window, and on Linux sets [`FreeDesktopNotifier`](xref:Uniform.Matrix.Client.Desktop.Notifications.FreeDesktopNotifier) as the app's notifier and ships `install-desktop-entry.sh`, which adds the app to the application menu.
 
 ## Build and run
 

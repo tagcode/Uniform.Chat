@@ -1,3 +1,7 @@
+---
+title: Log in
+uid: Uniform.Matrix.Protocol.Client.LogIn.Article
+---
 # Log in
 
 ```csharp

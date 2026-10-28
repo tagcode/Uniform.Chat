@@ -1,10 +1,10 @@
 ---
 title: Uniform.Matrix.Client
-uid: Uniform.Matrix.Client.Introduction
+uid: Uniform.Matrix.Client.Article
 ---
 # Uniform.Matrix.Client
 
-The headless client. `builder.AddMatrixClient()` registers the Matrix and storage options, session logging under the data directory, storage, encryption, sync and the outbox; the application adds its own `ICredentialPrompt` for the first login. The data directory defaults to `~/.local/share/<app>` by the host's application name.
+The headless client. `builder.AddMatrixClient()` registers the Matrix and storage options, session logging under the data directory, storage, encryption, sync and the outbox; the application adds its own [`ICredentialPrompt`](xref:Uniform.Matrix.Client.Services.ICredentialPrompt) for the first login. The data directory defaults to `~/.local/share/<app>` by the host's application name.
 
 ```text
 MatrixWorker (hosted service)
@@ -16,7 +16,7 @@ MatrixWorker (hosted service)
 a frontend reads SyncChanges and queues messages via OutboxSender
 ```
 
-The client stores encryption state in its SQLite database (`EfCryptoStore`), with the 32-byte pickle key in `crypto.key` (mode 0600). `SyncProcessor` decrypts each sync before storing it and re-decrypts stored events when late keys arrive; `OutboxSender` encrypts for encrypted rooms after loading the full member list, and fails a message rather than sending it in the clear when encryption is unavailable. Files for encrypted rooms are encrypted and uploaded, then sent through the outbox; `MediaCache` decrypts them after the hash check, and the server is not asked for thumbnails of ciphertext. `CryptoService` backs up new room keys after each sync, and `MainWindow.Security.cs` holds the recovery and verification dialogs.
+The client stores encryption state in its SQLite database ([`EfCryptoStore`](xref:Uniform.Matrix.Client.Storage.EfCryptoStore)), with the 32-byte pickle key in `crypto.key` (mode 0600). [`SyncProcessor`](xref:Uniform.Matrix.Client.Services.SyncProcessor) decrypts each sync before storing it and re-decrypts stored events when late keys arrive; [`OutboxSender`](xref:Uniform.Matrix.Client.Services.OutboxSender) encrypts for encrypted rooms after loading the full member list, and fails a message rather than sending it in the clear when encryption is unavailable. Files for encrypted rooms are encrypted and uploaded, then sent through the outbox; [`MediaCache`](xref:Uniform.Matrix.Client.Services.MediaCache) decrypts them after the hash check, and the server is not asked for thumbnails of ciphertext. [`CryptoService`](xref:Uniform.Matrix.Client.Services.CryptoService) backs up new room keys after each sync, and `MainWindow.Security.cs` holds the recovery and verification dialogs.
 
 ## Not yet covered
 

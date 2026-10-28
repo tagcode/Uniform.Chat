@@ -1,3 +1,7 @@
+---
+title: Room state
+uid: Uniform.Matrix.Client.RoomState.Article
+---
 # Room state
 
 [RoomStore](xref:Uniform.Matrix.Client.State.RoomStore) turns sync responses into one [Room](xref:Uniform.Matrix.Client.State.Room) per room ID. [Apply](xref:Uniform.Matrix.Client.State.RoomStore.Apply*) returns [SyncChanges](xref:Uniform.Matrix.Client.State.SyncChanges) so a UI only redraws what changed. A room keeps:

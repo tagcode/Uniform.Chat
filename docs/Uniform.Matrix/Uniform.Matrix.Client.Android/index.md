@@ -1,8 +1,12 @@
+---
+title: Uniform.Matrix.Client.Android
+uid: Uniform.Matrix.Client.Android.Article
+---
 # Uniform.Matrix.Client.Android
 
 The Android entry point of the graphical app in [Uniform.Matrix.Client.Avalonia.Core](../Uniform.Matrix.Client.Avalonia.Core/index.md): the activity, the manifest and the resources.
 
-`MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so `AppDirectories` and the engine need no Android code. The activity resizes for the keyboard. The app has internet permission only, and Android backup is off, so encryption keys stay on the device.
+`MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so [`AppDirectories`](xref:Uniform.Matrix.Hosting.AppDirectories) and the engine need no Android code. The activity resizes for the keyboard. The app has internet permission only, and Android backup is off, so encryption keys stay on the device.
 
 ## Build and install
 

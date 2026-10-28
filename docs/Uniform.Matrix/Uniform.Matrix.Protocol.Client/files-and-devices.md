@@ -1,3 +1,7 @@
+---
+title: Files and devices
+uid: Uniform.Matrix.Protocol.Client.FilesAndDevices.Article
+---
 # Files and devices
 
 ```csharp

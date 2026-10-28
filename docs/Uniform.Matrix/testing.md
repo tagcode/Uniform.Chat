@@ -1,3 +1,7 @@
+---
+title: Testing
+uid: Uniform.Matrix.Testing.Article
+---
 # Testing
 
 The tests use xUnit v3 on Microsoft.Testing.Platform, enabled in `global.json`.
@@ -9,7 +13,7 @@ dotnet test -- --filter-not-trait "Category=Live"   # skip tests against the rea
 
 Unit tests replace the network with `StubHandler`, which records requests and returns canned responses.
 
-`Uniform.Matrix.Protocol.Crypto.Tests` has round-trip and tamper tests of the managed Olm and Megolm (`OlmTests`), differential tests against native vodozemac (`OracleTests`: messages, out-of-order delivery, Megolm ratchet positions up to 2^32 − 1, backup encryption, SAS and pickles in both directions), and protocol tests where several `OlmMachine`s talk through `FakeKeyServer`, an in-memory stand-in for the key, cross-signing, account data, backup and to-device endpoints. `SecurityTests` cover recovery on a new device, key forwarding between own devices and SAS verification there.
+`Uniform.Matrix.Protocol.Crypto.Tests` has round-trip and tamper tests of the managed Olm and Megolm (`OlmTests`), differential tests against native vodozemac (`OracleTests`: messages, out-of-order delivery, Megolm ratchet positions up to 2^32 − 1, backup encryption, SAS and pickles in both directions), and protocol tests where several [`OlmMachine`](xref:Uniform.Matrix.Protocol.Crypto.OlmMachine)s talk through `FakeKeyServer`, an in-memory stand-in for the key, cross-signing, account data, backup and to-device endpoints. `SecurityTests` cover recovery on a new device, key forwarding between own devices and SAS verification there.
 
 Live tests (`Category=Live`) log in to a real homeserver with the accounts in `testclient.txt` at the repository root, which share one password:
 

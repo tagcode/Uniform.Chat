@@ -1,3 +1,7 @@
+---
+title: Directories and account data
+uid: Uniform.Matrix.Protocol.Client.DirectoriesAndAccountData.Article
+---
 # Directories and account data
 
 ```csharp

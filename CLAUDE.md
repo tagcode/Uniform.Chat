@@ -30,7 +30,7 @@
 - Mentioned classes and members are refered with links, either xref or url, e.g. [Class](xref:Namespace.Class), [List&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1).
 - Articles follow the same directory structure as class libraries.
 - Each class library specific directory has an index.md and toc.yml. The name for index.md is "Introduction" in toc.yml.
-- Every article has a an uid in the header, e.g. ---uid: [ClassLibraryName.Introduction]. Avoid conflicting with uid:s under api/, adjust uid if needed.
+- Every article has a an `uid:` and a `title:` in the header. To avoid conflicting with uid:s under api/, add suffix ".Article" to uid, e.g. "ClassLibraryName.Article" and "ClassLibraryName.Topic.Article".
 - Example directory structure:
   theme/
   docs/
@@ -45,18 +45,20 @@
     index.md
     toc.yml
 - Example of toc.yml under [ClassLibraryName]/
-  - name: [ClassLibraryName]
-    items:
-    - name: Introduction
-      href: index.md
-    - name: Article
-      href: article.md
+  - name: Introduction
+    uid: ClassLibraryName.Article
+  - name: Some Topic
+    uid: ClassLibraryName.Topic.Article
 - Example of root toc.yml:
   items:
   - name: [ClassLibraryName]
     href: [ClassLibraryName]/toc.yml
-  - name: Some article
-    href: article.md
+  - name: Some Topic
+    uid: SomeTopic.Article
+
+# User documentation
+- Use `uid:` and `title:` in .md frontmatter.
+- In toc.yml, refer to articles with `uid:`
 
 # Git
 - Don't remind me when to commit code.

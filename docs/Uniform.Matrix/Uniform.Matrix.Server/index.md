@@ -1,3 +1,7 @@
+---
+title: Uniform.Matrix.Server
+uid: Uniform.Matrix.Server.Article
+---
 # Uniform.Matrix.Server
 
 The homeserver is three projects:

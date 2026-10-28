@@ -1,3 +1,7 @@
+---
+title: URL previews
+uid: Uniform.Matrix.Server.UrlPreviews.Article
+---
 # URL previews
 
-`UrlPreviewService` answers `preview_url` when `UrlPreviews:Enabled` is on: it fetches the page, reads its OpenGraph `og:` tags with AngleSharp (the page's `<title>` and description when there are none), fetches `og:image` and stores it as media of the user who asked, and returns it as an `mxc://` URI with `matrix:image:size`. A link to an image previews as that image. Pages and images are read up to `UrlPreviews:MaxSize` within `UrlPreviews:Timeout`, and results are cached per address for `UrlPreviews:CacheDuration`. The HTTP client is the same kind as for push gateways (`PublicAddresses.CreateHandler`): only public addresses, checked on every connection including redirects, unless `UrlPreviews:AllowPrivateAddresses` is on.
+[`UrlPreviewService`](xref:Uniform.Matrix.Server.Media.UrlPreviewService) answers `preview_url` when `UrlPreviews:Enabled` is on: it fetches the page, reads its OpenGraph `og:` tags with AngleSharp (the page's `<title>` and description when there are none), fetches `og:image` and stores it as media of the user who asked, and returns it as an `mxc://` URI with `matrix:image:size`. A link to an image previews as that image. Pages and images are read up to `UrlPreviews:MaxSize` within `UrlPreviews:Timeout`, and results are cached per address for `UrlPreviews:CacheDuration`. The HTTP client is the same kind as for push gateways ([`PublicAddresses.CreateHandler`](xref:Uniform.Matrix.Server.Http.PublicAddresses.CreateHandler*)): only public addresses, checked on every connection including redirects, unless `UrlPreviews:AllowPrivateAddresses` is on.

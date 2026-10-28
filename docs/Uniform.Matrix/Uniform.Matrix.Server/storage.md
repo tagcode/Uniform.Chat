@@ -1,6 +1,10 @@
+---
+title: Storage
+uid: Uniform.Matrix.Server.Storage.Article
+---
 # Storage
 
-EF Core on SQLite, `ServerDbContext` with entities in `Storage/Entities.cs`. `DatabaseMigrator` applies migrations at start, before the server answers. Each schema change adds a migration:
+EF Core on SQLite, [`ServerDbContext`](xref:Uniform.Matrix.Server.Storage.ServerDbContext) with entities in `Storage/Entities.cs`. [`DatabaseMigrator`](xref:Uniform.Matrix.Server.Storage.DatabaseMigrator) applies migrations at start, before the server answers. Each schema change adds a migration:
 
 ```bash
 dotnet tool run dotnet-ef migrations add <Name> --project src/Uniform.Matrix.Server --output-dir Storage/Migrations

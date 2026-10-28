@@ -1,3 +1,7 @@
+---
+title: Documentation
+uid: Uniform.Matrix.Documentation.Article
+---
 # Documentation
 
 DocFX is a local tool pinned in `dotnet-tools.json`.

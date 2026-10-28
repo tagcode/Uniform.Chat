@@ -1,3 +1,7 @@
+---
+title: Rooms and messages
+uid: Uniform.Matrix.Protocol.Client.RoomsAndMessages.Article
+---
 # Rooms and messages
 
 ```csharp

@@ -1,3 +1,7 @@
+---
+title: Receive events
+uid: Uniform.Matrix.Protocol.Client.ReceiveEvents.Article
+---
 # Receive events
 
 ```csharp

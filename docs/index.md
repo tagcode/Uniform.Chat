@@ -1,3 +1,7 @@
+---
+title: Uniform.Matrix
+uid: Uniform.Matrix.Home.Article
+---
 # Uniform.Matrix
 
 .NET 10 libraries and applications for the [Matrix](https://spec.matrix.org/latest/) chat protocol.

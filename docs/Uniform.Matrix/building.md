@@ -1,3 +1,7 @@
+---
+title: Building
+uid: Uniform.Matrix.Building.Article
+---
 # Building
 
 ```bash

@@ -1,3 +1,7 @@
+---
+title: Local storage
+uid: Uniform.Matrix.Client.LocalStorage.Article
+---
 # Local storage
 
 Each account has its own directory, `<data directory>/<localpart>_<server>/`, holding `client.db` and `media/`. Tables:

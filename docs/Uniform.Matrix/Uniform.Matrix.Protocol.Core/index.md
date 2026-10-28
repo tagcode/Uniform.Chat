@@ -1,3 +1,7 @@
+---
+title: Uniform.Matrix.Protocol.Core
+uid: Uniform.Matrix.Protocol.Core.Article
+---
 # Uniform.Matrix.Protocol.Core
 
 The types both sides of the protocol use: identifiers, events, the request and response records of the APIs, canonical JSON and error codes.
