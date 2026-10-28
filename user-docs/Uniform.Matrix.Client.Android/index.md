@@ -1,0 +1,16 @@
+# Uniform.Matrix for Android
+
+A chat app for [Matrix](https://matrix.org), the open chat protocol, for Android phones and tablets: rooms, formatted messages, replies and reactions, files, invites, and end-to-end encryption with recovery and emoji verification. Messages you write are kept on the phone until the server has them, so nothing is lost when the connection drops.
+
+> [!NOTE]
+> The app is in early development.
+
+- [Getting started](articles/getting-started.md): install, sign in, and where your data is kept.
+- [Rooms](articles/rooms.md): the room list, joining and creating rooms.
+- [Messages and files](articles/messages.md): writing, replies, reactions and files.
+- [Security](articles/security.md): encryption, recovery key and verification.
+- [Notifications](articles/notifications.md): when and how the app tells you about messages.
+- [Settings](articles/settings.md): what can be changed.
+- [Phones and narrow windows](articles/phones.md): the one-pane layout.
+
+It is the same app as the one for Windows and Linux; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Desktop/index.md). There is also a client for the text terminal, see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Terminal/index.md), and to run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Server.Host/index.md).

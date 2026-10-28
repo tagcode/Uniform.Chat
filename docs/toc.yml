@@ -1,6 +1,5 @@
-- name: Home
-  href: index.md
-- name: Guide
-  href: articles/
+- name: Uniform.Matrix
+  href: Uniform.Matrix/
+  topicHref: Uniform.Matrix/index.md
 - name: API
   href: api/

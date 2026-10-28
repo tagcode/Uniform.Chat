@@ -37,11 +37,11 @@ await app.RunAsync();
 
 The server speaks plain HTTP; put a reverse proxy in front of it for HTTPS. The [Uniform.Matrix server](https://github.com/tagcode/Uniform.Matrix) is a ready application with a terminal dashboard, built on this package.
 
-More in [Server](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/server.md).
+More in [the developer guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Server/index.md).
 
 ## About
 
 Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Matrix), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
 
-- [Architecture](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/architecture.md)
-- [Building and testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/building-and-testing.md)
+- [How it works](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Server/index.md)
+- [Building](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/building.md) and [testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/testing.md)

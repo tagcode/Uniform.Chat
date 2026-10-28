@@ -1,6 +1,5 @@
-# Coding style
-
-## C#
+# C#
+## Coding style
 - Use file-scoped namespaces; place `namespace xx;` before `using xx;`
 - Use type name `MyClass x = new();`, avoid `var x`.
 - For classes that have lot of properties, implement as 'record' and use property initializers and no-args constructor.
@@ -13,7 +12,6 @@
 - Keep `<summary></summary>` and `<param name="serverName"></param>` comments in one line if line width is less than 250 characters.
 - Give concise `<summary>` comments for every public and private class, public and private method, public property and public field.
 - You can use `<see href="">` for urls to give more relevant information, such as specifications.
-- xUnit v3 for tests, with method names like `DoX()` 
 - For simple if-statements, use one-liners without linefeed after condition; E.g. `if (condition) do();`
 - Refer other parts of the code with `<see cref="">`, `<paramref name="">`, `<typeparamref>`. Do not refer other parts of code with <!CDATA[]>.
 - Use `<example><code><![CDATA[]]></code></example>` at an occasion to add code snippets, but if snippet is just reference to other parts of code, then use `<see>` and `<paramref>`.
@@ -21,5 +19,45 @@
 - In property and method comments, use imperative verbs, e.g. `Add an element`, not `Adds an element`.
 - Write long and indicative parameter names, e.g. `CancellationToken cancellationToken`, not `CancellationToken ct`.
 
-## General
-- Small focused commits; don't commit unless I ask
+# Testing
+- xUnit v3 for tests, with method names like `DoX()` 
+
+# Docfx Documentation
+- When using snippets with ``` ```, write the description first, and then follow with the snippet. E.g. "To build documents use docfx.\n```bash\ndotnet docfx docs/docfx.json```
+- Developer documents go under docs/ folder at root, theme goes under theme/. If there are user documentation, they go under user-docs/
+
+## Developer documents
+- Mentioned classes and members are refered with links, either xref or url, e.g. [Class](xref:Namespace.Class), [List&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1).
+- Articles follow the same directory structure as class libraries.
+- Each class library specific directory has an index.md and toc.yml. The name for index.md is "Introduction" in toc.yml.
+- Every article has a an uid in the header, e.g. ---uid: [ClassLibraryName.Introduction]. Avoid conflicting with uid:s under api/, adjust uid if needed.
+- Example directory structure:
+  theme/
+  docs/
+    [solution name]/
+      [ClassLibraryName]/
+        index.md
+        toc.yml
+        article.md
+      toc.yml
+    api/
+    docfx.json
+    index.md
+    toc.yml
+- Example of toc.yml under [ClassLibraryName]/
+  - name: [ClassLibraryName]
+    items:
+    - name: Introduction
+      href: index.md
+    - name: Article
+      href: article.md
+- Example of root toc.yml:
+  items:
+  - name: [ClassLibraryName]
+    href: [ClassLibraryName]/toc.yml
+  - name: Some article
+    href: article.md
+
+# Git
+- Don't remind me when to commit code.
+

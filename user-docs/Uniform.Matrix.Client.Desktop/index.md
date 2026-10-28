@@ -1,6 +1,6 @@
 # Uniform.Matrix App
 
-A chat app for [Matrix](https://matrix.org), the open chat protocol, for Windows, Linux and Android: rooms, formatted messages, replies and reactions, files, invites, and end-to-end encryption with recovery and emoji verification. Messages you write are kept on the device until the server has them, so nothing is lost when the connection drops.
+A chat app for [Matrix](https://matrix.org), the open chat protocol, for Windows and Linux: rooms, formatted messages, replies and reactions, files, invites, and end-to-end encryption with recovery and emoji verification. Messages you write are kept on the device until the server has them, so nothing is lost when the connection drops.
 
 ![The app with a room open](images/desktop.png)
 
@@ -15,4 +15,4 @@ A chat app for [Matrix](https://matrix.org), the open chat protocol, for Windows
 - [Settings](articles/settings.md): what can be changed.
 - [Phones and narrow windows](articles/phones.md): the one-pane layout.
 
-There is also a client for the text terminal; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/terminal/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/server/index.md).
+The same app runs on Android; see the [Android guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/index.md). There is also a client for the text terminal; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Terminal/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Server.Host/index.md).

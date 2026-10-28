@@ -1,0 +1,25 @@
+# Uniform.Matrix.Protocol.Crypto
+
+End-to-end encryption is pure .NET, so the client runs on any platform .NET runs on, with no native libraries. Two layers:
+
+1. **Olm and Megolm**: a port of [vodozemac](https://github.com/matrix-org/vodozemac) 0.11.1, the maintained Rust implementation, to C#. It keeps vodozemac's API shape (`OlmAccount`, `OlmSession`, `MegolmOutboundSession`, `MegolmInboundSession`, `Ed25519`, `PkEncryption`, `Sas`) and its wire formats: Olm and Megolm messages with truncated MACs (session config version 1), libolm-compatible backup encryption, `hkdf-hmac-sha256.v2` SAS MACs. X25519 and Ed25519 come from BouncyCastle; HKDF, HMAC, SHA-256 and AES from .NET. Errors are `OlmException`. The port keeps vodozemac's Apache-2.0 copyright notices; each ported file says so in its header, and THIRD-PARTY-NOTICES.md at the repository root lists them.
+   - Pickles are vodozemac's own format, JSON encrypted with HKDF-derived AES-CBC and HMAC, so state written by the native library loads here and back. Libolm pickles and expanded Ed25519 keys are not supported.
+   - Unlike vodozemac, this code has not been audited, and the .NET runtime cannot guarantee constant-time execution or that secrets are wiped from memory; `Dispose` clears key buffers on a best-effort basis.
+2. **OlmMachine**: the Matrix protocol.
+   - Keys: signed device keys on first use, one-time keys topped up to half capacity from sync's `device_one_time_keys_count`, a fallback key replaced when used. Everything is signed over [canonical JSON](xref:Uniform.Matrix.Protocol.Core.CanonicalJson).
+   - Devices: `/keys/query` results are accepted only with a valid self-signature; a known device ID keeps its first fingerprint. Lists are marked outdated from `device_lists.changed`.
+   - Receiving: Olm to-device events are decrypted with an existing session or a new one from a pre-key message, and the payload must name us, our key and the actual sender. `m.room_key` becomes an inbound Megolm session; `RoomKeyReceived` lets callers retry waiting events. Megolm events are checked for the right room and against replayed indices.
+   - Sending: one outbound session per room, rotated after the room's message or time limit or when someone it was shared with left. The key goes to every device of every member over Olm, claiming and verifying one-time keys where no session exists. Our own copy is kept so our messages decrypt in sync.
+   - Cross-signing: `/keys/query` master, self-signing and user-signing keys are accepted only when the master key signed the others; devices note which self-signing key validly signed them. A device is *cross-signed* when that key belongs to a trusted identity: our own when its private master key is here, or verified by SAS; another user's when our user-signing key signed their master key. `SetUpRecoveryAsync` refuses to replace existing cross-signing keys, since that would distrust every device.
+   - Secret storage: `m.secret_storage.v1.aes-hmac-sha2` (HKDF-SHA-256, AES-256-CTR, HMAC-SHA-256) with the key check from the key description, a base58 recovery key with prefix and parity, or a PBKDF2 passphrase. It holds the three cross-signing private keys and the backup key.
+   - Key backup: `m.megolm_backup.v1.curve25519-aes-sha2`. Sessions are exported from their first known index, encrypted to the backup's public key and uploaded in batches after each sync; `BackedUp` marks what is done. Uploads happen only with the private key of the current version, so a backup replaced on the server cannot capture keys. Restore imports sessions that reach further back than stored ones and raises `RoomKeyReceived`.
+   - Key requests: a missing session is requested once from our other devices with `m.room_key_request`. Requests and `m.secret.request` are answered only to our cross-signed or verified devices; forwarded keys and secrets are accepted only from them, only for our own outstanding requests, and secrets only when they match the published public keys.
+   - Verification: to-device SAS (`m.sas.v1`, `curve25519-hkdf-sha256`, `hkdf-hmac-sha256.v2`) with the accept commitment, emoji and decimals, and MACs over the device key and, when trusted, the master key. Afterwards our own device is signed with the self-signing key and asked for missing secrets; another user's master key is signed with the user-signing key.
+   - Imported sessions (backup, forwarded) are marked `Imported`, as their sender is not proven by Olm.
+   - All calls are serialized; state lives in an `ICryptoStore` as encrypted pickles. Private keys are stored as named values, encrypted with the pickle key.
+
+Encrypted attachments (`EncryptedAttachments`) use AES-256-CTR with a random key and an IV whose low 64 bits are zero, and SHA-256 of the ciphertext, which is checked before decrypting. The message carries `file` instead of `url`; `MessageContent.MediaUrl` gives either.
+
+## Not yet covered
+
+- QR code verification, in-room verification requests, dehydrated devices, and key export files.

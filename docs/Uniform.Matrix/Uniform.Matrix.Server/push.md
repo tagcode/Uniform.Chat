@@ -1,0 +1,13 @@
+# Push rules and pushers
+
+## Push rules and unread counts
+
+Each user's [push rules](https://spec.matrix.org/latest/client-server-api/#push-rules) are stored as the `m.push_rules` account data that clients sync, and changed through `/pushrules`. `PushRuleService` merges them with `PushRules.Defaults` (in `Uniform.Matrix.Protocol.Server`) on every read: a stored default rule keeps only its `enabled` and `actions`, so changes to the defaults reach users who customised their rules. User rules come before the defaults of their kind, except that `.m.rule.master` stays first. Initial syncs always carry `m.push_rules`, also for users who never changed a rule.
+
+`notification_count` and `highlight_count` in sync are worked out when the sync is built, not stored per event: the room's events by others after the user's read receipt (or their own latest event, whichever is later) go through `PushRules.Evaluate`, newest first and at most `PushRuleService.MaxCounted` of them. The evaluator implements the condition kinds of the spec (`event_match` with globs and word boundaries for `content.body`, `event_property_is`, `event_property_contains`, `contains_display_name`, `room_member_count`, `sender_notification_permission`) and skips the deprecated name-based mention rules for events with `m.mentions`. Encrypted messages count through `.m.rule.encrypted`, but the server cannot see mentions inside them; clients highlight those themselves.
+
+## Pushers
+
+[Pushers](https://spec.matrix.org/latest/client-server-api/#push-notifications) say where a user's notifications go, usually a push gateway that wakes a phone app. `PusherService` keeps them in the `Pushers` table; each belongs to the device that set it and goes when that device logs out. `PushNotifier` is a background service that follows `ServerStream`: for each new event it runs the push rules of the room's joined members (and of the invitee of an invite) with `PushRuleService.DecideAsync`, and posts a notification in the [push gateway API](https://spec.matrix.org/latest/push-gateway-api/) format to each of their http pushers, with the tweaks of the deciding rule and the user's unread count across rooms. The `event_id_only` format leaves out the content and names. Push keys the gateway rejects are deleted; failing gateways are logged and skipped. Events from before the server started are not pushed.
+
+Gateway URLs come from users, so the gateway client (`PushNotifier.CreateHandler`) connects only to public addresses unless `Push:AllowPrivateGateways` is on. It checks the very addresses it connects to, in `SocketsHttpHandler.ConnectCallback`, so a host name cannot resolve to a public address for a check and a private one for the request.

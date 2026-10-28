@@ -2,7 +2,7 @@
 
 ## Encryption
 
-[!include[](../../shared/encryption.md)]
+[!include[](../../Uniform.Matrix.Core/encryption.md)]
 
 In the terminal client, the room's frame shows `[encrypted]`.
 

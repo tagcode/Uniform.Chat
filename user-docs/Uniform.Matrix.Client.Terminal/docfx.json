@@ -5,11 +5,11 @@
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
     "output": "_site",
-    "template": [ "statictoc", "../theme" ],
+    "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span></span>",
-      "_appTitle": "Uniform.Matrix Terminal Client Guide",
-      "_appName": "Uniform.Matrix Terminal",
+      "_appFooter": "<span>Uniform.Matrix.Client.Terminal</span>",
+      "_appTitle": "Uniform.Matrix.Client.Terminal",
+      "_appName": "Uniform.Matrix.Client.Terminal",
       "_enableSearch": true
     }
   }

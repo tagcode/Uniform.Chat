@@ -1,6 +1,6 @@
 # Security
 
-[!include[](../../shared/encryption.md)]
+[!include[](../../Uniform.Matrix.Core/encryption.md)]
 
 *⋮ → Security and recovery* at the top of the room list shows this device's encryption keys and the account's state, and offers what is missing:
 

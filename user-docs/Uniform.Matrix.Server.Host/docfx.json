@@ -5,11 +5,11 @@
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
     "output": "_site",
-    "template": [ "statictoc", "../theme" ],
+    "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span></span>",
-      "_appTitle": "Uniform.Matrix Server Guide",
-      "_appName": "Uniform.Matrix Server",
+      "_appFooter": "<span>Uniform.Matrix.Server.Host</span>",
+      "_appTitle": "Uniform.Matrix.Server.Host",
+      "_appName": "Uniform.Matrix.Server.Host",
       "_enableSearch": true
     }
   }

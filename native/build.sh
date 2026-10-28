@@ -3,7 +3,7 @@
 # libraries to tests/Uniform.Matrix.Protocol.Crypto.Tests/runtimes/<rid>/native/. The client itself needs no native code.
 # Only the host target is needed for tests; other targets are built when their cross-linker exists.
 #
-# Toolchain (see docs/dev/articles/building-and-testing.md):
+# Toolchain (see docs/articles/building-and-testing.md):
 #   rustup in ~/.cargo (pinned by native/vodozemac-ffi/rust-toolchain.toml)
 #   linux-arm64: sudo apt install gcc-aarch64-linux-gnu
 #   win-x64:     sudo apt install gcc-mingw-w64-x86-64

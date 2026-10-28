@@ -8,11 +8,11 @@
       { "files": [ "images/**" ] }
     ],
     "output": "_site",
-    "template": [ "statictoc", "../theme" ],
+    "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span></span>",
-      "_appTitle": "Uniform.Matrix App Guide",
-      "_appName": "Uniform.Matrix App",
+      "_appFooter": "<span>Uniform.Matrix.Client.Desktop</span>",
+      "_appTitle": "Uniform.Matrix.Client.Desktop",
+      "_appName": "Uniform.Matrix.Client.Desktop",
       "_enableSearch": true
     }
   }

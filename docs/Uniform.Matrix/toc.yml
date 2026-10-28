@@ -1,0 +1,106 @@
+- name: Uniform.Matrix.Protocol.Core
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Protocol.Core/index.md
+- name: Uniform.Matrix.Protocol.Client
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Protocol.Client/index.md
+  - name: Log in
+    href: Uniform.Matrix.Protocol.Client/log-in.md
+  - name: Receive events
+    href: Uniform.Matrix.Protocol.Client/receive-events.md
+  - name: Rooms and messages
+    href: Uniform.Matrix.Protocol.Client/rooms-and-messages.md
+  - name: Directories and account data
+    href: Uniform.Matrix.Protocol.Client/directories-and-account-data.md
+  - name: Files and devices
+    href: Uniform.Matrix.Protocol.Client/files-and-devices.md
+  - name: Errors
+    href: Uniform.Matrix.Protocol.Client/errors.md
+- name: Uniform.Matrix.Protocol.Crypto
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Protocol.Crypto/index.md
+- name: Uniform.Matrix.Hosting
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Hosting/index.md
+- name: Uniform.Matrix.Gui.Terminal
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Gui.Terminal/index.md
+- name: Uniform.Matrix.Client
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Client/index.md
+  - name: Room state
+    href: Uniform.Matrix.Client/room-state.md
+  - name: Rich text
+    href: Uniform.Matrix.Client/rich-text.md
+  - name: Local storage
+    href: Uniform.Matrix.Client/local-storage.md
+  - name: Outbox
+    href: Uniform.Matrix.Client/outbox.md
+  - name: Track rooms
+    href: Uniform.Matrix.Client/track-rooms.md
+- name: Uniform.Matrix.Client.Terminal
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Protocol.Core/index.md
+- name: Uniform.Matrix.Client.Avalonia.Core
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Client.Avalonia.Core/index.md
+  - name: View models
+    href: Uniform.Matrix.Client.Avalonia.Core/view-models.md
+  - name: Views
+    href: Uniform.Matrix.Client.Avalonia.Core/views.md
+- name: Uniform.Matrix.Client.Desktop
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Client.Desktop/index.md
+- name: Uniform.Matrix.Client.Android
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Client.Android/index.md
+- name: Uniform.Matrix.Protocol.Server
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Protocol.Server/index.md
+- name: Uniform.Matrix.Server
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Server/index.md
+  - name: Requests
+    href: Uniform.Matrix.Server/requests.md
+  - name: Storage
+    href: Uniform.Matrix.Server/storage.md
+  - name: Events and state
+    href: Uniform.Matrix.Server/events-and-state.md
+  - name: Sync and the stream
+    href: Uniform.Matrix.Server/sync.md
+  - name: Services
+    href: Uniform.Matrix.Server/services.md
+  - name: Push rules and pushers
+    href: Uniform.Matrix.Server/push.md
+  - name: Presence
+    href: Uniform.Matrix.Server/presence.md
+  - name: URL previews
+    href: Uniform.Matrix.Server/url-previews.md
+  - name: Rate limits
+    href: Uniform.Matrix.Server/rate-limits.md
+  - name: Federation
+    href: Uniform.Matrix.Server/federation.md
+  - name: Testing
+    href: Uniform.Matrix.Server/testing.md
+- name: Uniform.Matrix.Server.Host
+  items:
+  - name: Introduction
+    href: Uniform.Matrix.Server.Host/index.md
+- name: Building
+  href: building.md
+- name: Testing
+  href: testing.md
+- name: Documentation
+  href: documentation.md

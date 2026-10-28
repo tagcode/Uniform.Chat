@@ -25,16 +25,16 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 </pre>
 
-- User guide: [Getting started](docs/terminal/articles/getting-started.md), [Interface](docs/terminal/articles/interface.md), [Settings](docs/terminal/articles/settings.md)
-- Developer guide: [Architecture](docs/dev/articles/architecture.md), [Using the protocol client](docs/dev/articles/using-client.md)
+- User guide: [Getting started](user-docs/Uniform.Matrix.Client.Terminal/articles/getting-started.md), [Interface](user-docs/Uniform.Matrix.Client.Terminal/articles/interface.md), [Settings](user-docs/Uniform.Matrix.Client.Terminal/articles/settings.md)
+- Developer guide: [Overview](docs/index.md), [Using the protocol client](docs/Uniform.Matrix/Uniform.Matrix.Protocol.Client/index.md)
 
 ## Desktop and Android client
 
 `Uniform.Matrix.Client.Desktop` and `Uniform.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
 
-![The desktop client](docs/desktop/images/desktop.png)
+![The desktop client](user-docs/Uniform.Matrix.Client.Desktop/images/desktop.png)
 
-- User guide: [Getting started](docs/desktop/articles/getting-started.md), [Rooms](docs/desktop/articles/rooms.md), [Messages and files](docs/desktop/articles/messages.md)
+- User guide: [Getting started](user-docs/Uniform.Matrix.Client.Desktop/articles/getting-started.md), [Rooms](user-docs/Uniform.Matrix.Client.Desktop/articles/rooms.md), [Messages and files](user-docs/Uniform.Matrix.Client.Desktop/articles/messages.md)
 
 ## Server
 
@@ -55,8 +55,8 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 └──────────────────────────────────────────────────────────────────────────────────┘
 </pre>
 
-- User guide: [Installing](docs/server/articles/install.md), [Settings](docs/server/articles/settings.md)
-- Developer guide: [Server](docs/dev/articles/server.md), [Architecture](docs/dev/articles/architecture.md)
+- User guide: [Installing](user-docs/Uniform.Matrix.Server.Host/articles/install.md), [Settings](user-docs/Uniform.Matrix.Server.Host/articles/settings.md)
+- Developer guide: [Server](docs/Uniform.Matrix/Uniform.Matrix.Server/index.md), [Overview](docs/index.md)
 
 ## Libraries
 
@@ -82,7 +82,7 @@ dotnet run --project src/Uniform.Matrix.Server.Host
 dotnet run --project src/Uniform.Matrix.Client.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
 ```
 
-See [Building and testing](docs/dev/articles/building-and-testing.md) for the tests and the documentation sites.
+See [Building](docs/Uniform.Matrix/building.md), [Testing](docs/Uniform.Matrix/testing.md) and [Documentation](docs/Uniform.Matrix/documentation.md) for the build, the tests and the documentation sites.
 
 ## License
 

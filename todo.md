@@ -85,8 +85,45 @@ Keep the test server's registration closed and rate limits on, since unfinished 
 # Uniform.Matrix.Client.Desktop
 
 - The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?
+A theme that fits each platform.
 
-# Documents readable from github pages
+Android: Material.Avalonia, with Material 3 colours, shapes and ripples.
+Desktop: keep Fluent, but with our own accent colour and dark mode following the system.
+One shared set of style resources, with small differences per platform.
+Typography: the system font (Roboto on Android, Segoe UI on Windows, the desktop's own font on Linux), with clear sizes for room names, message text and timestamps.
 
-- How does github pages work?
+Spacing and density:
+
+Phones: larger touch targets, at least 48 dp.
+Desktop: denser lists.
+Everywhere: consistent padding.
+Much of the "unpolished" impression comes from this.
+
+Chat-specific look:
+
+message bubbles;
+grouping of consecutive messages from the same sender;
+avatars with initials as fallback;
+unread badges;
+a proper composer bar.
+Motion: short transitions between room list and room on phones, smooth scrolling, and a typing indicator that animates.
+
+Android conventions:
+
+edge-to-edge layout with the right system bar colours;
+the back gesture;
+the keyboard pushing the composer up;
+long-press menus instead of right-click.
+
+
+# Stun/Turn
+
+- Uniform.Stun.Protocol
+  Uniform.Turn.Protocol
+  Uniform.Stun
+  Uniform.Turn
+  Uniform.Sturn.Hosting
+  Uniform.Sturn.Host
+
+
 

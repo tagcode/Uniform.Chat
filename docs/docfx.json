@@ -4,7 +4,7 @@
     {
       "src": [
         {
-          "src": "../../src",
+          "src": "../src",
           "files": [ "Uniform.*/*.csproj" ],
           "exclude": [ "Uniform.Matrix.Client.Android/*.csproj" ]
         }
@@ -16,14 +16,14 @@
   ],
   "build": {
     "content": [
-      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**", "theme/**" ] }
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
     "output": "_site",
     "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span></span>",
-      "_appTitle": "Matrix .NET Developer Guide",
-      "_appName": "Matrix .NET",
+      "_appFooter": "<span>Uniform.Matrix</span>",
+      "_appTitle": "Uniform.Matrix Developer Guide",
+      "_appName": "Uniform.Matrix",
       "_enableSearch": true
     }
   }

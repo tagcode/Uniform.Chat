@@ -79,6 +79,12 @@ code {
   background-color: #22222280;
 }
 
+/* Code inside links: docfx.css's "a code" outranks plain "code", so it needs a rule of the same weight */
+a code {
+  color: #539ac7;
+  background-color: #22222280;
+}
+
 /* Code blocks: the block's own 16px padding only, as with the highlight.js version this theme was made with; newer ones add 1em */
 pre code.hljs {
   padding: 0;

@@ -16,4 +16,4 @@ Accounts, rooms, messages, sync, profiles, typing, receipts, the room directory,
 - [Files](articles/files.md): where the database, keys, media and logs are.
 - [Troubleshooting](articles/troubleshooting.md): common problems.
 
-For apps to chat with, see the guides of the [app for Windows, Linux and Android](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/desktop/index.md) and the [terminal client](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/terminal/index.md).
+For apps to chat with, see the guides of the [app for Windows, Linux and Android](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Desktop/index.md) and the [terminal client](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Terminal/index.md).

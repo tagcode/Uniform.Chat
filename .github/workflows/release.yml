@@ -82,9 +82,10 @@ jobs:
       - run: dotnet tool restore
       - name: Build guides
         run: |
-          for guide in desktop terminal server; do
-            dotnet docfx "docs/$guide/docfx.json"
-            mkdir -p guides && cp -r "docs/$guide/_site" "guides/$guide"
+          for guide in desktop:Uniform.Matrix.Client.Desktop terminal:Uniform.Matrix.Client.Terminal server:Uniform.Matrix.Server.Host; do
+            IFS=: read -r kind folder <<< "$guide"
+            dotnet docfx "user-docs/$folder/docfx.json"
+            mkdir -p guides && cp -r "user-docs/$folder/_site" "guides/$kind"
           done
       - uses: actions/upload-artifact@v5
         with:
@@ -111,7 +112,7 @@ jobs:
           path: guides
       # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows.
       # desktop is the Avalonia app; its Linux archive has install-desktop-entry.sh for the application menu.
-      # Each archive has its own user guide as HTML in docs/, built from docs/<kind>.
+      # Each archive has its own user guide as HTML in docs/, built from its project's folder in user-docs/.
       - name: Publish and archive
         env:
           VERSION: ${{ needs.version.outputs.version }}

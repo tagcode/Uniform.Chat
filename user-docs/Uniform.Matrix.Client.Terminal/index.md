@@ -14,4 +14,4 @@ A chat client for [Matrix](https://matrix.org), the open chat protocol, that run
 - [Commands](articles/commands.md): the `/commands` of the input line.
 - [Settings](articles/settings.md): command-line parameters, the settings file and logs.
 
-There is also a graphical app for Windows, Linux and Android; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/desktop/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/server/index.md).
+There is also a graphical app for Windows, Linux and Android; see its [guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Desktop/index.md). To run a homeserver of your own, see the [server guide](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Server.Host/index.md).

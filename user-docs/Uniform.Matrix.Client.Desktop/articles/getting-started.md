@@ -1,15 +1,15 @@
 # Getting started
 
-The Uniform.Matrix app for Windows, Linux and Android: rooms, messages, files and end-to-end encryption in a graphical window. On phones and in narrow windows it shows one pane at a time.
+The Uniform.Matrix app for Windows and Linux: rooms, messages, files and end-to-end encryption in a graphical window. In narrow windows it shows one pane at a time.
 
 ![The desktop app with a room open](../images/desktop.png)
 
 > [!NOTE]
-> The app is in early development. It covers everyday chatting and encryption; notifications on Windows and Android are still to come.
+> The app is in early development. It covers everyday chatting and encryption; notifications on Windows are still to come.
 
 ## Requirements
 
-- Windows 10 or later, Linux, or Android 6 or later
+- Windows 10 or later, or Linux
 - An account on a Matrix homeserver, for example `@alice:matrix.org`
 
 ## Install
@@ -30,10 +30,6 @@ cd uniform-matrix-desktop-*-linux-x64
 
 To add it to the application menu, run `./install-desktop-entry.sh` in the same folder. Run it again if you move the folder, and `./install-desktop-entry.sh --uninstall` removes the entry.
 
-### Android
-
-There is no store release yet. To try it, build and install it on a phone connected with USB debugging; see [Building and testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/building-and-testing.md).
-
 ### From source
 
 With the [.NET 10 SDK](https://dotnet.microsoft.com/download), from the repository root:
@@ -52,9 +48,9 @@ Next, see [Rooms](rooms.md) and [Messages and files](messages.md).
 
 ## Where things are kept
 
-| What | Desktop | Android |
-|---|---|---|
-| Messages, keys and files | `~/.local/share/uniform-matrix-client-desktop/` | the app's private storage |
-| Remembered account and settings | `~/.config/uniform-matrix-client-desktop/settings.json` | the app's private storage |
+| What | Where |
+|---|---|
+| Messages, keys and files | `~/.local/share/uniform-matrix-client-desktop/` |
+| Remembered account and settings | `~/.config/uniform-matrix-client-desktop/settings.json` |
 
-On Windows, `~` is your user folder, for example `C:\Users\alice`. Uninstalling on Android removes everything; Android backups are turned off, so encryption keys never leave the phone.
+On Windows, `~` is your user folder, for example `C:\Users\alice`.

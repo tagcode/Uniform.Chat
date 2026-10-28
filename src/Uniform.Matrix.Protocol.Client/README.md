@@ -51,11 +51,11 @@ await client.SendEventAsync(roomId, EventTypes.RoomMessage, new MessageContent {
 - Endpoints that need [user-interactive auth](https://spec.matrix.org/latest/client-server-api/#user-interactive-authentication-api), such as deleting devices, take the password and answer the server's challenge.
 - For end-to-end encryption, see [Uniform.Matrix.Protocol.Crypto](https://www.nuget.org/packages/Uniform.Matrix.Protocol.Crypto); for a client with local storage and room state, [Uniform.Matrix.Client](https://www.nuget.org/packages/Uniform.Matrix.Client).
 
-More in [Using the protocol client](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/using-client.md).
+More in [the developer guide](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Protocol.Client/index.md).
 
 ## About
 
 Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Matrix), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
 
-- [Architecture](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/architecture.md)
-- [Building and testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/dev/articles/building-and-testing.md)
+- [How it works](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Protocol.Client/index.md)
+- [Building](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/building.md) and [testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/testing.md)

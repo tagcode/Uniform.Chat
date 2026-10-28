@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "statictoc",
+      "../../theme"
+    ],
+    "globalMetadata": {
+      "_appFooter": "<span>Uniform.Matrix.Client.Android</span>",
+      "_appTitle": "Uniform.Matrix.Client.Android",
+      "_appName": "Uniform.Matrix.Client.Android",
+      "_enableSearch": true
+    }
+  }
+}
