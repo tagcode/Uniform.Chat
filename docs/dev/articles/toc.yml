@@ -1,8 +1,0 @@
-- name: Architecture
-  href: architecture.md
-- name: Using the protocol client
-  href: using-client.md
-- name: Building and testing
-  href: building-and-testing.md
-- name: Server
-  href: server.md
