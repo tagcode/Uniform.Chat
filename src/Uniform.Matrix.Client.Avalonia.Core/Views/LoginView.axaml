@@ -12,7 +12,7 @@
       <TextBox x:Name="UserIdBox" Text="{Binding UserId}" PlaceholderText="@alice:matrix.org" />
 
       <TextBlock Text="Password" />
-      <TextBox x:Name="PasswordBox" Text="{Binding Password}" PasswordChar="•" RevealPassword="False" />
+      <TextBox x:Name="PasswordBox" Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" />
 
       <Expander Header="Server address" HorizontalAlignment="Stretch">
         <StackPanel Spacing="6">

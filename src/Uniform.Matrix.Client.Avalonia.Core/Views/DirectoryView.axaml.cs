@@ -16,12 +16,13 @@ public partial class DirectoryView : UserControl
         SearchBox.KeyDown += OnFieldKeyDown;
     }
 
-    /// <summary>Search on Enter.</summary>
+    /// <summary>Search on Enter, closing the keyboard.</summary>
     private void OnFieldKeyDown(object? sender, KeyEventArgs e)
     {
-        // Enter only
+        // Enter only; leaving the field closes a phone's keyboard, which would cover the results
         if (e.Key != Key.Enter || DataContext is not DirectoryViewModel directory) return;
         e.Handled = true;
+        Results.Focus();
         directory.SearchCommand.Execute(null);
     }
 }

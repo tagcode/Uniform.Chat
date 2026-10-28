@@ -47,6 +47,11 @@
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
   </Style>
+  <!-- Cards with lists use the whole height, e.g. on phones -->
+  <Style Selector="Border.card.tall">
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+  </Style>
   <Style Selector="Border.compose">
     <Setter Property="Margin" Value="12,6,12,0" />
     <Setter Property="Padding" Value="10,2,2,2" />

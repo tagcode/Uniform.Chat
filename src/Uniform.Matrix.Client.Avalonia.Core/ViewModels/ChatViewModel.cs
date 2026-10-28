@@ -474,9 +474,17 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         RefreshRooms();
     }
 
-    /// <summary>Join the room of <paramref name="link"/> through its servers and open it when it arrives; return whether it was joined.</summary>
+    /// <summary>Join the room of <paramref name="link"/> through its servers and open it when it arrives, or open it at once when joined already; return whether it was joined or opened.</summary>
     private async Task<bool> JoinLinkAsync(MatrixLink link)
     {
+        // Rooms joined already open at once
+        string? joinedId = connection.Processor.Read(store => store?.Rooms.Values.FirstOrDefault(room => room.Membership == Memberships.Join && (room.RoomId == link.Target || room.CanonicalAlias == link.Target))?.RoomId);
+        if (joinedId is not null && roomsById.TryGetValue(joinedId, out RoomItemViewModel? open))
+        {
+            SelectedRoom = open;
+            return true;
+        }
+
         // Join, then open when sync brings it
         string? roomId = null;
         if (!await RunAsync($"Joining {link.Target}", async client => roomId = await client.JoinRoomAsync(link.Target, link.Via.Count > 0 ? link.Via : null))) return false;
@@ -582,7 +590,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             if (!await JoinLinkAsync(link)) return false;
             RoomDirectory = null;
             return true;
-        });
+        }, roomId => roomsById.TryGetValue(roomId, out RoomItemViewModel? joined) && !joined.IsInvite);
         directory.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(DirectoryViewModel.Server)) directoryServer = directory.Server.Trim(); };
         RoomDirectory = directory;
         await directory.SearchAsync();

@@ -33,7 +33,7 @@
     <StackPanel Spacing="6" IsVisible="{Binding CanSetUp}">
       <TextBlock Classes="subtitle" Text="Set up recovery" />
       <TextBlock Classes="hint" TextWrapping="Wrap" Text="Create cross-signing keys, a key backup of message keys, and a recovery key." />
-      <TextBox Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" IsVisible="{Binding NeedsPassword}" />
+      <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" IsVisible="{Binding NeedsPassword}" />
       <Button Classes="accent" Content="Set up" Command="{Binding SetUpCommand}" HorizontalAlignment="Right" />
     </StackPanel>
 
@@ -41,7 +41,7 @@
     <StackPanel Spacing="6" IsVisible="{Binding CanRecover}">
       <TextBlock Classes="subtitle" Text="Unlock encrypted history" />
       <TextBlock Classes="hint" TextWrapping="Wrap" Text="Enter the recovery key or passphrase you set up in this or another app, such as Element." />
-      <TextBox Text="{Binding RecoveryInput}" PlaceholderText="EsT…" PasswordChar="•" />
+      <TextBox Classes="revealPasswordButton" Text="{Binding RecoveryInput}" PlaceholderText="EsT…" PasswordChar="•" />
       <Button Classes="accent" Content="Recover" Command="{Binding RecoverCommand}" HorizontalAlignment="Right" />
     </StackPanel>
 
@@ -73,7 +73,7 @@
     <Border Classes="notice" IsVisible="{Binding IsSigningOutDevice}">
       <StackPanel Spacing="6">
         <TextBlock TextWrapping="Wrap" Text="{Binding SigningOut.Name, StringFormat='Sign out {0}? Enter your account password to confirm.', FallbackValue=''}" />
-        <TextBox Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" />
+        <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" />
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
           <Button Classes="accent" Content="Sign out" Command="{Binding ConfirmSignOutCommand}" />
           <Button Content="Cancel" Command="{Binding CancelSignOutCommand}" />

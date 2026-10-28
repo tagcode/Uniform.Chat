@@ -11,8 +11,12 @@ using Uniform.Matrix.Protocol.Core;
 /// <summary>A room of a public room directory.</summary>
 /// <param name="Room">The directory's entry.</param>
 /// <param name="Server">Server whose directory listed it; empty for the user's own.</param>
-public sealed record PublicRoomItem(PublicRoom Room, string Server)
+/// <param name="IsJoined">Whether the user is in the room already.</param>
+public sealed record PublicRoomItem(PublicRoom Room, string Server, bool IsJoined = false)
 {
+    /// <summary>Text of the button: Open for rooms the user is in, else Join.</summary>
+    public string ActionText => IsJoined ? "Open" : "Join";
+
     /// <summary>Name, else alias, else ID.</summary>
     public string Title => Room.Name ?? Room.CanonicalAlias ?? Room.RoomId;
 
@@ -36,15 +40,17 @@ public sealed partial class DirectoryViewModel : ViewModelBase
     private readonly ClientConnection connection;
     private readonly IUiDispatcher ui;
     private readonly Func<MatrixLink, Task<bool>> join;
+    private readonly Func<string, bool> isJoined;
     private int generation;
 
-    /// <summary>Create the directory of <paramref name="server"/>; <paramref name="join"/> joins a chosen room and returns whether it did.</summary>
-    public DirectoryViewModel(ClientConnection connection, IUiDispatcher ui, string server, Func<MatrixLink, Task<bool>> join)
+    /// <summary>Create the directory of <paramref name="server"/>; <paramref name="join"/> joins a chosen room, or opens it when joined already, and returns whether it did; <paramref name="isJoined"/> tells whether the user is in a room, by ID.</summary>
+    public DirectoryViewModel(ClientConnection connection, IUiDispatcher ui, string server, Func<MatrixLink, Task<bool>> join, Func<string, bool> isJoined)
     {
         // Dependencies and the server shown last
         this.connection = connection;
         this.ui = ui;
         this.join = join;
+        this.isJoined = isJoined;
         Server = server;
     }
 
@@ -86,7 +92,7 @@ public sealed partial class DirectoryViewModel : ViewModelBase
             MatrixClient client = await connection.Session.WhenReady;
             PublicRoomsResponse page = await client.GetPublicRoomsAsync(server.Length > 0 ? server : null, PageSize, searchTerm: term.Length > 0 ? term : null);
             if (current != generation) return;
-            foreach (PublicRoom room in page.Chunk) Rooms.Add(new PublicRoomItem(room, server));
+            foreach (PublicRoom room in page.Chunk) Rooms.Add(new PublicRoomItem(room, server, isJoined(room.RoomId)));
             Message = Rooms.Count == 0 ? "No rooms found." : "";
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
@@ -100,12 +106,12 @@ public sealed partial class DirectoryViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Join <paramref name="room"/> through the server that listed it.</summary>
+    /// <summary>Join <paramref name="room"/> through the server that listed it, or open it when joined already.</summary>
     [RelayCommand]
     private async Task JoinAsync(PublicRoomItem room)
     {
         // The chat opens it when it arrives
-        Message = $"Joining {room.Title}…";
+        if (!room.IsJoined) Message = $"Joining {room.Title}…";
         bool joined = await join(room.Link);
         ui.Post(() => Message = joined ? "" : $"Could not join {room.Title}.");
     }

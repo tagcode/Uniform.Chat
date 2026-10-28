@@ -230,7 +230,7 @@
 
     <!-- Room directory over everything -->
     <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding RoomDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
-      <Border Classes="card">
+      <Border Classes="card tall">
         <Grid RowDefinitions="Auto,*">
           <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseDirectoryCommand}" HorizontalAlignment="Right" />
           <views:DirectoryView Grid.Row="1" DataContext="{Binding RoomDirectory}" />
