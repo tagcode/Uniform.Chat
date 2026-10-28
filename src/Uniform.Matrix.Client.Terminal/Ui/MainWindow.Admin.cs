@@ -6,7 +6,7 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
-// Room administration: name, avatar, kick, ban, unban and power levels.
+// Room administration: name, avatar, public rooms, aliases, directory listing, kick, ban, unban and power levels.
 public sealed partial class MainWindow
 {
     /// <summary>Set the name of the open room, asking with the current name when <paramref name="name"/> is empty.</summary>
@@ -23,6 +23,111 @@ public sealed partial class MainWindow
 
     /// <summary>Set the name from the menu.</summary>
     private void SetRoomName() => SetRoomName("");
+
+    /// <summary>Create a public room with alias <paramref name="alias"/> on the user's server, listed in its directory, asking for what is not given.</summary>
+    /// <param name="alias">Alias like <c>#room</c> or <c>#room:server</c>; asked for when empty.</param>
+    /// <param name="roomName">Room name; the alias's name when empty.</param>
+    private void CreatePublicRoom(string alias, string roomName)
+    {
+        // Ask for the alias, then check it is on this server
+        string? text = alias.Length > 0 ? alias : Dialogs.Ask(app, "New public room", $"Address, e.g. #room or #room:{OwnServerName}:");
+        if (text is null) return;
+        if (LocalAliasName(text) is not string localpart) return;
+        string name = roomName.Length > 0 ? roomName : localpart;
+
+        // Create unencrypted, as anyone may join and read; listed in the directory
+        _ = RunSafelyAsync($"Creating #{localpart}:{OwnServerName}", async client =>
+        {
+            await client.CreateRoomAsync(new CreateRoomRequest { Name = name, Preset = RoomPresets.PublicChat, RoomAliasName = localpart, Visibility = "public" });
+            app.Invoke(() => ShowStatus($"Created #{localpart}:{OwnServerName}"));
+        });
+    }
+
+    /// <summary>Create a public room from the menu.</summary>
+    private void CreatePublicRoom() => CreatePublicRoom("", "");
+
+    /// <summary>Add alias <paramref name="alias"/> on the user's server to the open room, asking when empty; it becomes the main alias when the room has none.</summary>
+    private void AddAlias(string alias)
+    {
+        // Assert room, ask and check the alias
+        if (currentRoomId is not string roomId) return;
+        string? text = alias.Length > 0 ? alias : Dialogs.Ask(app, "Add alias", $"Address, e.g. #room or #room:{OwnServerName}:");
+        if (text is null || LocalAliasName(text) is not string localpart) return;
+        string full = $"#{localpart}:{OwnServerName}";
+        bool hasMain = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.CanonicalAlias is not null);
+
+        // Create, and make it the main alias that clients show
+        _ = RunSafelyAsync($"Adding {full}", async client =>
+        {
+            await client.CreateRoomAliasAsync(full, roomId);
+            if (!hasMain) await client.SendStateEventAsync(roomId, EventTypes.RoomCanonicalAlias, new CanonicalAliasContent { Alias = full });
+            app.Invoke(() => ShowStatus($"Added {full}"));
+        });
+    }
+
+    /// <summary>Add an alias from the menu.</summary>
+    private void AddAlias() => AddAlias("");
+
+    /// <summary>Remove alias <paramref name="alias"/> of the user's server, asking when empty.</summary>
+    private void RemoveAlias(string alias)
+    {
+        // Ask and check the alias
+        string? text = alias.Length > 0 ? alias : Dialogs.Ask(app, "Remove alias", "Address to remove, e.g. #room:" + OwnServerName + ":");
+        if (text is null || LocalAliasName(text) is not string localpart) return;
+        string full = $"#{localpart}:{OwnServerName}";
+        // Remove
+        _ = RunSafelyAsync($"Removing {full}", async client => { await client.DeleteRoomAliasAsync(full); app.Invoke(() => ShowStatus($"Removed {full}")); });
+    }
+
+    /// <summary>Ask whether to list the open room in the public room directory of the user's server.</summary>
+    private void ChangeDirectoryListing()
+    {
+        // Assert room and ask
+        if (currentRoomId is not string roomId) return;
+        string name = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.DisplayName : roomId);
+        int? choice = Dialogs.Choose(app, "Directory listing", $"List {name} in the public room directory of {OwnServerName}? Listing does not change who may join.", ["_List", "_Unlist", "_Close"]);
+        // List or unlist
+        if (choice is 0 or 1) SetDirectoryListing(listed: choice == 0);
+    }
+
+    /// <summary>List the open room in the public room directory of the user's server, or remove it.</summary>
+    private void SetDirectoryListing(bool listed)
+    {
+        // Assert room
+        if (currentRoomId is not string roomId) return;
+        string name = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.DisplayName : roomId);
+        // Set
+        _ = RunSafelyAsync(listed ? $"Listing {name}" : $"Unlisting {name}", async client =>
+        {
+            await client.SetRoomDirectoryVisibilityAsync(roomId, listed);
+            app.Invoke(() => ShowStatus(listed ? $"{name} is listed in the room directory" : $"{name} is no longer listed in the room directory"));
+        });
+    }
+
+    /// <summary>Server name of the user, the only server where they can make aliases.</summary>
+    private string OwnServerName => UserId.TryParse(ownUserId, out UserId user) ? user.ServerName : "";
+
+    /// <summary>Return the name part of an alias like <c>#room</c> or <c>#room:server</c> of the user's server, or show why it is not one and return null.</summary>
+    private string? LocalAliasName(string alias)
+    {
+        // Sigil, name, and this server when one is given
+        string text = alias.Trim();
+        int colon = text.IndexOf(':');
+        string localpart = colon < 0 ? text.TrimStart('#') : text[..colon].TrimStart('#');
+        string? server = colon < 0 ? null : text[(colon + 1)..];
+        if (!text.StartsWith('#') || localpart.Length == 0 || localpart.Any(c => char.IsWhiteSpace(c) || c == ':'))
+        {
+            Dialogs.Error(app, "Invalid address", $"{alias} is not a room address like #room or #room:{OwnServerName}.");
+            return null;
+        }
+        if (server is not null && server != OwnServerName)
+        {
+            Dialogs.Error(app, "Other server", $"Addresses can only be made on your own server, {OwnServerName}.");
+            return null;
+        }
+        // Return name part
+        return localpart;
+    }
 
     /// <summary>Set the avatar of the open room from an image file, picking one when <paramref name="argument"/> is empty; <c>none</c> removes it.</summary>
     private void SetRoomAvatar(string argument)

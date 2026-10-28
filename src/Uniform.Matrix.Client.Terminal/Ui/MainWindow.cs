@@ -146,6 +146,7 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "_Join…", HelpText = "Join by alias or ID", Key = Key.O.WithCtrl, Action = JoinRoom },
             new MenuItem { Title = "Room _directory…", HelpText = "Search public rooms", Key = Key.R.WithCtrl, Action = BrowseDirectory },
             new MenuItem { Title = "_New room…", HelpText = "Create a private room", Action = CreateRoom },
+            new MenuItem { Title = "New public _room…", HelpText = "Create a room anyone can join", Action = CreatePublicRoom },
             new MenuItem { Title = "Direct _message…", HelpText = "Start a chat with a user", Action = StartDirectChat },
             new Line(),
             new MenuItem { Title = "Send _file…", HelpText = "Upload a file here", Action = SendFile },
@@ -153,6 +154,8 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "Set _topic…", HelpText = "Change the topic", Action = SetTopic },
             new MenuItem { Title = "Set nam_e…", HelpText = "Change the room name", Action = SetRoomName },
             new MenuItem { Title = "Set _avatar…", HelpText = "Picture of the room", Action = SetRoomAvatar },
+            new MenuItem { Title = "Add alia_s…", HelpText = "An address like #room:server", Action = AddAlias },
+            new MenuItem { Title = "Directory listin_g…", HelpText = "List in the public room directory", Action = ChangeDirectoryListing },
             new MenuItem { Title = "_Power level…", HelpText = "Make a member admin or moderator", Action = SetPowerLevel },
             new MenuItem { Title = "_Kick…", HelpText = "Remove a member", Action = KickMember },
             new MenuItem { Title = "_Ban…", HelpText = "Remove a member for good", Action = BanMember },
@@ -655,6 +658,10 @@ public sealed partial class MainWindow : Window
             case "msg" or "query": StartDirectChat(argument); break;
             case "list": BrowseDirectory(argument); break;
             case "create": CreateRoom(argument); break;
+            case "alias": AddAlias(argument); break;
+            case "unalias": RemoveAlias(argument); break;
+            case "publish": SetDirectoryListing(listed: true); break;
+            case "unpublish": SetDirectoryListing(listed: false); break;
             case "quit" or "exit": app.RequestStop(); break;
             case "help": ShowHelp(); break;
             default: Dialogs.Error(app, "Unknown command", $"/{parts[0]} is not a command. See Help → Commands and keys."); break;
@@ -754,9 +761,17 @@ public sealed partial class MainWindow : Window
     /// <summary>Search the public room directory from the menu.</summary>
     private void BrowseDirectory() => BrowseDirectory("");
 
-    /// <summary>Create a private room, asking for the name when <paramref name="roomName"/> is empty.</summary>
+    /// <summary>Create a private room, asking for the name when <paramref name="roomName"/> is empty; an alias first, as in <c>/create #room name</c>, makes a public room instead.</summary>
     private void CreateRoom(string roomName)
     {
+        // Public rooms start with their alias
+        if (roomName.StartsWith('#'))
+        {
+            string[] parts = roomName.Split(' ', 2, StringSplitOptions.TrimEntries);
+            CreatePublicRoom(parts[0], parts.Length > 1 ? parts[1] : "");
+            return;
+        }
+
         // Ask
         string? name = roomName.Length > 0 ? roomName : Dialogs.Ask(app, "New room", "Room name:");
         if (name is null) return;
@@ -884,6 +899,9 @@ public sealed partial class MainWindow : Window
         "/nick name      set your display name",
         "/list [server]  browse public rooms, here or on another server",
         "/create name    create a private room",
+        "/create #room [name]   create a public room with that address",
+        "/alias #room, /unalias #room   add or remove an address of this room",
+        "/publish, /unpublish   list this room in the public room directory, or not",
         "/upload         send a file",
         "/devices        manage your sessions",
         "/settings       view and change options",

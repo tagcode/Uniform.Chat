@@ -23,6 +23,9 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/nick name` | Set your display name |
 | `/list [server]` | Browse the public rooms of your server, or of another server |
 | `/create name` | Create a private room |
+| `/create #room [name]` | Create a public room with the address `#room:yourserver`, listed in the room directory |
+| `/alias #room`, `/unalias #room` | Add or remove an address of the current room |
+| `/publish`, `/unpublish` | List the current room in your server's public room directory, or remove it |
 | `/upload` | Send a file |
 | `/devices` | Manage your sessions |
 | `/settings` | View and change options |

@@ -128,8 +128,5 @@ long-press menus instead of right-click.
 
 # Embedded help
 
-
-Now each application type include user documents included in release files.
-F2 (Help/Documentation) could open in a browser for desktop and android apps, and for terminal client and server, perhaps a embedded html browser, if such exists.
-F1 would still show the quick keyboard shortcut.
+F1 could open the user documentations in system browser for desktop clients
 
