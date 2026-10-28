@@ -1,16 +1,16 @@
 - name: Installing
-  href: install.md
+  uid: Uniform.Matrix.Server.Host.Install.Article
 - name: Run with the dashboard
-  href: dashboard.md
+  uid: Uniform.Matrix.Server.Host.Dashboard.Article
 - name: Run without the dashboard
-  href: service.md
+  uid: Uniform.Matrix.Server.Host.Service.Article
 - name: Settings
-  href: settings.md
+  uid: Uniform.Matrix.Server.Host.Settings.Article
 - name: Accounts
-  href: accounts.md
+  uid: Uniform.Matrix.Server.Host.Accounts.Article
 - name: Connecting clients
-  href: clients.md
+  uid: Uniform.Matrix.Server.Host.Clients.Article
 - name: Files
-  href: files.md
+  uid: Uniform.Matrix.Server.Host.Files.Article
 - name: Troubleshooting
-  href: troubleshooting.md
+  uid: Uniform.Matrix.Server.Host.Troubleshooting.Article

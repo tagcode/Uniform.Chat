@@ -1,6 +1,10 @@
+---
+title: Accounts
+uid: Uniform.Matrix.Server.Host.Accounts.Article
+---
 # Accounts
 
-The server starts with registration disabled, so nobody can create an account by themselves. The simplest way to add people is the dashboard: Server → Users → New (see [Users window](dashboard.md#users-window)).
+The server starts with registration disabled, so nobody can create an account by themselves. The simplest way to add people is the dashboard: Server → Users → New (see [Users window](xref:Uniform.Matrix.Server.Host.Dashboard.Article#users-window)).
 
 To let people register in their own client instead:
 

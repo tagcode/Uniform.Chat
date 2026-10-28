@@ -1,14 +1,14 @@
 - name: Getting started
-  href: getting-started.md
+  uid: Uniform.Matrix.Client.Desktop.GettingStarted.Article
 - name: Rooms
-  href: rooms.md
+  uid: Uniform.Matrix.Client.Desktop.Rooms.Article
 - name: Messages and files
-  href: messages.md
+  uid: Uniform.Matrix.Client.Desktop.Messages.Article
 - name: Security
-  href: security.md
+  uid: Uniform.Matrix.Client.Desktop.Security.Article
 - name: Notifications
-  href: notifications.md
+  uid: Uniform.Matrix.Client.Desktop.Notifications.Article
 - name: Settings
-  href: settings.md
+  uid: Uniform.Matrix.Client.Desktop.Settings.Article
 - name: Phones and narrow windows
-  href: phones.md
+  uid: Uniform.Matrix.Client.Desktop.Phones.Article

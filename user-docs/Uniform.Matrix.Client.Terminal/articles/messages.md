@@ -1,3 +1,7 @@
+---
+title: Messages
+uid: Uniform.Matrix.Client.Terminal.Messages.Article
+---
 # Messages
 
 ## Formatting

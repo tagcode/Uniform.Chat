@@ -46,4 +46,4 @@ native/build.sh
 
 The library lands in `tests/Uniform.Matrix.Protocol.Crypto.Tests/runtimes/<rid>/native/`, which is not in git. Without it the differential tests in `OracleTests` are skipped.
 
-The server's own tests, with two servers federating in memory, are described in [Uniform.Matrix.Server](Uniform.Matrix.Server/testing.md).
+The server's own tests, with two servers federating in memory, are described in [Uniform.Matrix.Server](xref:Uniform.Matrix.Server.Testing.Article).

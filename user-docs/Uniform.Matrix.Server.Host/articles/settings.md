@@ -1,3 +1,7 @@
+---
+title: Settings
+uid: Uniform.Matrix.Server.Host.Settings.Article
+---
 # Settings
 
 Settings come from these places; later ones override earlier ones:
@@ -48,7 +52,7 @@ Settings come from these places; later ones override earlier ones:
 | `Tls:KeyPath` | not set | Private key of the certificate, such as [certbot](https://github.com/certbot/certbot)'s `privkey.pem`. Keep it readable only by the account that runs the server. ↻ |
 | `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
-| `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](service.md). ↻ |
+| `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](xref:Uniform.Matrix.Server.Host.Service.Article). ↻ |
 
 ↻ marks options that take effect after a restart.
 

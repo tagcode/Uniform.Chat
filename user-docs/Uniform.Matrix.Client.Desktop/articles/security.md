@@ -1,3 +1,7 @@
+---
+title: Security
+uid: Uniform.Matrix.Client.Desktop.Security.Article
+---
 # Security
 
 [!include[](../../Uniform.Matrix.Core/encryption.md)]

@@ -1,3 +1,7 @@
+---
+title: Rooms
+uid: Uniform.Matrix.Client.Desktop.Rooms.Article
+---
 # Rooms
 
 

@@ -1,3 +1,7 @@
+---
+title: Troubleshooting
+uid: Uniform.Matrix.Server.Host.Troubleshooting.Article
+---
 # Troubleshooting
 
 | Message | Meaning |

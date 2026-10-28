@@ -1,3 +1,7 @@
+---
+title: Commands
+uid: Uniform.Matrix.Client.Terminal.Commands.Article
+---
 # Commands
 
 | Command | Action |

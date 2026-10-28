@@ -1,3 +1,7 @@
+---
+title: Settings
+uid: Uniform.Matrix.Client.Terminal.Settings.Article
+---
 # Settings
 
 Settings come from these places; later ones override earlier ones:

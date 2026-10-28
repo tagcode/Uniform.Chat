@@ -1,3 +1,7 @@
+---
+title: Files and images
+uid: Uniform.Matrix.Client.Terminal.Files.Article
+---
 # Files and images
 
 ## Files

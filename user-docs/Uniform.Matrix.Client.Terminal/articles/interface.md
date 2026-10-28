@@ -1,3 +1,7 @@
+---
+title: Interface
+uid: Uniform.Matrix.Client.Terminal.Interface.Article
+---
 # Interface
 
 ```text

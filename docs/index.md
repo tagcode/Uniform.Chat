@@ -8,23 +8,23 @@ uid: Uniform.Matrix.Home.Article
 
 | Project | Kind | Status |
 |---|---|---|
-| [`Uniform.Matrix.Protocol.Core`](Uniform.Matrix/Uniform.Matrix.Protocol.Core/index.md) | Spec types shared by clients and servers: IDs, events, API records, canonical JSON | Client-Server API types |
-| [`Uniform.Matrix.Protocol.Client`](Uniform.Matrix/Uniform.Matrix.Protocol.Client/index.md) | HTTP client of the [Client-Server API](https://spec.matrix.org/latest/client-server-api/) | Login, sync, rooms, messages, media, devices, keys, backup |
-| [`Uniform.Matrix.Protocol.Crypto`](Uniform.Matrix/Uniform.Matrix.Protocol.Crypto/index.md) | End-to-end encryption in pure .NET | Olm, Megolm, cross-signing, secret storage, backup, key requests, SAS |
-| [`Uniform.Matrix.Hosting`](Uniform.Matrix/Uniform.Matrix.Hosting/index.md) | Settings and logging for .NET host applications | Settings file layers, option catalog, session logs |
-| [`Uniform.Matrix.Gui.Terminal`](Uniform.Matrix/Uniform.Matrix.Gui.Terminal/index.md) | Terminal.Gui components | Settings window, log window, dialogs |
-| [`Uniform.Matrix.Client`](Uniform.Matrix/Uniform.Matrix.Client/index.md) | Headless client with local SQLite storage | Session, sync, outbox, media cache, encryption, room state |
-| [`Uniform.Matrix.Client.Terminal`](Uniform.Matrix/Uniform.Matrix.Client.Terminal/index.md) | Terminal client app (Terminal.Gui v2) | Rooms, messages, files, encryption, settings and logs |
-| [`Uniform.Matrix.Client.Avalonia.Core`](Uniform.Matrix/Uniform.Matrix.Client.Avalonia.Core/index.md) | Graphical app shared by desktop and Android (Avalonia) | Rooms, messages, files, encryption, verification, notifications on Linux |
-| [`Uniform.Matrix.Client.Desktop`](Uniform.Matrix/Uniform.Matrix.Client.Desktop/index.md) | Graphical app for Windows and Linux | Entry point, application menu entry |
-| [`Uniform.Matrix.Client.Android`](Uniform.Matrix/Uniform.Matrix.Client.Android/index.md) | Graphical app for Android | Entry point; no store release yet |
-| [`Uniform.Matrix.Protocol.Server`](Uniform.Matrix/Uniform.Matrix.Protocol.Server/index.md) | Homeserver protocol: room versions, event format, signing, auth rules | Room versions 10, 11 and 12 |
-| [`Uniform.Matrix.Server`](Uniform.Matrix/Uniform.Matrix.Server/index.md) | Homeserver engine on ASP.NET Core and SQLite | Accounts, rooms, sync and sliding sync, media, encryption relay, directory, push, calls, federation |
-| [`Uniform.Matrix.Server.Host`](Uniform.Matrix/Uniform.Matrix.Server.Host/index.md) | Homeserver app, with or without the dashboard | Dashboard, users and rooms admin, settings and logs |
+| [`Uniform.Matrix.Protocol.Core`](xref:Uniform.Matrix.Protocol.Core.Article) | Spec types shared by clients and servers: IDs, events, API records, canonical JSON | Client-Server API types |
+| [`Uniform.Matrix.Protocol.Client`](xref:Uniform.Matrix.Protocol.Client.Article) | HTTP client of the [Client-Server API](https://spec.matrix.org/latest/client-server-api/) | Login, sync, rooms, messages, media, devices, keys, backup |
+| [`Uniform.Matrix.Protocol.Crypto`](xref:Uniform.Matrix.Protocol.Crypto.Article) | End-to-end encryption in pure .NET | Olm, Megolm, cross-signing, secret storage, backup, key requests, SAS |
+| [`Uniform.Matrix.Hosting`](xref:Uniform.Matrix.Hosting.Article) | Settings and logging for .NET host applications | Settings file layers, option catalog, session logs |
+| [`Uniform.Matrix.Gui.Terminal`](xref:Uniform.Matrix.Gui.Terminal.Article) | Terminal.Gui components | Settings window, log window, dialogs |
+| [`Uniform.Matrix.Client`](xref:Uniform.Matrix.Client.Article) | Headless client with local SQLite storage | Session, sync, outbox, media cache, encryption, room state |
+| [`Uniform.Matrix.Client.Terminal`](xref:Uniform.Matrix.Client.Terminal.Article) | Terminal client app (Terminal.Gui v2) | Rooms, messages, files, encryption, settings and logs |
+| [`Uniform.Matrix.Client.Avalonia.Core`](xref:Uniform.Matrix.Client.Avalonia.Core.Article) | Graphical app shared by desktop and Android (Avalonia) | Rooms, messages, files, encryption, verification, notifications on Linux |
+| [`Uniform.Matrix.Client.Desktop`](xref:Uniform.Matrix.Client.Desktop.Article) | Graphical app for Windows and Linux | Entry point, application menu entry |
+| [`Uniform.Matrix.Client.Android`](xref:Uniform.Matrix.Client.Android.Article) | Graphical app for Android | Entry point; no store release yet |
+| [`Uniform.Matrix.Protocol.Server`](xref:Uniform.Matrix.Protocol.Server.Article) | Homeserver protocol: room versions, event format, signing, auth rules | Room versions 10, 11 and 12 |
+| [`Uniform.Matrix.Server`](xref:Uniform.Matrix.Server.Article) | Homeserver engine on ASP.NET Core and SQLite | Accounts, rooms, sync and sliding sync, media, encryption relay, directory, push, calls, federation |
+| [`Uniform.Matrix.Server.Host`](xref:Uniform.Matrix.Server.Host.Article) | Homeserver app, with or without the dashboard | Dashboard, users and rooms admin, settings and logs |
 
-- [Building](Uniform.Matrix/building.md): build the solution and the apps, and make releases.
-- [Testing](Uniform.Matrix/testing.md): the test projects, live tests and the native test oracle.
-- [Documentation](Uniform.Matrix/documentation.md): these sites and the user guides.
+- [Building](xref:Uniform.Matrix.Building.Article): build the solution and the apps, and make releases.
+- [Testing](xref:Uniform.Matrix.Testing.Article): the test projects, live tests and the native test oracle.
+- [Documentation](xref:Uniform.Matrix.Documentation.Article): these sites and the user guides.
 - [API reference](api/index.md): generated from XML doc comments.
 
 # Folder structure
@@ -125,4 +125,4 @@ Uniform.Matrix.Server.Host ──► Uniform.Matrix.Server ──► Uniform.Mat
     └──► Uniform.Matrix.Gui.Terminal ──► Uniform.Matrix.Hosting
 ```
 
-The server reuses Core, Crypto (to check key signatures), Hosting and Gui.Terminal, so its settings and log windows are the same as the client's. See [Uniform.Matrix.Server](Uniform.Matrix/Uniform.Matrix.Server/index.md) for how it works.
+The server reuses Core, Crypto (to check key signatures), Hosting and Gui.Terminal, so its settings and log windows are the same as the client's. See [Uniform.Matrix.Server](xref:Uniform.Matrix.Server.Article) for how it works.

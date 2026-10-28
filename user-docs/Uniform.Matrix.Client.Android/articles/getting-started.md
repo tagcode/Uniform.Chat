@@ -1,3 +1,7 @@
+---
+title: Getting started
+uid: Uniform.Matrix.Client.Android.GettingStarted.Article
+---
 # Getting started
 
 The Uniform.Matrix app for Android: rooms, messages, files and end-to-end encryption. It shows the room list and a room one at a time.
@@ -20,7 +24,7 @@ Enter your full user ID, such as `@alice:matrix.org`, and your password. The ser
 
 The app remembers the account, so the next start opens the chat without asking. *⋮ → Sign out* logs the device out on the server and forgets the account.
 
-Next, see [Rooms](rooms.md) and [Messages and files](messages.md).
+Next, see [Rooms](xref:Uniform.Matrix.Client.Android.Rooms.Article) and [Messages and files](xref:Uniform.Matrix.Client.Android.Messages.Article).
 
 ## Where things are kept
 

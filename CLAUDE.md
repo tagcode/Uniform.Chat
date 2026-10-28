@@ -24,13 +24,15 @@
 
 # Docfx Documentation
 - When using snippets with ``` ```, write the description first, and then follow with the snippet. E.g. "To build documents use docfx.\n```bash\ndotnet docfx docs/docfx.json```
-- Developer documents go under docs/ folder at root, theme goes under theme/. If there are user documentation, they go under user-docs/
+- Developer documents go under docs/ folder, theme goes under theme/. If there are user documentations, they go under user-docs/.
 
 ## Developer documents
 - Mentioned classes and members are refered with links, either xref or url, e.g. [Class](xref:Namespace.Class), [List&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1).
+- Use [](xref:) when refering other articles. Use uid of `ClassLibraryName.Article` when refering another class library.
 - Articles follow the same directory structure as class libraries.
 - Each class library specific directory has an index.md and toc.yml. The name for index.md is "Introduction" in toc.yml.
-- Every article has a an `uid:` and a `title:` in the header. To avoid conflicting with uid:s under api/, add suffix ".Article" to uid, e.g. "ClassLibraryName.Article" and "ClassLibraryName.Topic.Article".
+- Article has a an `uid:` and a `title:` in the frontmatter. 
+   - Add suffix ".Article" to uid, e.g. "ClassLibraryName.Article" and "ClassLibraryName.Topic.Article
 - Example directory structure:
   theme/
   docs/
@@ -59,6 +61,8 @@
 # User documentation
 - Use `uid:` and `title:` in .md frontmatter.
 - In toc.yml, refer to articles with `uid:`
+- Use [](xref:) to refer to other articles.
+- Add suffix ".Article" to uid, e.g. "ApplicationName.Topic.Article".
 
 # Git
 - Don't remind me when to commit code.

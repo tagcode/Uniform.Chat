@@ -1,3 +1,7 @@
+---
+title: Run with the dashboard
+uid: Uniform.Matrix.Server.Host.Dashboard.Article
+---
 # Run with the dashboard
 
 In the unpacked folder:
@@ -26,7 +30,7 @@ When started from a terminal, the server opens its dashboard and serves at `http
 - **Listening** shows the addresses clients connect to.
 - **Requests** counts client requests: answered, being answered now (syncing clients wait here for news), and failed with a server error.
 - **Accounts** counts users and rooms, every few seconds.
-- **Data** is the folder with the database and signing key; see [Files](files.md).
+- **Data** is the folder with the database and signing key; see [Files](xref:Uniform.Matrix.Server.Host.Files.Article).
 - **Log** is this session's log file.
 
 The dashboard refreshes every second. The server keeps serving while menus and windows are open.

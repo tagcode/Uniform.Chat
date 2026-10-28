@@ -1,16 +1,16 @@
 - name: Getting started
-  href: getting-started.md
+  uid: Uniform.Matrix.Client.Terminal.GettingStarted.Article
 - name: Interface
-  href: interface.md
+  uid: Uniform.Matrix.Client.Terminal.Interface.Article
 - name: Messages
-  href: messages.md
+  uid: Uniform.Matrix.Client.Terminal.Messages.Article
 - name: Files and images
-  href: files.md
+  uid: Uniform.Matrix.Client.Terminal.Files.Article
 - name: Encryption and devices
-  href: encryption.md
+  uid: Uniform.Matrix.Client.Terminal.Encryption.Article
 - name: Room administration
-  href: rooms.md
+  uid: Uniform.Matrix.Client.Terminal.Rooms.Article
 - name: Commands
-  href: commands.md
+  uid: Uniform.Matrix.Client.Terminal.Commands.Article
 - name: Settings
-  href: settings.md
+  uid: Uniform.Matrix.Client.Terminal.Settings.Article

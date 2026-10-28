@@ -1,3 +1,7 @@
+---
+title: Messages and files
+uid: Uniform.Matrix.Client.Desktop.Messages.Article
+---
 # Messages and files
 
 ## Messages

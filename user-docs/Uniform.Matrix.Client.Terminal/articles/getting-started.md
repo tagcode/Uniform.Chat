@@ -1,3 +1,7 @@
+---
+title: Getting started
+uid: Uniform.Matrix.Client.Terminal.GettingStarted.Article
+---
 # Getting started
 
 ## Requirements
@@ -23,9 +27,9 @@ The first time, it asks for your full Matrix user ID, such as `@alice:matrix.org
 
 You can also give them on the command line, which skips the question: `--Matrix:UserId=@alice:matrix.org`, and `--Matrix:Homeserver=http://localhost:8008` when needed. Without a terminal to ask in, for example with input redirected, the client prints this help instead. Messages are kept in a local database under `~/.local/share/uniform-matrix-client-terminal/`, and messages you write are kept there until the server has received them, so nothing is lost when the connection drops.
 
-The window has a menu bar, a room list, the messages of the selected room and its members. Type a message and press Enter to send it; see [Interface](interface.md) for menus, keys and `/commands`.
+The window has a menu bar, a room list, the messages of the selected room and its members. Type a message and press Enter to send it; see [Interface](xref:Uniform.Matrix.Client.Terminal.Interface.Article) for menus, keys and `/commands`.
 
-Settings can be changed in File → Settings, which saves them to `~/.config/uniform-matrix-client-terminal/settings.json`; see [Settings](settings.md), which also lists every command-line parameter. They can also go in `appsettings.json` next to the program, for example `"Matrix": { "UserId": "@alice:matrix.org" }`. Command-line options override both.
+Settings can be changed in File → Settings, which saves them to `~/.config/uniform-matrix-client-terminal/settings.json`; see [Settings](xref:Uniform.Matrix.Client.Terminal.Settings.Article), which also lists every command-line parameter. They can also go in `appsettings.json` next to the program, for example `"Matrix": { "UserId": "@alice:matrix.org" }`. Command-line options override both.
 
 Each run writes its own log under `~/.local/share/uniform-matrix-client-terminal/logs/`; View → Logs shows them.
 

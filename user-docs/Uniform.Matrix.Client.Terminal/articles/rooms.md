@@ -1,3 +1,7 @@
+---
+title: Room administration
+uid: Uniform.Matrix.Client.Terminal.Rooms.Article
+---
 # Room administration
 
 Admins and moderators can change the room and its members from the Room menu or with commands; the server refuses what your power level does not allow.

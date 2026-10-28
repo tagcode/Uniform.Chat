@@ -1,3 +1,7 @@
+---
+title: Files
+uid: Uniform.Matrix.Server.Host.Files.Article
+---
 # Files
 
 Everything the server keeps is in the data folder, `~/.local/share/uniform-matrix-server-host` by default (under `$XDG_DATA_HOME` when set):

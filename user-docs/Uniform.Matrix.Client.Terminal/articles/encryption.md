@@ -1,3 +1,7 @@
+---
+title: Encryption and devices
+uid: Uniform.Matrix.Client.Terminal.Encryption.Article
+---
 # Encryption and devices
 
 ## Encryption

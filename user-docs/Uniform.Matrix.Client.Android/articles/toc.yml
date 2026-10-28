@@ -1,16 +1,16 @@
 - name: Introduction
-  href: ../index.md
+  uid: Uniform.Matrix.Client.Android.Article
 - name: Getting started
-  href: getting-started.md
+  uid: Uniform.Matrix.Client.Android.GettingStarted.Article
 - name: Rooms
-  href: rooms.md
+  uid: Uniform.Matrix.Client.Android.Rooms.Article
 - name: Messages and files
-  href: messages.md
+  uid: Uniform.Matrix.Client.Android.Messages.Article
 - name: Security
-  href: security.md
+  uid: Uniform.Matrix.Client.Android.Security.Article
 - name: Notifications
-  href: notifications.md
+  uid: Uniform.Matrix.Client.Android.Notifications.Article
 - name: Settings
-  href: settings.md
+  uid: Uniform.Matrix.Client.Android.Settings.Article
 - name: Phones and narrow windows
-  href: phones.md
+  uid: Uniform.Matrix.Client.Android.Phones.Article

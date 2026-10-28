@@ -4,7 +4,7 @@ uid: Uniform.Matrix.Client.TrackRooms.Article
 ---
 # Track rooms
 
-Room state is in the `Uniform.Matrix.Client` library (`using Uniform.Matrix.Client.State;`), which builds on the protocol client:
+Room state is in the [`Uniform.Matrix.Client`](xref:Uniform.Matrix.Client.Article) library (`using Uniform.Matrix.Client.State;`), which builds on the protocol client:
 
 ```csharp
 RoomStore store = new(client.UserId!);

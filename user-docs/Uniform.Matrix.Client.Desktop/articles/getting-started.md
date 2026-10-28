@@ -1,3 +1,7 @@
+---
+title: Getting started
+uid: Uniform.Matrix.Client.Desktop.GettingStarted.Article
+---
 # Getting started
 
 The Uniform.Matrix app for Windows and Linux: rooms, messages, files and end-to-end encryption in a graphical window. In narrow windows it shows one pane at a time.
@@ -44,7 +48,7 @@ Enter your full user ID, such as `@alice:matrix.org`, and your password. The ser
 
 The app remembers the account, so the next start opens the chat without asking. *⋮ → Sign out* logs the device out on the server and forgets the account.
 
-Next, see [Rooms](rooms.md) and [Messages and files](messages.md).
+Next, see [Rooms](xref:Uniform.Matrix.Client.Desktop.Rooms.Article) and [Messages and files](xref:Uniform.Matrix.Client.Desktop.Messages.Article).
 
 ## Where things are kept
 

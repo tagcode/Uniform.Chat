@@ -1,3 +1,7 @@
+---
+title: Installing
+uid: Uniform.Matrix.Server.Host.Install.Article
+---
 # Installing
 
 The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform.Matrix clients or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.

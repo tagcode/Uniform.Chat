@@ -1,3 +1,7 @@
+---
+title: Run without the dashboard
+uid: Uniform.Matrix.Server.Host.Service.Article
+---
 # Run without the dashboard
 
 Without a terminal, for example as a service, the server runs without the dashboard and also writes its log to standard output:
