@@ -18,6 +18,7 @@
     <Project Path="tests/Uniform.Matrix.Protocol.Tests/Uniform.Matrix.Protocol.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Protocol.Crypto.Tests/Uniform.Matrix.Protocol.Crypto.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Protocol.Server.Tests/Uniform.Matrix.Protocol.Server.Tests.csproj" />
+    <Project Path="tests/Uniform.Matrix.Docs.Tests/Uniform.Matrix.Docs.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Hosting.Tests/Uniform.Matrix.Hosting.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Tests/Uniform.Matrix.Client.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Terminal.Tests/Uniform.Matrix.Client.Terminal.Tests.csproj" />

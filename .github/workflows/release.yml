@@ -80,13 +80,18 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       # HTML for reading offline, one guide per app; the statictoc theme needs no web server
       - run: dotnet tool restore
+      # Warnings fail the build, so broken links and missing uids are found here
       - name: Build guides
         run: |
           for guide in desktop:Uniform.Matrix.Client.Desktop terminal:Uniform.Matrix.Client.Terminal server:Uniform.Matrix.Server.Host; do
             IFS=: read -r kind folder <<< "$guide"
-            dotnet docfx "user-docs/$folder/docfx.json"
+            dotnet docfx "user-docs/$folder/docfx.json" --warningsAsErrors
             mkdir -p guides && cp -r "user-docs/$folder/_site" "guides/$kind"
           done
+          dotnet docfx user-docs/Uniform.Matrix.Client.Android/docfx.json --warningsAsErrors
+      # The developer site with the API reference, checked the same way; not part of the release archives
+      - name: Check developer site
+        run: dotnet docfx docs/docfx.json --warningsAsErrors
       - uses: actions/upload-artifact@v5
         with:
           name: guides

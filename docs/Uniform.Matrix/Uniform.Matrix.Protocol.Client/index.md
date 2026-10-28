@@ -9,9 +9,9 @@ uid: Uniform.Matrix.Protocol.Client.Article
 1. adds the bearer token for authenticated endpoints, and refuses to send if not logged in;
 2. serializes the body with [MatrixJson.Options](xref:Uniform.Matrix.Protocol.Core.MatrixJson.Options);
 3. retries [rate-limited](https://spec.matrix.org/latest/client-server-api/#rate-limiting) requests up to [MaxRateLimitRetries](xref:Uniform.Matrix.Protocol.Client.MatrixClient.MaxRateLimitRetries) times, waiting as long as the server asks, unless that is longer than [MaxRateLimitDelay](xref:Uniform.Matrix.Protocol.Client.MatrixClient.MaxRateLimitDelay);
-4. turns other non-2xx responses into a [MatrixException](xref:Uniform.Matrix.Protocol.Core.MatrixException) when the body is a [standard error](https://spec.matrix.org/latest/client-server-api/#standard-error-response), or an [`HttpRequestException`](https://learn.microsoft.com/dotnet/api/system.net.http.httprequestexception) otherwise.
+4. turns other non-2xx responses into a [MatrixException](xref:Uniform.Matrix.Protocol.Core.MatrixException) when the body is a [standard error](https://spec.matrix.org/latest/client-server-api/#standard-error-response), or an [`HttpRequestException`](xref:System.Net.Http.HttpRequestException) otherwise.
 
-Path segments such as room IDs (`!abc:server`), aliases (`#room:server`) and event IDs are always percent-escaped. The caller owns the [`HttpClient`](https://learn.microsoft.com/dotnet/api/system.net.http.httpclient), which keeps the library usable with [`IHttpClientFactory`](https://learn.microsoft.com/dotnet/api/system.net.http.ihttpclientfactory), custom handlers and test stubs.
+Path segments such as room IDs (`!abc:server`), aliases (`#room:server`) and event IDs are always percent-escaped. The caller owns the [`HttpClient`](xref:System.Net.Http.HttpClient), which keeps the library usable with [`IHttpClientFactory`](xref:System.Net.Http.IHttpClientFactory), custom handlers and test stubs.
 
 ## Session
 

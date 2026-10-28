@@ -21,6 +21,7 @@ Settings come from these places; later ones override earlier ones:
 | `Server:TrustedProxies` | not set | Addresses of reverse proxies, such as nginx, whose `X-Forwarded-For` header gives the client's address, separated by commas. Set it when the server runs behind a proxy, so rate limits count each client instead of the proxy. Other senders' headers are ignored. ↻ |
 | `Server:RegistrationTokens` | not set | Tokens for `Token` registration, separated by commas. |
 | `Media:MaxUploadSize` | `52428800` | Largest file users can upload, in bytes (50 MiB). |
+| `Media:MaxThumbnailSourcePixels` | `40000000` | Largest image, in pixels, that thumbnails are made from; larger images get none. |
 | `Media:AllowUnauthenticatedDownloads` | `false` | Also serve files at the old `/_matrix/media/v3` download addresses, which need no login, for older clients. Anyone with a link can then fetch a file, so leave it off unless a client needs it. |
 | `Media:PendingUploadLifetime` | `1.00:00:00` | How long a client may take to upload a file it reserved an address for first. |
 | `Media:MaxPendingUploads` | `10` | How many reserved addresses a user may have waiting for their files. |
@@ -51,8 +52,12 @@ Settings come from these places; later ones override earlier ones:
 | `Tls:CertificatePath` | not set | Certificate file for `https://` addresses in `Urls`, with its intermediate certificates, such as [certbot](https://github.com/certbot/certbot)'s `fullchain.pem`. A path may start with `~/` for the home folder, also where the shell leaves it alone, as in `--Tls:CertificatePath=~/tls/fullchain.pem`. A renewed file is picked up within a minute, without a restart. ↻ |
 | `Tls:KeyPath` | not set | Private key of the certificate, such as [certbot](https://github.com/certbot/certbot)'s `privkey.pem`. Keep it readable only by the account that runs the server. ↻ |
 | `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
+| `Storage:DatabaseFileName` | `server.db` | Database file inside the data folder. ↻ |
+| `Storage:MediaDirectoryName` | `media` | Folder inside the data folder for uploaded files. ↻ |
+| `Storage:LogDirectoryName` | `logs` | Folder inside the data folder with one log file per session. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
 | `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](xref:Uniform.Matrix.Server.Host.Service.Article). ↻ |
+| `Logging:LogLevel:Default` | `Information` | Lowest level written to the log: `Trace`, `Debug`, `Information`, `Warning`, `Error`, `Critical` or `None`. |
 
 ↻ marks options that take effect after a restart.
 

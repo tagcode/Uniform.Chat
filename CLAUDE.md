@@ -27,8 +27,10 @@
 - Developer documents go under docs/ folder, theme goes under theme/. If there are user documentations, they go under user-docs/.
 
 ## Developer documents
-- Mentioned classes and members are refered with links, either xref or url, e.g. [Class](xref:Namespace.Class), [List&lt;T&gt;](https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1).
-- Use [](xref:) when refering other articles. Use uid of `ClassLibraryName.Article` when refering another class library.
+- Refer mentioned classes and members with links, either xref or url, e.g. [Class](xref:Namespace.Class).
+- Load Microsoft's uid map into docfx.json. `"xref": ["https://learn.microsoft.com/en-us/dotnet/.xrefmap.json"]`. Then refer standardlibrary classes with xref e.g. `[HttpClient](xref:System.Net.Http.HttpClient)`.
+- Use [](xref:) when refering other articles. 
+- Refer class libraries by their introduction article, e.g. `ClassLibraryName.Article`.
 - Articles follow the same directory structure as class libraries.
 - Each class library specific directory has an index.md and toc.yml. The name for index.md is "Introduction" in toc.yml.
 - Article has a an `uid:` and a `title:` in the frontmatter. 

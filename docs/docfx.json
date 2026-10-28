@@ -19,6 +19,7 @@
       { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
     ],
     "output": "_site",
+    "xref": [ "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json" ],
     "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
       "_appFooter": "<span>Uniform.Matrix</span>",
