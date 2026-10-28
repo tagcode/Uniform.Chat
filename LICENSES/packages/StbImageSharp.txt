@@ -1,0 +1,9 @@
+StbImageSharp 2.30.16
+Project: https://github.com/StbSharp/StbImageSharp
+License: Unlicense OR MIT
+Used by: server, terminal client
+
+StbImageSharp is a C# port of Sean Barrett's stb libraries (https://github.com/nothings/stb), which are in the public domain.
+
+Its README (https://github.com/StbSharp/StbImageSharp#license) states the license as: Public Domain or MIT.
+It is used here under the public domain dedication; no notice is required, and this file only records where it comes from.

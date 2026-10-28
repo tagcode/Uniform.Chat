@@ -1,0 +1,6 @@
+TextMateSharp.Grammars 2.0.4
+Project: https://github.com/danipen/TextMateSharp
+License: MIT
+Used by: server, terminal client
+
+The license text is the same as that of TextMateSharp; see TextMateSharp.txt.

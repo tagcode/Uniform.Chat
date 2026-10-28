@@ -49,4 +49,29 @@ public class SettingsTests
         Assert.Equal(14, settings.TextSize);
         Assert.True(settings.Notifications);
     }
+
+    /// <summary>The licences list the app's own license first, then the runtimes and the bundled packages, and show the chosen text; going back returns to the settings.</summary>
+    [AvaloniaFact]
+    public void ShowLicenses()
+    {
+        // Arrange
+        SettingsViewModel settings = new(Path.GetRandomFileName(), canNotify: false);
+
+        // Act
+        settings.ShowLicensesCommand.Execute(null);
+        LicensesViewModel licenses = settings.Licenses!;
+        string own = licenses.Text;
+        licenses.Selected = licenses.Entries.First(e => e.Group == "Packages" && e.Name == "Concentus");
+        string concentus = licenses.Text;
+        settings.CloseLicensesCommand.Execute(null);
+
+        // Assert
+        Assert.Equal("Uniform.Matrix", licenses.Entries[0].Name);
+        Assert.Contains("MIT License", own);
+        Assert.Contains(licenses.Entries, e => e.Group == "Runtime");
+        Assert.Contains(licenses.Entries, e => e.Group == "Packages" && e.Name == "Avalonia");
+        Assert.Contains("Redistributions in binary form must reproduce the above copyright notice", concentus);
+        Assert.True(settings.ShowsSettings);
+    }
 }
+

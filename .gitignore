@@ -191,6 +191,9 @@ PublishScripts/
 *.snupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
+# License texts of bundled packages, written by tools/ThirdPartyNotices.cs
+!LICENSES/packages/
+!LICENSES/packages/*
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed

@@ -2,11 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
              x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.SettingsView"
+             xmlns:views="using:Uniform.Matrix.Client.Avalonia.Core.Views"
              x:DataType="vm:SettingsViewModel">
-  <StackPanel Spacing="12" MinWidth="300">
+  <Panel>
+  <StackPanel Spacing="12" IsVisible="{Binding ShowsSettings}">
     <TextBlock Classes="title" Text="Settings" />
 
-    <Grid ColumnDefinitions="120,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
       <TextBlock Grid.Row="0" Grid.Column="0" Text="Theme" VerticalAlignment="Center" />
       <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Themes}" SelectedIndex="{Binding ThemeIndex}" HorizontalAlignment="Stretch" />
 
@@ -22,5 +24,16 @@
     </Grid>
 
     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Changes are saved right away." />
+    <Button Content="Licences…" Command="{Binding ShowLicensesCommand}" HorizontalAlignment="Left" />
   </StackPanel>
+
+  <!-- Licences in place of the settings -->
+  <StackPanel Spacing="10" IsVisible="{Binding !ShowsSettings}">
+    <Grid ColumnDefinitions="Auto,*">
+      <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Settings" Command="{Binding CloseLicensesCommand}" />
+      <TextBlock Grid.Column="1" Classes="title" Text="Licences" VerticalAlignment="Center" Margin="6,0,0,0" />
+    </Grid>
+    <views:LicensesView DataContext="{Binding Licenses}" />
+  </StackPanel>
+  </Panel>
 </UserControl>

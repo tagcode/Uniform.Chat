@@ -1,0 +1,7 @@
+Xamarin.AndroidX.Lifecycle.ViewModelSavedState 2.10.0.2
+Project: https://aka.ms/android-libraries
+License: MIT AND Apache-2.0
+Used by: Android client
+Copyright: © Microsoft Corporation. All rights reserved.
+
+The license text is the same as that of Xamarin.AndroidX.Activity; see Xamarin.AndroidX.Activity.txt.

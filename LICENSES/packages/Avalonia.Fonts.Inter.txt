@@ -1,0 +1,7 @@
+Avalonia.Fonts.Inter 12.1.4
+Project: https://avaloniaui.net/?utm_source=nuget&utm_medium=referral&utm_content=project_homepage_link
+License: MIT
+Used by: Android client, desktop client
+Copyright: Copyright 2013-2026 © The AvaloniaUI Project
+
+The license text is the same as that of Avalonia; see Avalonia.txt.

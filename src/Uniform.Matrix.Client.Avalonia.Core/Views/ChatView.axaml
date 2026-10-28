@@ -38,15 +38,14 @@
           </StackPanel>
           <Button Grid.Column="2" Classes="icon" Content="⋮" ToolTip.Tip="Account">
             <Button.Flyout>
-              <Flyout Placement="BottomEdgeAlignedRight">
-                <StackPanel Width="240" Spacing="8">
-                  <Button Content="Room directory…" Command="{Binding OpenDirectoryCommand}" HorizontalAlignment="Stretch" />
-                  <Button Content="Security and recovery…" Command="{Binding OpenSecurityCommand}" HorizontalAlignment="Stretch" />
-                  <Button Content="Settings…" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Stretch" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                  <Separator />
-                  <Button Content="Sign out" Command="{Binding SignOutCommand}" HorizontalAlignment="Stretch" />
-                </StackPanel>
-              </Flyout>
+              <!-- A menu flyout closes when an item is chosen, unlike buttons in a plain flyout -->
+              <MenuFlyout Placement="BottomEdgeAlignedRight">
+                <MenuItem Header="Room directory…" Command="{Binding OpenDirectoryCommand}" />
+                <MenuItem Header="Security and recovery…" Command="{Binding OpenSecurityCommand}" />
+                <MenuItem Header="Settings…" Command="{Binding ToggleSettingsCommand}" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <Separator />
+                <MenuItem Header="Sign out" Command="{Binding SignOutCommand}" />
+              </MenuFlyout>
             </Button.Flyout>
           </Button>
         </Grid>
@@ -242,7 +241,7 @@
       <Border Classes="card">
         <Grid RowDefinitions="Auto,*">
           <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Right" />
-          <ScrollViewer Grid.Row="1">
+          <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
             <views:SettingsView DataContext="{Binding Settings}" />
           </ScrollViewer>
         </Grid>

@@ -1,0 +1,7 @@
+Xamarin.KotlinX.Coroutines.Core.Jvm 1.10.2.3
+Project: https://aka.ms/android-libraries
+License: MIT AND Apache-2.0
+Used by: Android client
+Copyright: © Microsoft Corporation. All rights reserved.
+
+The license text is the same as that of Xamarin.KotlinX.Coroutines.Android; see Xamarin.KotlinX.Coroutines.Android.txt.

@@ -1,0 +1,7 @@
+HarfBuzzSharp.NativeAssets.Linux 8.3.1.3
+Project: https://go.microsoft.com/fwlink/?linkid=868515
+License: MIT
+Used by: Android client, desktop client
+Copyright: © Microsoft Corporation. All rights reserved.
+
+The license text is the same as that of HarfBuzzSharp.NativeAssets.Android; see HarfBuzzSharp.NativeAssets.Android.txt.

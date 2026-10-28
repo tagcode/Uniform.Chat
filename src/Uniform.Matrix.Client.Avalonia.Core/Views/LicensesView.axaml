@@ -1,0 +1,17 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
+             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.LicensesView"
+             x:DataType="vm:LicensesViewModel">
+  <StackPanel Spacing="10">
+    <TextBlock TextWrapping="Wrap" Text="Uniform.Matrix is free software under the MIT license. It includes the .NET runtime and other libraries, each under its own license, whose texts follow." />
+    <ListBox ItemsSource="{Binding Entries}" SelectedItem="{Binding Selected}" MaxHeight="220">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:LicenseEntry">
+          <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <SelectableTextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="12" FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" />
+  </StackPanel>
+</UserControl>

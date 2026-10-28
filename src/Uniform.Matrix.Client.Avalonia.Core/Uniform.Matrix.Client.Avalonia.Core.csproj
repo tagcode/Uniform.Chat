@@ -31,6 +31,15 @@
     <ProjectReference Include="..\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
   </ItemGroup>
 
+  <!-- License texts of the app and what it bundles, shown under Settings → Licences; LICENSES/overrides is already part of the package files -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\LICENSE" LogicalName="Licenses/Uniform.Matrix" />
+    <EmbeddedResource Include="..\..\THIRD-PARTY-NOTICES.md" LogicalName="Licenses/Third-party notices" />
+    <EmbeddedResource Include="..\..\LICENSES\*.txt" LogicalName="Licenses/License texts/%(Filename)" />
+    <EmbeddedResource Include="..\..\LICENSES\runtime\*.txt" LogicalName="Licenses/Runtime/%(Filename)" />
+    <EmbeddedResource Include="..\..\LICENSES\packages\*.txt" LogicalName="Licenses/Packages/%(Filename)" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Uniform.Matrix.Client.Avalonia.Core.Tests" />
   </ItemGroup>

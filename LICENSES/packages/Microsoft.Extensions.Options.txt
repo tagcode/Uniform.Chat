@@ -1,0 +1,7 @@
+Microsoft.Extensions.Options 10.0.12
+Project: https://dot.net/
+License: MIT
+Used by: Android client, desktop client, terminal client
+Copyright: © Microsoft Corporation. All rights reserved.
+
+The license text is the same as that of Microsoft.Extensions.Caching.Abstractions; see Microsoft.Extensions.Caching.Abstractions.txt.

@@ -1,0 +1,9 @@
+StbImageWriteSharp 1.16.7
+Project: https://github.com/StbSharp/StbImageWriteSharp
+License: see file
+Used by: server
+
+StbImageWriteSharp is a C# port of Sean Barrett's stb libraries (https://github.com/nothings/stb), which are in the public domain.
+
+Its README (https://github.com/StbSharp/StbImageWriteSharp#license) states the license as: Public Domain.
+It is used here under the public domain dedication; no notice is required, and this file only records where it comes from.

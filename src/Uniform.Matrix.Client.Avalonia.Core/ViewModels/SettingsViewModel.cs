@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
 
 using System.Text.Json.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Client.Avalonia.Core.Services;
 using Uniform.Matrix.Hosting;
 
@@ -40,6 +41,22 @@ public sealed partial class SettingsViewModel : ViewModelBase
 
     /// <summary>Themes to choose from, in <see cref="AppTheme"/> order.</summary>
     public IReadOnlyList<string> Themes { get; } = ["System", "Light", "Dark"];
+
+    /// <summary>The licenses shown in place of the settings, or null.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsSettings))]
+    public partial LicensesViewModel? Licenses { get; set; }
+
+    /// <summary>Whether the settings are shown rather than the licenses.</summary>
+    public bool ShowsSettings => Licenses is null;
+
+    /// <summary>Show the licenses of the app and what it bundles.</summary>
+    [RelayCommand]
+    private void ShowLicenses() => Licenses = new LicensesViewModel();
+
+    /// <summary>Go back from the licenses to the settings.</summary>
+    [RelayCommand]
+    private void CloseLicenses() => Licenses = null;
 
     /// <summary>Text sizes to choose from: small, normal and large.</summary>
     public IReadOnlyList<double> TextSizes { get; } = [13, 14, 16];

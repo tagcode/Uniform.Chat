@@ -1,0 +1,7 @@
+TestableIO.System.IO.Abstractions.Wrappers 22.2.0
+Project: https://github.com/TestableIO/System.IO.Abstractions
+License: MIT
+Used by: server, terminal client
+Copyright: Copyright © Tatham Oddie & friends 2010-2026
+
+The license text is the same as that of System.IO.Abstractions; see System.IO.Abstractions.txt.
