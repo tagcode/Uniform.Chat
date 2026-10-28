@@ -24,6 +24,9 @@ public sealed record MatrixOptions
     /// <summary>Long-poll time of each sync request.</summary>
     [RestartRequired]
     public TimeSpan SyncTimeout { get; set; } = TimeSpan.FromSeconds(30);
+    /// <summary>How long to wait for the server to answer a request, at least <see cref="SyncTimeout"/> and 30 seconds; joining a large room on another server can take minutes.</summary>
+    [RestartRequired]
+    public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromMinutes(5);
     /// <summary>Timeline events per room in each sync.</summary>
     [RestartRequired]
     public int TimelineLimit { get; set; } = 50;

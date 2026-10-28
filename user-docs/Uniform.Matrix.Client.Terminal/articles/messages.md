@@ -30,6 +30,7 @@ Press **Ctrl+Up** to select the newest message, move with the arrow keys, and pr
 | Edit | E | Your own messages only. The text moves to the input line, `[edit]` is shown; Enter saves, Esc cancels. |
 | View image | V | Images only. Opens the full image in a viewer. |
 | Save file | S | Attachments only. Downloads the file to `~/Downloads`. |
+| Open link | L | Messages with room or user links, such as `https://matrix.to/#/#room:server`. Opens a room you are in or a direct chat you have, or offers to join the room or start a chat. With several links, pick one. |
 | Delete | D | Your own messages only, after confirmation. Deletes it for everyone. |
 
 Esc returns to the input line. Replies show what they answer, like `<bob> [re alice: lunch at noon?] sure`.

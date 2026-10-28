@@ -8,7 +8,7 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 |---|---|
 | `/me text` | Action, shown as `* you text` |
 | `/plain text` | Send without Markdown formatting |
-| `/join #room:server` | Join a room |
+| `/join #room:server` | Join a room by alias, room ID or link; see [Joining rooms](xref:Uniform.Matrix.Client.Terminal.Joining.Article) |
 | `/leave` | Leave the current room |
 | `/topic text` | Set the topic |
 | `/invite @user:server` | Invite a user |
@@ -21,7 +21,7 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/op @user:server`, `/deop @user:server` | Make a member admin, or an ordinary member |
 | `/msg @user:server` | Start a direct chat |
 | `/nick name` | Set your display name |
-| `/list` | Browse public rooms |
+| `/list [server]` | Browse the public rooms of your server, or of another server |
 | `/create name` | Create a private room |
 | `/upload` | Send a file |
 | `/devices` | Manage your sessions |

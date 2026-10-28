@@ -50,6 +50,7 @@ public sealed partial class MainWindow
         bool message = ev.Type == EventTypes.RoomMessage && MessageFormatter.GetText(ev) is not null;
         ev.TryGetContent(out MessageContent? content);
         bool attachment = message && MxcUri.TryParse(content?.MediaUrl, out _);
+        IReadOnlyList<MatrixLink> links = message ? [.. MatrixLink.FindAll(content?.FormattedBody).Concat(MatrixLink.FindAll(content?.Body)).Distinct().Where(l => l.Target != ownUserId)] : [];
 
         // Offer what applies; hotkeys must be unique, so React uses A
         List<(string Label, Action Run)> actions = [];
@@ -58,6 +59,7 @@ public sealed partial class MainWindow
         if (message && own && !attachment) actions.Add(("_Edit", () => StartEdit(ev)));
         if (attachment && content!.MessageType == MessageTypes.Image) actions.Add(("_View image", () => _ = ViewImageAsync(content)));
         if (attachment) actions.Add(("_Save file", () => _ = SaveAttachmentAsync(content!)));
+        if (links.Count > 0) actions.Add(("Open _link", () => OpenLink(links)));
         if (own && ev.Unsigned?.RedactedBecause is null) actions.Add(("_Delete", () => DeleteMessage(roomId, ev)));
         actions.Add(("_Close", () => { }));
 
@@ -66,6 +68,21 @@ public sealed partial class MainWindow
         int? choice = Dialogs.Choose(app, "Message", preview, [.. actions.Select(a => a.Label)]);
         input.SetFocus();
         if (choice is int index && index < actions.Count) app.Invoke(actions[index].Run);
+    }
+
+    /// <summary>Follow the room or user link of a message, asking which one when there are several.</summary>
+    private void OpenLink(IReadOnlyList<MatrixLink> links)
+    {
+        // One link is followed, several are chosen from by number, which also keeps underscores in IDs from becoming hotkeys; the dialog has room for a few
+        if (links.Count == 1)
+        {
+            FollowLink(links[0]);
+            return;
+        }
+        List<MatrixLink> shown = [.. links.Take(5)];
+        int? choice = Dialogs.Choose(app, "Open link", "Which room or user?", [.. shown.Select((l, i) => $"_{i + 1} {l.Target}"), "_Close"]);
+        // Follow the chosen one after this dialog has closed
+        if (choice is int index && index < shown.Count) app.Invoke(() => FollowLink(shown[index]));
     }
 
     /// <summary>Re-renders messages of the open room that <paramref name="events"/> redact, as entries are formatted once.</summary>

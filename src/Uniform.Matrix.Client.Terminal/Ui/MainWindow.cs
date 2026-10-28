@@ -653,7 +653,7 @@ public sealed partial class MainWindow : Window
             case "invite": InviteUser(argument); break;
             case "nick": _ = RunSafelyAsync("Changing display name", client => client.SetDisplayNameAsync(argument)); break;
             case "msg" or "query": StartDirectChat(argument); break;
-            case "list": BrowseDirectory(); break;
+            case "list": BrowseDirectory(argument); break;
             case "create": CreateRoom(argument); break;
             case "quit" or "exit": app.RequestStop(); break;
             case "help": ShowHelp(); break;
@@ -661,21 +661,81 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    /// <summary>Join a room by alias or ID, asking when <paramref name="target"/> is empty.</summary>
+    /// <summary>Join a room by alias, ID or link, asking when <paramref name="target"/> is empty; words after the room are servers to join through.</summary>
     private void JoinRoom(string target)
     {
         // Ask
-        string? room = target.Length > 0 ? target : Dialogs.Ask(app, "Join room", "Room alias or ID, e.g. #matrix:matrix.org:");
-        if (room is null) return;
+        string? text = target.Length > 0 ? target : Dialogs.Ask(app, "Join room", "Room alias, ID or link, e.g. #matrix:matrix.org; servers to join through may follow:");
+        if (text is null) return;
+        string[] words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (words.Length == 0) return;
+
+        // Assert a room, not a user
+        if (!MatrixLink.TryParse(words[0], out MatrixLink? link) || link.IsUser)
+        {
+            Dialogs.Error(app, "Invalid room", $"{words[0]} is not a room alias, ID or link like #matrix:matrix.org. Use /msg to chat with a user.");
+            return;
+        }
+        // Join with the link's servers and the typed ones
+        JoinRoom(link with { Via = [.. link.Via.Concat(words.Skip(1)).Distinct()] });
+    }
+
+    /// <summary>Join the room of <paramref name="link"/> through its servers, or open it when joined already.</summary>
+    private void JoinRoom(MatrixLink link)
+    {
+        // Joined rooms open
+        string room = link.Target;
+        if (FindJoinedRoom(room) is string roomId)
+        {
+            _ = OpenRoomAsync(roomId);
+            return;
+        }
+
+        // Newer room IDs name no server, so one is needed to join through
+        if (room.StartsWith('!') && !room.Contains(':') && link.Via.Count == 0)
+        {
+            Dialogs.Error(app, "Server needed", $"{room} does not name a server. Give servers in the room to join through, e.g. /join {room} matrix.org.");
+            return;
+        }
         // Join; the room appears with the next sync
-        _ = RunSafelyAsync($"Joining {room}", async client => { await client.JoinRoomAsync(room); app.Invoke(() => ShowStatus($"Joined {room}")); });
+        _ = RunSafelyAsync($"Joining {room}", async client => { await client.JoinRoomAsync(room, link.Via.Count > 0 ? link.Via : null); app.Invoke(() => ShowStatus($"Joined {room}")); });
     }
 
     /// <summary>Join from the menu, asking for the room.</summary>
     private void JoinRoom() => JoinRoom("");
 
-    /// <summary>Search the public room directory and join the chosen room.</summary>
-    private void BrowseDirectory()
+    /// <summary>Return the ID of the joined room with ID or main alias <paramref name="roomIdOrAlias"/>, or null.</summary>
+    private string? FindJoinedRoom(string roomIdOrAlias) =>
+        processor.Read(r => r?.Rooms.Values.FirstOrDefault(room => room.Membership == Memberships.Join && (room.RoomId == roomIdOrAlias || room.CanonicalAlias == roomIdOrAlias))?.RoomId);
+
+    /// <summary>Follow <paramref name="link"/> from a message: open a joined room or a direct chat, or offer to join the room or start a chat.</summary>
+    private void FollowLink(MatrixLink link)
+    {
+        // Users: an existing direct chat opens, others are offered one
+        if (link.IsUser)
+        {
+            if (link.Target == ownUserId) return;
+            string? direct = processor.Read(r => r?.Rooms.Values.FirstOrDefault(room => room.Membership == Memberships.Join && room.DirectUserId == link.Target)?.RoomId);
+            if (direct is not null) _ = OpenRoomAsync(direct);
+            else if (Dialogs.Confirm(app, "Direct message", $"Start a direct chat with {link.Target}?")) StartDirectChat(link.Target);
+            return;
+        }
+
+        // Rooms: joined ones open, others are offered to join
+        if (FindJoinedRoom(link.Target) is string roomId)
+        {
+            _ = OpenRoomAsync(roomId);
+            return;
+        }
+        string through = link.Via.Count > 0 ? $" through {string.Join(", ", link.Via)}" : "";
+        if (Dialogs.Confirm(app, "Join room", $"Join {link.Target}{through}?")) JoinRoom(link);
+    }
+
+    /// <summary>Server whose directory <see cref="BrowseDirectory(string)"/> showed last; empty for this homeserver.</summary>
+    private string directoryServer = "";
+
+    /// <summary>Search the public room directory of <paramref name="server"/>, or of the last one shown when empty, and join the chosen room.</summary>
+    private void BrowseDirectory(string server)
     {
         // Assert connected
         if (Client is not MatrixClient client)
@@ -683,10 +743,16 @@ public sealed partial class MainWindow : Window
             Dialogs.Error(app, "Not connected", "Wait until the client is connected.");
             return;
         }
-        // Pick and join
-        string? room = ClientDialogs.PickPublicRoom(app, async term => (await client.GetPublicRoomsAsync(limit: 50, searchTerm: term)).Chunk);
-        if (room is not null) JoinRoom(room);
+        // Pick, remembering the server, and join through it
+        if (server.Length > 0) directoryServer = server;
+        (MatrixLink Room, string Server)? picked = ClientDialogs.PickPublicRoom(app, directoryServer, async (other, term) => (await client.GetPublicRoomsAsync(other, limit: 50, searchTerm: term)).Chunk);
+        if (picked is not { } choice) return;
+        directoryServer = choice.Server;
+        JoinRoom(choice.Room);
     }
+
+    /// <summary>Search the public room directory from the menu.</summary>
+    private void BrowseDirectory() => BrowseDirectory("");
 
     /// <summary>Create a private room, asking for the name when <paramref name="roomName"/> is empty.</summary>
     private void CreateRoom(string roomName)
@@ -803,7 +869,7 @@ public sealed partial class MainWindow : Window
         "**bold** _italic_ `code` ~~strike~~ [text](url)   Markdown is sent formatted",
         "/plain text     send without Markdown",
         "/me text        action, like * you wave",
-        "/join #room     join a room",
+        "/join #room     join a room; also !id or a link, then servers to join through",
         "/leave          leave this room",
         "/topic text     set the topic",
         "/name text      set the room name",
@@ -816,7 +882,7 @@ public sealed partial class MainWindow : Window
         "/invite @user   invite a user",
         "/msg @user      start a direct chat",
         "/nick name      set your display name",
-        "/list           browse public rooms",
+        "/list [server]  browse public rooms, here or on another server",
         "/create name    create a private room",
         "/upload         send a file",
         "/devices        manage your sessions",

@@ -4,6 +4,8 @@
   uid: Uniform.Matrix.Client.Terminal.Interface.Article
 - name: Messages
   uid: Uniform.Matrix.Client.Terminal.Messages.Article
+- name: Joining rooms
+  uid: Uniform.Matrix.Client.Terminal.Joining.Article
 - name: Files and images
   uid: Uniform.Matrix.Client.Terminal.Files.Article
 - name: Encryption and devices

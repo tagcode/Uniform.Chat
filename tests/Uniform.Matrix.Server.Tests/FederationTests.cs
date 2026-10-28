@@ -1,5 +1,6 @@
 namespace Uniform.Matrix.Server.Tests;
 
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -50,11 +51,14 @@ public class FederationTests
         public Dictionary<string, int> FailTransactions { get; } = [];
         /// <summary>Hosts that refuse transactions with 400, so senders drop them and events go missing.</summary>
         public HashSet<string> RefuseTransactions { get; } = [];
+        /// <summary>Address of each request, including those to unknown hosts.</summary>
+        public ConcurrentQueue<string> Requests { get; } = new();
 
         /// <summary>Forward to the server of the host, or fail as an unknown host does.</summary>
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // By host, whatever the port
+            Requests.Enqueue(request.RequestUri!.ToString());
             if (!Servers.TryGetValue(request.RequestUri!.Host, out HttpMessageHandler? server)) throw new HttpRequestException($"No such host {request.RequestUri.Host}");
             request.Headers.TryAddWithoutValidation(RawTargetHeader, request.RequestUri.PathAndQuery);
             lock (FailTransactions)
@@ -621,6 +625,63 @@ public class FederationTests
         Assert.Equal(2, hierarchy["room"]!["children_state"]!.AsArray().Count);
         Assert.Equal([open], hierarchy["children"]!.AsArray().Select(c => c!["room_id"]!.GetValue<string>()));
         Assert.Equal([closed], hierarchy["inaccessible_children"]!.AsArray().Select(c => c!.GetValue<string>()));
+    }
+
+    /// <summary>A user lists and searches another server's public room directory through their own server, and joins a room from it.</summary>
+    [Fact]
+    public async Task ListRemoteDirectory()
+    {
+        // Arrange: two public rooms on b.test, one of them listed
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string kitchen = await bob.CreateRoomAsync(new CreateRoomRequest { Visibility = "public", Preset = RoomPresets.PublicChat, Name = "Kitchen", Topic = "Food", RoomAliasName = "kitchen" }, Ct);
+        await bob.CreateRoomAsync(new CreateRoomRequest { Visibility = "public", Preset = RoomPresets.PublicChat, Name = "Garden" }, Ct);
+        await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Unlisted" }, Ct);
+
+        // Act
+        PublicRoomsResponse all = await alice.GetPublicRoomsAsync(server: "b.test", cancellationToken: Ct);
+        PublicRoomsResponse found = await alice.GetPublicRoomsAsync(server: "b.test", searchTerm: "food", cancellationToken: Ct);
+        PublicRoomsResponse page = await alice.GetPublicRoomsAsync(server: "b.test", limit: 1, cancellationToken: Ct);
+        PublicRoomsResponse next = await alice.GetPublicRoomsAsync(server: "b.test", limit: 1, since: page.NextBatch, cancellationToken: Ct);
+        await alice.JoinRoomAsync(found.Chunk[0].CanonicalAlias!, cancellationToken: Ct);
+
+        // Assert
+        Assert.Equal(["Garden", "Kitchen"], all.Chunk.Select(r => r.Name).Order());
+        Assert.Equal([kitchen], found.Chunk.Select(r => r.RoomId));
+        Assert.Equal("#kitchen:b.test", found.Chunk[0].CanonicalAlias);
+        Assert.Single(page.Chunk);
+        Assert.Single(next.Chunk);
+        Assert.NotEqual(page.Chunk[0].RoomId, next.Chunk[0].RoomId);
+        Assert.Contains(kitchen, await alice.GetJoinedRoomsAsync(Ct));
+    }
+
+    /// <summary>Concurrent lookups of a server's keys share one fetch, and a server that cannot be reached is not asked again for a while.</summary>
+    [Fact]
+    public async Task ShareKeyFetches()
+    {
+        // Arrange: b.test running, c.test unknown to the network
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        RemoteServerKeys keys = a.Services.GetRequiredService<RemoteServerKeys>();
+        string keyId = b.Services.GetRequiredService<ServerKeys>().KeyId;
+
+        // Act
+        string?[] reachable = await Task.WhenAll(Enumerable.Range(0, 5).Select(_ => keys.GetVerifyKeyAsync("b.test", keyId, Ct)));
+        string?[] unreachable = await Task.WhenAll(Enumerable.Range(0, 5).Select(_ => keys.GetVerifyKeyAsync("c.test", "ed25519:any", Ct)));
+        string? again = await keys.GetVerifyKeyAsync("c.test", "ed25519:any", Ct);
+
+        // Assert
+        Assert.All(reachable, Assert.NotNull);
+        Assert.All(unreachable, Assert.Null);
+        Assert.Null(again);
+        Assert.Single(network.Requests, r => r.Contains("b.test") && r.Contains("/_matrix/key/v2/server"));
+        Assert.Single(network.Requests, r => r.Contains("c.test") && r.Contains("/_matrix/key/v2/server"));
     }
 
     /// <summary>Return the message bodies of a room, oldest first, once there are <paramref name="count"/>; fail after a few seconds.</summary>

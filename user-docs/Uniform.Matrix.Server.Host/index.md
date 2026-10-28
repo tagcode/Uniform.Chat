@@ -6,7 +6,7 @@ uid: Uniform.Matrix.Server.Host.Article
 
 A homeserver for [Matrix](https://matrix.org), the open chat protocol. It runs with a dashboard in the terminal, or without one as a service.
 
-Accounts, rooms, messages, sync, profiles, typing, receipts, the room directory, files and end-to-end encryption work; federation with other servers is still to come.
+Accounts, rooms, messages, sync, profiles, typing, receipts, the room directory, files and end-to-end encryption work; federation with other servers is being built and is off by default.
 
 > [!NOTE]
 > The server is in early development. Keep its registration closed, and do not rely on it for important conversations yet.

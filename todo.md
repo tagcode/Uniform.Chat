@@ -33,7 +33,6 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 
 ## Library quality
 - Typed RoomId, EventId and RoomAlias; today these are plain strings (`UserId` and `MxcUri` are typed).
-- Parsing matrix.to links and `matrix:` URIs into IDs.
 - Retrying network errors on ordinary requests; today only sync and rate-limited requests retry.
 - JSON source generation, for trimming.
 
@@ -57,7 +56,7 @@ URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 ## Milestone 2: federation
 A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users and receiving their invites (`invite` v2, signed by both servers), encryption across servers (keys, one-time keys, to-device, device list updates), typing and read receipts, retrying transactions with backoff, the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
 
-Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`.
+Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`, public room directories of other servers (`publicRooms` both ways).
 
 Next:
 - Make version 12 the default for new rooms once our clients send `via` servers when joining by room ID (eight server tests join by ID alone).
@@ -65,7 +64,7 @@ Next:
 - Checking received events against the state before them, auth chains with the auth rules, state resolution v2; gaps of more than 20 missing events.
 - Sliding sync: per-list timeline limits, left rooms, more list filters, keeping connections across restarts.
 - A review list for reports, which are only logged now; hierarchies and summaries of rooms on other servers.
-- Room ACLs, `/_matrix/federation/v1/publicRooms`, threads.
+- Room ACLs, threads.
 - Element X calls through Element Call against a LiveKit server.
 
 Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
@@ -126,4 +125,11 @@ long-press menus instead of right-click.
   Uniform.Sturn.Host
 
 
+
+# Embedded help
+
+
+Now each application type include user documents included in release files.
+F2 (Help/Documentation) could open in a browser for desktop and android apps, and for terminal client and server, perhaps a embedded html browser, if such exists.
+F1 would still show the quick keyboard shortcut.
 

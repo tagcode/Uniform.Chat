@@ -1,7 +1,9 @@
 namespace Uniform.Matrix.Server.Federation;
 
+using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Server;
@@ -10,7 +12,7 @@ using Uniform.Matrix.Server.Keys;
 using Uniform.Matrix.Server.Rooms;
 
 /// <summary><see href="https://spec.matrix.org/latest/server-server-api/#joining-rooms">Joining rooms</see> of other servers: <c>make_join</c> for a template, sign it, <c>send_join</c>, check the returned state and store the room.</summary>
-/// <remarks>Received events are checked for their content hash and their sender server's signature. Auth chains are not yet run through the auth rules, and later events need <c>/send</c>, which is not there yet.</remarks>
+/// <remarks>Received events are checked for their content hash and their sender server's signature; those that fail are dropped. Auth chains are not yet run through the auth rules, and later events need <c>/send</c>, which is not there yet.</remarks>
 public sealed class RemoteJoins
 {
     private readonly FederationClient federation;
@@ -18,9 +20,11 @@ public sealed class RemoteJoins
     private readonly ServerKeys keys;
     private readonly EventSender sender;
     private readonly IOptionsMonitor<ServerOptions> server;
+    private readonly IOptionsMonitor<FederationOptions> options;
+    private readonly ILogger<RemoteJoins> logger;
 
     /// <summary>Create the service.</summary>
-    public RemoteJoins(FederationClient federation, RemoteServerKeys remoteKeys, ServerKeys keys, EventSender sender, IOptionsMonitor<ServerOptions> server)
+    public RemoteJoins(FederationClient federation, RemoteServerKeys remoteKeys, ServerKeys keys, EventSender sender, IOptionsMonitor<ServerOptions> server, IOptionsMonitor<FederationOptions> options, ILogger<RemoteJoins> logger)
     {
         // Store dependencies
         this.federation = federation;
@@ -28,6 +32,8 @@ public sealed class RemoteJoins
         this.keys = keys;
         this.sender = sender;
         this.server = server;
+        this.options = options;
+        this.logger = logger;
     }
 
     /// <summary>Join local user <paramref name="userId"/> to <paramref name="roomId"/> through <paramref name="resident"/>, a server in the room.</summary>
@@ -53,20 +59,34 @@ public sealed class RemoteJoins
         EventFormat.HashAndSign(template, version, server.CurrentValue.ServerName, keys.KeyId, keys.Secret);
         string eventId = EventFormat.ComputeEventId(template, version);
 
-        // The resident server accepts it and sends the room's state
-        JsonNode? joined = await federation.SendAsync(HttpMethod.Put, resident, $"/_matrix/federation/v2/send_join/{Uri.EscapeDataString(roomId)}/{Uri.EscapeDataString(eventId)}", template, cancellationToken);
-        Dictionary<string, JsonObject> events = [];
-        List<string> stateIds = [];
+        // The resident server accepts it and sends the room's state, which for large rooms takes a while
+        JsonNode? joined = await federation.SendAsync(HttpMethod.Put, resident, $"/_matrix/federation/v2/send_join/{Uri.EscapeDataString(roomId)}/{Uri.EscapeDataString(eventId)}", template, cancellationToken, timeout: options.CurrentValue.JoinTimeout);
+        List<(string Id, JsonObject Pdu, bool IsState)> received = [];
         foreach ((JsonNode? node, bool isState) in (joined?["state"] as JsonArray ?? []).Select(n => (n, true)).Concat((joined?["auth_chain"] as JsonArray ?? []).Select(n => (n, false))))
         {
             if (node is not JsonObject pdu) throw Bad(resident, "an event that is not an object");
             string id = EventFormat.ComputeEventId(pdu, version);
             bool isCreate = version.RoomIdIsCreateHash && pdu["type"]?.GetValue<string>() == EventTypes.RoomCreate && !pdu.ContainsKey("room_id") && RoomVersion.RoomIdOf(id) == roomId;
             if (!isCreate && pdu["room_id"]?.GetValue<string>() != roomId) throw Bad(resident, "an event of another room");
-            if (!await IsSignedAsync(pdu, version, cancellationToken)) throw Bad(resident, $"event {id} without a valid signature or hash");
+            received.Add((id, pdu, isState));
+        }
+
+        // Keys of every sending server at once, then signatures in parallel
+        await remoteKeys.PrefetchAsync(received.Select(r => UserId.TryParse(r.Pdu["sender"]?.GetValue<string>(), out UserId senderId) ? senderId.ServerName : null).OfType<string>(), cancellationToken);
+        ConcurrentDictionary<string, bool> signedIds = new();
+        await Parallel.ForEachAsync(received, cancellationToken, async (entry, token) => signedIds[entry.Id] = await IsSignedAsync(entry.Pdu, version, token));
+
+        // Events failing the check are dropped, as other servers do, e.g. those of servers that cannot be reached for their keys
+        Dictionary<string, JsonObject> events = [];
+        List<string> stateIds = [];
+        foreach ((string id, JsonObject pdu, bool isState) in received)
+        {
+            if (!signedIds[id]) continue;
             events[id] = pdu;
             if (isState && pdu["state_key"] is not null) stateIds.Add(id);
         }
+        int dropped = signedIds.Count(s => !s.Value);
+        if (dropped > 0) logger.LogInformation("Dropped {Dropped} of {Count} events of {RoomId} without a valid signature or hash", dropped, signedIds.Count, roomId);
         // Done
         await sender.StoreJoinedRoomAsync(version, template, eventId, events, stateIds, cancellationToken);
     }

@@ -10,36 +10,45 @@ using global::Terminal.Gui.Views;
 /// <summary>Modal dialogs of the client: first sign-in, room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
 public static class ClientDialogs
 {
-    /// <summary>Let the user search the public room directory; return the alias or ID of the room to join, or null.</summary>
+    /// <summary>Let the user search the public room directory of their server or another one; return the room to join with the server it was listed on, or null.</summary>
     /// <param name="app">Running application.</param>
-    /// <param name="search">Searches the directory for a term, or lists rooms when the term is empty; runs off the UI thread.</param>
-    public static string? PickPublicRoom(IApplication app, Func<string?, Task<IReadOnlyList<PublicRoom>>> search)
+    /// <param name="server">Server to show at first; empty for the user's own.</param>
+    /// <param name="search">Searches the directory of a server, null for the user's own, for a term, or lists rooms when the term is null; runs off the UI thread.</param>
+    public static (MatrixLink Room, string Server)? PickPublicRoom(IApplication app, string server, Func<string?, string?, Task<IReadOnlyList<PublicRoom>>> search)
     {
-        // Build dialog: search field, results, buttons
+        // Build dialog: server and search fields, results, buttons
         using Dialog dialog = new() { Title = "Room directory", Width = Dim.Percent(80), Height = Dim.Percent(80) };
-        Label hint = new() { Text = "Search (Enter):", X = 1, Y = 0 };
+        Label serverHint = new() { Text = "Server:", X = 1, Y = 0 };
+        TextField serverField = new() { Text = server, X = Pos.Right(serverHint) + 1, Y = 0, Width = Dim.Percent(35) };
+        Label hint = new() { Text = "Search:", X = Pos.Right(serverField) + 2, Y = 0 };
         TextField field = new() { X = Pos.Right(hint) + 1, Y = 0, Width = Dim.Fill(1) };
+        Label note = new() { Text = "Leave the server empty for your own; Enter in either field searches.", X = 1, Y = 1, Width = Dim.Fill(1) };
         ObservableCollection<string> rows = ["Searching…"];
         List<PublicRoom> results = [];
-        ListView list = new() { X = 1, Y = 2, Width = Dim.Fill(1), Height = Dim.Fill(1) };
+        string shownServer = "";
+        ListView list = new() { X = 1, Y = 3, Width = Dim.Fill(1), Height = Dim.Fill(1) };
         list.SetSource(rows);
-        dialog.Add(hint, field, list);
+        dialog.Add(serverHint, serverField, hint, field, note, list);
         dialog.AddButton(new Button { Text = "_Close" });
         dialog.AddButton(new Button { Text = "_Join", IsDefault = true });
 
-        // Search off the UI thread, then show results
-        async void RunSearch(string? term)
+        // Search off the UI thread, then show results; a late answer for another server is dropped
+        async void RunSearch()
         {
+            string other = serverField.Text.Trim();
+            string term = field.Text.Trim();
+            shownServer = other;
+            results.Clear();
             rows.Clear();
-            rows.Add("Searching…");
+            rows.Add(other.Length > 0 ? $"Asking {other}…" : "Searching…");
             try
             {
-                IReadOnlyList<PublicRoom> found = await search(string.IsNullOrWhiteSpace(term) ? null : term.Trim());
-                app.Invoke(() => ShowResults(found));
+                IReadOnlyList<PublicRoom> found = await search(other.Length > 0 ? other : null, term.Length > 0 ? term : null);
+                app.Invoke(() => { if (shownServer == other) ShowResults(found); });
             }
             catch (Exception ex)
             {
-                app.Invoke(() => { rows.Clear(); rows.Add($"Search failed: {ex.Message}"); });
+                app.Invoke(() => { if (shownServer == other) { rows.Clear(); rows.Add($"Search failed: {ex.Message}"); } });
             }
         }
         void ShowResults(IReadOnlyList<PublicRoom> found)
@@ -51,14 +60,16 @@ public static class ClientDialogs
             if (found.Count == 0) rows.Add("No rooms found");
         }
 
-        // Enter in the field searches instead of closing
-        field.Accepting += (_, e) => { RunSearch(field.Text); e.Handled = true; };
-        RunSearch(null);
+        // Enter in a field searches instead of closing
+        field.Accepting += (_, e) => { RunSearch(); e.Handled = true; };
+        serverField.Accepting += (_, e) => { RunSearch(); e.Handled = true; };
+        RunSearch();
         app.Run(dialog);
 
-        // Return the selected room when joining
+        // Return the selected room, joined through the server that listed it
         if (dialog.Result != 1 || list.SelectedItem is not int index || index >= results.Count) return null;
-        return results[index].CanonicalAlias ?? results[index].RoomId;
+        PublicRoom chosen = results[index];
+        return (new MatrixLink { Target = chosen.CanonicalAlias ?? chosen.RoomId, Via = shownServer.Length > 0 ? [shownServer] : [] }, shownServer);
     }
 
     /// <summary>Ask for the user ID and, when needed, the server address on first start; return them, or null when cancelled.</summary>

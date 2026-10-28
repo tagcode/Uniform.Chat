@@ -41,6 +41,7 @@ Settings come from these places; later ones override earlier ones:
 | `Federation:AllowPrivateAddresses` | `false` | Also reach servers at private and local network addresses. Off, so remote server names cannot make the server reach machines inside your network. |
 | `Federation:TrustedKeyServers` | not set | Key servers to ask for other servers' signing keys when those servers cannot be reached, separated by commas, such as `matrix.org`. Asking tells the key server which servers this one talks to, so none are asked by default. |
 | `Federation:RequestTimeout` | `00:00:30` | How long to wait for another server to answer. |
+| `Federation:JoinTimeout` | `00:03:00` | How long to wait for another server to answer a join, which sends the whole state of the room. |
 | `Federation:KeyValidity` | `1.00:00:00` | How long other servers may keep this server's signing key before asking again. |
 | `Federation:WellKnownServer` | not set | Where other servers should connect, served as `/.well-known/matrix/server`, such as `example.org:443` when a reverse proxy on port 443 forwards to this server. Needed when the server name has no port and the server is not on port 8448. |
 | `Calls:LiveKitServiceUrl` | not set | Address of the MatrixRTC authorization service (lk-jwt-service) in front of a LiveKit server, for calls in Element X and other MatrixRTC clients. Announced to clients through `rtc/transports` and `/.well-known/matrix/client`. |

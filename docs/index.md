@@ -33,7 +33,7 @@ uid: Uniform.Matrix.Home.Article
 src/
   Uniform.Matrix.Protocol.Core/          Shared spec types, no dependencies
     Api/                                 Request, response, event and content records; constants
-    UserId.cs,                           MxcUri.cs                      Identifiers
+    UserId.cs, MxcUri.cs, MatrixLink.cs  Identifiers and matrix.to links
     CanonicalJson.cs                     Canonical JSON and signatures
     MatrixJson.cs                        Shared JSON settings
     MatrixException.cs                   Matrix error responses

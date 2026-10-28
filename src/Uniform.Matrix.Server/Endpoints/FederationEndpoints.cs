@@ -57,6 +57,12 @@ public static class FederationEndpoints
             return MatrixHttp.Json(new JsonObject { ["room_id"] = roomId, ["servers"] = new JsonArray([.. servers.Select(s => (JsonNode)s)]) });
         });
 
+        // Public room directory for other servers' users
+        federation.MapGet("/publicRooms", async (int? limit, string? since, DirectoryService directory, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await directory.GetPublicRoomsAsync(limit, since, null, server.CurrentValue.ServerName, cancellationToken)));
+        federation.MapPost("/publicRooms", async (JsonObject body, DirectoryService directory, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
+            MatrixHttp.Json(await directory.GetPublicRoomsAsync((int?)body["limit"]?.GetValue<long>(), body["since"]?.GetValue<string>(), body["filter"]?["generic_search_term"]?.GetValue<string>(), server.CurrentValue.ServerName, cancellationToken)));
+
         // Joins and leaves of other servers' users, such as rejected invites
         federation.MapGet("/make_join/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
         {

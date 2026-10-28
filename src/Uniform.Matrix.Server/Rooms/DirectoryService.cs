@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Protocol.Server;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Storage;
@@ -18,15 +19,17 @@ public sealed class DirectoryService
     private readonly RoomService rooms;
     private readonly IOptions<ServerOptions> options;
     private readonly RemoteJoins remoteJoins;
+    private readonly FederationClient federation;
 
     /// <summary>Create the service.</summary>
-    public DirectoryService(IDbContextFactory<ServerDbContext> contexts, RoomService rooms, IOptions<ServerOptions> options, RemoteJoins remoteJoins)
+    public DirectoryService(IDbContextFactory<ServerDbContext> contexts, RoomService rooms, IOptions<ServerOptions> options, RemoteJoins remoteJoins, FederationClient federation)
     {
         // Store dependencies
         this.contexts = contexts;
         this.rooms = rooms;
         this.options = options;
         this.remoteJoins = remoteJoins;
+        this.federation = federation;
     }
 
     /// <summary>Server name of local aliases.</summary>
@@ -133,8 +136,10 @@ public sealed class DirectoryService
     /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<JsonObject> GetPublicRoomsAsync(int? limit, string? since, string? searchTerm, string? server, CancellationToken cancellationToken)
     {
-        // Assert local directory and page token
-        if (server is not null && server != ServerName) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Listing other servers' rooms needs federation, which is not supported yet.");
+        // Other servers' directories from them
+        if (server is not null && server != ServerName) return await GetRemotePublicRoomsAsync(server, limit, since, searchTerm, cancellationToken);
+
+        // Assert page token
         int offset = since is null ? 0 : since.StartsWith('p') && int.TryParse(since.AsSpan(1), CultureInfo.InvariantCulture, out int parsed) && parsed >= 0 ? parsed : throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid token {since}.");
 
         // Published rooms matching the search
@@ -152,6 +157,34 @@ public sealed class DirectoryService
         if (offset > 0) response["prev_batch"] = $"p{Math.Max(0, offset - size)}";
         // Return page
         return response;
+    }
+
+    /// <summary>Return a page of the public room directory of <paramref name="server"/>, asked over <see href="https://spec.matrix.org/latest/server-server-api/#public-room-directory">federation</see>; the filtered form is used when <paramref name="searchTerm"/> is set.</summary>
+    private async Task<JsonObject> GetRemotePublicRoomsAsync(string server, int? limit, string? since, string? searchTerm, CancellationToken cancellationToken)
+    {
+        // Assert a server name
+        if (!ServerNames.TryParse(server, out _, out _)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"{server} is not a server name.");
+
+        // Search or list
+        JsonNode? answer;
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            JsonObject body = new() { ["filter"] = new JsonObject { ["generic_search_term"] = searchTerm.Trim() } };
+            if (limit is > 0) body["limit"] = limit.Value;
+            if (since is not null) body["since"] = since;
+            answer = await federation.SendAsync(HttpMethod.Post, server, "/_matrix/federation/v1/publicRooms", body, cancellationToken);
+        }
+        else
+        {
+            List<string> query = [];
+            if (limit is > 0) query.Add($"limit={limit.Value}");
+            if (since is not null) query.Add($"since={Uri.EscapeDataString(since)}");
+            answer = await federation.SendAsync(HttpMethod.Get, server, "/_matrix/federation/v1/publicRooms" + (query.Count > 0 ? "?" + string.Join('&', query) : ""), null, cancellationToken);
+        }
+
+        // Return the other server's page; a malformed one has no rooms
+        if (answer is not JsonObject page || page["chunk"] is not JsonArray) return new JsonObject { ["chunk"] = new JsonArray() };
+        return page;
     }
 
     /// <summary>Return the <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/3266">summary</see> of a local room, as the room directory shows it with the user's membership, version and encryption; throw <c>M_NOT_FOUND</c> when the user may not see it.</summary>

@@ -12,10 +12,12 @@ using Uniform.Matrix.Server.Keys;
 using Uniform.Matrix.Server.Storage;
 
 /// <summary>Other servers' <see href="https://spec.matrix.org/latest/server-server-api/#retrieving-server-keys">signing keys</see>: fetched from each server's <c>/_matrix/key/v2/server</c>, else from the <see cref="FederationOptions.TrustedKeyServers"/>, and kept in the database until their <c>valid_until_ts</c>, at most a week.</summary>
-/// <remarks>An answer counts only when every key it lists has signed it, and an answer from a key server also needs that server's signature. Old keys (<c>old_verify_keys</c>) are accepted too, as events signed with them stay valid. When a server and the key servers cannot be reached, its last kept answer is used even after it expired, as refusing every event of a server that is down helps no one.</remarks>
+/// <remarks>An answer counts only when every key it lists has signed it, and an answer from a key server also needs that server's signature. Old keys (<c>old_verify_keys</c>) are accepted too, as events signed with them stay valid. When a server and the key servers cannot be reached, its last kept answer is used even after it expired, as refusing every event of a server that is down helps no one; such a server is not asked again for a few minutes, and each server is asked once at a time.</remarks>
 public sealed class RemoteServerKeys
 {
     private static readonly TimeSpan MaxValidity = TimeSpan.FromDays(7);
+    private static readonly TimeSpan RetryUnreachable = TimeSpan.FromMinutes(5);
+    private const int ParallelFetches = 20;
     private readonly FederationClient federation;
     private readonly ServerKeys ownKeys;
     private readonly IDbContextFactory<ServerDbContext> contexts;
@@ -24,6 +26,8 @@ public sealed class RemoteServerKeys
     private readonly TimeProvider time;
     private readonly ILogger<RemoteServerKeys> logger;
     private readonly ConcurrentDictionary<string, KeptKeys> cache = new();
+    private readonly ConcurrentDictionary<string, Lazy<Task<KeptKeys?>>> fetching = new();
+    private readonly ConcurrentDictionary<string, DateTimeOffset> unreachable = new();
 
     /// <summary>A server's keys, current and old, until when they hold, and the answer they came in.</summary>
     private sealed record KeptKeys(IReadOnlyDictionary<string, string> Keys, DateTimeOffset ValidUntil, JsonObject Response);
@@ -60,6 +64,20 @@ public sealed class RemoteServerKeys
         return null;
     }
 
+    /// <summary>Fetch the keys of <paramref name="serverNames"/> that are not kept or have expired, several servers at a time, e.g. before checking the many events of a joined room.</summary>
+    public async Task PrefetchAsync(IEnumerable<string> serverNames, CancellationToken cancellationToken)
+    {
+        // Other servers only, each once
+        string own = server.CurrentValue.ServerName;
+        List<string> names = [.. serverNames.Where(n => n != own).Distinct()];
+        // Done when each has an answer or failed
+        await Parallel.ForEachAsync(names, new ParallelOptions { MaxDegreeOfParallelism = ParallelFetches, CancellationToken = cancellationToken }, async (name, token) =>
+        {
+            KeptKeys? kept = await GetKeptAsync(name, token);
+            if (kept is null || kept.ValidUntil <= time.GetUtcNow()) await FetchAsync(name, token);
+        });
+    }
+
     /// <summary>Return the kept, validated key answer of <paramref name="serverName"/>, fetching it when there is none or it expired; null when none can be had. Used to answer <c>/_matrix/key/v2/query</c> as a key server.</summary>
     public async Task<JsonObject?> GetResponseAsync(string serverName, CancellationToken cancellationToken)
     {
@@ -85,8 +103,36 @@ public sealed class RemoteServerKeys
         return entry;
     }
 
-    /// <summary>Fetch a server's keys from it, else from the key servers; keep and return them, or null.</summary>
+    /// <summary>Fetch a server's keys as <see cref="FetchOnceAsync"/> does, sharing a fetch already under way; null without asking when the server could not be reached a moment ago.</summary>
     private async Task<KeptKeys?> FetchAsync(string serverName, CancellationToken cancellationToken)
+    {
+        // Assert not recently unreachable
+        if (unreachable.TryGetValue(serverName, out DateTimeOffset retryAt) && retryAt > time.GetUtcNow()) return null;
+        // Return the shared fetch, which runs to its own time limit even when this caller stops waiting
+        Lazy<Task<KeptKeys?>> fetch = fetching.GetOrAdd(serverName, name => new Lazy<Task<KeptKeys?>>(() => FetchOnceAsync(name)));
+        return await fetch.Value.WaitAsync(cancellationToken);
+    }
+
+    /// <summary>Fetch a server's keys from it, else from the key servers; keep and return them, or null, remembering for a while that the server could not be reached.</summary>
+    private async Task<KeptKeys?> FetchOnceAsync(string serverName)
+    {
+        // Ask, then let the next caller fetch again
+        try
+        {
+            KeptKeys? fetched = await FetchFromServersAsync(serverName, CancellationToken.None);
+            if (fetched is null) unreachable[serverName] = time.GetUtcNow() + RetryUnreachable;
+            else unreachable.TryRemove(serverName, out _);
+            // Return keys
+            return fetched;
+        }
+        finally
+        {
+            fetching.TryRemove(serverName, out _);
+        }
+    }
+
+    /// <summary>Fetch a server's keys from it, else from the key servers; keep and return them, or null.</summary>
+    private async Task<KeptKeys?> FetchFromServersAsync(string serverName, CancellationToken cancellationToken)
     {
         // The server itself
         JsonObject? response = null;

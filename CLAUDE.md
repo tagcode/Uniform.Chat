@@ -67,5 +67,6 @@
 - Add suffix ".Article" to uid, e.g. "ApplicationName.Topic.Article".
 
 # Git
-- Don't remind me when to commit code.
+- Don't remind about commits.
+
 

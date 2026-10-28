@@ -33,6 +33,7 @@ Uniform.Matrix.Client.Terminal --Matrix:UserId=@alice:matrix.org --Matrix:Passwo
 | `Matrix:Homeserver` | not set | Server address, when it cannot be found from the user ID, e.g. http://localhost:8008 for a server on this computer. |
 | `Matrix:DeviceName` | `Uniform.Matrix.Client.Terminal` | Display name of the device created at login. |
 | `Matrix:SyncTimeout` | `00:00:30` | Long-poll time of each sync request. |
+| `Matrix:RequestTimeout` | `00:05:00` | How long to wait for the server to answer a request; joining a large room on another server can take minutes. |
 | `Matrix:TimelineLimit` | `50` | Timeline events per room in each sync. |
 | `Matrix:OutboxRetryInterval` | `00:00:15` | Wait before retrying unsent messages after a transient failure. |
 | `Storage:DataDirectory` | not set | Root directory; when unset, the application's data directory, e.g. ~/.local/share/uniform-matrix-client-terminal. |

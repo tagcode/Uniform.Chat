@@ -7,7 +7,7 @@ uid: Uniform.Matrix.Server.Host.Install.Article
 The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform.Matrix clients or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
 
 > [!NOTE]
-> The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, presence, typing, read receipts, unread counts, push rules and push notifications through push gateways, room tags, previews of linked pages (when turned on), room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is being built and is off by default: with `Federation:Enabled`, users can look up profiles on other servers, join their rooms and talk there, and other servers' users can join rooms here.
+> The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, presence, typing, read receipts, unread counts, push rules and push notifications through push gateways, room tags, previews of linked pages (when turned on), room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is being built and is off by default: with `Federation:Enabled`, users can look up profiles on other servers, join their rooms and talk there, and browse their public room directories, and other servers' users can join rooms here.
 
 ## Requirements
 

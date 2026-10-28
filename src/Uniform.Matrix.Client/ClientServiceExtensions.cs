@@ -46,8 +46,13 @@ public static class ClientServiceExtensions
         services.AddSingleton<CryptoService>();
         services.AddSingleton<MediaCache>();
 
-        // Matrix; HTTP timeout must outlast the sync long-poll
-        services.AddHttpClient(ClientSession.HttpClientName, (provider, http) => http.Timeout = provider.GetRequiredService<IOptions<MatrixOptions>>().Value.SyncTimeout + TimeSpan.FromSeconds(30));
+        // Matrix HTTP client
+        services.AddHttpClient(ClientSession.HttpClientName, (provider, http) =>
+        {
+            // Long enough for slow requests such as remote joins, and for a sync's long poll
+            MatrixOptions matrix = provider.GetRequiredService<IOptions<MatrixOptions>>().Value;
+            http.Timeout = matrix.RequestTimeout > matrix.SyncTimeout + TimeSpan.FromSeconds(30) ? matrix.RequestTimeout : matrix.SyncTimeout + TimeSpan.FromSeconds(30);
+        });
         services.AddSingleton<ClientSession>();
         services.AddSingleton<SyncProcessor>();
         services.AddSingleton<OutboxSender>();

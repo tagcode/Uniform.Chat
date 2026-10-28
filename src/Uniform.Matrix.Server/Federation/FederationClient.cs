@@ -44,7 +44,8 @@ public sealed class FederationClient
     /// <param name="content">JSON body, or null.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="signed">Whether to sign; key requests are not signed.</param>
-    public async Task<JsonNode?> SendAsync(HttpMethod method, string destination, string pathAndQuery, JsonNode? content, CancellationToken cancellationToken, bool signed = true)
+    /// <param name="timeout">How long to wait for the answer; <see cref="FederationOptions.RequestTimeout"/> when null.</param>
+    public async Task<JsonNode?> SendAsync(HttpMethod method, string destination, string pathAndQuery, JsonNode? content, CancellationToken cancellationToken, bool signed = true, TimeSpan? timeout = null)
     {
         // Assert federation is on, and another server
         if (!options.CurrentValue.Enabled) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Federation is off on this server.");
@@ -59,15 +60,15 @@ public sealed class FederationClient
         if (signed) request.Headers.TryAddWithoutValidation("Authorization", FederationAuth.Sign(method.Method, pathAndQuery, origin, destination, content, keys.KeyId, keys.Secret).ToString());
 
         // Send within the time limit
-        using CancellationTokenSource timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(options.CurrentValue.RequestTimeout);
+        using CancellationTokenSource limit = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        limit.CancelAfter(timeout ?? options.CurrentValue.RequestTimeout);
         string body;
         HttpStatusCode status;
         try
         {
-            using HttpResponseMessage response = await httpClients.CreateClient(HttpClientName).SendAsync(request, timeout.Token);
+            using HttpResponseMessage response = await httpClients.CreateClient(HttpClientName).SendAsync(request, limit.Token);
             status = response.StatusCode;
-            body = await response.Content.ReadAsStringAsync(timeout.Token);
+            body = await response.Content.ReadAsStringAsync(limit.Token);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {

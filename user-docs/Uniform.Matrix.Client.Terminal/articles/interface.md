@@ -47,7 +47,7 @@ Messages you write are stored first and sent in order, so they survive a lost co
 | PageUp, PageDown | Scroll messages |
 | Ctrl+PageUp | Load older messages |
 | Ctrl+O | Join a room |
-| Ctrl+R | Room directory |
+| Ctrl+R | Room directory, also of other servers |
 | F1 | Help |
 | F2 | Show or hide members |
 | Ctrl+Up, Enter | Select a message and act on it |
