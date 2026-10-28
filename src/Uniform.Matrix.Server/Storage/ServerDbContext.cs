@@ -25,6 +25,8 @@ public sealed class ServerDbContext : DbContext
     public DbSet<EventRow> Events => Set<EventRow>();
     /// <summary>Edges of the room graphs.</summary>
     public DbSet<EventEdgeRow> EventEdges => Set<EventEdgeRow>();
+    /// <summary>Relations between events.</summary>
+    public DbSet<EventRelationRow> EventRelations => Set<EventRelationRow>();
     /// <summary>Latest events of each room.</summary>
     public DbSet<ForwardExtremityRow> ForwardExtremities => Set<ForwardExtremityRow>();
     /// <summary>State snapshots.</summary>
@@ -81,6 +83,8 @@ public sealed class ServerDbContext : DbContext
     public DbSet<FederationOutboxRow> FederationOutbox => Set<FederationOutboxRow>();
     /// <summary>Invites from other servers to rooms not here yet.</summary>
     public DbSet<RemoteInviteRow> RemoteInvites => Set<RemoteInviteRow>();
+    /// <summary>Reports of content, rooms and users.</summary>
+    public DbSet<ReportRow> Reports => Set<ReportRow>();
 
     /// <summary>Keys and indexes.</summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -99,6 +103,9 @@ public sealed class ServerDbContext : DbContext
         modelBuilder.Entity<EventRow>().HasKey(e => e.EventId);
         modelBuilder.Entity<EventRow>().HasIndex(e => e.Stream).IsUnique();
         modelBuilder.Entity<EventRow>().HasIndex(e => new { e.RoomId, e.Stream });
+        modelBuilder.Entity<EventRow>().HasQueryFilter(e => !e.SoftFailed);
+        modelBuilder.Entity<EventRelationRow>().HasKey(r => r.EventId);
+        modelBuilder.Entity<EventRelationRow>().HasIndex(r => new { r.RelatesTo, r.RelType });
         modelBuilder.Entity<EventEdgeRow>().HasKey(e => new { e.EventId, e.PrevEventId });
         modelBuilder.Entity<ForwardExtremityRow>().HasKey(e => new { e.RoomId, e.EventId });
 

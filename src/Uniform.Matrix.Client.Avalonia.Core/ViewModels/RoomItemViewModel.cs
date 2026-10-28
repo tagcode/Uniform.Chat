@@ -84,8 +84,12 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 /// <param name="Name">Display name in the room.</param>
 /// <param name="IsInvited">Whether the user is invited but not joined.</param>
 /// <param name="CanVerify">Whether they can be verified from here: someone else, with encryption on.</param>
-public sealed record MemberItem(string UserId, string Name, bool IsInvited, bool CanVerify)
+/// <param name="IsVerified">Whether this device has verified them.</param>
+public sealed record MemberItem(string UserId, string Name, bool IsInvited, bool CanVerify, bool IsVerified = false)
 {
-    /// <summary>Get the second line, e.g. <c>@bob:example.org · invited</c>.</summary>
-    public string Details => IsInvited ? $"{UserId} · invited" : UserId;
+    /// <summary>Get the second line, e.g. <c>@bob:example.org · invited</c> or <c>@bob:example.org · verified</c>.</summary>
+    public string Details => string.Join(" · ", new[] { UserId, IsInvited ? "invited" : null, IsVerified ? "verified" : null }.OfType<string>());
+
+    /// <summary>Whether to offer verifying: possible, and not done yet.</summary>
+    public bool ShowVerify => CanVerify && !IsVerified;
 }

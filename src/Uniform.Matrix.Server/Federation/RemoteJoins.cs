@@ -12,7 +12,7 @@ using Uniform.Matrix.Server.Keys;
 using Uniform.Matrix.Server.Rooms;
 
 /// <summary><see href="https://spec.matrix.org/latest/server-server-api/#joining-rooms">Joining rooms</see> of other servers: <c>make_join</c> for a template, sign it, <c>send_join</c>, check the returned state and store the room.</summary>
-/// <remarks>Received events are checked for their content hash and their sender server's signature; those that fail are dropped. Auth chains are not yet run through the auth rules, and later events need <c>/send</c>, which is not there yet.</remarks>
+/// <remarks>Received events are checked for their content hash, their sender server's signature, and the auth rules against their own auth events; those that fail are dropped.</remarks>
 public sealed class RemoteJoins
 {
     private readonly FederationClient federation;
@@ -76,17 +76,21 @@ public sealed class RemoteJoins
         ConcurrentDictionary<string, bool> signedIds = new();
         await Parallel.ForEachAsync(received, cancellationToken, async (entry, token) => signedIds[entry.Id] = await IsSignedAsync(entry.Pdu, version, token));
 
-        // Events failing the check are dropped, as other servers do, e.g. those of servers that cannot be reached for their keys
+        // Events failing the checks are dropped, as other servers do: those without a valid signature, e.g. of servers that cannot be reached for their keys, and those the auth rules do not allow against their own auth events
+        Dictionary<string, JsonObject> signedEvents = [];
+        foreach ((string id, JsonObject pdu, _) in received) if (signedIds[id]) signedEvents[id] = pdu;
+        HashSet<string> allowed = AuthRules.CheckAuthChains(version, signedEvents);
         Dictionary<string, JsonObject> events = [];
         List<string> stateIds = [];
         foreach ((string id, JsonObject pdu, bool isState) in received)
         {
-            if (!signedIds[id]) continue;
+            if (!allowed.Contains(id)) continue;
             events[id] = pdu;
             if (isState && pdu["state_key"] is not null) stateIds.Add(id);
         }
-        int dropped = signedIds.Count(s => !s.Value);
-        if (dropped > 0) logger.LogInformation("Dropped {Dropped} of {Count} events of {RoomId} without a valid signature or hash", dropped, signedIds.Count, roomId);
+        int unsigned = signedIds.Count(s => !s.Value);
+        int unauthorized = signedEvents.Count - allowed.Count;
+        if (unsigned + unauthorized > 0) logger.LogInformation("Dropped {Unsigned} events without a valid signature or hash and {Unauthorized} not allowed by their auth events, of {Count} of {RoomId}", unsigned, unauthorized, signedIds.Count, roomId);
         // Done
         await sender.StoreJoinedRoomAsync(version, template, eventId, events, stateIds, cancellationToken);
     }

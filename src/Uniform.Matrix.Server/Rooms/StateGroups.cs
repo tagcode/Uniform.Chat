@@ -55,6 +55,18 @@ internal static class StateGroups
         return state;
     }
 
+    /// <summary>Store <paramref name="state"/> as a group: <paramref name="parentId"/> itself when equal, its changes on top when only added or replaced, else a full snapshot, as when a merge leaves a key out; return the group's ID.</summary>
+    public static async Task<long> CreateFromStateAsync(ServerDbContext dbContext, string roomId, long parentId, IReadOnlyDictionary<(string Type, string StateKey), string> state, CancellationToken cancellationToken)
+    {
+        // Differences to the parent
+        Dictionary<(string Type, string StateKey), string> parent = await LoadAsync(dbContext, parentId, cancellationToken);
+        List<(string, string, string)> changes = [.. state.Where(e => parent.GetValueOrDefault(e.Key) != e.Value).Select(e => (e.Key.Type, e.Key.StateKey, e.Value))];
+        bool removed = parent.Keys.Any(k => !state.ContainsKey(k));
+        if (!removed && changes.Count == 0 && parentId != 0) return parentId;
+        // Return the new group
+        return removed ? await CreateAsync(dbContext, roomId, 0, [.. state.Select(e => (e.Key.Type, e.Key.StateKey, e.Value))], cancellationToken) : await CreateAsync(dbContext, roomId, parentId, changes, cancellationToken);
+    }
+
     /// <summary>Store the state of <paramref name="parentId"/> with <paramref name="changes"/> as a new group; return its ID.</summary>
     public static async Task<long> CreateAsync(ServerDbContext dbContext, string roomId, long parentId, IReadOnlyCollection<(string Type, string StateKey, string EventId)> changes, CancellationToken cancellationToken)
     {

@@ -14,7 +14,7 @@ public sealed record RoomVersion
     public static IReadOnlyDictionary<string, RoomVersion> Supported { get; } = new Dictionary<string, RoomVersion> { [V10.Id] = V10, [V11.Id] = V11, [V12.Id] = V12 };
 
     /// <summary>Version of new rooms unless the client asks for another.</summary>
-    public static RoomVersion Default => V10;
+    public static RoomVersion Default => V12;
 
     /// <summary>Version ID, e.g. <c>10</c>.</summary>
     public required string Id { get; init; }

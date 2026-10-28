@@ -12,23 +12,25 @@ using Uniform.Matrix.Protocol.Server;
 /// <param name="HostHeader">E.g. <c>matrix.example.org</c>, or with the port when the name has one.</param>
 public sealed record ServerAddress(Uri BaseAddress, string HostHeader);
 
-/// <summary><see href="https://spec.matrix.org/latest/server-server-api/#resolving-server-names">Resolve server names</see> to addresses: IP literals and names with a port directly, otherwise through <c>/.well-known/matrix/server</c> delegation, else port 8448.</summary>
-/// <remarks>SRV records are not looked up yet. Results are cached for a day when a well-known answer was found, an hour when not.</remarks>
+/// <summary><see href="https://spec.matrix.org/latest/server-server-api/#resolving-server-names">Resolve server names</see> to addresses: IP literals and names with a port directly, otherwise through <c>/.well-known/matrix/server</c> delegation, then SRV records (<c>_matrix-fed._tcp</c>, and the older <c>_matrix._tcp</c>), else port 8448.</summary>
+/// <remarks>With an SRV record, the connection goes to the record's target while the <c>Host</c> header, and with it the name the TLS certificate must be valid for, stays the server name. Results are cached for a day when delegation was found, an hour when not.</remarks>
 public sealed class ServerResolver
 {
     private static readonly TimeSpan FoundLifetime = TimeSpan.FromDays(1);
     private static readonly TimeSpan NotFoundLifetime = TimeSpan.FromHours(1);
     private const int MaxWellKnownBytes = 64 * 1024;
     private readonly IHttpClientFactory httpClients;
+    private readonly SrvLookup srv;
     private readonly TimeProvider time;
     private readonly ILogger<ServerResolver> logger;
     private readonly ConcurrentDictionary<string, (ServerAddress Address, DateTimeOffset Expires)> cache = new();
 
     /// <summary>Create the resolver.</summary>
-    public ServerResolver(IHttpClientFactory httpClients, TimeProvider time, ILogger<ServerResolver> logger)
+    public ServerResolver(IHttpClientFactory httpClients, SrvLookup srv, TimeProvider time, ILogger<ServerResolver> logger)
     {
         // Store dependencies
         this.httpClients = httpClients;
+        this.srv = srv;
         this.time = time;
         this.logger = logger;
     }
@@ -43,15 +45,31 @@ public sealed class ServerResolver
         // IP literals and explicit ports need no lookup
         if (ServerNames.IsIpLiteral(host) || port is not null) return Remember(serverName, Address(host, port ?? ServerNames.DefaultPort, serverName), FoundLifetime);
 
-        // Delegation through well-known, the delegated name resolved the same way without another lookup
+        // Delegation through well-known: IP literals and explicit ports directly, else the delegated name's SRV records or default port
         string? delegated = await WellKnownAsync(host, cancellationToken);
         if (delegated is not null && ServerNames.TryParse(delegated, out string? delegatedHost, out int? delegatedPort))
         {
-            ServerAddress address = Address(delegatedHost, delegatedPort ?? ServerNames.DefaultPort, delegatedPort is null ? delegatedHost : delegated);
-            return Remember(serverName, address, FoundLifetime);
+            if (ServerNames.IsIpLiteral(delegatedHost) || delegatedPort is not null) return Remember(serverName, Address(delegatedHost, delegatedPort ?? ServerNames.DefaultPort, delegatedPort is null ? delegatedHost : delegated), FoundLifetime);
+            return Remember(serverName, await SrvAddressAsync(delegatedHost, cancellationToken) ?? Address(delegatedHost, ServerNames.DefaultPort, delegatedHost), FoundLifetime);
         }
+
+        // SRV records of the name itself
+        if (await SrvAddressAsync(host, cancellationToken) is ServerAddress service) return Remember(serverName, service, FoundLifetime);
         // Return the default port of the name itself
         return Remember(serverName, Address(host, ServerNames.DefaultPort, host), NotFoundLifetime);
+    }
+
+    /// <summary>Return the address of the best SRV record of <paramref name="host"/>, the current name first, then the deprecated one; null when it has none. The <c>Host</c> header stays <paramref name="host"/>.</summary>
+    private async Task<ServerAddress?> SrvAddressAsync(string host, CancellationToken cancellationToken)
+    {
+        // Current, then deprecated service names
+        foreach (string service in new[] { "_matrix-fed._tcp", "_matrix._tcp" })
+        {
+            IReadOnlyList<SrvRecord> records = await srv.LookupAsync($"{service}.{host}", cancellationToken);
+            if (records.Count > 0) return Address(records[0].Target, records[0].Port, host);
+        }
+        // Return none
+        return null;
     }
 
     /// <summary>Cache and return an address.</summary>

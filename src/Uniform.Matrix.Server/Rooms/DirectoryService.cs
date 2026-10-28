@@ -187,12 +187,16 @@ public sealed class DirectoryService
         return page;
     }
 
-    /// <summary>Return the <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/3266">summary</see> of a local room, as the room directory shows it with the user's membership, version and encryption; throw <c>M_NOT_FOUND</c> when the user may not see it.</summary>
+    /// <summary>Return the <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/3266">summary</see> of a room, as the room directory shows it with the user's membership, version and encryption; rooms not here are asked from servers in them. Throw <c>M_NOT_FOUND</c> when the user may not see it.</summary>
     /// <param name="userId">Who asks, or null without a login.</param>
-    /// <param name="roomIdOrAlias">Room ID or local alias.</param>
+    /// <param name="roomIdOrAlias">Room ID or alias.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public async Task<JsonObject> GetSummaryAsync(string? userId, string roomIdOrAlias, CancellationToken cancellationToken)
+    /// <param name="via">Servers to ask about a room not here, besides the alias's and the room ID's server.</param>
+    public async Task<JsonObject> GetSummaryAsync(string? userId, string roomIdOrAlias, CancellationToken cancellationToken, IReadOnlyCollection<string>? via = null)
     {
+        // Rooms not here from a server in them
+        if (!await IsLocalAsync(roomIdOrAlias, cancellationToken)) return await GetRemoteSummaryAsync(roomIdOrAlias, via ?? [], cancellationToken);
+
         // Local room the user may see
         string roomId = await rooms.ResolveAsync(roomIdOrAlias, cancellationToken);
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
@@ -214,7 +218,7 @@ public sealed class DirectoryService
         return summary;
     }
 
-    /// <summary>Return the <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidhierarchy">hierarchy</see> of a local space: the space and the local rooms its <c>m.space.child</c> events name, depth first, that the user may see.</summary>
+    /// <summary>Return the <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidhierarchy">hierarchy</see> of a space: the space and the local rooms its <c>m.space.child</c> events name, depth first, that the user may see. A space not here is asked from a server in it, such as a <c>via</c> server the client gives, with its direct children.</summary>
     /// <param name="userId">Who asks.</param>
     /// <param name="roomId">The space.</param>
     /// <param name="maxDepth">Deepest level, the space being 0; unlimited when null.</param>
@@ -222,8 +226,17 @@ public sealed class DirectoryService
     /// <param name="from">Token of the page, <c>p</c> and an offset.</param>
     /// <param name="suggestedOnly">Only children marked <c>suggested</c>.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public async Task<JsonObject> GetHierarchyAsync(string userId, string roomId, int? maxDepth, int limit, string? from, bool suggestedOnly, CancellationToken cancellationToken)
+    /// <param name="via">Servers to ask about a space not here, besides its room ID's server.</param>
+    public async Task<JsonObject> GetHierarchyAsync(string userId, string roomId, int? maxDepth, int limit, string? from, bool suggestedOnly, CancellationToken cancellationToken, IReadOnlyCollection<string>? via = null)
     {
+        // Spaces not here from a server in them, with their direct children
+        if (!await IsLocalAsync(roomId, cancellationToken))
+        {
+            (_, JsonObject remote) = await RemoteHierarchyAsync(roomId, via ?? [], suggestedOnly, cancellationToken);
+            List<JsonObject> rooms = [(JsonObject)remote["room"]!.DeepClone(), .. maxDepth == 0 ? [] : (remote["children"] as JsonArray ?? []).OfType<JsonObject>().Select(c => (JsonObject)c.DeepClone())];
+            return new JsonObject { ["rooms"] = new JsonArray([.. rooms.Take(limit)]) };
+        }
+
         // Assert page token; the space must be visible
         int offset = from is null ? 0 : from.StartsWith('p') && int.TryParse(from.AsSpan(1), CultureInfo.InvariantCulture, out int parsed) && parsed >= 0 ? parsed : throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid token {from}.");
         await GetSummaryAsync(userId, roomId, cancellationToken);
@@ -254,6 +267,59 @@ public sealed class DirectoryService
         if (found.Count > offset + limit) response["next_batch"] = $"p{offset + limit}";
         // Return page
         return response;
+    }
+
+    /// <summary>Return whether a room ID or alias names a room here.</summary>
+    private async Task<bool> IsLocalAsync(string roomIdOrAlias, CancellationToken cancellationToken)
+    {
+        // By alias, else by ID
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        string? roomId = roomIdOrAlias.StartsWith('#') ? await db.RoomAliases.AsNoTracking().Where(a => a.Alias == roomIdOrAlias).Select(a => a.RoomId).SingleOrDefaultAsync(cancellationToken) : roomIdOrAlias;
+        // Return whether the room is here
+        return roomId is not null && await db.Rooms.AnyAsync(r => r.RoomId == roomId, cancellationToken);
+    }
+
+    /// <summary>Return the summary of a room not here, from the room entry of its federation hierarchy.</summary>
+    private async Task<JsonObject> GetRemoteSummaryAsync(string roomIdOrAlias, IReadOnlyCollection<string> via, CancellationToken cancellationToken)
+    {
+        // The hierarchy's own room, without its children
+        (_, JsonObject hierarchy) = await RemoteHierarchyAsync(roomIdOrAlias, via, suggestedOnly: false, cancellationToken);
+        JsonObject summary = (JsonObject)hierarchy["room"]!.DeepClone();
+        summary.Remove("children_state");
+        if (summary["room_version"] is JsonNode version) summary["im.nheko.summary.room_version"] = version.DeepClone();
+        if (summary["encryption"] is JsonNode encryption) summary["im.nheko.summary.encryption"] = encryption.DeepClone();
+        // Return summary
+        return summary;
+    }
+
+    /// <summary>Return the room ID and <see href="https://spec.matrix.org/latest/server-server-api/#get_matrixfederationv1hierarchyroomid">federation hierarchy</see> of a room not here, asked from <paramref name="via"/>, the alias's servers and the room ID's server until one answers; throw <c>M_NOT_FOUND</c> when none does.</summary>
+    private async Task<(string RoomId, JsonObject Hierarchy)> RemoteHierarchyAsync(string roomIdOrAlias, IReadOnlyCollection<string> via, bool suggestedOnly, CancellationToken cancellationToken)
+    {
+        // Room ID and servers to ask
+        string roomId = roomIdOrAlias;
+        List<string> servers = [.. via];
+        if (roomIdOrAlias.StartsWith('#'))
+        {
+            JsonObject alias = await GetAliasAsync(roomIdOrAlias, cancellationToken);
+            roomId = alias["room_id"]!.GetValue<string>();
+            servers.AddRange((alias["servers"] as JsonArray ?? []).Select(n => n?.GetValue<string>()).OfType<string>());
+        }
+        if (roomId.IndexOf(':') is int colon and > 0) servers.Add(roomId[(colon + 1)..]);
+
+        // Each server until one answers
+        foreach (string server in servers.Distinct().Where(n => n != ServerName))
+        {
+            try
+            {
+                if (await federation.SendAsync(HttpMethod.Get, server, $"/_matrix/federation/v1/hierarchy/{Uri.EscapeDataString(roomId)}?suggested_only={(suggestedOnly ? "true" : "false")}", null, cancellationToken) is JsonObject answer && answer["room"] is JsonObject) return (roomId, answer);
+            }
+            catch (MatrixException)
+            {
+                // Next server
+            }
+        }
+        // On error not found
+        throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Room not found, or no server in it could be asked.");
     }
 
     /// <summary>Return a local space and its direct children for another server, as <see href="https://spec.matrix.org/latest/server-server-api/#get_matrixfederationv1hierarchyroomid">federation hierarchy</see> answers; rooms the server may not see are listed as inaccessible.</summary>

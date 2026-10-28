@@ -6,7 +6,9 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Uniform.Matrix.Protocol.Client;
+using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Rooms;
 
 /// <summary>Tests of room creation, membership, messages, state and redaction, through our own client.</summary>
 public class RoomTests
@@ -37,13 +39,13 @@ public class RoomTests
         IReadOnlyList<ClientEvent> state = await alice.GetStateAsync(roomId, Ct);
 
         // Assert
-        Assert.EndsWith($":{TestHomeserver.ServerName}", roomId);
+        Assert.DoesNotContain(":", roomId);
         Assert.Contains(roomId, await alice.GetJoinedRoomsAsync(Ct));
         Assert.Contains(state, e => e.Type == EventTypes.RoomCreate);
         Assert.Contains(state, e => e.Type == EventTypes.RoomMember && e.StateKey == alice.UserId);
         Assert.Equal("Kitchen", (await alice.TryGetStateEventAsync(roomId, EventTypes.RoomName, cancellationToken: Ct))?.GetProperty("name").GetString());
         Assert.Equal("invite", (await alice.TryGetStateEventAsync(roomId, "m.room.join_rules", cancellationToken: Ct))?.GetProperty("join_rule").GetString());
-        Assert.Equal(100, (await alice.TryGetStateEventAsync(roomId, EventTypes.RoomPowerLevels, cancellationToken: Ct))?.GetProperty("users").GetProperty(alice.UserId!).GetInt32());
+        Assert.False((await alice.TryGetStateEventAsync(roomId, EventTypes.RoomPowerLevels, cancellationToken: Ct))?.GetProperty("users").TryGetProperty(alice.UserId!, out _));
     }
 
     /// <summary>A power level change keeps the other levels, including fields the typed content does not name; a moderator can kick, an ordinary member cannot; the room avatar is set and removed.</summary>
@@ -69,7 +71,7 @@ public class RoomTests
         // Assert: Bob's level changed and nothing else
         Assert.Equal(ErrorCodes.Forbidden, refused.Errcode);
         Assert.Equal(PowerLevelsContent.Moderator, after.GetUserLevel(bob.UserId!));
-        Assert.Equal(PowerLevelsContent.Admin, after.GetUserLevel(alice.UserId!));
+        Assert.False(after.Users?.ContainsKey(alice.UserId!));
         Assert.Equal(before.Events, after.Events);
         Assert.Equal(before.Extra?.Keys.Order(), after.Extra?.Keys.Order());
         Assert.DoesNotContain(carol.UserId!, (await alice.GetJoinedMembersAsync(roomId, Ct)).Keys);
@@ -341,6 +343,85 @@ public class RoomTests
         Assert.Equal(edit, atTime.GetProperty("event_id").GetString());
         Assert.Equal(HttpStatusCode.OK, report);
     }
+
+    /// <summary>Reports of an event, a room and a user are kept with the reported event's text, newest first, until resolved.</summary>
+    [Fact]
+    public async Task KeepReports()
+    {
+        // Arrange: bob's message in alice's room
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = server.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        string message = await bob.SendTextAsync(roomId, "buy my stuff", Ct);
+        using HttpClient http = server.CreateHttpClient();
+        http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        string room = Uri.EscapeDataString(roomId);
+        ReportService reports = server.Services.GetRequiredService<ReportService>();
+
+        // Act
+        (await http.PostAsJsonAsync($"/_matrix/client/v3/rooms/{room}/report/{Uri.EscapeDataString(message)}", new { reason = "spam" }, Ct)).EnsureSuccessStatusCode();
+        (await http.PostAsJsonAsync($"/_matrix/client/v3/rooms/{room}/report", new { reason = "spam room" }, Ct)).EnsureSuccessStatusCode();
+        (await http.PostAsJsonAsync($"/_matrix/client/v3/users/{Uri.EscapeDataString(bob.UserId!)}/report", new { reason = "spammer" }, Ct)).EnsureSuccessStatusCode();
+        IReadOnlyList<Report> open = await reports.GetAsync(includeResolved: false, Ct);
+        await reports.SetResolvedAsync(open[0].Id, true, Ct);
+        int stillOpen = await reports.CountOpenAsync(Ct);
+
+        // Assert
+        Assert.Equal(["spammer", "spam room", "spam"], open.Select(r => r.Reason));
+        Assert.Equal(bob.UserId, open[0].UserId);
+        Assert.Equal(message, open[2].EventId);
+        Assert.Equal($"{bob.UserId}: \"buy my stuff\"", open[2].EventSummary);
+        Assert.All(open, r => Assert.Equal(alice.UserId, r.Reporter));
+        Assert.Equal(2, stillOpen);
+    }
+
+    /// <summary>Threads are listed by their latest reply, also only those the user took part in, and their roots carry a summary in the timeline.</summary>
+    [Fact]
+    public async Task ListThreads()
+    {
+        // Arrange: two threads of alice's, bob replies to the older one, which so becomes the latest
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Open" });
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = server.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        string first = await alice.SendTextAsync(roomId, "first topic", Ct);
+        string second = await alice.SendTextAsync(roomId, "second topic", Ct);
+        string room = Uri.EscapeDataString(roomId);
+        using HttpClient aliceHttp = server.CreateHttpClient();
+        aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+        using HttpClient bobHttp = server.CreateHttpClient();
+        bobHttp.DefaultRequestHeaders.Authorization = new("Bearer", bob.AccessToken);
+        await SendRawAsync(aliceHttp, room, "m.room.message", Reply(second, "on second"));
+        await SendRawAsync(aliceHttp, room, "m.room.message", Reply(first, "on first"));
+        string latest = await SendRawAsync(bobHttp, room, "m.room.message", Reply(first, "bob on first"));
+
+        // Act
+        JsonElement all = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/threads", Ct);
+        JsonElement page = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/threads?limit=1", Ct);
+        JsonElement rest = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/threads?limit=1&from={page.GetProperty("next_batch").GetString()}", Ct);
+        JsonElement bobs = await bobHttp.GetFromJsonAsync<JsonElement>($"/_matrix/client/v1/rooms/{room}/threads?include=participated", Ct);
+
+        // Assert: the root's summary has its latest reply, count and bob's part
+        Assert.Equal([first, second], all.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        Assert.Equal([first], page.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        Assert.Equal([second], rest.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        Assert.Equal([first], bobs.GetProperty("chunk").EnumerateArray().Select(e => e.GetProperty("event_id").GetString()));
+        JsonElement summary = all.GetProperty("chunk")[0].GetProperty("unsigned").GetProperty("m.relations").GetProperty("m.thread");
+        Assert.Equal(latest, summary.GetProperty("latest_event").GetProperty("event_id").GetString());
+        Assert.Equal(2, summary.GetProperty("count").GetInt32());
+        Assert.True(summary.GetProperty("current_user_participated").GetBoolean());
+    }
+
+    /// <summary>Return the content of a thread reply to <paramref name="root"/>.</summary>
+    private static JsonObject Reply(string root, string body) =>
+        new() { ["msgtype"] = "m.text", ["body"] = body, ["m.relates_to"] = new JsonObject { ["rel_type"] = "m.thread", ["event_id"] = root, ["is_falling_back"] = true, ["m.in_reply_to"] = new JsonObject { ["event_id"] = root } } };
 
     /// <summary>Send an event of any type as JSON; return its ID.</summary>
     private static async Task<string> SendRawAsync(HttpClient http, string room, string type, JsonObject content)

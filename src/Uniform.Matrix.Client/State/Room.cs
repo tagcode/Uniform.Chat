@@ -130,8 +130,26 @@ public sealed class Room
         return false;
     }
 
-    /// <summary>Return the power level of <paramref name="userId"/>; without power levels, 100 for the room's creator and 0 for others.</summary>
-    public long GetPowerLevel(string userId) => PowerLevels is PowerLevelsContent levels ? levels.GetUserLevel(userId) : userId == GetSender(GetState(EventTypes.RoomCreate)) ? PowerLevelsContent.Admin : 0;
+    /// <summary>Creators with unlimited power, from room version 12: the create event's sender and its additional creators; empty in older rooms.</summary>
+    public IReadOnlyCollection<string> Creators
+    {
+        get
+        {
+            // Only rooms whose version gives creators power
+            if (GetStateContent<CreateContent>(EventTypes.RoomCreate) is not { HasPowerfulCreators: true } create) return [];
+            // Return the sender and the additional creators
+            return [.. new[] { GetSender(GetState(EventTypes.RoomCreate)) }.Concat(create.AdditionalCreators ?? []).OfType<string>().Distinct()];
+        }
+    }
+
+    /// <summary>Return the power level of <paramref name="userId"/>: <see cref="PowerLevelsContent.Creator"/> for <see cref="Creators"/>; without power levels, 100 for the room's creator and 0 for others.</summary>
+    public long GetPowerLevel(string userId)
+    {
+        // Creators above all levels
+        if (Creators.Contains(userId)) return PowerLevelsContent.Creator;
+        // Return the listed level
+        return PowerLevels is PowerLevelsContent levels ? levels.GetUserLevel(userId) : userId == GetSender(GetState(EventTypes.RoomCreate)) ? PowerLevelsContent.Admin : 0;
+    }
 
     /// <summary>Name to show for <paramref name="userId"/> per <see href="https://spec.matrix.org/latest/client-server-api/#calculating-the-display-name-for-a-user">spec</see>: display name, with the user ID appended when another member shares it.</summary>
     public string GetMemberDisplayName(string userId)

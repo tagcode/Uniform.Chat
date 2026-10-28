@@ -9,6 +9,7 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Accounts;
+using Uniform.Matrix.Server.Rooms;
 using Uniform.Matrix.Server.Configuration;
 using global::Terminal.Gui.App;
 using global::Terminal.Gui.Input;
@@ -29,13 +30,14 @@ public sealed class ServerWindow : Window
     private readonly IHostEnvironment environment;
     private readonly TimeProvider time;
     private readonly AdminService admin;
+    private readonly ReportService reports;
     private readonly Label summary = new() { X = 1, Y = 1, Width = Dim.Fill(1), Height = Dim.Fill(2) };
     private object? timer;
     private int ticks;
-    private (int Users, int Rooms)? counts;
+    private (int Users, int Rooms, int Reports)? counts;
 
     /// <summary>Build the dashboard over the running server's services.</summary>
-    public ServerWindow(IApplication app, ServerStatus status, IServer server, SettingsStore settings, OptionCatalog catalog, IConfiguration configuration, FileLoggerProvider fileLogger, IOptions<ServerStorageOptions> storage, IOptions<ServerOptions> options, IHostEnvironment environment, TimeProvider time, AdminService admin)
+    public ServerWindow(IApplication app, ServerStatus status, IServer server, SettingsStore settings, OptionCatalog catalog, IConfiguration configuration, FileLoggerProvider fileLogger, IOptions<ServerStorageOptions> storage, IOptions<ServerOptions> options, IHostEnvironment environment, TimeProvider time, AdminService admin, ReportService reports)
     {
         // Dependencies
         this.app = app;
@@ -49,6 +51,7 @@ public sealed class ServerWindow : Window
         this.environment = environment;
         this.time = time;
         this.admin = admin;
+        this.reports = reports;
 
         // Menu and dashboard
         Title = $"Matrix server {options.Value.ServerName}";
@@ -62,6 +65,7 @@ public sealed class ServerWindow : Window
             new MenuBarItem("_Server", [
                 new MenuItem { Title = "_Users…", HelpText = "Create users, reset passwords, admins", Action = ShowUsers },
                 new MenuItem { Title = "_Rooms…", HelpText = "Rooms and the public directory", Action = ShowRooms },
+                new MenuItem { Title = "Re_ports…", HelpText = "Review what users reported", Action = ShowReports },
             ]),
         ]);
         Add(menu, summary);
@@ -92,7 +96,8 @@ public sealed class ServerWindow : Window
             $"Listening:  {string.Join(", ", addresses)}",
             $"Uptime:     {(int)uptime.TotalHours}:{uptime:mm\\:ss}",
             $"Requests:   {status.Requests} answered, {status.ActiveRequests} in progress, {status.FailedRequests} failed",
-            counts is (int users, int rooms) ? $"Accounts:   {users} users, {rooms} rooms" : "Accounts:   counting…",
+            counts is (int users, int rooms, _) ? $"Accounts:   {users} users, {rooms} rooms" : "Accounts:   counting…",
+            counts is (_, _, int open) ? $"Reports:    {(open == 0 ? "none open" : $"{open} open; Server → Reports to review")}" : "Reports:    counting…",
             "",
             $"Data:       {storage.ResolveDataDirectory(environment.ApplicationName)}",
             $"Log:        {fileLogger.FilePath}",
@@ -108,7 +113,8 @@ public sealed class ServerWindow : Window
         {
             IReadOnlyList<AdminUser> users = await Task.Run(() => admin.GetUsersAsync(CancellationToken.None));
             IReadOnlyList<AdminRoom> rooms = await Task.Run(() => admin.GetRoomsAsync(CancellationToken.None));
-            counts = (users.Count, rooms.Count);
+            int open = await Task.Run(() => reports.CountOpenAsync(CancellationToken.None));
+            counts = (users.Count, rooms.Count, open);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -121,6 +127,15 @@ public sealed class ServerWindow : Window
     {
         // Until closed
         using UsersWindow window = new(app, admin);
+        app.Run(window);
+        _ = CountAsync();
+    }
+
+    /// <summary>Open the reports window.</summary>
+    private void ShowReports()
+    {
+        // Until closed
+        using ReportsWindow window = new(app, reports);
         app.Run(window);
         _ = CountAsync();
     }

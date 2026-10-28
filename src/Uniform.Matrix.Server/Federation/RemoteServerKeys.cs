@@ -18,6 +18,7 @@ public sealed class RemoteServerKeys
     private static readonly TimeSpan MaxValidity = TimeSpan.FromDays(7);
     private static readonly TimeSpan RetryUnreachable = TimeSpan.FromMinutes(5);
     private const int ParallelFetches = 20;
+    private const int NotaryBatch = 100;
     private readonly FederationClient federation;
     private readonly ServerKeys ownKeys;
     private readonly IDbContextFactory<ServerDbContext> contexts;
@@ -64,18 +65,32 @@ public sealed class RemoteServerKeys
         return null;
     }
 
-    /// <summary>Fetch the keys of <paramref name="serverNames"/> that are not kept or have expired, several servers at a time, e.g. before checking the many events of a joined room.</summary>
+    /// <summary>Fetch the keys of <paramref name="serverNames"/> that are not kept or have expired, e.g. before checking the many events of a joined room: from the <see cref="FederationOptions.TrustedKeyServers"/> in batches first, then from each remaining server, several at a time.</summary>
     public async Task PrefetchAsync(IEnumerable<string> serverNames, CancellationToken cancellationToken)
     {
-        // Other servers only, each once
+        // Other servers only, each once, without valid kept keys
         string own = server.CurrentValue.ServerName;
-        List<string> names = [.. serverNames.Where(n => n != own).Distinct()];
-        // Done when each has an answer or failed
-        await Parallel.ForEachAsync(names, new ParallelOptions { MaxDegreeOfParallelism = ParallelFetches, CancellationToken = cancellationToken }, async (name, token) =>
+        List<string> names = [];
+        foreach (string name in serverNames.Where(n => n != own).Distinct())
         {
-            KeptKeys? kept = await GetKeptAsync(name, token);
-            if (kept is null || kept.ValidUntil <= time.GetUtcNow()) await FetchAsync(name, token);
-        });
+            KeptKeys? kept = await GetKeptAsync(name, cancellationToken);
+            if (kept is null || kept.ValidUntil <= time.GetUtcNow()) names.Add(name);
+        }
+
+        // Key servers first, many servers per request, as one answer is faster than asking each server, some of which are down
+        foreach (string notary in options.CurrentValue.GetTrustedKeyServers().Where(n => n != own))
+        {
+            foreach (string[] batch in names.Where(n => n != notary).Chunk(NotaryBatch).ToList())
+            {
+                foreach ((string name, JsonObject response) in await AskNotaryAsync(notary, batch, cancellationToken))
+                {
+                    if (await KeepAsync(name, response, cancellationToken) is not null) names.Remove(name);
+                }
+            }
+        }
+        // Done when each has an answer or failed
+        // The rest from each server
+        await Parallel.ForEachAsync(names, new ParallelOptions { MaxDegreeOfParallelism = ParallelFetches, CancellationToken = cancellationToken }, async (name, token) => await FetchAsync(name, token));
     }
 
     /// <summary>Return the kept, validated key answer of <paramref name="serverName"/>, fetching it when there is none or it expired; null when none can be had. Used to answer <c>/_matrix/key/v2/query</c> as a key server.</summary>
@@ -138,7 +153,7 @@ public sealed class RemoteServerKeys
         JsonObject? response = null;
         try
         {
-            response = await federation.SendAsync(HttpMethod.Get, serverName, "/_matrix/key/v2/server", null, cancellationToken, signed: false) as JsonObject;
+            response = await federation.SendAsync(HttpMethod.Get, serverName, "/_matrix/key/v2/server", null, cancellationToken, signed: false, timeout: options.CurrentValue.KeyRequestTimeout) as JsonObject;
         }
         catch (MatrixException ex)
         {
@@ -151,50 +166,71 @@ public sealed class RemoteServerKeys
             response = null;
             foreach (string notary in options.CurrentValue.GetTrustedKeyServers().Where(n => n != serverName && n != server.CurrentValue.ServerName))
             {
-                response = await AskNotaryAsync(notary, serverName, cancellationToken);
+                response = (await AskNotaryAsync(notary, [serverName], cancellationToken)).GetValueOrDefault(serverName);
                 if (response is not null) break;
             }
         }
-        if (response is null || Validate(serverName, response) is not (IReadOnlyDictionary<string, string>, DateTimeOffset) valid) return null;
+        // Return kept keys, or none
+        return response is null ? null : await KeepAsync(serverName, response, cancellationToken);
+    }
 
-        // Kept in memory and the database
+    /// <summary>Keep a key answer of <paramref name="serverName"/> in memory and the database when valid; return the keys, or null.</summary>
+    private async Task<KeptKeys?> KeepAsync(string serverName, JsonObject response, CancellationToken cancellationToken)
+    {
+        // Assert valid
+        if (Validate(serverName, response) is not (IReadOnlyDictionary<string, string>, DateTimeOffset) valid) return null;
+
+        // Kept in memory, then the database, where a fetch running beside this one may have stored it first
+        KeptKeys entry = new(valid.Keys, valid.ValidUntil, response);
+        cache[serverName] = entry;
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         ServerKeyResponseRow? row = await db.ServerKeyResponses.SingleOrDefaultAsync(k => k.ServerName == serverName, cancellationToken);
         if (row is null) db.ServerKeyResponses.Add(row = new ServerKeyResponseRow { ServerName = serverName, Json = "" });
         row.Json = response.ToJsonString();
         row.ValidUntilTs = valid.ValidUntil.ToUnixTimeMilliseconds();
-        await db.SaveChangesAsync(cancellationToken);
-        KeptKeys entry = new(valid.Keys, valid.ValidUntil, response);
-        cache[serverName] = entry;
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogDebug("Keys of {ServerName} were stored meanwhile: {Error}", serverName, ex.Message);
+        }
         // Return keys
         return entry;
     }
 
-    /// <summary>Return the answer of key server <paramref name="notary"/> about <paramref name="serverName"/>, when the key server signed it; null otherwise.</summary>
-    private async Task<JsonObject?> AskNotaryAsync(string notary, string serverName, CancellationToken cancellationToken)
+    /// <summary>Return the answers of key server <paramref name="notary"/> about <paramref name="serverNames"/> by server, those the key server signed.</summary>
+    private async Task<Dictionary<string, JsonObject>> AskNotaryAsync(string notary, IReadOnlyCollection<string> serverNames, CancellationToken cancellationToken)
     {
-        // Query for the server's keys
+        // Query for the servers' keys
         JsonNode? answer;
+        Dictionary<string, JsonObject> answers = [];
         try
         {
-            answer = await federation.SendAsync(HttpMethod.Post, notary, "/_matrix/key/v2/query", new JsonObject { ["server_keys"] = new JsonObject { [serverName] = new JsonObject() } }, cancellationToken, signed: false);
+            JsonObject query = [];
+            foreach (string serverName in serverNames) query[serverName] = new JsonObject();
+            answer = await federation.SendAsync(HttpMethod.Post, notary, "/_matrix/key/v2/query", new JsonObject { ["server_keys"] = query }, cancellationToken, signed: false, timeout: options.CurrentValue.KeyRequestTimeout);
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Key server {Notary} cannot give the keys of {ServerName}: {Error}", notary, serverName, ex.Message);
-            return null;
+            logger.LogInformation("Key server {Notary} cannot give the keys of {Count} servers: {Error}", notary, serverNames.Count, ex.Message);
+            return answers;
         }
 
-        // The entry of the server, signed by the key server too
-        foreach (JsonObject entry in (answer?["server_keys"] as JsonArray ?? []).OfType<JsonObject>().Where(e => e["server_name"]?.GetValue<string>() == serverName))
+        // Entries of the asked servers, signed by the key server too
+        foreach (JsonObject entry in (answer?["server_keys"] as JsonArray ?? []).OfType<JsonObject>())
         {
+            if (entry["server_name"]?.GetValue<string>() is not string serverName || !serverNames.Contains(serverName) || answers.ContainsKey(serverName)) continue;
             foreach (string keyId in (entry["signatures"]?[notary] as JsonObject ?? []).Select(k => k.Key))
             {
-                if (await GetVerifyKeyAsync(notary, keyId, cancellationToken) is string key && CanonicalJson.GetSignature(entry, notary, keyId) is string signature && Ed25519.Verify(key, CanonicalJson.SigningForm(entry), signature)) return entry;
+                if (await GetVerifyKeyAsync(notary, keyId, cancellationToken) is not string key || CanonicalJson.GetSignature(entry, notary, keyId) is not string signature || !Ed25519.Verify(key, CanonicalJson.SigningForm(entry), signature)) continue;
+                answers[serverName] = entry;
+                break;
             }
         }
-        // Return none
-        return null;
+        // Return answers
+        return answers;
     }
 
     /// <summary>Return the keys of a key answer, current and old, and until when they hold, or null when it is not for <paramref name="serverName"/> or not signed by each of its current keys.</summary>

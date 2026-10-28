@@ -133,6 +133,9 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<FederationClient>();
         builder.Services.AddSingleton<RemoteServerKeys>();
         builder.Services.AddSingleton<RemoteJoins>();
+        builder.Services.AddSingleton<RoomAcls>();
+        builder.Services.AddSingleton<ReportService>();
+        builder.Services.AddSingleton<SrvLookup>();
         builder.Services.AddSingleton<RemoteInvites>();
         builder.Services.AddSingleton<FederationQueue>();
         builder.Services.AddSingleton<RemoteDevices>();

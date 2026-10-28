@@ -23,14 +23,14 @@ public static class DirectoryEndpoints
         open.MapGet("/directory/list/room/{roomId}", async (string roomId, DirectoryService directory, CancellationToken cancellationToken) => MatrixHttp.Json(await directory.GetVisibilityAsync(roomId, cancellationToken)));
         open.MapGet("/publicRooms", async (int? limit, string? since, string? server, DirectoryService directory, CancellationToken cancellationToken) => MatrixHttp.Json(await directory.GetPublicRoomsAsync(limit, since, null, server, cancellationToken)));
 
-        // Room summaries, also at their unstable paths, and space hierarchies
+        // Room summaries, also at their unstable paths, and space hierarchies; rooms elsewhere through servers in them, such as the via servers given
         RouteGroupBuilder rooms = routes.MapGroup("/_matrix/client").RequireAccessToken();
         foreach (string summary in new[] { "/v1/room_summary/{roomIdOrAlias}", "/unstable/im.nheko.summary/summary/{roomIdOrAlias}", "/unstable/im.nheko.summary/rooms/{roomIdOrAlias}/summary" })
         {
-            rooms.MapGet(summary, async (string roomIdOrAlias, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) => MatrixHttp.Json(await directory.GetSummaryAsync(http.GetRequester().UserId, roomIdOrAlias, cancellationToken)));
+            rooms.MapGet(summary, async (string roomIdOrAlias, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) => MatrixHttp.Json(await directory.GetSummaryAsync(http.GetRequester().UserId, roomIdOrAlias, cancellationToken, [.. http.Request.Query["via"].OfType<string>()])));
         }
         rooms.MapGet("/v1/rooms/{roomId}/hierarchy", async (string roomId, int? max_depth, int? limit, string? from, bool? suggested_only, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) =>
-            MatrixHttp.Json(await directory.GetHierarchyAsync(http.GetRequester().UserId, roomId, max_depth, Math.Clamp(limit ?? 50, 1, 100), from, suggested_only == true, cancellationToken)));
+            MatrixHttp.Json(await directory.GetHierarchyAsync(http.GetRequester().UserId, roomId, max_depth, Math.Clamp(limit ?? 50, 1, 100), from, suggested_only == true, cancellationToken, [.. http.Request.Query["via"].OfType<string>()])));
 
         // Changing aliases and visibility
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v3").RequireAccessToken();

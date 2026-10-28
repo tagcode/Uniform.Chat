@@ -24,11 +24,11 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 - QR code verification, verification requests inside a room, key export files, dehydrated devices.
 
 ## Desktop and Android app
-- Renaming devices, showing who is verified in member lists, and choosing your own reaction emoji.
+- Renaming devices, and choosing your own reaction emoji.
 - Showing logs in the app, and more settings: Markdown on or off, image previews, the download folder.
 - Notifications on Windows (toast notifications) and Android (UnifiedPush or Firebase, which need a push gateway); clicking a notification to open its room.
 - A full-size image viewer inside the app; avatars of people in the timeline and member list.
-- Room directory, spaces, and leaving or forgetting old rooms.
+- Spaces, and forgetting old rooms.
 - Android: release signing and a Play Store listing; Android builds in the release workflow.
 
 ## Library quality
@@ -38,16 +38,15 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 
 # Server
 
-How it works is in `docs/dev/articles/server.md`. Tests run our own `MatrixClient` against the server in memory; run the live tests against Synapse now and then as the reference.
+How it works is in `docs/Uniform.Matrix/Uniform.Matrix.Server/`. Tests run our own `MatrixClient` against the server in memory; run the live tests against Synapse now and then as the reference.
 
 ## Milestone 1: standalone homeserver (done, except compatibility)
 - Element Web smoke test against the server.
 - Complement client-server tests. Needs Go, and Docker access for the user (the docker group, or rootless Docker).
 - Email pushers: they are stored, but no email is sent.
-- Forwarded headers from a trusted reverse proxy (a known-proxies setting), so login rate limits count each client address instead of the proxy's.
 
 ## Later
-PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), sliding sync (MSC4186), OpenTelemetry.
+PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), OpenTelemetry.
 
 URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 - Server: allow and deny lists of hosts.
@@ -56,16 +55,13 @@ URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
 ## Milestone 2: federation
 A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users and receiving their invites (`invite` v2, signed by both servers), encryption across servers (keys, one-time keys, to-device, device list updates), typing and read receipts, retrying transactions with backoff, the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
 
-Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`, public room directories of other servers (`publicRooms` both ways).
+Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`, public room directories of other servers (`publicRooms` both ways), received events checked against their auth events, the state before them and the current state (soft failure), state resolution v2 and v2.1 for forks, auth chains of joined rooms checked, gaps of any size filled through `state_ids`, keys of many servers fetched at once (key server batches, `Federation:KeyRequestTimeout`), version 12 as the default room version, room ACLs, SRV lookup, previews of rooms and spaces on other servers, threads (`/threads` and thread summaries), and a review list for reports in the dashboard.
 
 Next:
-- Make version 12 the default for new rooms once our clients send `via` servers when joining by room ID (eight server tests join by ID alone).
-- SRV lookup (`_matrix-fed._tcp`), which needs a small DNS client.
-- Checking received events against the state before them, auth chains with the auth rules, state resolution v2; gaps of more than 20 missing events.
+- Partial-state joins ([MSC3706](https://github.com/matrix-org/matrix-spec-proposals/pull/3706)) for very large rooms, whose joins now wait for every event's signature check.
 - Sliding sync: per-list timeline limits, left rooms, more list filters, keeping connections across restarts.
-- A review list for reports, which are only logged now; hierarchies and summaries of rooms on other servers.
-- Room ACLs, threads.
-- Element X calls through Element Call against a LiveKit server.
+- Room upgrades (`/upgrade`, tombstones), search.
+- Element X calls through Element Call against a LiveKit server; needs testing on the phone.
 
 Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
 
@@ -114,7 +110,6 @@ the back gesture;
 the keyboard pushing the composer up;
 long-press menus instead of right-click.
 
-
 # Stun/Turn
 
 - Uniform.Stun.Protocol
@@ -124,9 +119,7 @@ long-press menus instead of right-click.
   Uniform.Sturn.Hosting
   Uniform.Sturn.Host
 
-
-
 # Embedded help
 
-F1 could open the user documentations in system browser for desktop clients
+For desktop clients, F1 could open in system browser the user documentations that are already included in the release.
 

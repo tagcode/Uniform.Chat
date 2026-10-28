@@ -64,31 +64,38 @@ public static class FederationEndpoints
             MatrixHttp.Json(await directory.GetPublicRoomsAsync((int?)body["limit"]?.GetValue<long>(), body["since"]?.GetValue<string>(), body["filter"]?["generic_search_term"]?.GetValue<string>(), server.CurrentValue.ServerName, cancellationToken)));
 
         // Joins and leaves of other servers' users, such as rejected invites
-        federation.MapGet("/make_join/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
+        federation.MapGet("/make_join/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, RoomAcls acls, CancellationToken cancellationToken) =>
         {
+            await acls.AssertAllowedAsync(http.GetOrigin(), roomId, cancellationToken);
             (JsonObject template, RoomVersion version) = await events.MakeMembershipAsync(roomId, AssertOriginUser(http, userId), Memberships.Join, cancellationToken);
             if (!http.Request.Query["ver"].Contains(version.Id)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.IncompatibleRoomVersion, $"The room has version {version.Id}, which the asking server does not support.");
             return MatrixHttp.Json(new JsonObject { ["event"] = template, ["room_version"] = version.Id });
         });
-        federation.MapGet("/make_leave/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, CancellationToken cancellationToken) =>
+        federation.MapGet("/make_leave/{roomId}/{userId}", async (string roomId, string userId, HttpContext http, EventSender events, RoomAcls acls, CancellationToken cancellationToken) =>
         {
+            await acls.AssertAllowedAsync(http.GetOrigin(), roomId, cancellationToken);
             (JsonObject template, RoomVersion version) = await events.MakeMembershipAsync(roomId, AssertOriginUser(http, userId), Memberships.Leave, cancellationToken);
             return MatrixHttp.Json(new JsonObject { ["event"] = template, ["room_version"] = version.Id });
         });
-        routes.MapPut("/_matrix/federation/v2/send_join/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
+        routes.MapPut("/_matrix/federation/v2/send_join/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, RoomAcls acls, IOptionsMonitor<ServerOptions> server, CancellationToken cancellationToken) =>
         {
+            await acls.AssertAllowedAsync(http.GetOrigin(), roomId, cancellationToken);
             (List<JsonObject> state, List<JsonObject> authChain) = await AcceptAsync(http, roomId, eventId, pdu, Memberships.Join, events, keys, cancellationToken);
             return MatrixHttp.Json(new JsonObject { ["origin"] = server.CurrentValue.ServerName, ["members_omitted"] = false, ["state"] = new JsonArray([.. state]), ["auth_chain"] = new JsonArray([.. authChain]) });
         }).RequireFederation();
-        routes.MapPut("/_matrix/federation/v2/send_leave/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, CancellationToken cancellationToken) =>
+        routes.MapPut("/_matrix/federation/v2/send_leave/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject pdu, HttpContext http, EventSender events, RemoteServerKeys keys, RoomAcls acls, CancellationToken cancellationToken) =>
         {
+            await acls.AssertAllowedAsync(http.GetOrigin(), roomId, cancellationToken);
             await AcceptAsync(http, roomId, eventId, pdu, Memberships.Leave, events, keys, cancellationToken);
             return MatrixHttp.Json(new JsonObject());
         }).RequireFederation();
 
         // Invites of this server's users to rooms elsewhere
-        routes.MapPut("/_matrix/federation/v2/invite/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject body, HttpContext http, RemoteInvites invites, CancellationToken cancellationToken) =>
-            MatrixHttp.Json(await invites.ReceiveAsync(http.GetOrigin(), roomId, eventId, body, cancellationToken))).RequireFederation();
+        routes.MapPut("/_matrix/federation/v2/invite/{roomId}/{eventId}", async (string roomId, string eventId, JsonObject body, HttpContext http, RemoteInvites invites, RoomAcls acls, CancellationToken cancellationToken) =>
+        {
+            await acls.AssertAllowedAsync(http.GetOrigin(), roomId, cancellationToken);
+            return MatrixHttp.Json(await invites.ReceiveAsync(http.GetOrigin(), roomId, eventId, body, cancellationToken));
+        }).RequireFederation();
 
         // History for servers filling gaps: missing events, backfill, single events and state at an event
         federation.MapPost("/get_missing_events/{roomId}", async (string roomId, JsonObject body, HttpContext http, RoomHistory history, CancellationToken cancellationToken) =>
@@ -129,8 +136,9 @@ public static class FederationEndpoints
             UserId.TryParse(userId, out UserId user) && user.ServerName == server.CurrentValue.ServerName ? MatrixHttp.Json(await devices.GetUserDevicesAsync(userId, cancellationToken)) : MatrixHttp.Error(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Not a user of this server."));
 
         // Transactions of events, and EDUs: to-device messages, device list changes, typing, receipts and presence
-        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, RemoteEvents events, RemoteDevices devices, RemoteActivity activity, CancellationToken cancellationToken) =>
+        federation.MapPut("/send/{txnId}", async (string txnId, JsonObject body, HttpContext http, RemoteEvents events, RemoteDevices devices, RemoteActivity activity, RoomAcls acls, CancellationToken cancellationToken) =>
         {
+            // Typing and receipts of rooms whose ACL denies the origin are dropped, as are its events there
             string origin = http.GetOrigin();
             foreach (JsonObject edu in (body["edus"] as JsonArray ?? []).OfType<JsonObject>().Take(100))
             {
@@ -139,14 +147,15 @@ public static class FederationEndpoints
                 {
                     case "m.direct_to_device": await devices.ReceiveToDeviceAsync(origin, content, cancellationToken); break;
                     case "m.device_list_update": await devices.ReceiveDeviceListUpdateAsync(origin, content, cancellationToken); break;
-                    case "m.typing": await activity.ReceiveTypingAsync(origin, content, cancellationToken); break;
-                    case "m.receipt": await activity.ReceiveReceiptsAsync(origin, content, cancellationToken); break;
+                    case "m.typing" when await acls.IsAllowedAsync(origin, content["room_id"]?.GetValue<string>(), cancellationToken): await activity.ReceiveTypingAsync(origin, content, cancellationToken); break;
+                    case "m.receipt": await activity.ReceiveReceiptsAsync(origin, await AllowedRoomsAsync(acls, origin, content, cancellationToken), cancellationToken); break;
                     case "m.presence": await activity.ReceivePresenceAsync(origin, content, cancellationToken); break;
                 }
             }
             JsonObject results = [];
             foreach (JsonObject pdu in (body["pdus"] as JsonArray ?? []).OfType<JsonObject>().Take(50))
             {
+                if (!await acls.IsAllowedAsync(origin, pdu["room_id"]?.GetValue<string>(), cancellationToken)) continue;
                 (string? eventId, string? error) = await events.AcceptAsync(origin, pdu, cancellationToken);
                 if (eventId is not null) results[eventId] = error is null ? new JsonObject() : new JsonObject { ["error"] = error };
             }
@@ -154,6 +163,19 @@ public static class FederationEndpoints
         });
         // Return routes
         return routes;
+    }
+
+    /// <summary>Return the rooms of an <c>m.receipt</c> EDU whose ACL allows <paramref name="origin"/>.</summary>
+    private static async Task<JsonObject> AllowedRoomsAsync(RoomAcls acls, string origin, JsonObject content, CancellationToken cancellationToken)
+    {
+        // Each room separately
+        JsonObject allowed = [];
+        foreach ((string roomId, JsonNode? receipts) in content)
+        {
+            if (await acls.IsAllowedAsync(origin, roomId, cancellationToken)) allowed[roomId] = receipts?.DeepClone();
+        }
+        // Return allowed rooms
+        return allowed;
     }
 
     /// <summary>Return <paramref name="userId"/> when it is a user of the asking server; throw <c>M_FORBIDDEN</c> otherwise.</summary>

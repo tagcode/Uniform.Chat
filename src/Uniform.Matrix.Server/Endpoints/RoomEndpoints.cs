@@ -34,15 +34,15 @@ public static class RoomEndpoints
         client.MapPost("/rooms/{roomId}/ban", (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => ChangeAsync(http, rooms, roomId, body, Memberships.Ban, cancellationToken));
         client.MapPost("/rooms/{roomId}/unban", (string roomId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) => ChangeAsync(http, rooms, roomId, body, Memberships.Leave, cancellationToken));
 
-        // Reports of content, rooms and users, logged for the admin as there is no review list yet
+        // Reports of content, rooms and users, kept for the admin to review
         foreach (string pattern in new[] { "/rooms/{roomId}/report/{eventId}", "/rooms/{roomId}/report", "/users/{userId}/report" })
         {
-            client.MapPost(pattern, async (HttpContext http, ILoggerFactory loggers, CancellationToken cancellationToken) =>
+            client.MapPost(pattern, async (HttpContext http, ReportService reports, CancellationToken cancellationToken) =>
             {
-                JsonObject? body = http.Request.ContentLength is > 0 ? await http.Request.ReadFromJsonAsync<JsonObject>(cancellationToken) : null;
+                JsonObject? body = http.Request.ContentLength is not 0 && http.Request.HasJsonContentType() ? await http.Request.ReadFromJsonAsync<JsonObject>(cancellationToken) : null;
                 string reason = body?["reason"] is JsonValue value && value.TryGetValue(out string? text) ? text : "";
-                string target = string.Join(" ", http.Request.RouteValues.Where(r => r.Key is "roomId" or "eventId" or "userId").Select(r => $"{r.Key}={r.Value}"));
-                loggers.CreateLogger("Uniform.Matrix.Server.Reports").LogWarning("Report by {Reporter}: {Target}: {Reason}", http.GetRequester().UserId, target, reason.Length > 1000 ? reason[..1000] : reason);
+                string? Route(string key) => http.Request.RouteValues.TryGetValue(key, out object? routeValue) ? routeValue as string : null;
+                await reports.AddAsync(http.GetRequester().UserId, Route("roomId"), Route("eventId"), Route("userId"), reason, cancellationToken);
                 return MatrixHttp.Json(new JsonObject());
             }).RequireRateLimiting(RateLimits.Writes);
         }

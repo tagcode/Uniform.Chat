@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
@@ -51,6 +52,8 @@ public class FederationTests
         public Dictionary<string, int> FailTransactions { get; } = [];
         /// <summary>Hosts that refuse transactions with 400, so senders drop them and events go missing.</summary>
         public HashSet<string> RefuseTransactions { get; } = [];
+        /// <summary>SRV records by service name, e.g. <c>_matrix-fed._tcp.e.test</c>, which the servers' <see cref="SrvLookup"/> answers from.</summary>
+        public Dictionary<string, SrvRecord> Srv { get; } = [];
         /// <summary>Address of each request, including those to unknown hosts.</summary>
         public ConcurrentQueue<string> Requests { get; } = new();
 
@@ -96,6 +99,14 @@ public class FederationTests
         protected override void Dispose(bool disposing) { }
     }
 
+    /// <summary>Answers SRV lookups from <see cref="Network.Srv"/> instead of DNS.</summary>
+    private sealed class TestSrvLookup(Network network) : SrvLookup(NullLogger<SrvLookup>.Instance)
+    {
+        /// <summary>Return the network's record for the name, if any.</summary>
+        public override Task<IReadOnlyList<SrvRecord>> LookupAsync(string name, CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<SrvRecord>>(network.Srv.TryGetValue(name, out SrvRecord? record) ? [record] : []);
+    }
+
     /// <summary>Start a federating server named <paramref name="serverName"/> on <paramref name="network"/>, in <paramref name="dataDirectory"/> when given, e.g. to restart it, with <paramref name="extra"/> settings.</summary>
     internal static async Task<TestHomeserver> StartAsync(string serverName, Network network, string? dataDirectory = null, IReadOnlyDictionary<string, string?>? extra = null)
     {
@@ -109,6 +120,7 @@ public class FederationTests
             {
                 services.AddHttpClient(FederationClient.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
                 services.AddTransient<IStartupFilter, RawTargetFilter>();
+                services.AddSingleton<SrvLookup>(new TestSrvLookup(network));
             });
         network.Servers[serverName] = server.CreateHandler();
         // Return server
@@ -155,8 +167,8 @@ public class FederationTests
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Kitchen" }, Ct);
 
         // Act
-        string joined = await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
-        string again = await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        string joined = await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
+        string again = await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
 
         // Assert: membership on both sides, the state here
         Assert.Equal([roomId, roomId], [joined, again]);
@@ -179,7 +191,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
 
         // Act
         await bob.SendTextAsync(roomId, "hello from b", Ct);
@@ -218,7 +230,7 @@ public class FederationTests
         await alice.InviteAsync(roomId, "@carol:b.test", cancellationToken: Ct);
         JsonObject bobSync = (await bobHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
         JsonObject carolBefore = (await carolHttp.GetFromJsonAsync<JsonObject>("/_matrix/client/v3/sync?timeout=0", Ct))!;
-        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await bob.JoinRoomAsync(roomId, ["a.test"], cancellationToken: Ct);
         await bob.SendTextAsync(roomId, "thanks for the invite", Ct);
         IReadOnlyList<string> atA = await WaitForBodiesAsync(alice, roomId, 1);
         await carol.LeaveRoomAsync(roomId, cancellationToken: Ct);
@@ -255,7 +267,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         lock (network.FailTransactions) network.FailTransactions["b.test"] = 1;
 
         // Act
@@ -280,7 +292,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         await WaitForOutboxAsync(a, 0);
         lock (network.FailTransactions) network.FailTransactions["b.test"] = 2;
 
@@ -313,7 +325,7 @@ public class FederationTests
             {
                 MatrixClient alice = a.CreateClient();
                 await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
-                await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+                await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
                 await WaitForOutboxAsync(a, 0);
                 lock (network.FailTransactions) network.FailTransactions["b.test"] = 1000;
 
@@ -348,7 +360,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         await WaitForOutboxAsync(b, 0);
 
         // Act: two messages a.test refuses, which b.test then drops, and one that arrives
@@ -409,7 +421,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         string eventId = await bob.SendTextAsync(roomId, "read me", Ct);
         await WaitForBodiesAsync(alice, roomId, 1);
         using HttpClient aliceHttp = a.CreateHttpClient();
@@ -450,7 +462,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         string one = await bob.SendTextAsync(roomId, "one", Ct);
         string two = await bob.SendTextAsync(roomId, "two", Ct);
         string three = await bob.SendTextAsync(roomId, "three", Ct);
@@ -542,7 +554,7 @@ public class FederationTests
         MatrixClient bob = b.CreateClient();
         await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
-        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
         using HttpClient aliceHttp = a.CreateHttpClient();
         aliceHttp.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
         using HttpClient bobHttp = b.CreateHttpClient();
@@ -660,6 +672,260 @@ public class FederationTests
         Assert.Contains(kitchen, await alice.GetJoinedRoomsAsync(Ct));
     }
 
+    /// <summary>When both servers change the topic while cut off from each other, the room forks, and both resolve it to the same topic once they hear of each other's change.</summary>
+    [Fact]
+    public async Task ConvergeAfterFork()
+    {
+        // Arrange: bob of b.test a moderator in alice's room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, ["a.test"], cancellationToken: Ct);
+        await alice.SendStateEventAsync(roomId, EventTypes.RoomPowerLevels, PowerLevelsWith(await alice.GetStateEventAsync<JsonObject>(roomId, EventTypes.RoomPowerLevels, cancellationToken: Ct), "@bob:b.test", 50), cancellationToken: Ct);
+        await WaitForAsync(async () => await PowerOfBobAsync(bob, roomId) == "50");
+
+        // Act: a topic on each side of the cut, then messages that carry each side's history over
+        lock (network.FailTransactions) { network.RefuseTransactions.Add("a.test"); network.RefuseTransactions.Add("b.test"); }
+        await alice.SetRoomTopicAsync(roomId, "Alice's topic", Ct);
+        await Task.Delay(20, Ct);
+        await bob.SetRoomTopicAsync(roomId, "Bob's topic", Ct);
+        await Task.Delay(500, Ct);
+        await WaitForOutboxAsync(a, 0);
+        await WaitForOutboxAsync(b, 0);
+        lock (network.FailTransactions) network.RefuseTransactions.Clear();
+        await alice.SendTextAsync(roomId, "from a", Ct);
+        await bob.SendTextAsync(roomId, "from b", Ct);
+        bool converged = await WaitForAsync(async () => await TopicAsync(alice, roomId) == await TopicAsync(bob, roomId) && await TopicAsync(alice, roomId) == "Bob's topic");
+
+        // Assert: the later topic on both
+        Assert.True(converged, $"a.test has {await TopicAsync(alice, roomId)}, b.test has {await TopicAsync(bob, roomId)}");
+    }
+
+    /// <summary>A message of a user who was banned meanwhile on another server is soft-failed there: kept for the room's history, but not shown.</summary>
+    [Fact]
+    public async Task SoftFailEventsOfBannedSenders()
+    {
+        // Arrange: bob of b.test in alice's room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, ["a.test"], cancellationToken: Ct);
+        await WaitForOutboxAsync(b, 0);
+
+        // Act: alice bans bob while bob, not yet knowing, writes
+        lock (network.FailTransactions) { network.RefuseTransactions.Add("a.test"); network.RefuseTransactions.Add("b.test"); }
+        await alice.BanAsync(roomId, "@bob:b.test", cancellationToken: Ct);
+        await bob.SendTextAsync(roomId, "before I knew", Ct);
+        await Task.Delay(500, Ct);
+        await WaitForOutboxAsync(a, 0);
+        await WaitForOutboxAsync(b, 0);
+        lock (network.FailTransactions) network.RefuseTransactions.Clear();
+        await bob.SendTextAsync(roomId, "still writing", Ct);
+        bool stored = await WaitForAsync(async () =>
+        {
+            await using ServerDbContext db = await a.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>().CreateDbContextAsync(Ct);
+            return await db.Events.IgnoreQueryFilters().CountAsync(e => e.RoomId == roomId && e.SoftFailed, Ct) == 2;
+        });
+        MessagesResponse page = await alice.GetMessagesAsync(roomId, limit: 50, cancellationToken: Ct);
+
+        // Assert: both kept as soft-failed, neither shown to alice
+        Assert.True(stored);
+        Assert.DoesNotContain(page.Chunk, e => e.Sender == "@bob:b.test" && e.Type == EventTypes.RoomMessage);
+    }
+
+    /// <summary>When more events are missing than get_missing_events brings, the state before the oldest one is asked for, so a state change in the part never fetched still applies.</summary>
+    [Fact]
+    public async Task FetchStateOverLargeGaps()
+    {
+        // Arrange: alice of a.test in bob's room
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
+        await WaitForOutboxAsync(b, 0);
+
+        // Act: a topic, then more messages than one gap fill brings, all refused, then one that arrives
+        lock (network.FailTransactions) network.RefuseTransactions.Add("a.test");
+        await bob.SetRoomTopicAsync(roomId, "Set in the gap", Ct);
+        for (int i = 0; i < RemoteEvents.MaxMissing + 5; i++) await bob.SendTextAsync(roomId, $"lost {i}", Ct);
+        await Task.Delay(500, Ct);
+        await WaitForOutboxAsync(b, 0);
+        lock (network.FailTransactions) network.RefuseTransactions.Remove("a.test");
+        await bob.SendTextAsync(roomId, "after the gap", Ct);
+        bool arrived = await WaitForAsync(async () => await TopicAsync(alice, roomId) == "Set in the gap");
+
+        // Assert
+        Assert.True(arrived, $"a.test has the topic {await TopicAsync(alice, roomId)}");
+    }
+
+    /// <summary>A user previews a room and a space of another server through their own server: the summary by alias or by ID with a via server, and the space with its children.</summary>
+    [Fact]
+    public async Task PreviewRemoteRooms()
+    {
+        // Arrange: bob's public space on b.test with a public child that has an alias
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string space = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Home" }, Ct);
+        string kitchen = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Kitchen", RoomAliasName = "kitchen" }, Ct);
+        await bob.SendStateEventAsync(space, "m.space.child", new { via = new[] { "b.test" } }, kitchen, Ct);
+        using HttpClient http = a.CreateHttpClient();
+        http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+
+        // Act
+        JsonObject byAlias = (await http.GetFromJsonAsync<JsonObject>($"/_matrix/client/v1/room_summary/{Uri.EscapeDataString("#kitchen:b.test")}", Ct))!;
+        JsonObject byId = (await http.GetFromJsonAsync<JsonObject>($"/_matrix/client/v1/room_summary/{Uri.EscapeDataString(kitchen)}?via=b.test", Ct))!;
+        HttpStatusCode withoutVia = (await http.GetAsync($"/_matrix/client/v1/room_summary/{Uri.EscapeDataString(kitchen)}", Ct)).StatusCode;
+        JsonObject hierarchy = (await http.GetFromJsonAsync<JsonObject>($"/_matrix/client/v1/rooms/{Uri.EscapeDataString(space)}/hierarchy?via=b.test", Ct))!;
+
+        // Assert: version 12 room IDs name no server, so the ID alone cannot be looked up
+        Assert.Equal("Kitchen", byAlias["name"]!.GetValue<string>());
+        Assert.Equal(kitchen, byId["room_id"]!.GetValue<string>());
+        Assert.Equal(HttpStatusCode.NotFound, withoutVia);
+        Assert.Equal(["Home", "Kitchen"], hierarchy["rooms"]!.AsArray().Select(r => r!["name"]!.GetValue<string>()));
+    }
+
+    /// <summary>A server found only through its SRV record is reached at the record's host and port, named by its server name.</summary>
+    [Fact]
+    public async Task ResolveSrvRecords()
+    {
+        // Arrange: e.test reachable only as e-host.test, which its SRV record names
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver e = await StartAsync("e.test", network);
+        network.Servers["e-host.test"] = network.Servers["e.test"];
+        network.Servers.Remove("e.test");
+        network.Srv["_matrix-fed._tcp.e.test"] = new SrvRecord(10, 0, 8448, "e-host.test");
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient erin = e.CreateClient();
+        await erin.RegisterAsync("erin", "password", cancellationToken: Ct);
+        await erin.SetDisplayNameAsync("Erin of E", Ct);
+
+        // Act
+        ProfileResponse profile = await alice.GetProfileAsync("@erin:e.test", Ct);
+
+        // Assert
+        Assert.Equal("Erin of E", profile.DisplayName);
+        Assert.Contains(network.Requests, r => r.StartsWith("https://e-host.test:8448/", StringComparison.Ordinal));
+    }
+
+    /// <summary>A server the room's ACL denies cannot join the room, and its events and typing there are dropped.</summary>
+    [Fact]
+    public async Task ApplyServerAcls()
+    {
+        // Arrange: bob of b.test in alice's room, then an ACL that denies b.test and c.test
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        await using TestHomeserver c = await StartAsync("c.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        MatrixClient carol = c.CreateClient();
+        await carol.RegisterAsync("carol", "password", cancellationToken: Ct);
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, ["a.test"], cancellationToken: Ct);
+        await alice.SendStateEventAsync(roomId, RoomAcls.EventType, new JsonObject { ["allow"] = new JsonArray("*"), ["deny"] = new JsonArray("b.test", "c.test") }, cancellationToken: Ct);
+        await Task.Delay(500, Ct);
+
+        // Act
+        MatrixException refused = await Assert.ThrowsAsync<MatrixException>(() => carol.JoinRoomAsync(roomId, ["a.test"], cancellationToken: Ct));
+        await bob.SendTextAsync(roomId, "denied", Ct);
+        await Task.Delay(1000, Ct);
+        MessagesResponse page = await alice.GetMessagesAsync(roomId, limit: 50, cancellationToken: Ct);
+
+        // Assert
+        Assert.Equal(ErrorCodes.Forbidden, refused.Errcode);
+        Assert.DoesNotContain(page.Chunk, e => e.Sender == "@bob:b.test" && e.Type == EventTypes.RoomMessage);
+    }
+
+    /// <summary>Return the room's topic as a user's server has it, or null.</summary>
+    private static async Task<string?> TopicAsync(MatrixClient client, string roomId)
+    {
+        // Missing topic is null
+        try
+        {
+            return (await client.GetStateEventAsync<JsonObject>(roomId, EventTypes.RoomTopic, cancellationToken: Ct))["topic"]?.GetValue<string>();
+        }
+        catch (MatrixException)
+        {
+            // On error no topic
+            return null;
+        }
+    }
+
+    /// <summary>Return bob's power level as a user's server has it, as text.</summary>
+    private static async Task<string?> PowerOfBobAsync(MatrixClient client, string roomId) =>
+        (await client.GetStateEventAsync<JsonObject>(roomId, EventTypes.RoomPowerLevels, cancellationToken: Ct))["users"]?["@bob:b.test"]?.ToJsonString();
+
+    /// <summary>Return power levels content with <paramref name="userId"/> at <paramref name="level"/>.</summary>
+    private static JsonObject PowerLevelsWith(JsonObject content, string userId, int level)
+    {
+        // Copy with the user's level
+        JsonObject updated = content.DeepClone().AsObject();
+        if (updated["users"] is not JsonObject users) updated["users"] = users = [];
+        users[userId] = level;
+        // Return content
+        return updated;
+    }
+
+    /// <summary>Return whether <paramref name="condition"/> holds within a few seconds.</summary>
+    private static async Task<bool> WaitForAsync(Func<Task<bool>> condition, int attempts = 100)
+    {
+        // Poll
+        for (int attempt = 0; attempt < attempts; attempt++)
+        {
+            if (await condition()) return true;
+            await Task.Delay(100, Ct);
+        }
+        // On timeout false
+        return false;
+    }
+
+    /// <summary>Keys of many servers, as for checking a joined room's state, are asked from the key server in one request, before asking any of the servers.</summary>
+    [Fact]
+    public async Task PrefetchThroughKeyServer()
+    {
+        // Arrange: a.test trusts c.test as its key server; b.test and d.test are in rooms a.test joins
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network, extra: new Dictionary<string, string?> { ["Federation:TrustedKeyServers"] = "c.test" });
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        await using TestHomeserver c = await StartAsync("c.test", network);
+        await using TestHomeserver d = await StartAsync("d.test", network);
+        RemoteServerKeys keys = a.Services.GetRequiredService<RemoteServerKeys>();
+
+        // Act
+        await keys.PrefetchAsync(["b.test", "d.test"], Ct);
+        string? bKey = await keys.GetVerifyKeyAsync("b.test", b.Services.GetRequiredService<ServerKeys>().KeyId, Ct);
+
+        // Assert: one query to the key server, which alone asked b.test and d.test
+        Assert.NotNull(bKey);
+        Assert.Single(network.Requests, r => r.Contains("c.test") && r.Contains("/_matrix/key/v2/query"));
+        Assert.Single(network.Requests, r => r.Contains("b.test") && r.Contains("/_matrix/key/v2/server"));
+        Assert.Single(network.Requests, r => r.Contains("d.test") && r.Contains("/_matrix/key/v2/server"));
+    }
+
     /// <summary>Concurrent lookups of a server's keys share one fetch, and a server that cannot be reached is not asked again for a while.</summary>
     [Fact]
     public async Task ShareKeyFetches()
@@ -713,7 +979,7 @@ public class FederationTests
 
         // Act
         MatrixException unknown = await Assert.ThrowsAsync<MatrixException>(() => alice.JoinRoomAsync("!nothing:b.test", cancellationToken: Ct));
-        MatrixException forbidden = await Assert.ThrowsAsync<MatrixException>(() => alice.JoinRoomAsync(privateRoom, cancellationToken: Ct));
+        MatrixException forbidden = await Assert.ThrowsAsync<MatrixException>(() => alice.JoinRoomAsync(privateRoom, ["b.test"], cancellationToken: Ct));
 
         // Assert
         Assert.Equal(ErrorCodes.NotFound, unknown.Errcode);

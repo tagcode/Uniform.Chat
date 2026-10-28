@@ -40,6 +40,7 @@
             <Button.Flyout>
               <Flyout Placement="BottomEdgeAlignedRight">
                 <StackPanel Width="240" Spacing="8">
+                  <Button Content="Room directory…" Command="{Binding OpenDirectoryCommand}" HorizontalAlignment="Stretch" />
                   <Button Content="Security and recovery…" Command="{Binding OpenSecurityCommand}" HorizontalAlignment="Stretch" />
                   <Button Content="Settings…" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Stretch" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
                   <Separator />
@@ -50,9 +51,10 @@
           </Button>
         </Grid>
 
-        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="12,0,12,8">
-          <TextBox Grid.Column="0" Text="{Binding JoinTarget}" PlaceholderText="#room, @user or new name" ToolTip.Tip="Join a room by its address, chat with a user, or create a private room" x:Name="RoomBox" />
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="12,0,12,8">
+          <TextBox Grid.Column="0" Text="{Binding JoinTarget}" PlaceholderText="#room, @user, link or new name" ToolTip.Tip="Join a room by its address or link, chat with a user, or create a private room" x:Name="RoomBox" />
           <Button Grid.Column="1" Margin="6,0,0,0" Content="{Binding OpenTargetText}" Command="{Binding OpenTargetCommand}" />
+          <Button Grid.Column="2" Margin="6,0,0,0" Classes="icon" Content="🔍" ToolTip.Tip="Room directory" Command="{Binding OpenDirectoryCommand}" />
         </Grid>
 
         <TextBlock DockPanel.Dock="Bottom" Classes="status" Text="{Binding StatusText}" IsVisible="{Binding StatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextWrapping="Wrap" />
@@ -117,7 +119,7 @@
                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
                               </StackPanel>
-                              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyMemberClick" IsVisible="{Binding CanVerify}" />
+                              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyMemberClick" IsVisible="{Binding ShowVerify}" />
                             </Grid>
                           </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -222,6 +224,16 @@
           <ScrollViewer Grid.Row="1">
             <views:SettingsView DataContext="{Binding Settings}" />
           </ScrollViewer>
+        </Grid>
+      </Border>
+    </Border>
+
+    <!-- Room directory over everything -->
+    <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding RoomDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <Border Classes="card">
+        <Grid RowDefinitions="Auto,*">
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseDirectoryCommand}" HorizontalAlignment="Right" />
+          <views:DirectoryView Grid.Row="1" DataContext="{Binding RoomDirectory}" />
         </Grid>
       </Border>
     </Border>

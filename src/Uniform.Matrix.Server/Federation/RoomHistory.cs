@@ -13,12 +13,14 @@ public sealed class RoomHistory
 {
     private const int MaxEvents = 100;
     private readonly IDbContextFactory<ServerDbContext> contexts;
+    private readonly RoomAcls acls;
 
     /// <summary>Create the service.</summary>
-    public RoomHistory(IDbContextFactory<ServerDbContext> contexts)
+    public RoomHistory(IDbContextFactory<ServerDbContext> contexts, RoomAcls acls)
     {
         // Store dependencies
         this.contexts = contexts;
+        this.acls = acls;
     }
 
     /// <summary>Return the events before <paramref name="latest"/> back to <paramref name="earliest"/>, which the asking server has, at most <paramref name="limit"/>, oldest first.</summary>
@@ -26,7 +28,7 @@ public sealed class RoomHistory
     {
         // Breadth first from the prev_events of the latest, stopping at what the asker has
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        await AssertMemberServerAsync(db, origin, roomId, cancellationToken);
+        await AssertMemberServerAsync(db, acls, origin, roomId, cancellationToken);
         HashSet<string> seen = [.. earliest, .. latest];
         List<string> next = [.. (await LoadAsync(db, roomId, latest, cancellationToken)).SelectMany(e => PrevEvents(e.Pdu))];
         List<(long Depth, JsonObject Pdu)> found = [];
@@ -45,7 +47,7 @@ public sealed class RoomHistory
     {
         // Breadth first from the given events themselves
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        await AssertMemberServerAsync(db, origin, roomId, cancellationToken);
+        await AssertMemberServerAsync(db, acls, origin, roomId, cancellationToken);
         HashSet<string> seen = [];
         List<string> next = [.. from];
         List<(long Depth, JsonObject Pdu)> found = [];
@@ -65,19 +67,19 @@ public sealed class RoomHistory
         // The event, then the asker's right to it
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         EventRow row = await db.Events.AsNoTracking().SingleOrDefaultAsync(e => e.EventId == eventId, cancellationToken) ?? throw NotFound();
-        await AssertMemberServerAsync(db, origin, row.RoomId, cancellationToken);
+        await AssertMemberServerAsync(db, acls, origin, row.RoomId, cancellationToken);
         // Return event
         return JsonNode.Parse(row.Json)!.AsObject();
     }
 
-    /// <summary>Return the state of a room at an event, and the auth chain of that state, as IDs or as events.</summary>
+    /// <summary>Return the state of a room at an event, that is before it as other servers expect, and the auth chain of that state, as IDs or as events.</summary>
     public async Task<(List<JsonObject> State, List<JsonObject> AuthChain, List<string> StateIds, List<string> AuthChainIds)> GetStateAsync(string origin, string roomId, string eventId, CancellationToken cancellationToken)
     {
-        // State group of the event
+        // State group before the event, as other servers read it; the one after for history whose state before is not known
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        await AssertMemberServerAsync(db, origin, roomId, cancellationToken);
+        await AssertMemberServerAsync(db, acls, origin, roomId, cancellationToken);
         EventRow row = await db.Events.AsNoTracking().SingleOrDefaultAsync(e => e.EventId == eventId && e.RoomId == roomId, cancellationToken) ?? throw NotFound();
-        List<string> stateIds = [.. (await StateGroups.LoadAsync(db, row.StateGroup, cancellationToken)).Values];
+        List<string> stateIds = [.. (await StateGroups.LoadAsync(db, row.StateGroupBefore != 0 ? row.StateGroupBefore : row.StateGroup, cancellationToken)).Values];
         List<(string Id, long Depth, JsonObject Pdu)> state = await LoadAsync(db, roomId, stateIds, cancellationToken);
 
         // Auth events reachable from the state, also those that are state themselves
@@ -94,9 +96,12 @@ public sealed class RoomHistory
         return ([.. state.Select(e => e.Pdu)], [.. chain.Select(e => e.Pdu)], [.. state.Select(e => e.Id)], [.. chain.Select(e => e.Id)]);
     }
 
-    /// <summary>Assert that <paramref name="origin"/> has a member joined to the room, so it may see its history.</summary>
-    private static async Task AssertMemberServerAsync(ServerDbContext db, string origin, string roomId, CancellationToken cancellationToken)
+    /// <summary>Assert that <paramref name="origin"/> has a member joined to the room, so it may see its history, and that the room's server ACL allows it.</summary>
+    private static async Task AssertMemberServerAsync(ServerDbContext db, RoomAcls acls, string origin, string roomId, CancellationToken cancellationToken)
     {
+        // Allowed by the ACL
+        await acls.AssertAllowedAsync(origin, roomId, cancellationToken);
+
         // Joined members of the origin
         List<string> members = await db.CurrentState.AsNoTracking().Where(s => s.RoomId == roomId && s.Type == EventTypes.RoomMember && s.Membership == Memberships.Join).Select(s => s.StateKey).ToListAsync(cancellationToken);
         if (!members.Any(m => UserId.TryParse(m, out UserId user) && user.ServerName == origin)) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "The asking server has no member in the room.");

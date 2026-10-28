@@ -23,6 +23,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     private static readonly TimeSpan TypingRenewal = TimeSpan.FromSeconds(20);
     private readonly ClientConnection connection;
     private readonly IUiDispatcher ui;
+    private string directoryServer = "";
     private readonly bool singlePane;
     private readonly Func<Task> signOut;
     private readonly Dictionary<string, RoomItemViewModel> roomsById = [];
@@ -141,6 +142,10 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     [ObservableProperty]
     public partial bool IsSettingsOpen { get; set; }
 
+    /// <summary>Open room directory, or null.</summary>
+    [ObservableProperty]
+    public partial DirectoryViewModel? RoomDirectory { get; set; }
+
     /// <summary>Open security panel, or null.</summary>
     [ObservableProperty]
     public partial SecurityViewModel? Security { get; set; }
@@ -245,14 +250,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         await RefreshPendingAsync(room.RoomId);
     }
 
-    /// <summary>Follow a <c>https://matrix.to/#/…</c> link inside the app: open a room already joined, or put a room or person in the room box to join or chat with; return false for other links.</summary>
+    /// <summary>Follow a matrix.to link or <c>matrix:</c> URI inside the app: open a room already joined, or put a room, a room ID with the servers to join through, or a person in the room box to join or chat with; return false for other links.</summary>
     public bool OpenMatrixLink(string href)
     {
-        // Assert a matrix.to link to a room or user
-        const string prefix = "https://matrix.to/#/";
-        if (!href.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return false;
-        string target = Uri.UnescapeDataString(href[prefix.Length..].Split('?')[0].Split('/')[0]);
-        if (target.Length < 2 || target[0] is not ('#' or '!' or '@')) return false;
+        // Assert a link to a room or user
+        if (!href.StartsWith("https://matrix.to/", StringComparison.OrdinalIgnoreCase) && !href.StartsWith("matrix:", StringComparison.OrdinalIgnoreCase) || !MatrixLink.TryParse(href, out MatrixLink? link)) return false;
+        string target = link.Target;
 
         // Joined rooms and existing chats open; others wait in the room box for Join or Chat
         string? roomId = connection.Processor.Read(store => store?.Rooms.Values.FirstOrDefault(room => room.Membership == Memberships.Join && (room.RoomId == target || room.CanonicalAlias == target || room.DirectUserId == target))?.RoomId);
@@ -262,7 +265,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             return true;
         }
         if (target == connection.UserId) return true;
-        JoinTarget = target;
+        JoinTarget = target[0] == '!' ? string.Join(' ', [target, .. link.Via]) : target;
         Notice = target[0] == '@' ? $"Choose Chat to start a chat with {target}." : $"Choose Join to join {target}.";
         // Done
         return true;
@@ -439,12 +442,14 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         SelectedRoom = null;
     }
 
-    /// <summary>Join the room in <see cref="JoinTarget"/>, start a direct chat with the user in it, or create a private room by that name; open the room when it arrives.</summary>
+    /// <summary>Join the room in <see cref="JoinTarget"/>, given by alias, ID or link and optionally followed by servers to join through; start a direct chat with the user in it, or create a private room by that name; open the room when it arrives.</summary>
     [RelayCommand(CanExecute = nameof(CanOpenTarget))]
     private async Task OpenTargetAsync()
     {
-        // Assert a valid user ID for chats
-        string target = JoinTarget.Trim();
+        // A room, user or link, then servers to join through; a valid user ID for chats
+        string[] words = JoinTarget.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        MatrixLink? link = MatrixLink.TryParse(words[0], out MatrixLink? parsed) ? parsed with { Via = [.. parsed.Via.Concat(words.Skip(1)).Distinct()] } : null;
+        string target = link?.Target ?? JoinTarget.Trim();
         if (target[0] == '@' && !Uniform.Matrix.Protocol.Core.UserId.TryParse(target, out _))
         {
             Notice = $"{target} is not a user ID; they look like @name:server.";
@@ -457,7 +462,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         IReadOnlyList<InitialStateEvent>? state = encrypted ? [new InitialStateEvent { Type = EventTypes.RoomEncryption, Content = new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm } }] : null;
         bool done = target[0] switch
         {
-            '#' or '!' => await RunAsync($"Joining {target}", async client => roomId = await client.JoinRoomAsync(target)),
+            '#' or '!' => await JoinLinkAsync(link ?? new MatrixLink { Target = target }),
             '@' => await RunAsync($"Starting a chat with {target}", async client => roomId = await client.CreateDirectRoomAsync(target, encrypted)),
             _ => await RunAsync($"Creating {target}", async client => roomId = await client.CreateRoomAsync(new CreateRoomRequest { Name = target, Preset = RoomPresets.PrivateChat, InitialState = state })),
         };
@@ -465,8 +470,20 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
         // Open it now, or when sync brings it
         JoinTarget = "";
+        if (roomId is not null) openWhenArrived = roomId;
+        RefreshRooms();
+    }
+
+    /// <summary>Join the room of <paramref name="link"/> through its servers and open it when it arrives; return whether it was joined.</summary>
+    private async Task<bool> JoinLinkAsync(MatrixLink link)
+    {
+        // Join, then open when sync brings it
+        string? roomId = null;
+        if (!await RunAsync($"Joining {link.Target}", async client => roomId = await client.JoinRoomAsync(link.Target, link.Via.Count > 0 ? link.Via : null))) return false;
         openWhenArrived = roomId;
         RefreshRooms();
+        // Return joined
+        return true;
     }
 
     /// <summary>Return whether the room box has text.</summary>
@@ -486,7 +503,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                 .Where(member => member.Membership is Memberships.Join or Memberships.Invite)
                 .OrderBy(member => member.Membership == Memberships.Join ? 0 : 1)
                 .ThenBy(member => room.GetMemberDisplayName(member.UserId), StringComparer.CurrentCultureIgnoreCase)
-                .Select(member => new MemberItem(member.UserId, room.GetMemberDisplayName(member.UserId), member.Membership == Memberships.Invite, canVerify && member.UserId != connection.UserId))
+                .Select(member => new MemberItem(member.UserId, room.GetMemberDisplayName(member.UserId), member.Membership == Memberships.Invite, canVerify && member.UserId != connection.UserId, canVerify && member.UserId != connection.UserId && connection.Crypto.IsUserVerified(member.UserId)))
                 .ToList()
             : []);
         foreach (MemberItem member in members) Members.Add(member);
@@ -554,6 +571,26 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Show or hide the settings panel.</summary>
     [RelayCommand]
     private void ToggleSettings() => IsSettingsOpen = Settings is not null && !IsSettingsOpen;
+
+    /// <summary>Show the public room directory, of the server shown last.</summary>
+    [RelayCommand]
+    private async Task OpenDirectoryAsync()
+    {
+        // A fresh search of the last server
+        DirectoryViewModel directory = new(connection, ui, directoryServer, async link =>
+        {
+            if (!await JoinLinkAsync(link)) return false;
+            RoomDirectory = null;
+            return true;
+        });
+        directory.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(DirectoryViewModel.Server)) directoryServer = directory.Server.Trim(); };
+        RoomDirectory = directory;
+        await directory.SearchAsync();
+    }
+
+    /// <summary>Hide the room directory.</summary>
+    [RelayCommand]
+    private void CloseDirectory() => RoomDirectory = null;
 
     /// <summary>Hide the security panel.</summary>
     [RelayCommand]

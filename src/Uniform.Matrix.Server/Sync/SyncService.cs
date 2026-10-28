@@ -159,6 +159,52 @@ public sealed class SyncService
         return response;
     }
 
+    /// <summary>Return the <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidthreads">threads</see> of a room: their root events with summaries, the most recently active first.</summary>
+    /// <param name="requester">Who asks; only roots they can see are listed.</param>
+    /// <param name="roomId">Room.</param>
+    /// <param name="participated">Only threads the requester started or replied to.</param>
+    /// <param name="from">Token to continue from, as <c>next_batch</c> gave it.</param>
+    /// <param name="limit">Most threads.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<JsonObject> GetThreadsAsync(Requester requester, string roomId, bool participated, string? from, int limit, CancellationToken cancellationToken)
+    {
+        // Member of the room
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        CurrentStateRow member = await GetMemberAsync(db, requester.UserId, roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Not a member of the room.");
+        Visibility visibility = new(db, cache, requester.UserId, member.Membership);
+
+        // Roots by their latest reply, before the token
+        long? position = from is null ? null : ParseToken(from);
+        List<(string RelatesTo, long Stream, string Sender)> replies = await (from relation in db.EventRelations.AsNoTracking()
+                                                                              where relation.RelType == RelationTypes.Thread
+                                                                              join reply in db.Events.AsNoTracking() on relation.EventId equals reply.EventId
+                                                                              where reply.RoomId == roomId
+                                                                              select new ValueTuple<string, long, string>(relation.RelatesTo, reply.Stream, reply.Sender)).ToListAsync(cancellationToken);
+        List<(string Root, long Latest, bool Replied)> threads = [.. replies.GroupBy(r => r.RelatesTo).Select(g => (g.Key, g.Max(r => r.Stream), g.Any(r => r.Sender == requester.UserId))).Where(t => position is not long p || t.Item2 < p).OrderByDescending(t => t.Item2)];
+
+        // Visible roots, the requester's own threads only when asked
+        List<EventRow> roots = [];
+        long? next = null;
+        foreach ((string root, long latest, bool replied) in threads)
+        {
+            if (await db.Events.AsNoTracking().SingleOrDefaultAsync(e => e.EventId == root && e.RoomId == roomId, cancellationToken) is not EventRow row) continue;
+            if (participated && !replied && row.Sender != requester.UserId) continue;
+            if (!await visibility.CanSeeAsync(row, cancellationToken)) continue;
+            if (roots.Count == limit)
+            {
+                next = latest + 1;
+                break;
+            }
+            roots.Add(row);
+        }
+
+        // Page with a token to the next
+        JsonObject response = new() { ["chunk"] = new JsonArray([.. await FormatAsync(db, requester, roots, cancellationToken)]) };
+        if (next is long token) response["next_batch"] = Token(token);
+        // Return page
+        return response;
+    }
+
     /// <summary>Return the event closest to <paramref name="timestamp"/> in the direction asked, as <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv1roomsroomidtimestamp_to_event">timestamp_to_event</see> answers; throw <c>M_NOT_FOUND</c> when there is none.</summary>
     public async Task<JsonObject> GetEventAtAsync(Requester requester, string roomId, long timestamp, bool forwards, CancellationToken cancellationToken)
     {
@@ -306,6 +352,11 @@ public sealed class SyncService
             stateIds = startState.Where(s => tokenState.GetValueOrDefault(s.Key) != s.Value).Select(s => s.Value);
         }
 
+        // Current state that changed in the range without the timeline showing it, as when merging forks resolved it, is sent as state too
+        HashSet<(string, string)> inTimeline = [.. timeline.Where(e => e.StateKey is not null).Select(e => (e.Type, e.StateKey!))];
+        List<CurrentStateRow> changedCurrent = await dbContext.CurrentState.AsNoTracking().Where(s => s.RoomId == roomId && s.Stream <= until && (from == null || s.Stream > from)).ToListAsync(cancellationToken);
+        stateIds = [.. stateIds.Concat(changedCurrent.Where(s => !inTimeline.Contains((s.Type, s.StateKey)) && startState.GetValueOrDefault((s.Type, s.StateKey)) != s.EventId).Select(s => s.EventId)).Distinct()];
+
         // Only the needed members when lazy loading
         List<string> heroes = await HeroesAsync(dbContext, requester.UserId, roomId, cancellationToken);
         if (filter.LazyLoadMembers)
@@ -442,8 +493,35 @@ public sealed class SyncService
             JsonObject? because = row.RedactedBy is string by && redactions.TryGetValue(by, out EventRow? redaction) ? ClientFormat.ToClient(redaction, now) : null;
             formatted.Add(ClientFormat.ToClient(row, now, transactions.GetValueOrDefault(row.EventId), because, prevContent));
         }
+
+        // Summaries of the threads these events start
+        Dictionary<string, ThreadSummary> threads = await ThreadSummariesAsync(dbContext, requester.UserId, ids, cancellationToken);
+        foreach (JsonObject clientEvent in formatted)
+        {
+            if (!threads.TryGetValue(clientEvent["event_id"]!.GetValue<string>(), out ThreadSummary? thread)) continue;
+            JsonObject unsigned = clientEvent["unsigned"] as JsonObject ?? [];
+            clientEvent["unsigned"] = unsigned;
+            unsigned["m.relations"] = new JsonObject { ["m.thread"] = new JsonObject { ["latest_event"] = ClientFormat.ToClient(thread.Latest, now), ["count"] = thread.Count, ["current_user_participated"] = thread.Participated } };
+        }
         // Return events
         return formatted;
+    }
+
+    /// <summary>A thread's latest reply, number of replies, and whether the requester took part, by sending the root or a reply.</summary>
+    private sealed record ThreadSummary(EventRow Latest, int Count, bool Participated);
+
+    /// <summary>Return the summaries of the threads whose roots are among <paramref name="rootIds"/>, by root.</summary>
+    private static async Task<Dictionary<string, ThreadSummary>> ThreadSummariesAsync(ServerDbContext dbContext, string userId, IReadOnlyCollection<string> rootIds, CancellationToken cancellationToken)
+    {
+        // Replies of these roots
+        List<(string RelatesTo, EventRow Reply)> replies = await (from relation in dbContext.EventRelations.AsNoTracking()
+                                                                  where relation.RelType == RelationTypes.Thread && rootIds.Contains(relation.RelatesTo)
+                                                                  join reply in dbContext.Events.AsNoTracking() on relation.EventId equals reply.EventId
+                                                                  select new ValueTuple<string, EventRow>(relation.RelatesTo, reply)).ToListAsync(cancellationToken);
+        if (replies.Count == 0) return [];
+        HashSet<string> ownRoots = [.. await dbContext.Events.AsNoTracking().Where(e => rootIds.Contains(e.EventId) && e.Sender == userId).Select(e => e.EventId).ToListAsync(cancellationToken)];
+        // Return summaries
+        return replies.GroupBy(r => r.RelatesTo).ToDictionary(g => g.Key, g => new ThreadSummary(g.MaxBy(r => r.Reply.Stream)!.Reply, g.Count(), ownRoots.Contains(g.Key) || g.Any(r => r.Reply.Sender == userId)));
     }
 
     /// <summary>Return the content of the state a state event replaced, or null for new state.</summary>

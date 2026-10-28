@@ -193,6 +193,26 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("EventEdges");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.EventRelationRow", b =>
+                {
+                    b.Property<string>("EventId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RelType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RelatesTo")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("EventId");
+
+                    b.HasIndex("RelatesTo", "RelType");
+
+                    b.ToTable("EventRelations");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.EventRow", b =>
                 {
                     b.Property<string>("EventId")
@@ -219,7 +239,13 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("SoftFailed")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("StateGroup")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("StateGroupBefore")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("StateKey")
@@ -618,6 +644,40 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.HasKey("ServerName", "MediaId");
 
                     b.ToTable("RemoteMedia");
+                });
+
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.ReportRow", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EventId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ReceivedTs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reporter")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Resolved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RoomId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.RoomAliasRow", b =>

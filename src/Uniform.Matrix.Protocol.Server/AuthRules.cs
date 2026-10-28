@@ -67,6 +67,63 @@ public static class AuthRules
         return null;
     }
 
+    /// <summary>Return the IDs of <paramref name="events"/> that the rules allow against their own <c>auth_events</c>, each of which must be among them and allowed too; for state and auth chains received from another server, whose signatures were checked.</summary>
+    /// <param name="version">Room version.</param>
+    /// <param name="events">Events by ID, without <c>event_id</c>.</param>
+    public static HashSet<string> CheckAuthChains(RoomVersion version, IReadOnlyDictionary<string, JsonObject> events)
+    {
+        // Auth events before the events they authorize
+        HashSet<string> allowed = [];
+        HashSet<string> visited = [];
+        string? createId = events.FirstOrDefault(e => e.Value["type"]?.GetValue<string>() == AuthEventTypes.Create).Key;
+        // The create event first, as version 12 events do not list it
+        IEnumerable<string> roots = createId is null ? events.Keys : events.Keys.Where(id => id != createId).Prepend(createId);
+        foreach (string root in roots)
+        {
+            // Depth first without recursion: an event is checked once its auth events are
+            Stack<(string Id, bool Ready)> pending = new([(root, false)]);
+            while (pending.TryPop(out (string Id, bool Ready) step))
+            {
+                if (!step.Ready)
+                {
+                    if (!visited.Add(step.Id)) continue;
+                    pending.Push((step.Id, true));
+                    foreach (string authId in AuthIds(events[step.Id]).Where(events.ContainsKey)) pending.Push((authId, false));
+                    continue;
+                }
+                if (IsAllowed(version, events, step.Id, createId, allowed)) allowed.Add(step.Id);
+            }
+        }
+        // Return allowed events
+        return allowed;
+    }
+
+    /// <summary>Return whether event <paramref name="id"/> is allowed against its auth events, all of which must be in <paramref name="allowed"/>.</summary>
+    private static bool IsAllowed(RoomVersion version, IReadOnlyDictionary<string, JsonObject> events, string id, string? createId, HashSet<string> allowed)
+    {
+        // Auth state of allowed auth events, keyed once each; version 12 names the create event by room ID instead
+        JsonObject pdu = events[id];
+        Dictionary<(string Type, string StateKey), JsonObject> state = [];
+        foreach (string authId in AuthIds(pdu))
+        {
+            if (!allowed.Contains(authId)) return false;
+            JsonObject authEvent = events[authId].DeepClone().AsObject();
+            authEvent["event_id"] = authId;
+            if (authEvent["type"]?.GetValue<string>() is not string type || authEvent["state_key"]?.GetValue<string>() is not string stateKey || !state.TryAdd((type, stateKey), authEvent)) return false;
+        }
+        if (version.RoomIdIsCreateHash && createId is not null && createId != id && allowed.Contains(createId))
+        {
+            JsonObject create = events[createId].DeepClone().AsObject();
+            create["event_id"] = createId;
+            state.TryAdd((AuthEventTypes.Create, ""), create);
+        }
+        // Return verdict; signatures were checked on arrival
+        return Check(pdu, version, state, (_, _) => true) is null;
+    }
+
+    /// <summary>Return the <c>auth_events</c> of a PDU.</summary>
+    private static IEnumerable<string> AuthIds(JsonObject pdu) => (pdu["auth_events"] as JsonArray ?? []).Select(e => e?.GetValue<string>()).OfType<string>();
+
     /// <summary>Rule 1: the create event.</summary>
     private static string? CheckCreate(JsonObject pdu, RoomVersion version, string sender, JsonObject content)
     {

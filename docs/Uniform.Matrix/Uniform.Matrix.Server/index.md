@@ -23,4 +23,4 @@ await app.RunAsync();
 
 ## Not yet covered
 
-State resolution and checking received events against the state before them, room upgrades, threads, search, email pushers (stored but not sent), and PostgreSQL.
+Room upgrades, search, partial-state joins of large rooms, email pushers (stored but not sent), and PostgreSQL.

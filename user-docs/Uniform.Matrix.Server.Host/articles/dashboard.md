@@ -42,6 +42,7 @@ The dashboard refreshes every second. The server keeps serving while menus and w
 | File → Logs… | Read this session's log and earlier ones |
 | Server → Users… | Create users, reset passwords, give admin rights, deactivate accounts |
 | Server → Rooms… | See rooms and list them in the public room directory |
+| Server → Reports… | Review what users reported |
 | Ctrl+Q or File → Quit | Stop the server |
 
 ## Settings window
@@ -72,6 +73,15 @@ Server → Rooms lists every room with its name, alias, joined members, and whet
 
 - **Publish** lists the selected room in the public room directory, or removes it. Listing a room does not change who may join; that follows the room's own join rule.
 - Messages of encrypted rooms are encrypted on the members' devices, so the server cannot show or read them.
+
+## Reports window
+
+Users can report a message, a room or another user from their client. Server → Reports lists the open reports, newest first, with who reported, what about and why; the dashboard shows how many are open.
+
+- The details below the list show the whole reason, and the reported message's text when the server has it. Messages of encrypted rooms cannot be read by the server.
+- **Resolve** marks the selected report as dealt with, so it leaves the list; pressed on a resolved report, it opens it again.
+- **Show resolved** shows or hides the resolved reports.
+- **Delete** removes a report for good, after confirmation.
 
 ## Logs window
 

@@ -155,6 +155,8 @@ public sealed record PowerLevelsContent
     public const long Moderator = 50;
     /// <summary>Usual level of an admin.</summary>
     public const long Admin = 100;
+    /// <summary>Level of a room's creators from room version 12, above any level that can be given.</summary>
+    public const long Creator = long.MaxValue;
 
     /// <summary>Levels of users by user ID.</summary>
     public Dictionary<string, long>? Users { get; init; }
@@ -228,6 +230,11 @@ public sealed record CreateContent
     public string? RoomVersion { get; init; }
     /// <summary>Room type, e.g. <c>m.space</c>; null for chat rooms.</summary>
     public string? Type { get; init; }
+    /// <summary>Users besides the sender who created the room, from room version 12, where creators have unlimited power.</summary>
+    public IReadOnlyList<string>? AdditionalCreators { get; init; }
+
+    /// <summary>Return whether the room's creators have unlimited power and no power level, as from room version 12.</summary>
+    public bool HasPowerfulCreators => int.TryParse(RoomVersion, out int version) && version >= 12;
 }
 
 /// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroomredaction">m.room.redaction</see>.</summary>

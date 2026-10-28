@@ -154,6 +154,17 @@ public sealed class CryptoService : IDisposable
     /// <summary>Return the user's devices signed by their current self-signing key, which can vouch for others of the account, whether or not this device trusts the identity; none when encryption is off.</summary>
     public IReadOnlyList<DeviceInfo> GetSignedDevices(string userId) => machine is null ? [] : [.. machine.GetDevices(userId).Where(machine.IsSignedByIdentity)];
 
+    /// <summary>Return whether this device has verified <paramref name="userId"/>: their cross-signing identity is trusted, or, without one, every device of theirs known here is verified; false when encryption is off.</summary>
+    public bool IsUserVerified(string userId)
+    {
+        // Identity first, else each device
+        if (machine is null) return false;
+        if (machine.GetIdentity(userId) is UserIdentity identity) return machine.IsIdentityTrusted(identity);
+        IReadOnlyList<DeviceInfo> devices = machine.GetDevices(userId);
+        // Return whether all devices are verified
+        return devices.Count > 0 && devices.All(d => machine.GetDeviceTrust(d) is DeviceTrust.Verified or DeviceTrust.CrossSigned);
+    }
+
     /// <summary>Return the trust of a known device, or null when the device is unknown or encryption is off.</summary>
     public DeviceTrust? GetDeviceTrust(string userId, string deviceId) =>
         machine?.GetDevices(userId).FirstOrDefault(d => d.DeviceId == deviceId) is DeviceInfo device ? machine.GetDeviceTrust(device) : null;

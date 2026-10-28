@@ -283,14 +283,14 @@ public sealed class RoomService
         return await db.Rooms.AnyAsync(r => r.RoomId == roomId, cancellationToken);
     }
 
-    /// <summary>Return the room ID of a room ID or local alias; throw <c>M_NOT_FOUND</c> for unknown rooms.</summary>
+    /// <summary>Return the room ID of a room ID or local alias of a room here; throw <c>M_NOT_FOUND</c> for unknown rooms.</summary>
     public async Task<string> ResolveAsync(string roomIdOrAlias, CancellationToken cancellationToken)
     {
         // Aliases map to rooms
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         string roomId = roomIdOrAlias;
         if (roomIdOrAlias.StartsWith('#')) roomId = (await db.RoomAliases.AsNoTracking().SingleOrDefaultAsync(a => a.Alias == roomIdOrAlias, cancellationToken))?.RoomId ?? throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room alias.");
-        if (!await db.Rooms.AnyAsync(r => r.RoomId == roomId, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room; rooms on other servers need federation, which is not supported yet.");
+        if (!await db.Rooms.AnyAsync(r => r.RoomId == roomId, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room.");
         // Return room ID
         return roomId;
     }

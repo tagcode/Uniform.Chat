@@ -96,8 +96,23 @@ public sealed class EventRow
     public required string Json { get; set; }
     /// <summary>State group of the room's state after this event.</summary>
     public long StateGroup { get; set; }
+    /// <summary>State group of the room's state before this event, as <c>/state_ids</c> answers other servers; 0 when not known, as for history fetched from other servers.</summary>
+    public long StateGroupBefore { get; set; }
     /// <summary>Redaction that removed this event's content, when any.</summary>
     public string? RedactedBy { get; set; }
+    /// <summary>Whether this event of another server was <see href="https://spec.matrix.org/latest/server-server-api/#soft-failure">soft-failed</see>: allowed by the state before it but not by the room's current state, so it is kept for the room graph but not shown, and not built on. Queries leave these out unless they ignore query filters.</summary>
+    public bool SoftFailed { get; set; }
+}
+
+/// <summary>A <see href="https://spec.matrix.org/latest/client-server-api/#forming-relationships-between-events">relation</see> of an event to another, from its <c>m.relates_to</c>, for threads and relation lookups.</summary>
+public sealed class EventRelationRow
+{
+    /// <summary>The relating event, e.g. a thread reply.</summary>
+    public required string EventId { get; set; }
+    /// <summary>The event related to, e.g. the thread's root.</summary>
+    public required string RelatesTo { get; set; }
+    /// <summary>Relation type, e.g. <c>m.thread</c>, <c>m.annotation</c> or <c>m.replace</c>.</summary>
+    public required string RelType { get; set; }
 }
 
 /// <summary>Edge of the room graph: an event and one of its previous events.</summary>
@@ -520,4 +535,25 @@ public sealed class ServerKeyResponseRow
     public required string Json { get; set; }
     /// <summary>Until when the keys hold, in milliseconds since the Unix epoch, at most a week after fetching.</summary>
     public long ValidUntilTs { get; set; }
+}
+
+/// <summary>A user's <see href="https://spec.matrix.org/latest/client-server-api/#reporting-content">report</see> of an event, room or user, for the admin to review.</summary>
+public sealed class ReportRow
+{
+    /// <summary>Report ID; primary key.</summary>
+    public long Id { get; set; }
+    /// <summary>Who reported.</summary>
+    public required string Reporter { get; set; }
+    /// <summary>Reported room, or the room of the reported event.</summary>
+    public string? RoomId { get; set; }
+    /// <summary>Reported event, if any.</summary>
+    public string? EventId { get; set; }
+    /// <summary>Reported user, if any.</summary>
+    public string? UserId { get; set; }
+    /// <summary>The reporter's reason, at most 1000 characters.</summary>
+    public required string Reason { get; set; }
+    /// <summary>Time of the report in milliseconds since the Unix epoch.</summary>
+    public long ReceivedTs { get; set; }
+    /// <summary>Whether the admin has dealt with it.</summary>
+    public bool Resolved { get; set; }
 }

@@ -218,6 +218,13 @@ public sealed partial class MainWindow
             return;
         }
 
+        // Creators of newer rooms have no level to change
+        if (processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.Creators.Contains(userId)))
+        {
+            Dialogs.Error(app, "Power level", $"{userId} created this room and has unlimited power, which cannot be changed.");
+            return;
+        }
+
         // Level from the argument, or picked with the current one marked
         (long current, long own) = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? (room.GetPowerLevel(userId), room.GetPowerLevel(ownUserId)) : (0L, 0L));
         long? level = parts.Length > 1 ? ParseLevel(parts[1]) : PickLevel(userId, current);

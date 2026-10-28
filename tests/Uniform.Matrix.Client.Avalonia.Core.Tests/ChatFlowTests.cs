@@ -347,6 +347,11 @@ public class ChatFlowTests
             await WaitUntilAsync(() => heidiChat.Verification is { IsFinished: true } && ivanChat.Verification is { IsFinished: true }, "the verification to finish");
             Assert.EndsWith("is verified.", heidiChat.Verification.Message);
             Assert.StartsWith("@ivan", heidiChat.Verification.Message);
+            heidiChat.LoadMembersCommand.Execute(null);
+            MemberItem verified = heidiChat.Members.First(m => m.UserId == ivan.UserId);
+            Assert.True(verified.IsVerified);
+            Assert.False(verified.ShowVerify);
+            Assert.EndsWith("verified", verified.Details);
         }
         finally
         {
@@ -436,6 +441,45 @@ public class ChatFlowTests
             Assert.True(chat.OpenMatrixLink("https://matrix.to/#/%23elsewhere%3Atest.local?via=test.local"));
             Assert.Equal("#elsewhere:test.local", chat.JoinTarget);
             Assert.False(chat.OpenMatrixLink("https://example.org/"));
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>The room directory lists and searches public rooms, joins one that then opens, and renders; a room ID link with servers keeps them in the room box.</summary>
+    [AvaloniaFact]
+    public async Task BrowseDirectoryAndJoin()
+    {
+        // Arrange: two public rooms of Grace's
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient grace = await server.RegisterAsync("grace");
+        MatrixClient heidi = await server.RegisterAsync("heidi");
+        await grace.CreateRoomAsync(new CreateRoomRequest { Name = "Garden", Topic = "Plants", Preset = RoomPresets.PublicChat, Visibility = "public", RoomAliasName = "garden" });
+        await grace.CreateRoomAsync(new CreateRoomRequest { Name = "Kitchen", Preset = RoomPresets.PublicChat, Visibility = "public" });
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            // Act: list, search, join
+            ChatViewModel chat = await SignInAsync(model, heidi.UserId!);
+            await chat.OpenDirectoryCommand.ExecuteAsync(null);
+            DirectoryViewModel directory = chat.RoomDirectory!;
+            List<string> listed = [.. directory.Rooms.Select(r => r.Title).Order()];
+            directory.SearchTerm = "plants";
+            await directory.SearchCommand.ExecuteAsync(null);
+            List<string> found = [.. directory.Rooms.Select(r => r.Title)];
+            await CaptureAsync(model, "directory.png");
+            await directory.JoinCommand.ExecuteAsync(directory.Rooms[0]);
+            await WaitUntilAsync(() => chat.SelectedRoom?.Name == "Garden", "the joined room to open");
+
+            // Assert
+            Assert.Equal(["Garden", "Kitchen"], listed);
+            Assert.Equal(["Garden"], found);
+            Assert.Null(chat.RoomDirectory);
+            Assert.True(chat.OpenMatrixLink("matrix:roomid/abc:elsewhere.test?via=elsewhere.test"));
+            Assert.Equal("!abc:elsewhere.test elsewhere.test", chat.JoinTarget);
         }
         finally
         {

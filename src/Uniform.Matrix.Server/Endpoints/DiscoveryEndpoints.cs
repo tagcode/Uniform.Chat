@@ -31,9 +31,6 @@ public static class DiscoveryEndpoints
         // No e-mail addresses or phone numbers on accounts
         routes.MapGet("/_matrix/client/v3/account/3pid", () => MatrixHttp.Json(new JsonObject { ["threepids"] = new JsonArray() })).RequireAccessToken();
 
-        // No threads yet; clients list a room's threads
-        routes.MapGet("/_matrix/client/v1/rooms/{roomId}/threads", (string roomId) => MatrixHttp.Json(new JsonObject { ["chunk"] = new JsonArray() })).RequireAccessToken();
-
         // No bridges to other networks; clients ask before showing a directory of them
         routes.MapGet("/_matrix/client/v3/thirdparty/protocols", () => MatrixHttp.Json(new JsonObject())).RequireAccessToken();
 

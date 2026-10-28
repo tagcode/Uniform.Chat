@@ -33,8 +33,14 @@ public sealed record EventDraft
 }
 
 /// <summary>Builds local events into the room graph: previous events, auth events, hash, signature, ID, authorization, state and storage.</summary>
-/// <remarks>Events are written through the <see cref="ServerStream"/>, one at a time, so stream positions are committed in order.</remarks>
-public sealed class EventSender
+/// <remarks>
+/// Events are written through the <see cref="ServerStream"/>, one at a time, so stream positions are committed in order.
+/// <list type="bullet">
+/// <item><c>EventSender.cs</c>: local events, joins and leaves of other servers' users, and rooms joined elsewhere.</item>
+/// <item><c>EventSender.Remote.cs</c>: events other servers send, checked against their auth events, the state before them and the current state, with forks merged by <see cref="StateResolution"/>.</item>
+/// </list>
+/// </remarks>
+public sealed partial class EventSender
 {
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly ServerKeys keys;
@@ -209,39 +215,6 @@ public sealed class EventSender
         return (state, authChain);
     }
 
-    /// <summary>Accept an event another server sent in a transaction; return its ID, if known, and null when stored or already here, else why it was rejected.</summary>
-    /// <param name="pdu">The event.</param>
-    /// <param name="senderKeys">Public keys of the sender's server by key ID.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <remarks>The event is checked against the current state rather than the state before it, which holds while rooms have no forks.</remarks>
-    public Task<(string? EventId, string? Error)> AcceptEventAsync(JsonObject pdu, IReadOnlyDictionary<string, string> senderKeys, CancellationToken cancellationToken) =>
-        stream.WriteAsync(position => AcceptEventAtAsync(pdu, senderKeys, position, cancellationToken), cancellationToken);
-
-    /// <summary>Check and store a received event at stream <paramref name="position"/>.</summary>
-    private async Task<(string? EventId, string? Error)> AcceptEventAtAsync(JsonObject pdu, IReadOnlyDictionary<string, string> senderKeys, long position, CancellationToken cancellationToken)
-    {
-        // Assert a room here, a new event, and an intact one
-        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        string? roomId = pdu["room_id"]?.GetValue<string>();
-        RoomRow? room = await db.Rooms.SingleOrDefaultAsync(r => r.RoomId == roomId, cancellationToken);
-        if (room is null || RoomVersion.Find(room.Version) is not RoomVersion version) return (null, "Unknown room.");
-        pdu.Remove("unsigned");
-        string eventId = EventFormat.ComputeEventId(pdu, version);
-        if (await db.Events.AnyAsync(e => e.EventId == eventId, cancellationToken)) return (eventId, null);
-        if (!EventFormat.HasValidContentHash(pdu)) return (eventId, "The content hash does not match.");
-        if (pdu["type"]?.GetValue<string>() is not string type || !UserId.TryParse(pdu["sender"]?.GetValue<string>(), out UserId sender)) return (eventId, "The event has no type or sender.");
-
-        // Authorization against the current state, signed by the sender's server
-        string? stateKey = pdu["state_key"]?.GetValue<string>();
-        IReadOnlyList<(string Type, string StateKey)> needed = AuthEvents.Select(type, stateKey, sender.ToString(), pdu["content"] as JsonObject ?? []);
-        Dictionary<(string, string), JsonObject> authState = await LoadCurrentAsync(db, room.RoomId, needed, cancellationToken);
-        string? rejection = AuthRules.Check(pdu, version, authState, (e, server) => server == sender.ServerName && senderKeys.Any(k => EventFormat.HasValidSignature(e, version, server, k.Key, k.Value)));
-        if (rejection is not null) return (eventId, rejection);
-        await StoreAsync(db, room, version, pdu, eventId, position, null, cancellationToken);
-        // Return stored
-        return (eventId, null);
-    }
-
     /// <summary>Store a room joined on another server: its state and auth chain as they were before the join, then the join as the room's first own event.</summary>
     /// <param name="version">Room version.</param>
     /// <param name="join">The signed join, already accepted by the resident server.</param>
@@ -264,6 +237,7 @@ public sealed class EventSender
             foreach ((string eventId, JsonObject pdu) in events)
             {
                 db.Events.Add(new EventRow { EventId = eventId, RoomId = roomId, Stream = --earlier, Depth = pdu["depth"]?.GetValue<long>() ?? 0, Type = pdu["type"]!.GetValue<string>(), StateKey = pdu["state_key"]?.GetValue<string>(), Sender = pdu["sender"]!.GetValue<string>(), OriginServerTs = pdu["origin_server_ts"]?.GetValue<long>() ?? 0, Json = pdu.ToJsonString() });
+                AddRelation(db, eventId, pdu);
             }
 
             // State before the join as the room's first group and current state
@@ -351,14 +325,16 @@ public sealed class EventSender
 
         // State, event and edges, inside the caller's transaction if there is one
         await using Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = db.Database.CurrentTransaction is null ? await db.Database.BeginTransactionAsync(cancellationToken) : null;
-        long group = room.CurrentStateGroup;
+        long before = room.CurrentStateGroup;
+        long group = before;
         if (stateKey is not null)
         {
             group = await StateGroups.CreateAsync(db, room.RoomId, room.CurrentStateGroup, [(type, stateKey, eventId)], cancellationToken);
             room.CurrentStateGroup = group;
             await UpdateCurrentStateAsync(db, room.RoomId, type, stateKey, type == EventTypes.RoomMember ? content["membership"]?.GetValue<string>() : null, eventId, position, cancellationToken);
         }
-        db.Events.Add(new EventRow { EventId = eventId, RoomId = room.RoomId, Stream = position, Depth = pdu["depth"]!.GetValue<long>(), Type = type, StateKey = stateKey, Sender = sender, OriginServerTs = pdu["origin_server_ts"]!.GetValue<long>(), Json = pdu.ToJsonString(), StateGroup = group });
+        db.Events.Add(new EventRow { EventId = eventId, RoomId = room.RoomId, Stream = position, Depth = pdu["depth"]!.GetValue<long>(), Type = type, StateKey = stateKey, Sender = sender, OriginServerTs = pdu["origin_server_ts"]!.GetValue<long>(), Json = pdu.ToJsonString(), StateGroup = group, StateGroupBefore = before });
+        AddRelation(db, eventId, pdu);
         foreach (string prev in prevEvents) db.EventEdges.Add(new EventEdgeRow { EventId = eventId, PrevEventId = prev });
         await db.ForwardExtremities.Where(e => e.RoomId == room.RoomId && prevEvents.Contains(e.EventId)).ExecuteDeleteAsync(cancellationToken);
         db.ForwardExtremities.Add(new ForwardExtremityRow { RoomId = room.RoomId, EventId = eventId });
@@ -367,6 +343,16 @@ public sealed class EventSender
         await db.SaveChangesAsync(cancellationToken);
         // Done
         if (transaction is not null) await transaction.CommitAsync(cancellationToken);
+    }
+
+    /// <summary>Record the relation in an event's <c>m.relates_to</c>, if it has one with a type.</summary>
+    internal static void AddRelation(ServerDbContext dbContext, string eventId, JsonObject pdu)
+    {
+        // Target and type as strings
+        if (pdu["content"]?["m.relates_to"] is not JsonObject relatesTo) return;
+        if (relatesTo["event_id"] is not JsonValue target || !target.TryGetValue(out string? targetId) || relatesTo["rel_type"] is not JsonValue type || !type.TryGetValue(out string? relType)) return;
+        // Done
+        dbContext.EventRelations.Add(new EventRelationRow { EventId = eventId, RelatesTo = targetId, RelType = relType });
     }
 
     /// <summary>Return the event IDs in an array field of a PDU.</summary>
@@ -413,8 +399,9 @@ public sealed class EventSender
         // Target in the same room
         EventRow? row = target is null ? null : await dbContext.Events.SingleOrDefaultAsync(e => e.EventId == target && e.RoomId == roomId, cancellationToken);
         if (row is null || row.RedactedBy is not null) return;
-        // Keep only the protected keys
+        // Keep only the protected keys; its relation goes with its content
         row.Json = EventFormat.Redact(JsonNode.Parse(row.Json)!.AsObject(), version).ToJsonString();
         row.RedactedBy = redactionId;
+        await dbContext.EventRelations.Where(r => r.EventId == target).ExecuteDeleteAsync(cancellationToken);
     }
 }

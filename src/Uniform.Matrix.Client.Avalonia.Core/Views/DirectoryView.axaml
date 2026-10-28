@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
+             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.DirectoryView"
+             x:DataType="vm:DirectoryViewModel">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Top" Spacing="8">
+      <TextBlock Classes="title" Text="Room directory" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Public rooms of your server, or of another server such as matrix.org." />
+      <Grid ColumnDefinitions="*,8,*,Auto">
+        <TextBox Grid.Column="0" Text="{Binding Server}" PlaceholderText="Server (empty for yours)" x:Name="ServerBox" />
+        <TextBox Grid.Column="2" Text="{Binding SearchTerm}" PlaceholderText="Search" x:Name="SearchBox" />
+        <Button Grid.Column="3" Margin="6,0,0,0" Classes="accent" Content="Search" Command="{Binding SearchCommand}" IsDefault="True" />
+      </Grid>
+      <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+      <TextBlock Classes="hint" Text="{Binding Message}" TextWrapping="Wrap" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+
+    <ScrollViewer Margin="0,8,0,0">
+      <ItemsControl ItemsSource="{Binding Rooms}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:PublicRoomItem">
+            <Grid ColumnDefinitions="*,Auto" Margin="0,6">
+              <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Classes="subtitle" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{Binding Topic}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" IsVisible="{Binding HasTopic}" />
+              </StackPanel>
+              <Button Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center" Content="Join" Command="{Binding $parent[UserControl].((vm:DirectoryViewModel)DataContext).JoinCommand}" CommandParameter="{Binding}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>
