@@ -130,6 +130,7 @@ public sealed class MessageList
             EventId = clientEvent.EventId,
             SenderId = clientEvent.Sender,
             SenderName = sender,
+            SenderAvatarUri = room.Members.TryGetValue(clientEvent.Sender, out RoomMemberInfo? member) && MxcUri.TryParse(member.AvatarUrl, out _) ? member.AvatarUrl : null,
             Timestamp = clientEvent.Timestamp,
             Kind = kind,
             IsOwn = own,

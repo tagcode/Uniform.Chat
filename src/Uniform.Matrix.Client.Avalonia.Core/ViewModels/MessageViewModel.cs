@@ -28,6 +28,19 @@ public sealed partial class MessageViewModel : ViewModelBase
     public required string SenderId { get; init; }
     /// <summary>Sender's display name in the room.</summary>
     public required string SenderName { get; init; }
+    /// <summary><c>mxc://</c> URI of the sender's picture in the room, or null.</summary>
+    public string? SenderAvatarUri { get; init; }
+
+    /// <summary>The sender's picture once loaded; their initial shows until then.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSenderAvatar))]
+    public partial Bitmap? SenderAvatar { get; set; }
+
+    /// <summary>Whether <see cref="SenderAvatar"/> is shown.</summary>
+    public bool HasSenderAvatar => SenderAvatar is not null;
+
+    /// <summary>First letter of the sender's name, shown as their avatar.</summary>
+    public string SenderInitial => SenderName.TrimStart('@', ' ') is { Length: > 0 } name ? char.ToUpperInvariant(name[0]).ToString() : "?";
     /// <summary>When it was sent.</summary>
     public required DateTimeOffset Timestamp { get; init; }
     /// <summary>How it is shown.</summary>

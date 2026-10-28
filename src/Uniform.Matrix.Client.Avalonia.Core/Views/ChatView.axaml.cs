@@ -338,12 +338,10 @@ public partial class ChatView : UserControl
         }
     }
 
-    /// <summary>Go back to the room list on narrow screens, e.g. with Android's back button.</summary>
+    /// <summary>Go back one step with Android's back button: close a panel, or the room on narrow screens; otherwise the app closes.</summary>
     private void OnBackRequested(object? sender, RoutedEventArgs e)
     {
-        // Only when a room covers the list
-        if (model is not { IsNarrow: true, HasOpenRoom: true }) return;
-        e.Handled = true;
-        model.SelectedRoom = null;
+        // Handled when something was closed
+        if (model?.GoBack() == true) e.Handled = true;
     }
 }

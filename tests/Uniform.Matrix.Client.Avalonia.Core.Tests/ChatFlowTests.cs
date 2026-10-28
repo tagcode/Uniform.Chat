@@ -74,6 +74,7 @@ public class ChatFlowTests
         {
             MxcUri avatar = await bob.UploadMediaAsync(logo, "image/png", "logo.png");
             await bob.SendStateEventAsync(roomId, EventTypes.RoomAvatar, new RoomAvatarContent { Url = avatar.ToString() });
+            await bob.SetAvatarUrlAsync(avatar.ToString());
         }
         await alice.JoinRoomAsync(roomId);
         string data = Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName;
@@ -100,6 +101,9 @@ public class ChatFlowTests
             Assert.Contains("<strong>noon</strong>", content.FormattedBody);
             Assert.Equal("Food talk", chat.SelectedRoom!.Topic);
             await WaitUntilAsync(() => chat.SelectedRoom.HasAvatar, "the room's avatar");
+            await WaitUntilAsync(() => chat.SelectedRoom.LastMessage == "You: sure, *noon* works", "Alice's message as the room's latest");
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.SenderId == bob.UserId && m.Text.StartsWith("lunch") && m.HasSenderAvatar), "Bob's picture beside his message");
+            Assert.NotEmpty(chat.SelectedRoom.LastTime);
 
             // Assert: the screen draws, in both themes
             await CaptureAsync(model, "chat.png");
@@ -125,6 +129,19 @@ public class ChatFlowTests
         {
             await model.StopAsync();
         }
+    }
+
+    /// <summary>The room list shows a message's time today, its weekday within a week, and its date before that.</summary>
+    [Fact]
+    public void FormatListTimes()
+    {
+        // Arrange
+        DateTimeOffset now = new(2026, 10, 28, 15, 0, 0, TimeSpan.Zero);
+
+        // Act and assert
+        Assert.Equal("13:00", RoomItemViewModel.FormatTime(now.AddHours(-2), now));
+        Assert.Equal(now.AddDays(-3).ToString("ddd"), RoomItemViewModel.FormatTime(now.AddDays(-3), now));
+        Assert.Equal(now.AddDays(-30).ToString("d"), RoomItemViewModel.FormatTime(now.AddDays(-30), now));
     }
 
     /// <summary>Replies quote their message, reactions are counted, edits replace the text and deletions leave a marker.</summary>
@@ -474,7 +491,14 @@ public class ChatFlowTests
             await directory.JoinCommand.ExecuteAsync(directory.Rooms[0]);
             await WaitUntilAsync(() => chat.SelectedRoom?.Name == "Garden", "the joined room to open");
 
+            // Act: back closes the directory, then nothing on a wide screen
+            await chat.OpenDirectoryCommand.ExecuteAsync(null);
+            bool closedDirectory = chat.GoBack();
+            bool closedMore = chat.GoBack();
+
             // Assert
+            Assert.True(closedDirectory);
+            Assert.False(closedMore);
             Assert.Equal(["Garden", "Kitchen"], listed);
             Assert.Equal(["Garden"], found);
             Assert.Null(chat.RoomDirectory);

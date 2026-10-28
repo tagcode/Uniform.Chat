@@ -79,6 +79,11 @@
     <Setter Property="CornerRadius" Value="18" />
     <Setter Property="ClipToBounds" Value="True" />
   </Style>
+  <Style Selector="Border.avatar.small">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="CornerRadius" Value="16" />
+  </Style>
   <Style Selector="Border.avatar TextBlock">
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -115,9 +120,14 @@
     <Setter Property="MinHeight" Value="0" />
     <Setter Property="FontSize" Value="12" />
   </Style>
+  <!-- Icon buttons big enough to touch -->
   <Style Selector="Button.icon">
     <Setter Property="Background" Value="Transparent" />
-    <Setter Property="FontSize" Value="18" />
+    <Setter Property="FontSize" Value="20" />
     <Setter Property="Padding" Value="10,2" />
+    <Setter Property="MinWidth" Value="44" />
+    <Setter Property="MinHeight" Value="44" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
   </Style>
 </Styles>

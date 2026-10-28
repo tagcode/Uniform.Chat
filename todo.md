@@ -27,7 +27,7 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 - Renaming devices, and choosing your own reaction emoji.
 - Showing logs in the app, and more settings: Markdown on or off, image previews, the download folder.
 - Notifications on Windows (toast notifications) and Android (UnifiedPush or Firebase, which need a push gateway); clicking a notification to open its room.
-- A full-size image viewer inside the app; avatars of people in the timeline and member list.
+- A full-size image viewer inside the app; avatars of people in the member list (the timeline has them).
 - Spaces, and forgetting old rooms.
 - Android: release signing and a Play Store listing; Android builds in the release workflow.
 

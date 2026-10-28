@@ -72,11 +72,22 @@
                 <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                   <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Classes.unread="{Binding HasUnread}" />
                   <TextBlock Classes="hint" Text="Invitation" IsVisible="{Binding IsInvite}" />
-                  <TextBlock Classes="hint" Text="{Binding Topic}" TextTrimming="CharacterEllipsis" IsVisible="{Binding !IsInvite}" />
+                  <TextBlock Classes="hint" Text="{Binding LastMessage}" TextTrimming="CharacterEllipsis" MaxLines="1" IsVisible="{Binding HasLastMessage}" />
+                  <TextBlock Classes="hint" Text="{Binding Topic}" TextTrimming="CharacterEllipsis" MaxLines="1">
+                    <TextBlock.IsVisible>
+                      <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="!IsInvite" />
+                        <Binding Path="!HasLastMessage" />
+                      </MultiBinding>
+                    </TextBlock.IsVisible>
+                  </TextBlock>
                 </StackPanel>
-                <Border Grid.Column="2" Classes="badge" Classes.mention="{Binding IsHighlighted}" IsVisible="{Binding HasUnread}" VerticalAlignment="Center">
-                  <TextBlock Text="{Binding UnreadText}" />
-                </Border>
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="4">
+                  <TextBlock Classes="hint" Text="{Binding LastTime}" HorizontalAlignment="Right" />
+                  <Border Classes="badge" Classes.mention="{Binding IsHighlighted}" IsVisible="{Binding HasUnread}" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding UnreadText}" />
+                  </Border>
+                </StackPanel>
               </Grid>
             </DataTemplate>
           </ListBox.ItemTemplate>
@@ -156,7 +167,7 @@
       <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto" Margin="12,6,12,12" IsVisible="{Binding HasOpenRoom}">
         <Button Grid.Column="0" Margin="0,0,6,0" Content="📎" ToolTip.Tip="Send a file" Click="OnAttachClick" VerticalAlignment="Bottom" IsEnabled="{Binding !SelectedRoom.IsInvite, FallbackValue=False}" />
         <TextBox x:Name="ComposerBox" Grid.Column="1" Text="{Binding Composer}" PlaceholderText="Message" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="160" />
-        <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="Send" Command="{Binding SendCommand}" VerticalAlignment="Bottom" />
+        <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="Send" Command="{Binding SendCommand}" Focusable="False" ToolTip.Tip="Send (Enter); the message box keeps the focus" VerticalAlignment="Bottom" />
       </Grid>
       <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding IsComposingSpecial}">
         <Grid ColumnDefinitions="*,Auto">
@@ -186,8 +197,17 @@
                     <Run Classes="time" Text="{Binding TimeText}" />
                   </TextBlock>
 
-                  <!-- Messages -->
-                  <StackPanel IsVisible="{Binding !IsInfo}" Spacing="2" Margin="0,2">
+                  <!-- Messages, the sender's avatar beside the first of a group -->
+                  <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding !IsInfo}">
+                  <Panel Grid.Column="0" Width="32" Margin="0,8,10,0" VerticalAlignment="Top">
+                    <Border Classes="avatar small" Background="{Binding SenderId, Converter={StaticResource SenderColor}}" IsVisible="{Binding ShowHeader}">
+                      <Panel>
+                        <TextBlock Text="{Binding SenderInitial}" IsVisible="{Binding !HasSenderAvatar}" />
+                        <Image Source="{Binding SenderAvatar}" Stretch="UniformToFill" IsVisible="{Binding HasSenderAvatar}" />
+                      </Panel>
+                    </Border>
+                  </Panel>
+                  <StackPanel Grid.Column="1" Spacing="2" Margin="0,2">
                     <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding ShowHeader}" Margin="0,6,0,0">
                       <TextBlock Classes="sender" Text="{Binding SenderName}" Foreground="{Binding SenderId, Converter={StaticResource SenderColor}}" />
                       <TextBlock Classes="time" Text="{Binding TimeText}" VerticalAlignment="Bottom" />
@@ -207,6 +227,7 @@
                       </Border>
                     </StackPanel>
                   </StackPanel>
+                  </Grid>
                 </Panel>
               </DockPanel>
             </DataTemplate>

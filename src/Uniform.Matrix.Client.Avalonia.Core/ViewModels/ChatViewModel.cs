@@ -32,6 +32,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     private readonly INotifier? notifier;
     private readonly DateTimeOffset startedAt = DateTimeOffset.UtcNow;
     private readonly HashSet<string> avatarsLoading = [];
+    private readonly Dictionary<string, Task<Bitmap?>> pictures = [];
     private DateTimeOffset typingSentAt = DateTimeOffset.MinValue;
     private int pendingVersion;
     private string? openWhenArrived;
@@ -55,6 +56,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         this.notifier = notifier;
         Settings = settings;
         Messages = new MessageList(connection.UserId);
+        Messages.Items.CollectionChanged += (_, e) => ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
         IsNarrow = singlePane;
         StatusText = Describe(connection.Status.State, connection.Status.Message);
     }
@@ -418,6 +420,36 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     [RelayCommand]
     private void Back() => SelectedRoom = null;
 
+    /// <summary>Go back one step, as Android's back button does: close the panel on top, else leave the open room on narrow screens; return false when there is nothing to go back from, so the app may close.</summary>
+    public bool GoBack()
+    {
+        // Panels over the screen first; a verification in progress stays until it ends or is cancelled
+        if (Verification is { IsFinished: true })
+        {
+            Verification = null;
+            return true;
+        }
+        if (RoomDirectory is not null)
+        {
+            RoomDirectory = null;
+            return true;
+        }
+        if (Security is not null)
+        {
+            Security = null;
+            return true;
+        }
+        if (IsSettingsOpen)
+        {
+            IsSettingsOpen = false;
+            return true;
+        }
+        if (!IsNarrow || SelectedRoom is null) return false;
+        SelectedRoom = null;
+        // Done
+        return true;
+    }
+
     /// <summary>Accept the open invite.</summary>
     [RelayCommand]
     private async Task AcceptInviteAsync()
@@ -758,18 +790,21 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Rebuild the room list from room state, keeping items and the selection.</summary>
     private void RefreshRooms()
     {
-        // Snapshot in list order under the lock
+        // Snapshot in list order under the lock: invites, favourites, others and low priority, each the most recently active first
         string? openId = SelectedRoom?.RoomId;
+        DateTimeOffset now = DateTimeOffset.Now;
         List<RoomItemViewModel> ordered = connection.Processor.Read(store => store is null ? [] : store.Rooms.Values
             .Where(room => room.Membership is Memberships.Join or Memberships.Invite)
-            .OrderBy(room => room.Membership == Memberships.Invite ? 0 : room.Tags.ContainsKey(RoomTags.Favourite) ? 1 : room.Tags.ContainsKey(RoomTags.LowPriority) ? 3 : 2)
-            .ThenBy(room => room.DisplayName, StringComparer.CurrentCultureIgnoreCase)
             .Select(room =>
             {
                 if (!roomsById.TryGetValue(room.RoomId, out RoomItemViewModel? item)) roomsById[room.RoomId] = item = new RoomItemViewModel(room.RoomId);
-                item.Update(room, room.RoomId == openId);
-                return item;
+                item.Update(room, room.RoomId == openId, connection.UserId, now);
+                return (Room: room, Item: item);
             })
+            .OrderBy(entry => entry.Room.Membership == Memberships.Invite ? 0 : entry.Room.Tags.ContainsKey(RoomTags.Favourite) ? 1 : entry.Room.Tags.ContainsKey(RoomTags.LowPriority) ? 3 : 2)
+            .ThenByDescending(entry => entry.Item.LastActivity)
+            .ThenBy(entry => entry.Room.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+            .Select(entry => entry.Item)
             .ToList());
 
         // Move items into place without losing the selection
@@ -860,26 +895,61 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Download a room's avatar as a small thumbnail and show it in the list.</summary>
     private async Task LoadAvatarAsync(RoomItemViewModel room, string uri)
     {
-        // Cached file, decoded off the UI thread; a failed one is tried again on a later refresh
+        // A failed one is tried again on a later refresh
+        Bitmap? bitmap = await GetPictureAsync(uri);
+        ui.Post(() =>
+        {
+            if (bitmap is not null && room.AvatarUri == uri) room.Avatar = bitmap;
+            avatarsLoading.Remove(room.RoomId);
+        });
+    }
+
+    /// <summary>Show the pictures of the senders of <paramref name="messages"/>, each picture loaded once per session; call on the UI thread.</summary>
+    private void ShowSenderAvatars(IEnumerable<MessageViewModel> messages)
+    {
+        // Loaded or loading pictures are shared by every message with them
+        foreach (MessageViewModel message in messages)
+        {
+            if (message.SenderAvatarUri is not string uri || message.SenderAvatar is not null) continue;
+            Task<Bitmap?> loading = GetPictureAsync(uri);
+            if (loading.IsCompletedSuccessfully) message.SenderAvatar = loading.Result;
+            else _ = loading.ContinueWith(done => ui.Post(() => message.SenderAvatar = done.Result), TaskScheduler.Default);
+        }
+    }
+
+    /// <summary>Return the picture of <paramref name="uri"/>, loading it once for every room and message showing it; a failed load is forgotten, so a later use tries again. Call on the UI thread.</summary>
+    private Task<Bitmap?> GetPictureAsync(string uri)
+    {
+        // Shared while loading or loaded
+        if (pictures.TryGetValue(uri, out Task<Bitmap?>? known)) return known;
+        Task<Bitmap?> loading = LoadThumbnailAsync(uri);
+        pictures[uri] = loading;
+        _ = loading.ContinueWith(done => { if (done.Result is null) ui.Post(() => pictures.Remove(uri)); }, TaskScheduler.Default);
+        // Return the load
+        return loading;
+    }
+
+    /// <summary>Return a small picture of <paramref name="uri"/> from the media cache, decoded off the UI thread; null when it cannot be had.</summary>
+    private async Task<Bitmap?> LoadThumbnailAsync(string uri)
+    {
+        // Cached file, decoded off the UI thread
         try
         {
             MatrixClient client = await connection.Session.WhenReady;
             StoredMedia media = await connection.Media.GetThumbnailAsync(client, MxcUri.Parse(uri), 96, 96);
             string path = connection.Media.GetFullPath(media);
-            Bitmap bitmap = await Task.Run(() =>
+            // Return picture
+            return await Task.Run(() =>
             {
                 using FileStream stream = File.OpenRead(path);
                 return Bitmap.DecodeToWidth(stream, 96);
             });
-            ui.Post(() => { if (room.AvatarUri == uri) room.Avatar = bitmap; });
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
+            // On error none
             connection.Logger.LogInformation("Avatar {Uri} failed: {Error}", uri, exception.Message);
-        }
-        finally
-        {
-            ui.Post(() => avatarsLoading.Remove(room.RoomId));
+            return null;
         }
     }
 

@@ -773,6 +773,37 @@ public class FederationTests
         Assert.True(arrived, $"a.test has the topic {await TopicAsync(alice, roomId)}");
     }
 
+    /// <summary>A user who joined a room on another server pages back through its history to the state that came with the join, whose positions sort before every other.</summary>
+    [Fact]
+    public async Task PageBackThroughJoinedHistory()
+    {
+        // Arrange: alice of a.test joins bob's room after a message
+        Network network = new();
+        await using TestHomeserver a = await StartAsync("a.test", network);
+        await using TestHomeserver b = await StartAsync("b.test", network);
+        MatrixClient alice = a.CreateClient();
+        await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+        MatrixClient bob = b.CreateClient();
+        await bob.RegisterAsync("bob", "password", cancellationToken: Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat, Name = "Old room" }, Ct);
+        await alice.JoinRoomAsync(roomId, ["b.test"], cancellationToken: Ct);
+
+        // Act: back a page at a time until the start
+        List<ClientEvent> events = [];
+        string? from = null;
+        for (int page = 0; page < 20; page++)
+        {
+            MessagesResponse messages = await alice.GetMessagesAsync(roomId, from, limit: 3, cancellationToken: Ct);
+            events.AddRange(messages.Chunk);
+            if (messages.End is null || messages.Chunk.Count == 0) break;
+            from = messages.End;
+        }
+
+        // Assert: down to the create event
+        Assert.Contains(events, e => e.Type == EventTypes.RoomCreate);
+        Assert.Contains(events, e => e.Type == EventTypes.RoomName);
+    }
+
     /// <summary>A user previews a room and a space of another server through their own server: the summary by alias or by ID with a via server, and the space with its children.</summary>
     [Fact]
     public async Task PreviewRemoteRooms()

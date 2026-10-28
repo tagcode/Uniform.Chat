@@ -1,11 +1,13 @@
 namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
 
+using System.Globalization;
 using global::Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Uniform.Matrix.Client.Formatting;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Protocol.Core;
 
-/// <summary>One room in the room list: name, unread count, and whether it is an invite, a direct chat or encrypted.</summary>
+/// <summary>One room in the room list: name, latest message, unread count, and whether it is an invite, a direct chat or encrypted.</summary>
 public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 {
     /// <summary>Room ID.</summary>
@@ -44,6 +46,21 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
     [ObservableProperty]
     public partial string Initial { get; set; } = "#";
 
+    /// <summary>Latest message as one line, e.g. <c>Bob: lunch?</c>, or empty when none is loaded.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasLastMessage))]
+    public partial string LastMessage { get; set; } = "";
+
+    /// <summary>Time of the latest message: the time today, the weekday this week, else the date.</summary>
+    [ObservableProperty]
+    public partial string LastTime { get; set; } = "";
+
+    /// <summary>Time of the latest message, for ordering; the minimum when none is loaded.</summary>
+    public DateTimeOffset LastActivity { get; private set; } = DateTimeOffset.MinValue;
+
+    /// <summary>Whether <see cref="LastMessage"/> is shown in place of the topic.</summary>
+    public bool HasLastMessage => LastMessage.Length > 0;
+
     /// <summary><c>mxc://</c> URI of the room's avatar, or null.</summary>
     public string? AvatarUri { get; private set; }
 
@@ -62,7 +79,11 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
     public string UnreadText => Unread > 99 ? "99+" : Unread.ToString();
 
     /// <summary>Copy the room's current state; call under the room store's lock.</summary>
-    public void Update(Room room, bool isOpen)
+    /// <param name="room">The room.</param>
+    /// <param name="isOpen">Whether it is the open room, which has nothing unread.</param>
+    /// <param name="ownUserId">The user, whose messages show as from <c>You</c>.</param>
+    /// <param name="now">Current time, for <see cref="LastTime"/>.</param>
+    public void Update(Room room, bool isOpen, string ownUserId, DateTimeOffset now)
     {
         // State shown in the list; the open room has nothing unread
         Name = room.DisplayName;
@@ -76,6 +97,33 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         AvatarUri = room.AvatarUrl;
         string letters = Name.TrimStart('#', '!', '@', ' ');
         Initial = letters.Length > 0 ? char.ToUpperInvariant(letters[0]).ToString() : "#";
+
+        // Latest message: text, or a note for one that cannot be read yet
+        for (int i = room.Timeline.Count - 1; i >= 0; i--)
+        {
+            ClientEvent latest = room.Timeline[i];
+            string? text = latest.Type == EventTypes.RoomEncrypted ? "Encrypted message" : latest.Type == EventTypes.RoomMessage ? EventText.GetText(latest, room.GetMemberDisplayName) : null;
+            if (text is null) continue;
+            string sender = latest.Sender == ownUserId ? "You" : room.GetMemberDisplayName(latest.Sender);
+            string line = text.ReplaceLineEndings(" ");
+            LastMessage = room.IsDirect && latest.Sender != ownUserId ? line : $"{sender}: {line}";
+            LastActivity = DateTimeOffset.FromUnixTimeMilliseconds(latest.OriginServerTs);
+            LastTime = FormatTime(LastActivity.ToLocalTime(), now.ToLocalTime());
+            return;
+        }
+        // Done without messages
+        LastMessage = "";
+        LastTime = "";
+    }
+
+    /// <summary>Return a message time as a room list shows it: the time today, in 24 hours as messages show it, the weekday within a week, else the date.</summary>
+    internal static string FormatTime(DateTimeOffset time, DateTimeOffset now)
+    {
+        // Closer is shorter
+        if (time.Date == now.Date) return time.ToString("HH:mm", CultureInfo.CurrentCulture);
+        if (now.Date - time.Date < TimeSpan.FromDays(7)) return time.ToString("ddd", CultureInfo.CurrentCulture);
+        // Return the date
+        return time.ToString("d", CultureInfo.CurrentCulture);
     }
 }
 

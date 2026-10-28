@@ -554,7 +554,7 @@ public sealed class SyncService
     /// <summary>Format a stream position as a token.</summary>
     public static string Token(long position) => $"s{position}";
 
-    /// <summary>Parse a token; throw <c>M_INVALID_PARAM</c> for others.</summary>
+    /// <summary>Parse a token; throw <c>M_INVALID_PARAM</c> for others. Positions of history from other servers, such as a joined room's earlier state, are negative, so pagination tokens may be too.</summary>
     public static long ParseToken(string token) =>
-        token.StartsWith('s') && long.TryParse(token.AsSpan(1), out long position) && position >= 0 ? position : throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid token {token}.");
+        token.StartsWith('s') && long.TryParse(token.AsSpan(1), out long position) ? position : throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid token {token}.");
 }
