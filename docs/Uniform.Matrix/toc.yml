@@ -9,6 +9,8 @@ items:
   href: Uniform.Matrix.Hosting/toc.yml
 - name: Uniform.Matrix.Gui.Terminal
   href: Uniform.Matrix.Gui.Terminal/toc.yml
+- name: Uniform.Matrix.Audio
+  href: Uniform.Matrix.Audio/toc.yml
 - name: Uniform.Matrix.Client
   href: Uniform.Matrix.Client/toc.yml
 - name: Uniform.Matrix.Client.Terminal

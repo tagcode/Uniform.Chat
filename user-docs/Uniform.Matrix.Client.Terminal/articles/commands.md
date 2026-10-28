@@ -30,6 +30,7 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/devices` | Manage your sessions |
 | `/settings` | View and change options |
 | `/logs` | Read this and earlier session logs |
+| `/audiotest` | Hear yourself a second later, through the Opus codec of calls, to test the microphone and speaker; close the dialog to stop |
 | `/encryption` | Show encryption, recovery and backup state |
 | `/recover` | Unlock older messages with the recovery key |
 | `/verify [@user:server]` | Verify this device with your other devices, or a user, with emoji |

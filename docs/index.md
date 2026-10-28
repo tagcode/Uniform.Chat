@@ -56,6 +56,7 @@ src/
     Storage.cs                           ICryptoStore, InMemoryCryptoStore, IKeyTransport
   Uniform.Matrix.Hosting/                Settings layers, option catalog and editor, session logging; any .NET host
   Uniform.Matrix.Gui.Terminal/           Terminal.Gui components: settings window, log window, dialogs, text wrapping
+  Uniform.Matrix.Audio/                  Voice frames for calls: Opus (Concentus), microphone and speaker (NAudio)
   Uniform.Matrix.Client/                 Headless client: AddMatrixClient, services, storage, room state
     Configuration/                       Matrix and storage options, per-account paths
     Services/                            Session, sync, outbox, media cache, encryption, worker

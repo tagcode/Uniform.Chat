@@ -49,6 +49,8 @@ Uniform.Matrix.Client.Terminal --Matrix:UserId=@alice:matrix.org --Matrix:Passwo
 | `Ui:DarkBackground` | `true` | Whether the terminal background is dark, so bright pixels get dense characters. |
 | `Ui:DownloadDirectory` | not set | Folder that saved files go to; when null, ~/Downloads if it exists, otherwise the home folder. |
 | `Ui:AskWhereToSave` | `true` | Whether Save file asks where to save, starting from DownloadDirectory; otherwise files are saved there under a free name. |
+| `Audio:Microphone` | not set | Microphone: an ALSA device name on Linux, e.g. pulse, or part of the device's name on Windows; the system's default when null. The audio test lists the choices. |
+| `Audio:Speaker` | not set | Speaker: an ALSA device name on Linux, or part of the device's name on Windows; the system's default when null. The audio test lists the choices. |
 | `Logging:LogLevel:Default` | `Information` | Lowest level written to the log for categories without their own setting. |
 
 ## Settings window

@@ -33,7 +33,7 @@ Messages you write are stored first and sent in order, so they survive a lost co
 |---|---|
 | File | Encryption, Verify this device, Devices, Settings, Log out, Quit |
 | Room | Join, Room directory, New room, New public room, Direct message, Send file, Invite, Set topic, Set name, Set avatar, Add alias, Directory listing, Power level, Kick, Ban, Unban, Enable encryption, Leave |
-| View | Older messages, Members, Select message, Logs, Next room, Previous room |
+| View | Older messages, Members, Select message, Logs, Audio test, Next room, Previous room |
 | Help | Commands and keys, About |
 
 ## Keys

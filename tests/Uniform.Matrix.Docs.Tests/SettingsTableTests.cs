@@ -22,6 +22,7 @@ public partial class SettingsTableTests
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ApplicationName = "Uniform.Matrix.Docs.Tests" });
         builder.AddMatrixClient();
         builder.Services.AddOptionSection<UiOptions>(builder.Configuration, UiOptions.Section);
+        builder.Services.AddOptionSection<AudioOptions>(builder.Configuration, AudioOptions.Section);
 
         // Act and assert
         AssertTable("user-docs/Uniform.Matrix.Client.Terminal/articles/settings.md", Options(builder.Services, builder.Configuration));

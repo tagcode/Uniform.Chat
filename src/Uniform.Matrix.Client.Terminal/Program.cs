@@ -25,7 +25,7 @@ bool hasUserId = UserId.TryParse(userId, out _);
 bool askedForHelp = Usage.IsHelp(args);
 if (askedForHelp || !hasUserId && !Usage.CanAsk)
 {
-    OptionCatalog settings = new([new OptionSection(MatrixOptions.Section, typeof(MatrixOptions)), new OptionSection(StorageOptions.Section, typeof(StorageOptions)), new OptionSection(UiOptions.Section, typeof(UiOptions))]);
+    OptionCatalog settings = new([new OptionSection(MatrixOptions.Section, typeof(MatrixOptions)), new OptionSection(StorageOptions.Section, typeof(StorageOptions)), new OptionSection(UiOptions.Section, typeof(UiOptions)), new OptionSection(AudioOptions.Section, typeof(AudioOptions))]);
     (askedForHelp ? Console.Out : Console.Error).WriteLine(Usage.Text(userId, askedForHelp, SettingsStore.DefaultPath(builder.Environment.ApplicationName), [.. settings.GetAll(builder.Configuration).Where(o => o.Key == "Logging:LogLevel:Default" || !o.Key.StartsWith("Logging:"))]));
     Usage.WaitIfOwnConsole();
     return askedForHelp ? 0 : 2;
@@ -45,9 +45,10 @@ if (!hasUserId)
     builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { [userIdKey] = enteredUserId, [homeserverKey] = enteredHomeserver ?? builder.Configuration[homeserverKey] });
 }
 
-// Client services and options, then the terminal's own display options
+// Client services and options, then the terminal's own display and audio options
 builder.AddMatrixClient();
 builder.Services.AddOptionSection<UiOptions>(builder.Configuration, UiOptions.Section);
+builder.Services.AddOptionSection<AudioOptions>(builder.Configuration, AudioOptions.Section);
 builder.Services.AddSingleton<ICredentialPrompt, TuiCredentialPrompt>();
 
 // Start services, run the UI until quit, then stop services

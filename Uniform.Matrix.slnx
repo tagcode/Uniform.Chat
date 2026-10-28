@@ -8,6 +8,7 @@
     <Project Path="src/Uniform.Matrix.Gui.Terminal/Uniform.Matrix.Gui.Terminal.csproj" />
     <Project Path="src/Uniform.Matrix.Client/Uniform.Matrix.Client.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Terminal/Uniform.Matrix.Client.Terminal.csproj" />
+    <Project Path="src/Uniform.Matrix.Audio/Uniform.Matrix.Audio.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Android/Uniform.Matrix.Client.Android.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Avalonia.Core/Uniform.Matrix.Client.Avalonia.Core.csproj" />
     <Project Path="src/Uniform.Matrix.Client.Desktop/Uniform.Matrix.Client.Desktop.csproj" />
@@ -22,6 +23,7 @@
     <Project Path="tests/Uniform.Matrix.Hosting.Tests/Uniform.Matrix.Hosting.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Tests/Uniform.Matrix.Client.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Terminal.Tests/Uniform.Matrix.Client.Terminal.Tests.csproj" />
+    <Project Path="tests/Uniform.Matrix.Audio.Tests/Uniform.Matrix.Audio.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Avalonia.Core.Tests/Uniform.Matrix.Client.Avalonia.Core.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Server.Tests/Uniform.Matrix.Server.Tests.csproj" />
   </Folder>

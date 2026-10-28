@@ -168,6 +168,7 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "_Members", HelpText = "Show or hide", Key = Key.F2, Action = () => SetMemberListVisible(!memberList.Visible) },
             new MenuItem { Title = "_Select message", HelpText = "Reply, react, edit…", Key = Key.CursorUp.WithCtrl, Action = SelectMessage },
             new MenuItem { Title = "_Logs…", HelpText = "This and earlier sessions", Action = ShowLogs },
+            new MenuItem { Title = "_Audio test…", HelpText = "Hear yourself, to test microphone and speaker", Action = TestAudio },
             new Line(),
             new MenuItem { Title = "_Next room", Key = Key.N.WithCtrl, Action = () => SelectRelativeRoom(+1) },
             new MenuItem { Title = "_Previous room", Key = Key.P.WithCtrl, Action = () => SelectRelativeRoom(-1) },
@@ -639,6 +640,7 @@ public sealed partial class MainWindow : Window
             case "devices": _ = ManageDevicesAsync(); break;
             case "settings" or "set": ShowSettings(); break;
             case "logs" or "log": ShowLogs(); break;
+            case "audiotest": TestAudio(); break;
             case "encryption": _ = ShowEncryptionAsync(); break;
             case "recover": RecoverWithKey(); break;
             case "verify": VerifyUser(argument.Length > 0 ? argument : ownUserId); break;
@@ -906,6 +908,7 @@ public sealed partial class MainWindow : Window
         "/devices        manage your sessions",
         "/settings       view and change options",
         "/logs           read this and earlier session logs",
+        "/audiotest      hear yourself through Opus, to test microphone and speaker",
         "/encryption     keys, recovery and backup",
         "/recover        unlock old messages with the recovery key",
         "/verify [@user] verify your other device, or a user, with emoji",
