@@ -29,6 +29,7 @@ The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Ma
 - Notifications on Windows (toast notifications) and Android (UnifiedPush or Firebase, which need a push gateway); clicking a notification to open its room.
 - A full-size image viewer inside the app; avatars of people in the member list (the timeline has them).
 - Spaces, and forgetting old rooms.
+- Show the stored rooms and messages when the app starts without network; only timeline events are stored now, not room state, so the room list fills in once connected.
 - Android: release signing and a Play Store listing; Android builds in the release workflow.
 
 ## Library quality

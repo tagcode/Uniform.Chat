@@ -64,6 +64,30 @@ public sealed partial class MatrixClient
         }
     }
 
+    /// <summary>Run <paramref name="action"/> until it succeeds, retrying transient failures (network errors, 5xx, rate limiting) with the backoff of <see cref="SyncLoopAsync"/>; throw other errors.</summary>
+    /// <param name="action">The work, e.g. a first sync.</param>
+    /// <param name="onRetry">Called with the error and wait time before each retry.</param>
+    /// <param name="cancellationToken">Cancellation token; ends the retries.</param>
+    public async Task<T> RetryTransientAsync<T>(Func<CancellationToken, Task<T>> action, Action<Exception, TimeSpan>? onRetry, CancellationToken cancellationToken)
+    {
+        // Until it succeeds or fails for good
+        TimeSpan delay = SyncRetryDelay;
+        while (true)
+        {
+            try
+            {
+                // Return result
+                return await action(cancellationToken);
+            }
+            catch (Exception ex) when (IsTransient(ex, cancellationToken))
+            {
+                onRetry?.Invoke(ex, delay);
+            }
+            await Task.Delay(delay, cancellationToken);
+            delay = TimeSpan.FromTicks(Math.Min(delay.Ticks * 2, SyncRetryMaxDelay.Ticks));
+        }
+    }
+
     /// <summary>Sync once, returning transient errors instead of throwing them.</summary>
     private async Task<(SyncResponse? Response, Exception? Error)> TrySyncAsync(string? since, TimeSpan timeout, string? filter, CancellationToken cancellationToken)
     {

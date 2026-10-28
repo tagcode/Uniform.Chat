@@ -13,9 +13,11 @@
     <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <!-- EF Core and the JSON records use reflection, so the code is not trimmed; ahead-of-time compilation needs trimming, so it is off too -->
+    <!-- EF Core and the JSON records use reflection, so the code is not trimmed; ahead-of-time compilation needs trimming, so it is off too. A try with profiled ahead-of-time compilation and partial trimming started only about 10% faster on an old phone, and the trimmed build could no longer reach the server -->
     <PublishTrimmed>false</PublishTrimmed>
     <RunAOTCompilation>false</RunAOTCompilation>
+    <!-- Marshal methods leave out the native methods of Java overrides in classes with a generic base, such as Avalonia's AvaloniaAndroidApplication<TApp>, so release builds crash at start with UnsatisfiedLinkError; methods are registered at run time instead, as in debug builds -->
+    <AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>
   </PropertyGroup>
 
   <!-- Package -->

@@ -10,7 +10,9 @@ using global::Avalonia.VisualTree;
 using global::Avalonia.Media.Imaging;
 using global::Avalonia.Platform;
 using global::Avalonia.Styling;
+using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
 using Uniform.Matrix.Client.Avalonia.Core.Views;
 using Uniform.Matrix.Protocol.Client;
@@ -596,6 +598,42 @@ public class ChatFlowTests
         MainViewModel third = new(platform, new AvaloniaUiDispatcher());
         await third.StartAsync();
         Assert.IsType<LoginViewModel>(third.Page);
+    }
+
+    /// <summary>A start without network resumes the stored session and keeps trying to connect, instead of asking to sign in again.</summary>
+    [AvaloniaFact]
+    public async Task ResumeOffline()
+    {
+        // Arrange: a first sign-in
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient dave = await server.RegisterAsync("dave");
+        string data = Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName;
+        GuiPlatform platform = server.Platform(data);
+        MainViewModel first = new(platform, new AvaloniaUiDispatcher());
+        await SignInAsync(first, dave.UserId!);
+        await first.StopAsync();
+
+        // Act: start again with every request failing as without network
+        GuiPlatform offline = platform with { ConfigureServices = services => services.AddHttpClient(ClientSession.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => new OfflineHandler()) };
+        MainViewModel second = new(offline, new AvaloniaUiDispatcher());
+        try
+        {
+            await second.StartAsync();
+
+            // Assert: the chat, which keeps trying to connect
+            await WaitUntilAsync(() => second.Page is ChatViewModel chat && chat.StatusText.Contains("retrying"), "the chat, retrying");
+        }
+        finally
+        {
+            await second.StopAsync();
+        }
+    }
+
+    /// <summary>Fails every request as a phone without network does.</summary>
+    private sealed class OfflineHandler : HttpMessageHandler
+    {
+        /// <summary>Fail.</summary>
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) => throw new HttpRequestException("No network");
     }
 
     /// <summary>A wrong password keeps the form open with the server's reason.</summary>

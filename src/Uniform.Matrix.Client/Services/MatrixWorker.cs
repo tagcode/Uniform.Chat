@@ -45,7 +45,7 @@ public sealed class MatrixWorker : BackgroundService
             status.Set(ConnectionState.Connecting, "Logging in");
             MatrixClient client = await session.ConnectAsync(stoppingToken);
             status.Set(ConnectionState.Connecting, "Preparing encryption");
-            await crypto.StartAsync(client, stoppingToken);
+            await client.RetryTransientAsync(async token => { await crypto.StartAsync(client, token); return true; }, OnSyncRetry, stoppingToken);
             int decrypted = await processor.RetryStoredEncryptedAsync(stoppingToken);
             if (decrypted > 0) logger.LogInformation("Decrypted {Count} stored events with known keys", decrypted);
             await Task.WhenAll(SyncAsync(client, stoppingToken), outbox.RunAsync(client, stoppingToken));
@@ -61,7 +61,7 @@ public sealed class MatrixWorker : BackgroundService
         }
     }
 
-    /// <summary>Sync from the stored position; the first request asks for full state to rebuild room state in memory.</summary>
+    /// <summary>Sync from the stored position; the first request asks for full state to rebuild room state in memory, and is retried, as the app may start without network.</summary>
     private async Task SyncAsync(MatrixClient client, CancellationToken cancellationToken)
     {
         // Rebuild state from stored position
@@ -69,7 +69,7 @@ public sealed class MatrixWorker : BackgroundService
         string userId = client.UserId!;
         StoredAccount? account = await store.LoadAccountAsync(cancellationToken);
         string filter = new Filter { Room = new RoomFilter { Timeline = new RoomEventFilter { Limit = options.TimelineLimit, LazyLoadMembers = true }, State = new RoomEventFilter { LazyLoadMembers = true } } }.ToJson();
-        SyncResponse first = await client.SyncAsync(account?.NextBatch, filter: filter, fullState: true, cancellationToken: cancellationToken);
+        SyncResponse first = await client.RetryTransientAsync(token => client.SyncAsync(account?.NextBatch, filter: filter, fullState: true, cancellationToken: token), OnSyncRetry, cancellationToken);
         await processor.ProcessAsync(first, userId, cancellationToken);
         logger.LogInformation("Initial sync done: {Rooms} joined rooms", first.Rooms.Join.Count);
         status.Set(ConnectionState.Connected);

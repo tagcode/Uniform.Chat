@@ -47,7 +47,7 @@ public sealed class ClientSession
         return client;
     }
 
-    /// <summary>Return a client on the stored session, or null when none is stored or the server rejected it.</summary>
+    /// <summary>Return a client on the stored session, or null when none is stored or the server rejected it; when the server cannot be reached, the session is resumed unchecked.</summary>
     private async Task<MatrixClient?> TryResumeAsync(HttpClient http, CancellationToken cancellationToken)
     {
         // Assert stored token of this user
@@ -66,6 +66,11 @@ public sealed class ClientSession
             logger.LogWarning("Stored session of {UserId} was rejected: {Error}", account.UserId, ex.Message);
             await store.ClearAccessTokenAsync(cancellationToken);
             return null;
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
+        {
+            // The server cannot be reached, e.g. offline: keep the session, as syncing retries until it can
+            logger.LogInformation("Cannot reach the server to check the stored session of {UserId}, resuming it anyway: {Error}", account.UserId, ex.Message);
         }
 
         // Return resumed client
