@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Client.Avalonia.Core;
 
 using Uniform.Matrix.Client.Avalonia.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Uniform.Matrix.Audio;
 
 /// <summary>What the desktop and Android apps tell the shared user interface about their platform.</summary>
 public sealed record GuiPlatform
@@ -18,11 +19,18 @@ public sealed record GuiPlatform
     public INotifier? Notifier { get; init; }
     /// <summary>Changes to the engine's services, e.g. a test HTTP handler.</summary>
     public Action<IServiceCollection>? ConfigureServices { get; init; }
+    /// <summary>Open the platform's microphone and speaker, given whether to use the loudspeaker rather than an earpiece; null where there is no audio.</summary>
+    public Func<bool, IAudioDevices>? Audio { get; init; }
+    /// <summary>Whether the platform has an earpiece, so that the loudspeaker is a choice, as on phones.</summary>
+    public bool HasEarpiece { get; init; }
+    /// <summary>Ask for permission to record, where the platform needs it; return whether it is granted. Null where none is needed.</summary>
+    public Func<Task<bool>>? RequestMicrophoneAsync { get; init; }
 
     /// <summary>Return the platform of the desktop app on this operating system.</summary>
     public static GuiPlatform Desktop() => new()
     {
         ApplicationName = "Uniform.Matrix.Client.Desktop",
         DeviceName = OperatingSystem.IsWindows() ? "Uniform.Matrix on Windows" : OperatingSystem.IsMacOS() ? "Uniform.Matrix on macOS" : "Uniform.Matrix on Linux",
+        Audio = AudioDevices.ForThisPlatform() is null ? null : _ => AudioDevices.ForThisPlatform()!,
     };
 }

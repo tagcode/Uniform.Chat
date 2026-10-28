@@ -1,7 +1,7 @@
 NAudio.Core 3.3.0
 Project: https://naudio.github.io/NAudio/
 License: MIT
-Used by: terminal client
+Used by: Android client, desktop client, terminal client
 Copyright: © Mark Heath 2026
 
 The license text is the same as that of NAudio.Alsa; see NAudio.Alsa.txt.

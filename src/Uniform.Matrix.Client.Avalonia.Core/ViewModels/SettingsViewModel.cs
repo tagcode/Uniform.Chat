@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
 using System.Text.Json.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Uniform.Matrix.Audio;
 using Uniform.Matrix.Client.Avalonia.Core.Services;
 using Uniform.Matrix.Hosting;
 
@@ -23,14 +24,16 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Section of the settings file.</summary>
     public const string Section = "Ui";
     private readonly string path;
+    private readonly GuiPlatform? platform;
     private bool loading;
 
-    /// <summary>Load the settings of <paramref name="applicationName"/>; <paramref name="canNotify"/> tells whether the platform shows notifications.</summary>
-    public SettingsViewModel(string applicationName, bool canNotify)
+    /// <summary>Load the settings of <paramref name="applicationName"/>; <paramref name="canNotify"/> tells whether the platform shows notifications, and <paramref name="platform"/>, when given, offers its audio for the audio test.</summary>
+    public SettingsViewModel(string applicationName, bool canNotify, GuiPlatform? platform = null)
     {
         // Missing values keep their defaults
         path = SettingsStore.DefaultPath(applicationName);
         CanNotify = canNotify;
+        this.platform = platform;
         JsonObject ui = SettingsFile.Read(path)[Section] as JsonObject ?? [];
         loading = true;
         if (ui[nameof(Theme)] is JsonValue themeValue && themeValue.TryGetValue(out string? themeName) && Enum.TryParse(themeName, out AppTheme theme)) Theme = theme;
@@ -47,8 +50,29 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ShowsSettings))]
     public partial LicensesViewModel? Licenses { get; set; }
 
-    /// <summary>Whether the settings are shown rather than the licenses.</summary>
-    public bool ShowsSettings => Licenses is null;
+    /// <summary>The audio test shown in place of the settings, or null.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsSettings))]
+    public partial AudioTestViewModel? AudioTest { get; set; }
+
+    /// <summary>Whether the platform has audio to test.</summary>
+    public bool CanTestAudio => platform?.Audio is not null;
+
+    /// <summary>Whether the settings are shown rather than the licenses or the audio test.</summary>
+    public bool ShowsSettings => Licenses is null && AudioTest is null;
+
+    /// <summary>Show the audio test.</summary>
+    [RelayCommand]
+    private void ShowAudioTest() => AudioTest = platform?.Audio is Func<bool, IAudioDevices> audio ? new AudioTestViewModel(audio, platform.HasEarpiece, platform.RequestMicrophoneAsync) : null;
+
+    /// <summary>Stop the audio test and go back to the settings.</summary>
+    [RelayCommand]
+    public void CloseAudioTest()
+    {
+        // Devices closed first
+        AudioTest?.Dispose();
+        AudioTest = null;
+    }
 
     /// <summary>Show the licenses of the app and what it bundles.</summary>
     [RelayCommand]

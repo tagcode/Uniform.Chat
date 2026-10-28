@@ -24,11 +24,27 @@
     </Grid>
 
     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Changes are saved right away." />
-    <Button Content="Licences…" Command="{Binding ShowLicensesCommand}" HorizontalAlignment="Left" />
+    <StackPanel Orientation="Horizontal" Spacing="8">
+      <Button Content="Test audio…" Command="{Binding ShowAudioTestCommand}" IsVisible="{Binding CanTestAudio}" />
+      <Button Content="Licences…" Command="{Binding ShowLicensesCommand}" />
+    </StackPanel>
+  </StackPanel>
+
+  <!-- Audio test in place of the settings -->
+  <StackPanel Spacing="12" IsVisible="{Binding AudioTest, Converter={x:Static ObjectConverters.IsNotNull}}">
+    <Grid ColumnDefinitions="Auto,*">
+      <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Settings" Command="{Binding CloseAudioTestCommand}" />
+      <TextBlock Grid.Column="1" Classes="title" Text="Audio test" VerticalAlignment="Center" Margin="6,0,0,0" />
+    </Grid>
+    <StackPanel Spacing="12" DataContext="{Binding AudioTest}" x:DataType="vm:AudioTestViewModel">
+      <ToggleSwitch IsChecked="{Binding Loudspeaker}" IsVisible="{Binding HasEarpiece}" IsEnabled="{Binding !IsRunning}" OnContent="Loudspeaker" OffContent="Earpiece" />
+      <Button Classes="accent" Content="{Binding ButtonText}" Command="{Binding ToggleCommand}" HorizontalAlignment="Left" MinWidth="100" HorizontalContentAlignment="Center" />
+      <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+    </StackPanel>
   </StackPanel>
 
   <!-- Licences in place of the settings -->
-  <StackPanel Spacing="10" IsVisible="{Binding !ShowsSettings}">
+  <StackPanel Spacing="10" IsVisible="{Binding Licenses, Converter={x:Static ObjectConverters.IsNotNull}}">
     <Grid ColumnDefinitions="Auto,*">
       <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Settings" Command="{Binding CloseLicensesCommand}" />
       <TextBlock Grid.Column="1" Classes="title" Text="Licences" VerticalAlignment="Center" Margin="6,0,0,0" />

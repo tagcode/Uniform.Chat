@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Client.Android;
 
 using global::Avalonia;
 using global::Avalonia.Android;
+using Uniform.Matrix.Client.Android.Audio;
 using Uniform.Matrix.Client.Avalonia.Core;
 using global::Android.App;
 using global::Android.Runtime;
@@ -22,7 +23,15 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
         string files = FilesDir!.AbsolutePath;
         Environment.SetEnvironmentVariable("XDG_DATA_HOME", Path.Combine(files, "data"));
         Environment.SetEnvironmentVariable("XDG_CONFIG_HOME", Path.Combine(files, "config"));
-        App.Platform = new GuiPlatform { ApplicationName = "Uniform.Matrix.Client.Android", DeviceName = "Uniform.Matrix on Android", SinglePane = true };
+        App.Platform = new GuiPlatform
+        {
+            ApplicationName = "Uniform.Matrix.Client.Android",
+            DeviceName = "Uniform.Matrix on Android",
+            SinglePane = true,
+            Audio = loudspeaker => new AndroidAudioDevices(this, loudspeaker),
+            HasEarpiece = true,
+            RequestMicrophoneAsync = MainActivity.RequestMicrophoneAsync,
+        };
         base.OnCreate();
     }
 

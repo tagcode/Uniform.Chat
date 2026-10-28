@@ -1,7 +1,7 @@
 Concentus 2.2.2
 Project: https://github.com/lostromb/concentus
 License: see file
-Used by: terminal client
+Used by: Android client, desktop client, terminal client
 Copyright: © Xiph.Org Foundation, Skype Limited, CSIRO, Microsoft Corp.
 
 ===== LICENSE =====

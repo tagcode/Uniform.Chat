@@ -23,7 +23,7 @@ Concentus would switch to a native libopus where it finds one; both classes turn
 |---|---|---|
 | Linux | [`AlsaAudioDevices`](xref:Uniform.Matrix.Audio.AlsaAudioDevices) | NAudio.Alsa's `AlsaIn` and `AlsaOut` on ALSA's default devices, which desktops route through PipeWire or PulseAudio |
 | Windows | [`WasapiAudioDevices`](xref:Uniform.Matrix.Audio.WasapiAudioDevices) | NAudio.Wasapi, in shared mode |
-| Android | none here | the app supplies its own, over Android's `AudioRecord` and `AudioTrack` |
+| Android | `AndroidAudioDevices` in [Uniform.Matrix.Client.Android](xref:Uniform.Matrix.Client.Android.Article) | Android's `AudioRecord` from the voice communication source, with the phone's echo cancellation and noise suppression, and `AudioTrack` as call audio on the earpiece or the loudspeaker |
 
 Devices record and play in their own formats. [`MicrophoneFrames`](xref:Uniform.Matrix.Audio.MicrophoneFrames) turns any `IWaveIn` into voice frames, mixing channels to mono and resampling to 48 kHz; [`SpeakerFrames`](xref:Uniform.Matrix.Audio.SpeakerFrames) plays frames through any `IWavePlayer`, with a short buffer against uneven arrival and silence in the gaps.
 

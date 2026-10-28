@@ -52,7 +52,7 @@ The [Inter font](https://github.com/rsms/inter), which the desktop and Android c
 | BouncyCastle.Cryptography | 2.7.0 | Android client, desktop client, server, terminal client | [MIT](LICENSES/packages/BouncyCastle.Cryptography.txt) |
 | ColorHelper | 1.8.1 | server, terminal client | [MIT](LICENSES/packages/ColorHelper.txt) |
 | CommunityToolkit.Mvvm | 8.4.2 | Android client, desktop client | [MIT](LICENSES/packages/CommunityToolkit.Mvvm.txt) |
-| Concentus | 2.2.2 | terminal client | [see file](LICENSES/packages/Concentus.txt) |
+| Concentus | 2.2.2 | Android client, desktop client, terminal client | [see file](LICENSES/packages/Concentus.txt) |
 | HarfBuzzSharp | 8.3.1.3 | Android client, desktop client | [MIT](LICENSES/packages/HarfBuzzSharp.txt) |
 | HarfBuzzSharp.NativeAssets.Android | 8.3.1.3 | Android client | [MIT](LICENSES/packages/HarfBuzzSharp.NativeAssets.Android.txt) |
 | HarfBuzzSharp.NativeAssets.Linux | 8.3.1.3 | Android client, desktop client | [MIT](LICENSES/packages/HarfBuzzSharp.NativeAssets.Linux.txt) |
@@ -97,9 +97,9 @@ The [Inter font](https://github.com/rsms/inter), which the desktop and Android c
 | Microsoft.Extensions.Options | 10.0.12 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/Microsoft.Extensions.Options.txt) |
 | Microsoft.Extensions.Options.ConfigurationExtensions | 10.0.12 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/Microsoft.Extensions.Options.ConfigurationExtensions.txt) |
 | Microsoft.Extensions.Primitives | 10.0.12 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/Microsoft.Extensions.Primitives.txt) |
-| NAudio.Alsa | 3.3.0 | terminal client | [MIT](LICENSES/packages/NAudio.Alsa.txt) |
-| NAudio.Core | 3.3.0 | terminal client | [MIT](LICENSES/packages/NAudio.Core.txt) |
-| NAudio.Wasapi | 3.3.0 | terminal client | [MIT](LICENSES/packages/NAudio.Wasapi.txt) |
+| NAudio.Alsa | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Alsa.txt) |
+| NAudio.Core | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Core.txt) |
+| NAudio.Wasapi | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Wasapi.txt) |
 | Onigwrap | 1.0.11 | server, terminal client | [MIT](LICENSES/packages/Onigwrap.txt) |
 | SkiaSharp | 3.119.4 | Android client, desktop client | [MIT](LICENSES/packages/SkiaSharp.txt) |
 | SkiaSharp.NativeAssets.Android | 3.119.4 | Android client | [MIT](LICENSES/packages/SkiaSharp.NativeAssets.Android.txt) |
@@ -115,7 +115,7 @@ The [Inter font](https://github.com/rsms/inter), which the desktop and Android c
 | StbImageWriteSharp | 1.16.7 | server | [see file](LICENSES/packages/StbImageWriteSharp.txt) |
 | System.Diagnostics.EventLog | 10.0.12 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/System.Diagnostics.EventLog.txt) |
 | System.IO.Abstractions | 22.2.0 | server, terminal client | [MIT](LICENSES/packages/System.IO.Abstractions.txt) |
-| System.Numerics.Tensors | 9.0.0 | terminal client | [MIT](LICENSES/packages/System.Numerics.Tensors.txt) |
+| System.Numerics.Tensors | 9.0.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/System.Numerics.Tensors.txt) |
 | Terminal.Gui | 2.5.0 | server, terminal client | [MIT](LICENSES/packages/Terminal.Gui.txt) |
 | TestableIO.System.IO.Abstractions | 22.2.0 | server, terminal client | [MIT](LICENSES/packages/TestableIO.System.IO.Abstractions.txt) |
 | TestableIO.System.IO.Abstractions.Wrappers | 22.2.0 | server, terminal client | [MIT](LICENSES/packages/TestableIO.System.IO.Abstractions.Wrappers.txt) |

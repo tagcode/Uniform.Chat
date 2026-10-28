@@ -20,7 +20,7 @@ public sealed partial class MainViewModel : ViewModelBase
         this.platform = platform;
         this.ui = ui;
         memory = new AccountMemory(platform.ApplicationName);
-        Settings = new SettingsViewModel(platform.ApplicationName, canNotify: platform.Notifier is not null);
+        Settings = new SettingsViewModel(platform.ApplicationName, canNotify: platform.Notifier is not null, platform);
         Login = new LoginViewModel(SignInAsync);
         Page = Login;
     }

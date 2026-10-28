@@ -439,6 +439,11 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             Security = null;
             return true;
         }
+        if (IsSettingsOpen && Settings?.AudioTest is not null)
+        {
+            Settings.CloseAudioTest();
+            return true;
+        }
         if (IsSettingsOpen && Settings?.Licenses is not null)
         {
             Settings.Licenses = null;
