@@ -14,34 +14,28 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     private static readonly TimeSpan EndedShownFor = TimeSpan.FromSeconds(4);
     private readonly CallService calls;
     private readonly IUiDispatcher ui;
+    private readonly GuiPlatform platform;
     private readonly Func<bool, IAudioDevices>? audio;
-    private readonly Func<Task<bool>>? requestMicrophone;
-    private readonly INotifier? notifier;
     private readonly Func<string, string> nameOf;
-    private readonly Func<string, IDisposable>? keepAlive;
     private readonly Timer clock;
     private IDisposable? keptAlive;
+    private IDisposable? ringing;
+    private IDisposable? nearEar;
 
     /// <summary>Follow the calls of <paramref name="calls"/>.</summary>
     /// <param name="calls">The account's calls.</param>
     /// <param name="ui">Dispatcher of the user interface thread.</param>
-    /// <param name="audio">Opens the platform's devices, given whether to use the loudspeaker; null where there is no audio.</param>
-    /// <param name="hasEarpiece">Whether the loudspeaker is a choice, as on phones.</param>
-    /// <param name="requestMicrophone">Asks for the microphone permission where needed, or null.</param>
-    /// <param name="notifier">System notifications, for ringing in the background; or null.</param>
+    /// <param name="platform">The platform's audio, permissions, notifications, ringing and keeping calls alive.</param>
     /// <param name="nameOf">Returns a user's display name.</param>
-    /// <param name="keepAlive">Keeps a call going in the background, given the peer's name, until disposed; or null.</param>
-    public CallViewModel(CallService calls, IUiDispatcher ui, Func<bool, IAudioDevices>? audio, bool hasEarpiece, Func<Task<bool>>? requestMicrophone, INotifier? notifier, Func<string, string> nameOf, Func<string, IDisposable>? keepAlive = null)
+    public CallViewModel(CallService calls, IUiDispatcher ui, GuiPlatform platform, Func<string, string> nameOf)
     {
         // Devices as chosen when voice starts, and the call events
         this.calls = calls;
         this.ui = ui;
-        this.audio = audio;
-        HasEarpiece = hasEarpiece;
-        this.requestMicrophone = requestMicrophone;
-        this.notifier = notifier;
+        this.platform = platform;
+        audio = platform.Audio;
+        HasEarpiece = platform.HasEarpiece;
         this.nameOf = nameOf;
-        this.keepAlive = keepAlive;
         calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
         calls.IncomingCall += OnIncoming;
         calls.CallChanged += OnChanged;
@@ -148,6 +142,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // The choice, then the devices
         Loudspeaker = !Loudspeaker;
+        HoldPlatform(IsRinging, IsActive);
         if (Current is VoiceCall call) await RunAsync("Switching the speaker", () => call.RestartAudioAsync());
     }
 
@@ -158,17 +153,27 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         calls.IncomingCall -= OnIncoming;
         calls.CallChanged -= OnChanged;
         clock.Dispose();
-        KeepAlive(false);
+        HoldPlatform(false, false);
     }
 
-    /// <summary>Keep the app going in the background while a call is active, and stop when not.</summary>
-    private void KeepAlive(bool active)
+    /// <summary>Hold what the platform does for the call's state: keep it alive while active, ring while ringing, and turn the screen off near the ear while active on the earpiece.</summary>
+    private void HoldPlatform(bool ringingNow, bool active)
     {
-        // Start once, stop once
-        if (active && keptAlive is null && keepAlive is not null) keptAlive = keepAlive(PeerName);
-        if (active || keptAlive is null) return;
-        keptAlive.Dispose();
-        keptAlive = null;
+        // Each started once and stopped once
+        Hold(ref keptAlive, active, platform.KeepCallAlive is { } keep ? () => keep(PeerName) : null);
+        Hold(ref ringing, ringingNow, platform.Ring is { } ring ? () => ring(PeerName) : null);
+        Hold(ref nearEar, active && !(HasEarpiece && Loudspeaker), platform.ScreenOffNearEar);
+    }
+
+    /// <summary>Start a platform action when wanted and not held, or stop it when held and no longer wanted.</summary>
+    private static void Hold(ref IDisposable? held, bool wanted, Func<IDisposable>? start)
+    {
+        // Start
+        if (wanted && held is null && start is not null) held = start();
+        if (wanted || held is null) return;
+        // Stop
+        held.Dispose();
+        held = null;
     }
 
     /// <summary>Ring: show the call, and notify for when the app is in the background.</summary>
@@ -176,7 +181,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Bar, then the notification
         ui.Post(() => Show(call));
-        if (notifier is not null) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+        if (platform.Ring is null && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
     }
 
     /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>
@@ -207,7 +212,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         IsRinging = call.State == CallState.Ringing;
         IsActive = call.State is not (CallState.Ringing or CallState.Ended);
         IsMuted = call.Muted;
-        KeepAlive(IsActive);
+        HoldPlatform(IsRinging, IsActive);
         bool relayed = call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed;
         // Done
         StateText = call.State switch
@@ -241,7 +246,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     private async Task<bool> HasMicrophoneAsync()
     {
         // Granted, or no permission needed
-        if (requestMicrophone is null || await requestMicrophone()) return true;
+        if (platform.RequestMicrophoneAsync is not { } request || await request()) return true;
         Error = "Calls need the microphone permission.";
         // On refusal
         return false;

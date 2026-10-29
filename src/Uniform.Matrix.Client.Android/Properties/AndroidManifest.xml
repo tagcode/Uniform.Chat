@@ -8,7 +8,13 @@
   <!-- Calls go on in the background: a foreground service of the microphone type -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+  <!-- Messages and calls arrive with the screen off: a foreground service that keeps syncing -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
   <!-- Notifications of messages, incoming calls and the ongoing call -->
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <!-- Ringing: vibration, the incoming call over the lock screen, and the screen off near the ear -->
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
   <application android:label="Uniform.Matrix" android:icon="@drawable/icon" android:allowBackup="false" android:networkSecurityConfig="@xml/network_security_config" />
 </manifest>

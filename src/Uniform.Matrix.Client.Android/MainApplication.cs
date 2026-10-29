@@ -33,6 +33,9 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             RequestMicrophoneAsync = MainActivity.RequestMicrophoneAsync,
             Notifier = new AndroidNotifier(this),
             KeepCallAlive = peer => CallForegroundService.Start(this, peer),
+            KeepConnected = () => SyncForegroundService.Start(this),
+            Ring = peer => new Ringer(this, peer),
+            ScreenOffNearEar = () => new NearEarScreenOff(this),
         };
         base.OnCreate();
     }

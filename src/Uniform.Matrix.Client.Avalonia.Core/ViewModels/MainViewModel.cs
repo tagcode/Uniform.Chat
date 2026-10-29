@@ -12,6 +12,7 @@ public sealed partial class MainViewModel : ViewModelBase
     private readonly AccountMemory memory;
     private ClientConnection? connection;
     private ChatViewModel? chat;
+    private IDisposable? keptConnected;
 
     /// <summary>Create the app state for <paramref name="platform"/>.</summary>
     public MainViewModel(GuiPlatform platform, IUiDispatcher ui)
@@ -55,6 +56,8 @@ public sealed partial class MainViewModel : ViewModelBase
     public async Task StopAsync()
     {
         // Chat first, then the engine it follows
+        keptConnected?.Dispose();
+        keptConnected = null;
         if (chat is not null) await chat.DisposeAsync();
         if (connection is not null) await connection.DisposeAsync();
         chat = null;
@@ -103,9 +106,10 @@ public sealed partial class MainViewModel : ViewModelBase
 
         // Chat over the running engine
         connection = started;
-        CallViewModel call = new(started.Calls, ui, platform.Audio, platform.HasEarpiece, platform.RequestMicrophoneAsync, platform.Notifier, started.DisplayNameOf, platform.KeepCallAlive);
+        CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf);
         chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call);
         chat.Start();
+        keptConnected ??= platform.KeepConnected?.Invoke();
         Page = chat;
         return null;
     }

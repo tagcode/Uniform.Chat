@@ -165,10 +165,12 @@ public sealed class AccountService
     /// <summary>Rename a device; throw <c>M_NOT_FOUND</c> when the user has no such device.</summary>
     public async Task RenameDeviceAsync(string userId, string deviceId, string? displayName, CancellationToken cancellationToken)
     {
-        // Update in place
+        // Update in place, then tell those who share a room
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         int updated = await db.Devices.Where(d => d.UserId == userId && d.DeviceId == deviceId).ExecuteUpdateAsync(d => d.SetProperty(x => x.DisplayName, displayName), cancellationToken);
         if (updated == 0) throw NoDevice();
+        // Done; the name is part of the device list others see
+        await keys.MarkChangedAsync([userId], cancellationToken);
     }
 
     /// <summary>Delete devices of <paramref name="userId"/> with their tokens, pushers, keys and waiting messages; unknown device IDs are ignored.</summary>

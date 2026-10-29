@@ -13,13 +13,22 @@ internal static class Notifications
     public const string Messages = "messages";
     /// <summary>Channel of the ongoing call, quiet.</summary>
     public const string OngoingCall = "ongoing_call";
+    /// <summary>Channel of the connection notification of <see cref="SyncForegroundService"/>, the quietest.</summary>
+    public const string Connection = "connection";
+    /// <summary>Channel of incoming calls: urgent, but silent, as the ringer plays the ringtone.</summary>
+    public const string IncomingCall = "incoming_call";
 
     /// <summary>Create the channels, where Android has them; creating again changes nothing.</summary>
     public static void EnsureChannels(Context context)
     {
         // Android 8 and later
         if (!OperatingSystem.IsAndroidVersionAtLeast(26) || context.GetSystemService(Context.NotificationService) is not NotificationManager manager) return;
-        manager.CreateNotificationChannel(new NotificationChannel(Messages, "Messages and calls", NotificationImportance.High));
+        manager.CreateNotificationChannel(new NotificationChannel(Messages, "Messages", NotificationImportance.High));
+        NotificationChannel incoming = new(IncomingCall, "Incoming calls", NotificationImportance.High);
+        incoming.SetSound(null, null);
+        incoming.EnableVibration(false);
+        manager.CreateNotificationChannel(incoming);
+        manager.CreateNotificationChannel(new NotificationChannel(Connection, "Connection", NotificationImportance.Min));
         // Done
         manager.CreateNotificationChannel(new NotificationChannel(OngoingCall, "Ongoing call", NotificationImportance.Low));
     }
@@ -34,6 +43,20 @@ internal static class Notifications
         Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, channel) : new Notification.Builder(context);
 #pragma warning restore CA1422
         builder.SetSmallIcon(Resource.Drawable.icon).SetContentTitle(title).SetContentText(text).SetContentIntent(tap).SetOngoing(ongoing).SetAutoCancel(!ongoing);
+        // Return notification
+        return builder.Build()!;
+    }
+
+    /// <summary>Return the notification of an incoming call: a call that opens the app, over the lock screen and with the screen turned on when locked.</summary>
+    public static Notification BuildIncomingCall(Context context, string peer)
+    {
+        // The usual notification, as a call with a full-screen intent
+        Intent open = new Intent(context, typeof(MainActivity)).SetFlags(ActivityFlags.NewTask | ActivityFlags.SingleTop | ActivityFlags.ReorderToFront);
+        PendingIntent? screen = PendingIntent.GetActivity(context, 1, open, PendingIntentFlags.Immutable | PendingIntentFlags.UpdateCurrent);
+#pragma warning disable CA1422 // The builder without a channel serves Android 7 and older
+        Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, IncomingCall) : new Notification.Builder(context);
+#pragma warning restore CA1422
+        builder.SetSmallIcon(Resource.Drawable.icon).SetContentTitle("Incoming call").SetContentText($"{peer} is calling").SetContentIntent(screen).SetFullScreenIntent(screen, true).SetCategory(Notification.CategoryCall).SetOngoing(true);
         // Return notification
         return builder.Build()!;
     }
@@ -106,6 +129,53 @@ public sealed class CallForegroundService : Service
             // Once
             if (Interlocked.Exchange(ref stopped, 1) == 1) return;
             context.StopService(new Intent(context, typeof(CallForegroundService)));
+        }
+    }
+}
+
+/// <summary>Keeps the engine syncing while the app is off screen or the screen is off: a foreground service, without which Android's restricted networking cuts the app off, so that no message or call arrives. Push notifications would replace it.</summary>
+[Service(Exported = false, ForegroundServiceType = ForegroundService.TypeRemoteMessaging)]
+public sealed class SyncForegroundService : Service
+{
+    private const int NotificationId = 4;
+
+    /// <summary>Start the service; return what stops it.</summary>
+    public static IDisposable Start(Context context)
+    {
+        // Started while the app is on screen, as Android requires
+        Notifications.EnsureChannels(context);
+        Intent intent = new(context, typeof(SyncForegroundService));
+        if (OperatingSystem.IsAndroidVersionAtLeast(26)) context.StartForegroundService(intent);
+        else context.StartService(intent);
+        // Return the stopper
+        return new Stopper(context);
+    }
+
+    /// <summary>Not bound.</summary>
+    public override IBinder? OnBind(Intent? intent) => null;
+
+    /// <summary>Go to the foreground with the quiet connection notification.</summary>
+    public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
+    {
+        // Typed as remote messaging where Android asks
+        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform.Matrix", "Connected, for messages and calls", ongoing: true);
+        if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeRemoteMessaging);
+        else StartForeground(NotificationId, notification);
+        // Done
+        return StartCommandResult.NotSticky;
+    }
+
+    /// <summary>Stops the service once.</summary>
+    private sealed class Stopper(Context context) : IDisposable
+    {
+        private int stopped;
+
+        /// <summary>Stop the service.</summary>
+        public void Dispose()
+        {
+            // Once
+            if (Interlocked.Exchange(ref stopped, 1) == 1) return;
+            context.StopService(new Intent(context, typeof(SyncForegroundService)));
         }
     }
 }

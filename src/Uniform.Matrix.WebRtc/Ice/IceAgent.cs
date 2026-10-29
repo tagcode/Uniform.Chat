@@ -26,6 +26,8 @@ public sealed record IceOptions
     public bool IncludeLoopback { get; init; }
     /// <summary>Whether to offer and pair only relayed candidates, so the call goes through TURN; hides the addresses from the peer.</summary>
     public bool RelayOnly { get; init; }
+    /// <summary>Whether to gather and pair IPv6 host candidates, where the system has IPv6.</summary>
+    public bool EnableIPv6 { get; init; } = true;
     /// <summary>How long to wait for each server while gathering.</summary>
     public TimeSpan ServerTimeout { get; init; } = TimeSpan.FromSeconds(5);
 }
@@ -47,9 +49,9 @@ public enum IceState
     Closed,
 }
 
-/// <summary>A full <see href="https://www.rfc-editor.org/rfc/rfc8445">ICE</see> agent for one component over UDP and IPv4, as WebRTC's bundled, RTCP-multiplexed media needs: gathers candidates, checks pairs with the peer, selects one, and carries datagrams over it.</summary>
+/// <summary>A full <see href="https://www.rfc-editor.org/rfc/rfc8445">ICE</see> agent for one component over UDP, IPv4 and IPv6, as WebRTC's bundled, RTCP-multiplexed media needs: gathers candidates, checks pairs with the peer, selects one, and carries datagrams over it.</summary>
 /// <remarks>
-/// One socket bound to all interfaces is the base of every host candidate, and of the server-reflexive ones; each TURN allocation on that socket is the base of a relayed candidate. So pairs are bases times remote candidates.
+/// One IPv4 socket bound to all interfaces is the base of every IPv4 host candidate, and of the server-reflexive ones; each TURN allocation on that socket is the base of a relayed candidate. An IPv6 socket is likewise the base of the IPv6 host candidates, which are preferred, as <see href="https://www.rfc-editor.org/rfc/rfc8421">RFC 8421</see> recommends. So pairs are bases times remote candidates of the same family; relays, being IPv4, pair with IPv4 peers.
 /// Candidates trickle: <see cref="CandidateGathered"/> raises each as found, and <see cref="AddRemoteCandidate"/> takes the peer's at any time. The controlling agent nominates the best pair that works, shortly after the first one does; checks then continue every few seconds, for <see href="https://www.rfc-editor.org/rfc/rfc7675">consent</see>.
 /// Datagrams that are not STUN, i.e. DTLS and SRTP, go to <see cref="DataReceived"/>.
 /// </remarks>
@@ -65,8 +67,10 @@ public sealed class IceAgent : IAsyncDisposable
     private static readonly TimeSpan ConsentTimeout = TimeSpan.FromSeconds(30);
     private readonly IceOptions options;
     private readonly UdpClient socket = new(new IPEndPoint(IPAddress.Any, 0));
+    private readonly UdpClient? socket6;
     private readonly StunClient directStun;
     private readonly LocalBase host;
+    private readonly LocalBase host6;
     private readonly List<LocalBase> relays = [];
     private readonly List<IceCandidate> localCandidates = [];
     private readonly List<IceCandidate> remoteCandidates = [];
@@ -127,7 +131,9 @@ public sealed class IceAgent : IAsyncDisposable
         localKey = Encoding.UTF8.GetBytes(LocalPassword);
         directStun = new StunClient(SendDirectAsync);
         host = new LocalBase(directStun, null);
-        reading = ReadAsync(stopping.Token);
+        host6 = new LocalBase(directStun, null);
+        socket6 = options.EnableIPv6 ? OpenIPv6() : null;
+        reading = Task.WhenAll(ReadAsync(socket, host, stopping.Token), socket6 is null ? Task.CompletedTask : ReadAsync(socket6, host6, stopping.Token));
     }
 
     /// <summary>This agent's username fragment, for the SDP's <c>a=ice-ufrag</c>.</summary>
@@ -163,21 +169,35 @@ public sealed class IceAgent : IAsyncDisposable
     /// <summary>Gather host candidates, then reflexive and relayed ones from the servers; return when all servers answered or timed out.</summary>
     public async Task GatherAsync(CancellationToken cancellationToken = default)
     {
-        // Host candidates on every interface address, the socket's port
-        int port = ((IPEndPoint)socket.Client.LocalEndPoint!).Port;
-        IPAddress[] addresses = HostAddresses();
-        for (int i = 0; i < addresses.Length; i++)
-        {
-            IceCandidate candidate = new() { Foundation = $"h{i}", Priority = IceCandidate.ComputePriority(IceCandidateType.Host, (ushort)(65535 - i)), Address = new IPEndPoint(addresses[i], port), Type = IceCandidateType.Host };
-            host.Candidate ??= candidate;
-            if (!options.RelayOnly) AddLocal(candidate);
-        }
-        host.Candidate ??= new IceCandidate { Foundation = "h", Priority = IceCandidate.ComputePriority(IceCandidateType.Host), Address = new IPEndPoint(IPAddress.Any, port), Type = IceCandidateType.Host };
+        // Host candidates on every interface address and the socket's port; IPv6 preferred
+        if (socket6 is not null) AddHostCandidates(socket6, host6, AddressFamily.InterNetworkV6, "h6-", 65535);
+        AddHostCandidates(socket, host, AddressFamily.InterNetwork, "h", 49151);
 
         // Servers in parallel
         IEnumerable<Task> servers = options.Servers.Select((server, index) => GatherFromAsync(server, index, cancellationToken));
         // Done
         await Task.WhenAll(servers);
+    }
+
+    /// <summary>Add the host candidates of one socket, the first ranking its base's pairs.</summary>
+    /// <param name="udp">The socket.</param>
+    /// <param name="hostBase">Its base.</param>
+    /// <param name="family">Its address family.</param>
+    /// <param name="foundation">Prefix of the candidates' foundations.</param>
+    /// <param name="localPreference">Local preference of the first address; the next ones get one less each.</param>
+    private void AddHostCandidates(UdpClient udp, LocalBase hostBase, AddressFamily family, string foundation, int localPreference)
+    {
+        // Each address of the family
+        int port = ((IPEndPoint)udp.Client.LocalEndPoint!).Port;
+        IPAddress[] addresses = HostAddresses(family);
+        for (int i = 0; i < addresses.Length; i++)
+        {
+            IceCandidate candidate = new() { Foundation = $"{foundation}{i}", Priority = IceCandidate.ComputePriority(IceCandidateType.Host, (ushort)(localPreference - i)), Address = new IPEndPoint(addresses[i], port), Type = IceCandidateType.Host };
+            hostBase.Candidate ??= candidate;
+            if (!options.RelayOnly) AddLocal(candidate);
+        }
+        // Done, with a base that ranks pairs even without an address
+        hostBase.Candidate ??= new IceCandidate { Foundation = foundation, Priority = IceCandidate.ComputePriority(IceCandidateType.Host, (ushort)localPreference), Address = new IPEndPoint(family == AddressFamily.InterNetwork ? IPAddress.Any : IPAddress.IPv6Any, port), Type = IceCandidateType.Host };
     }
 
     /// <summary>Set the peer's username fragment and password, from its SDP; checks wait for them.</summary>
@@ -188,18 +208,19 @@ public sealed class IceAgent : IAsyncDisposable
         remoteKey = Encoding.UTF8.GetBytes(password);
     }
 
-    /// <summary>Add a candidate of the peer, and pair it with the local bases; ignored when it is not usable, e.g. IPv6.</summary>
+    /// <summary>Add a candidate of the peer, and pair it with the local bases of its family; ignored when it is not usable, e.g. IPv6 without an IPv6 socket.</summary>
     public void AddRemoteCandidate(IceCandidate candidate)
     {
-        // IPv4 only; loopback only when asked; relayed only when asked
-        if (candidate.Component != 1 || candidate.Address.AddressFamily != AddressFamily.InterNetwork) return;
+        // A family with a socket; loopback only when asked; relayed only when asked
+        bool ipv6 = candidate.Address.AddressFamily == AddressFamily.InterNetworkV6;
+        if (candidate.Component != 1 || (ipv6 && socket6 is null) || (!ipv6 && candidate.Address.AddressFamily != AddressFamily.InterNetwork)) return;
         if (IPAddress.IsLoopback(candidate.Address.Address) && !options.IncludeLoopback) return;
         LocalBase[] bases;
         lock (gate)
         {
             if (remoteCandidates.Any(c => c.Address.Equals(candidate.Address))) return;
             remoteCandidates.Add(candidate);
-            bases = options.RelayOnly ? [.. relays] : [host, .. relays];
+            bases = ipv6 ? (options.RelayOnly ? [] : [host6]) : options.RelayOnly ? [.. relays] : [host, .. relays];
             foreach (LocalBase local in bases) pairs.Add(new CandidatePair(local, candidate));
         }
 
@@ -221,6 +242,7 @@ public sealed class IceAgent : IAsyncDisposable
                 CheckNext(limit.Token);
                 if (Controlling) NominateBest(limit.Token);
                 await Task.WhenAny(selection.Task, Task.Delay(Ta, limit.Token));
+                if (!selection.Task.IsCompleted) limit.Token.ThrowIfCancellationRequested();
             }
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
@@ -251,6 +273,7 @@ public sealed class IceAgent : IAsyncDisposable
         if (consent is not null) await consent.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         foreach (LocalBase relay in relays) await relay.Turn!.DisposeAsync();
         socket.Dispose();
+        socket6?.Dispose();
         await reading.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         // Done
         SetState(IceState.Closed);
@@ -305,7 +328,7 @@ public sealed class IceAgent : IAsyncDisposable
         lock (gate)
         {
             relays.Add(relay);
-            remotes = [.. remoteCandidates];
+            remotes = [.. remoteCandidates.Where(c => c.Address.AddressFamily == AddressFamily.InterNetwork)];
             foreach (IceCandidate remote in remotes) pairs.Add(new CandidatePair(relay, remote));
         }
         // Done
@@ -504,14 +527,17 @@ public sealed class IceAgent : IAsyncDisposable
         }
     }
 
-    /// <summary>Read the socket until closed: TURN's responses and relayed data, the peer's checks and responses, and the rest to <see cref="DataReceived"/>.</summary>
-    private async Task ReadAsync(CancellationToken cancellationToken)
+    /// <summary>Read a socket until closed: TURN's responses and relayed data, the peer's checks and responses, and the rest to <see cref="DataReceived"/>.</summary>
+    /// <param name="udp">The socket.</param>
+    /// <param name="hostBase">The base of its host candidates.</param>
+    /// <param name="cancellationToken">Stops reading.</param>
+    private async Task ReadAsync(UdpClient udp, LocalBase hostBase, CancellationToken cancellationToken)
     {
         // Each datagram
         while (!cancellationToken.IsCancellationRequested)
         {
             UdpReceiveResult result;
-            try { result = await socket.ReceiveAsync(cancellationToken); }
+            try { result = await udp.ReceiveAsync(cancellationToken); }
             catch (SocketException) { continue; }
             catch (Exception e) when (e is OperationCanceledException or ObjectDisposedException) { return; }
             IPEndPoint from = result.RemoteEndPoint.Address.IsIPv4MappedToIPv6 ? new IPEndPoint(result.RemoteEndPoint.Address.MapToIPv4(), result.RemoteEndPoint.Port) : result.RemoteEndPoint;
@@ -521,7 +547,7 @@ public sealed class IceAgent : IAsyncDisposable
             if (StunMessage.IsStun(datagram) && directStun.Receive(datagram)) continue;
 
             // What a relay unwraps came from the peer through it
-            LocalBase local = host;
+            LocalBase local = hostBase;
             LocalBase[] relaysNow;
             lock (gate) relaysNow = [.. relays];
             foreach (LocalBase relay in relaysNow)
@@ -532,8 +558,8 @@ public sealed class IceAgent : IAsyncDisposable
                 datagram = data;
                 break;
             }
-            if (local == host && relaysNow.Any(r => r.Turn!.Server.Equals(from))) continue;
-            if (local == host && options.RelayOnly) continue;
+            if (local == hostBase && relaysNow.Any(r => r.Turn!.Server.Equals(from))) continue;
+            if (local == hostBase && options.RelayOnly) continue;
             // Done
             Dispatch(local, from, datagram);
         }
@@ -556,12 +582,33 @@ public sealed class IceAgent : IAsyncDisposable
         _ = AnswerCheckAsync(local, from, datagram, request);
     }
 
-    /// <summary>Send a datagram from the socket.</summary>
+    /// <summary>Send a datagram from the socket of the destination's family.</summary>
     private async ValueTask SendDirectAsync(ReadOnlyMemory<byte> datagram, IPEndPoint to, CancellationToken cancellationToken)
     {
         // Unreachable addresses fail the checks, not the agent
-        try { await socket.SendAsync(datagram, to, cancellationToken); }
+        UdpClient? udp = to.AddressFamily == AddressFamily.InterNetworkV6 ? socket6 : socket;
+        if (udp is null) return;
+        try { await udp.SendAsync(datagram, to, cancellationToken); }
         catch (SocketException) { }
+    }
+
+    /// <summary>Return an IPv6-only socket on any address, or null where the system has no IPv6.</summary>
+    private static UdpClient? OpenIPv6()
+    {
+        // Not dual mode: IPv4 has its own socket
+        if (!Socket.OSSupportsIPv6) return null;
+        try
+        {
+            UdpClient udp = new(AddressFamily.InterNetworkV6);
+            udp.Client.DualMode = false;
+            udp.Client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+            return udp;
+        }
+        catch (SocketException)
+        {
+            // On IPv6 turned off
+            return null;
+        }
     }
 
     /// <summary>Set the state, and tell when it changed.</summary>
@@ -574,14 +621,14 @@ public sealed class IceAgent : IAsyncDisposable
         StateChanged?.Invoke(state);
     }
 
-    /// <summary>Return the IPv4 addresses of the interfaces that are up; loopback only when asked, link-local never.</summary>
-    private IPAddress[] HostAddresses()
+    /// <summary>Return the addresses of a family on the interfaces that are up; loopback only when asked, link-local never.</summary>
+    private IPAddress[] HostAddresses(AddressFamily family)
     {
-        // Unicast addresses of up interfaces
+        // Unicast addresses of up interfaces, without IPv4's 169.254/16 and IPv6's fe80::/10 and site-local
         IEnumerable<IPAddress> addresses = NetworkInterface.GetAllNetworkInterfaces()
             .Where(n => n.OperationalStatus == OperationalStatus.Up)
             .SelectMany(n => n.GetIPProperties().UnicastAddresses.Select(a => a.Address))
-            .Where(a => a.AddressFamily == AddressFamily.InterNetwork && !a.ToString().StartsWith("169.254.", StringComparison.Ordinal));
+            .Where(a => a.AddressFamily == family && !a.IsIPv6LinkLocal && !a.IsIPv6SiteLocal && !a.ToString().StartsWith("169.254.", StringComparison.Ordinal));
         // Return them, loopback last
         return [.. addresses.Where(a => options.IncludeLoopback || !IPAddress.IsLoopback(a)).OrderBy(IPAddress.IsLoopback).Distinct()];
     }

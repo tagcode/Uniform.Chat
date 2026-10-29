@@ -19,7 +19,19 @@ public sealed class MainActivity : AvaloniaMainActivity
 {
     private const int MicrophoneRequest = 1;
     private static MainActivity? current;
+    private static bool shownWhenLocked;
     private TaskCompletionSource<bool>? microphoneAnswer;
+
+    /// <summary>Whether the app is on screen, so that a ringing call needs no notification.</summary>
+    public static bool IsInForeground { get; private set; }
+
+    /// <summary>Show the app over the lock screen and turn the screen on, while a call rings; or stop.</summary>
+    public static void SetShownWhenLocked(bool shown)
+    {
+        // Remembered for an activity created later, e.g. by the call notification
+        shownWhenLocked = shown;
+        current?.RunOnUiThread(() => current?.ApplyShownWhenLocked());
+    }
 
     /// <summary>Remember the running activity, which asks for permissions.</summary>
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -27,6 +39,41 @@ public sealed class MainActivity : AvaloniaMainActivity
         // Before the base, so the app can ask at once
         current = this;
         base.OnCreate(savedInstanceState);
+        ApplyShownWhenLocked();
+    }
+
+    /// <summary>On screen: a ringing call's notification would cover the call bar's buttons, so remove it.</summary>
+    protected override void OnResume()
+    {
+        // Foreground, without the notification
+        base.OnResume();
+        IsInForeground = true;
+        Ringer.HideNotification(this);
+    }
+
+    /// <summary>Off screen.</summary>
+    protected override void OnPause()
+    {
+        // Background
+        IsInForeground = false;
+        base.OnPause();
+    }
+
+    /// <summary>Apply <see cref="SetShownWhenLocked"/> to this activity.</summary>
+    private void ApplyShownWhenLocked()
+    {
+        // Android 8.1 and later have the calls; older ones the window flags
+        if (OperatingSystem.IsAndroidVersionAtLeast(27))
+        {
+            SetShowWhenLocked(shownWhenLocked);
+            SetTurnScreenOn(shownWhenLocked);
+            return;
+        }
+#pragma warning disable CA1422 // The window flags serve Android 8 and older
+        WindowManagerFlags flags = WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn;
+        if (shownWhenLocked) Window?.AddFlags(flags);
+        else Window?.ClearFlags(flags);
+#pragma warning restore CA1422
     }
 
     /// <summary>Ask for the microphone permission, and on Android 13 the one for notifications, which calls show, unless granted already; return whether the microphone is granted.</summary>

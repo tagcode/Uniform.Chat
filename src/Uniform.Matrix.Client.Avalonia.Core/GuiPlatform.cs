@@ -27,6 +27,12 @@ public sealed record GuiPlatform
     public Func<Task<bool>>? RequestMicrophoneAsync { get; init; }
     /// <summary>Keep a call with the named peer going while the app is in the background, e.g. a foreground service on Android; dispose the result when the call ends. Null where nothing is needed.</summary>
     public Func<string, IDisposable>? KeepCallAlive { get; init; }
+    /// <summary>Keep the engine syncing while the app is in the background or the screen is off, e.g. a foreground service on Android, which otherwise cuts the app's network; dispose the result when signed out. Null where nothing is needed.</summary>
+    public Func<IDisposable>? KeepConnected { get; init; }
+    /// <summary>Ring for an incoming call from the named peer, e.g. the ringtone and a full-screen call notification on Android; dispose the result to stop. Null where the platform only notifies.</summary>
+    public Func<string, IDisposable>? Ring { get; init; }
+    /// <summary>Turn the screen off while the phone is held to the ear, so that the cheek does not press buttons; dispose the result to stop. Null where there is no proximity sensor.</summary>
+    public Func<IDisposable>? ScreenOffNearEar { get; init; }
 
     /// <summary>Return the platform of the desktop app on this operating system.</summary>
     public static GuiPlatform Desktop() => new()

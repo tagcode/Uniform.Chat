@@ -53,6 +53,46 @@ public class IceTests
         await AssertExchangeAsync(caller, callee, cancellationToken);
     }
 
+    /// <summary>Connect two agents over IPv6 only, their IPv4 candidates withheld; skipped where the system has no IPv6.</summary>
+    [Fact]
+    public async Task ConnectOverIPv6()
+    {
+        // Agents with IPv6 loopback
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        if (!System.Net.Sockets.Socket.OSSupportsIPv6) { Assert.Skip("No IPv6 here."); return; }
+        await using IceAgent caller = new(new IceOptions { Controlling = true, IncludeLoopback = true });
+        await using IceAgent callee = new(new IceOptions { IncludeLoopback = true });
+        await Task.WhenAll(caller.GatherAsync(cancellationToken), callee.GatherAsync(cancellationToken));
+        Assert.Contains(caller.LocalCandidates, c => c.Address.Address.Equals(IPAddress.IPv6Loopback));
+
+        // Only IPv6 candidates exchanged, written and parsed as SDP does
+        caller.SetRemoteCredentials(callee.LocalUfrag, callee.LocalPassword);
+        callee.SetRemoteCredentials(caller.LocalUfrag, caller.LocalPassword);
+        foreach (IceCandidate candidate in callee.LocalCandidates.Where(c => c.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)) caller.AddRemoteCandidate(IceCandidate.Parse(candidate.ToString())!);
+        foreach (IceCandidate candidate in caller.LocalCandidates.Where(c => c.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)) callee.AddRemoteCandidate(IceCandidate.Parse(candidate.ToString())!);
+        bool[] connected = await Task.WhenAll(caller.ConnectAsync(TimeSpan.FromSeconds(10), cancellationToken), callee.ConnectAsync(TimeSpan.FromSeconds(10), cancellationToken));
+        Assert.All(connected, Assert.True);
+        Assert.Equal(System.Net.Sockets.AddressFamily.InterNetworkV6, caller.SelectedRemote!.Address.AddressFamily);
+        // Done
+        await AssertExchangeAsync(caller, callee, cancellationToken);
+    }
+
+    /// <summary>Give up after the timeout when the peer never answers, rather than checking forever.</summary>
+    [Fact]
+    public async Task TimeOutWithoutPeer()
+    {
+        // A peer candidate that nobody answers at
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        await using IceAgent agent = new(new IceOptions { Controlling = true, IncludeLoopback = true });
+        await agent.GatherAsync(cancellationToken);
+        agent.SetRemoteCredentials("abcd", "abcdefghijklmnopqrstuvwx");
+        agent.AddRemoteCandidate(IceCandidate.Parse("candidate:1 1 udp 2130706431 127.0.0.1 9 typ host")!);
+        bool connected = await agent.ConnectAsync(TimeSpan.FromSeconds(2), cancellationToken).WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
+        // Done
+        Assert.False(connected);
+        Assert.Equal(IceState.Failed, agent.State);
+    }
+
     /// <summary>Connect two agents that both start as controlling; the tie-breakers settle it.</summary>
     [Fact]
     public async Task SolveRoleConflict()
