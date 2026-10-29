@@ -280,6 +280,67 @@ public class ChatFlowTests
         }
     }
 
+    /// <summary>A second device sees older encrypted messages it has no keys for; once verified, the first device forwards the keys, and the open room and the room list show the messages without a restart.</summary>
+    [AvaloniaFact]
+    public async Task ShowMessagesWhenKeysArrive()
+    {
+        // Arrange: Heidi with recovery set up, and an encrypted room with a message from her first device
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient heidi = await server.RegisterAsync("heidi");
+        MainViewModel first = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+        MainViewModel second = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel firstChat = await SignInAsync(first, heidi.UserId!);
+            await WaitUntilAsync(() => firstChat.HasSecuritySuggestion, "the suggestion to set up recovery");
+            await firstChat.OpenSecurityCommand.ExecuteAsync(null);
+            await firstChat.Security!.SetUpCommand.ExecuteAsync(null);
+            if (firstChat.Security.NeedsPassword)
+            {
+                firstChat.Security.Password = "password";
+                await firstChat.Security.SetUpCommand.ExecuteAsync(null);
+            }
+            Assert.True(firstChat.Security.HasNewRecoveryKey, firstChat.Security.Message);
+            firstChat.CloseSecurityCommand.Execute(null);
+            firstChat.JoinTarget = "Diary";
+            await firstChat.OpenTargetCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => firstChat.SelectedRoom?.Name == "Diary", "the new room to open");
+            string roomId = firstChat.SelectedRoom!.RoomId;
+            firstChat.Composer = "dear diary";
+            await firstChat.SendCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => firstChat.Messages.Items.Any(m => m.Text == "dear diary") && !firstChat.Messages.Items.Any(m => m.IsPending), "the message to be sent");
+
+            // Act: the second device opens the room, which it cannot read yet
+            ChatViewModel secondChat = await SignInAsync(second, heidi.UserId!);
+            await WaitUntilAsync(() => secondChat.Rooms.Any(r => r.RoomId == roomId), "the room on the second device");
+            secondChat.SelectedRoom = secondChat.Rooms.First(r => r.RoomId == roomId);
+            await WaitUntilAsync(() => secondChat.Messages.Items.Any(m => m.Text.StartsWith("Encrypted message")), "the undecryptable message");
+            Assert.Equal("You: Encrypted message", secondChat.SelectedRoom!.LastMessage);
+
+            // Act: verify the second device from the first
+            await WaitUntilAsync(() => secondChat.HasSecuritySuggestion, "the suggestion to verify the second device");
+            await secondChat.OpenSecurityCommand.ExecuteAsync(null);
+            await secondChat.Security!.VerifyCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => firstChat.Verification is { IsIncoming: true }, "the request on the first device");
+            await firstChat.Verification!.AcceptCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => firstChat.Verification is { IsComparing: true } && secondChat.Verification is { IsComparing: true }, "the emoji on both devices");
+            await firstChat.Verification.MatchCommand.ExecuteAsync(null);
+            await secondChat.Verification!.MatchCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => firstChat.Verification is { IsFinished: true } && secondChat.Verification is { IsFinished: true }, "the verification to finish");
+
+            // Assert: the open room and its list entry show the message
+            await WaitUntilAsync(() => secondChat.Messages.Items.Any(m => m.Text == "dear diary"), "the decrypted message in the open room");
+            Assert.DoesNotContain(secondChat.Messages.Items, m => m.Text.StartsWith("Encrypted message"));
+            await WaitUntilAsync(() => secondChat.Rooms.First(r => r.RoomId == roomId).LastMessage == "You: dear diary", "the decrypted message in the room list");
+        }
+        finally
+        {
+            await first.StopAsync();
+            await second.StopAsync();
+        }
+    }
+
     /// <summary>Records notifications instead of showing them.</summary>
     private sealed class RecordingNotifier : INotifier
     {

@@ -882,12 +882,18 @@ public sealed partial class MainWindow : Window
     {
         // Confirm
         if (!Dialogs.Confirm(app, "Log out", "End this session on the server? Messages stay in the local database.")) return;
-        // Log out, forget the token and quit
+        // Log out, forget the token and the user ID, so the next start asks who signs in, and quit
         _ = RunSafelyAsync("Logging out", async client =>
         {
-            await client.LogoutAsync();
+            // Best effort: an unreachable server still ends the local session
+            try { await client.LogoutAsync(); }
+            catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException) { logger.LogWarning("Logging out on the server failed: {Error}", ex.Message); }
             await store.ClearAccessTokenAsync();
-            app.Invoke(() => app.RequestStop());
+            app.Invoke(() =>
+            {
+                settings.Save(new Dictionary<string, string?> { [$"{MatrixOptions.Section}:{nameof(MatrixOptions.UserId)}"] = null });
+                app.RequestStop();
+            });
         });
     }
 

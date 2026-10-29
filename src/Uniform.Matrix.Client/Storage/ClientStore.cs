@@ -123,12 +123,12 @@ public sealed class ClientStore
         return [.. rows.Select(FromStored)];
     }
 
-    /// <summary>Return every stored event that is still encrypted, with its room.</summary>
+    /// <summary>Return every stored event that is still encrypted and not redacted, with its room.</summary>
     public async Task<IReadOnlyList<(string RoomId, ClientEvent Event)>> GetAllEncryptedEventsAsync(CancellationToken cancellationToken = default)
     {
-        // Encrypted rows
+        // Encrypted rows; redacted ones have nothing left to decrypt
         await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
-        List<StoredEvent> rows = await db.Events.AsNoTracking().Where(e => e.Type == EventTypes.RoomEncrypted).ToListAsync(cancellationToken);
+        List<StoredEvent> rows = await db.Events.AsNoTracking().Where(e => e.Type == EventTypes.RoomEncrypted && !e.Redacted).ToListAsync(cancellationToken);
         // Return events with rooms
         return [.. rows.Select(r => (r.RoomId, FromStored(r)))];
     }

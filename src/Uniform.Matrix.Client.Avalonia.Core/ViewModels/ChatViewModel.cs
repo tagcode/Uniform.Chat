@@ -1048,8 +1048,13 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Show the open room's outbox again when a message there was sent or failed.</summary>
     private void OnOutboxChanged(string roomId) => ui.Post(() => { if (SelectedRoom?.RoomId == roomId) _ = RefreshPendingAsync(roomId); });
 
-    /// <summary>Show messages of the open room again once late keys decrypted them.</summary>
-    private void OnEventsDecrypted(string roomId) => ui.Post(() => { if (SelectedRoom?.RoomId == roomId) _ = OpenRoomAsync(roomId); });
+    /// <summary>Show the room list and the open room again once late keys decrypted their messages.</summary>
+    private void OnEventsDecrypted(string roomId) => ui.Post(() =>
+    {
+        // The list shows latest messages; the open room shows them all
+        RefreshRooms();
+        if (SelectedRoom?.RoomId == roomId) _ = OpenRoomAsync(roomId);
+    });
 
     /// <summary>Run a server call with the logged-in client; failures become the notice unless <paramref name="report"/> is false. Return whether it succeeded.</summary>
     private async Task<bool> RunAsync(string what, Func<MatrixClient, Task> action, bool report = true)

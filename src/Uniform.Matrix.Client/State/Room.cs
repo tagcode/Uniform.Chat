@@ -219,6 +219,17 @@ public sealed class Room
     /// <summary>Insert older events before <see cref="Timeline"/>; no state is applied as it is historical.</summary>
     internal void Prepend(IReadOnlyList<ClientEvent> olderFirst) => timeline.InsertRange(0, olderFirst);
 
+    /// <summary>Replace an event of <see cref="Timeline"/> by its decrypted form; return false when it is not there.</summary>
+    internal bool Replace(ClientEvent decrypted)
+    {
+        // Same place, new content
+        int index = timeline.FindIndex(e => e.EventId == decrypted.EventId);
+        if (index < 0) return false;
+        timeline[index] = decrypted with { RoomId = timeline[index].RoomId };
+        // Done
+        return true;
+    }
+
     /// <summary>Clear <see cref="Timeline"/> after a gap.</summary>
     internal void ClearTimeline() => timeline.Clear();
 

@@ -121,8 +121,8 @@ public sealed class CryptoService : IDisposable
     /// <summary>Decrypt one event; return it unchanged when not encrypted or not decryptable.</summary>
     public async Task<ClientEvent> DecryptAsync(string roomId, ClientEvent clientEvent, CancellationToken cancellationToken)
     {
-        // Assert encryption
-        if (machine is null || clientEvent.Type != EventTypes.RoomEncrypted) return clientEvent;
+        // Assert encryption; a redacted event has no ciphertext left
+        if (machine is null || clientEvent.Type != EventTypes.RoomEncrypted || clientEvent.Unsigned?.RedactedBecause is not null) return clientEvent;
         RoomEventDecryption result = await machine.DecryptRoomEventAsync(roomId, clientEvent, cancellationToken);
         // Return decrypted or original
         if (result.Status is DecryptionStatus.Failed) logger.LogWarning("Event {EventId} in {RoomId} did not decrypt: {Error}", clientEvent.EventId, roomId, result.Error);

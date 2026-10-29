@@ -126,3 +126,15 @@ For desktop clients, F1 could open in system browser the user documentations tha
 # Android Flutter UI
 
 Prototype with Flutter+Avalania.
+
+# README.md
+
+- Clean up package README.md.
+
+# Voice messages
+
+
+
+# User management
+
+Admin user manages other users through matrix protocol.

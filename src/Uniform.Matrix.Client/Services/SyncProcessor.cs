@@ -65,6 +65,7 @@ public sealed class SyncProcessor
                 ClientEvent decrypted = await crypto.DecryptAsync(roomId, ev, cancellationToken);
                 if (decrypted.Type == EventTypes.RoomEncrypted) continue;
                 await store.ReplaceEventAsync(decrypted, cancellationToken);
+                ReplaceInRoom(roomId, decrypted);
                 updatedRooms.Add(roomId);
             }
         }
@@ -86,12 +87,20 @@ public sealed class SyncProcessor
             ClientEvent decrypted = await crypto.DecryptAsync(roomId, ev, cancellationToken);
             if (decrypted.Type == EventTypes.RoomEncrypted) continue;
             await store.ReplaceEventAsync(decrypted, cancellationToken);
+            ReplaceInRoom(roomId, decrypted);
             updatedRooms.Add(roomId);
             count++;
         }
         // Announce, then return count
         foreach (string roomId in updatedRooms) EventsDecrypted?.Invoke(roomId);
         return count;
+    }
+
+    /// <summary>Replace an event in the room state by its decrypted form, so the room list sees it too.</summary>
+    private void ReplaceInRoom(string roomId, ClientEvent decrypted)
+    {
+        // Under lock, as syncs change the timeline
+        lock (gate) if (rooms?.TryGetRoom(roomId, out Room? room) == true) room.Replace(decrypted);
     }
 
     /// <summary>Run <paramref name="read"/> on the room state while no sync is applied.</summary>
