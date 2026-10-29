@@ -39,6 +39,9 @@ internal sealed class FakeTurnServer : IAsyncDisposable
     /// <summary>The relayed address of the allocation.</summary>
     public IPEndPoint RelayAddress => (IPEndPoint)relay.Client.LocalEndPoint!;
 
+    /// <summary>Data to relay on a channel right after its ChannelBind response, as from a peer whose packet arrives at that moment; null for none.</summary>
+    public byte[]? SendAfterBind { get; set; }
+
     /// <summary>Number of Refresh requests with a zero lifetime, which delete the allocation.</summary>
     public int Deletes { get; private set; }
 
@@ -88,6 +91,17 @@ internal sealed class FakeTurnServer : IAsyncDisposable
             StunMessage response;
             lock (gate) response = StunMessage.CheckIntegrity(datagram, key) ? Answer(message, peer) : Error(message, 401);
             await server.SendAsync(response.Encode(response.Class == StunClass.Success ? key : null), sender, cancellationToken);
+
+            // Channel data at once after a bind, when asked
+            if (message.Method == StunMethod.ChannelBind && response.Class == StunClass.Success && SendAfterBind is byte[] early)
+            {
+                byte[] frame = new byte[4 + early.Length];
+                frame[0] = message.Get(StunAttributeTypes.ChannelNumber)![0];
+                frame[1] = message.Get(StunAttributeTypes.ChannelNumber)![1];
+                BinaryPrimitives.WriteUInt16BigEndian(frame.AsSpan(2), (ushort)early.Length);
+                early.CopyTo(frame, 4);
+                await server.SendAsync(frame, sender, cancellationToken);
+            }
         }
     }
 

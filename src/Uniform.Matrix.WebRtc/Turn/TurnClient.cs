@@ -95,17 +95,24 @@ public sealed class TurnClient : IAsyncDisposable
     public async Task<bool> BindChannelAsync(IPEndPoint peer, CancellationToken cancellationToken = default)
     {
         // The peer's channel, or a new one
-        ushort channel = channelsByPeer.TryGetValue(peer, out (ushort Channel, DateTime Bound) bound) ? bound.Channel : (ushort)Interlocked.Increment(ref nextChannel);
+        bool rebinding = channelsByPeer.TryGetValue(peer, out (ushort Channel, DateTime Bound) bound);
+        ushort channel = rebinding ? bound.Channel : (ushort)Interlocked.Increment(ref nextChannel);
         if (channel > 0x4FFF) return false;
         byte[] number = new byte[4];
         BinaryPrimitives.WriteUInt16BigEndian(number, channel);
-        StunMessage? response = await RequestAsync(() => new StunMessage(StunMethod.ChannelBind, StunClass.Request).Add(StunAttributeTypes.ChannelNumber, number).Add(StunAttributeTypes.XorPeerAddress, []), cancellationToken, peer);
-        if (response?.Class != StunClass.Success) return false;
 
-        // Both ways, and the permission it brings
+        // Receiving known before asking: the server may relay channel data right after its response, before this continues
+        peersByChannel[channel] = peer;
+        StunMessage? response = await RequestAsync(() => new StunMessage(StunMethod.ChannelBind, StunClass.Request).Add(StunAttributeTypes.ChannelNumber, number).Add(StunAttributeTypes.XorPeerAddress, []), cancellationToken, peer);
+        if (response?.Class != StunClass.Success)
+        {
+            if (!rebinding) peersByChannel.TryRemove(channel, out _);
+            return false;
+        }
+
+        // Sending on it, and the permission it brings
         DateTime now = DateTime.UtcNow;
         channelsByPeer[peer] = (channel, now);
-        peersByChannel[channel] = peer;
         permissions[peer.Address] = now;
         // Done
         return true;

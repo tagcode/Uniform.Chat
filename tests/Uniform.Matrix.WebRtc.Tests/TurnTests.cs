@@ -41,6 +41,25 @@ public class TurnTests
         Assert.Equal(1, server.Deletes);
     }
 
+    /// <summary>Deliver channel data that the server relays right after answering the bind, before the client has seen the answer through.</summary>
+    [Fact]
+    public async Task ReceiveRightAfterBind()
+    {
+        // A server that relays at once after binding
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        await using FakeTurnServer server = new(Username, Password) { SendAfterBind = "early"u8.ToArray() };
+        await using Endpoint endpoint = new(server.Address, Username, Password);
+        Assert.True(await endpoint.Turn.AllocateAsync(cancellationToken));
+        IPEndPoint peer = new(IPAddress.Loopback, 40000);
+
+        // Bind; the early data arrives with the answer
+        Assert.True(await endpoint.Turn.BindChannelAsync(peer, cancellationToken));
+        (IPEndPoint from, byte[] data) = await endpoint.Received.ReadAsync(cancellationToken).AsTask().WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
+        // Done
+        Assert.Equal(peer, from);
+        Assert.Equal("early"u8.ToArray(), data);
+    }
+
     /// <summary>Relay between two allocations on the TURN server that <c>UNIFORM_MATRIX_TURN</c> names, as <c>host:port</c>, with the shared secret in <c>UNIFORM_MATRIX_TURN_SECRET</c>; skipped without them.</summary>
     [Fact]
     public async Task RelayThroughRealServer()
