@@ -31,7 +31,7 @@ For `Token` registration, use `"auth":{"type":"m.login.registration_token","toke
 
 The new user is `@alice:localhost`, or `@alice:` followed by the configured server name. Their display name starts out as their user name.
 
-# Confogure from dashboard
+## Configure from dashboard
 
 When the server runs as a [system service](xref:Uniform.Matrix.Server.Host.Service.Article), stop the service and open the dashboard as the service's user with the same folders, in a terminal:
 
