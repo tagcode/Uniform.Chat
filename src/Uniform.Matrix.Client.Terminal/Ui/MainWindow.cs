@@ -318,8 +318,13 @@ public sealed partial class MainWindow : Window
     /// <summary>Show connection changes; a fatal error is reported and end the app.</summary>
     private void OnConnectionChanged(ConnectionState state, string? message)
     {
-        // Status line
+        // Status line, and once connected the first time, what encryption still needs
         ShowStatus(DescribeConnection(state, message));
+        if (state == ConnectionState.Connected && !securityChecked)
+        {
+            securityChecked = true;
+            _ = SuggestSecurityAsync();
+        }
 
         // Fatal error ends the app
         if (state != ConnectionState.Failed) return;

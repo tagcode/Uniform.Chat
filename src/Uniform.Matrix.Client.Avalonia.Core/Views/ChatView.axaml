@@ -87,6 +87,17 @@
           <Button Grid.Column="2" Margin="6,0,0,0" Classes="icon" Content="🔍" ToolTip.Tip="Room directory" Command="{Binding OpenDirectoryCommand}" />
         </Grid>
 
+        <!-- Set up recovery, or verify this device, until done or dismissed -->
+        <Border DockPanel.Dock="Top" Classes="notice" Margin="12,0,12,8" IsVisible="{Binding HasSecuritySuggestion}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding SecuritySuggestion}" TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="accent" Content="Security and recovery…" Command="{Binding OpenSecurityCommand}" />
+              <Button Content="Not now" Command="{Binding DismissSecuritySuggestionCommand}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
         <TextBlock DockPanel.Dock="Bottom" Classes="status" Text="{Binding StatusText}" IsVisible="{Binding StatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextWrapping="Wrap" />
 
         <ListBox x:Name="RoomList" ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}" Classes="rooms">

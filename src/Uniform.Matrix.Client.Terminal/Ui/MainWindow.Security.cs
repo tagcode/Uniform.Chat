@@ -4,12 +4,39 @@ using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;
+using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 
 // Encryption status, recovery and device verification.
 public sealed partial class MainWindow
 {
     private readonly HashSet<(string TransactionId, VerificationState State)> shownVerificationStates = [];
+    private bool securityChecked;
+
+    /// <summary>Offer the encryption window when the account has no cross-signing yet, as a new account, or this device is not signed with it; otherwise others see this device as unverified.</summary>
+    private async Task SuggestSecurityAsync()
+    {
+        // The account's state, off the UI thread
+        if (!crypto.Available) return;
+        SecurityStatus status;
+        try
+        {
+            status = await crypto.GetSecurityStatusAsync();
+        }
+        catch (Exception ex) when (ex is MatrixException or HttpRequestException or InvalidOperationException)
+        {
+            logger.LogInformation("Security status not available: {Error}", ex.Message);
+            return;
+        }
+
+        // What is missing, offered once
+        string? missing = !status.CrossSigningSetUp ? "This account has no recovery set up yet. Setting it up lets others see this device as verified, and gives you a recovery key that unlocks your messages on new devices."
+            : !status.ThisDeviceCrossSigned ? "This device is not verified yet. Verify it with another of your devices, or with your recovery key, so that others see it as verified and it reads your older messages."
+            : null;
+        if (missing is null) return;
+        // Done
+        app.Invoke(() => { if (Dialogs.Confirm(app, "Encryption", $"{missing}\n\nOpen the encryption window now? It is also in File → Encryption, and /encryption.")) _ = ShowEncryptionAsync(); });
+    }
 
     /// <summary>Show this device's keys and the account's cross-signing, backup and recovery state, offering what is missing.</summary>
     private async Task ShowEncryptionAsync()

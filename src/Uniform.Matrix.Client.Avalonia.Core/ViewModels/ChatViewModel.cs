@@ -38,6 +38,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     private string? openWhenArrived;
     private bool notifiedChanges;
     private Task? consuming;
+    private bool securityChecked;
+    private bool securitySuggestionDismissed;
 
     /// <summary>Create the screen over a started connection.</summary>
     /// <param name="connection">Engine of the signed-in account.</param>
@@ -204,8 +206,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         connection.Outbox.RoomChanged += OnOutboxChanged;
         connection.Crypto.VerificationChanged += OnVerificationChanged;
         consuming = Task.Run(ConsumeChangesAsync);
-        // Rooms known already, e.g. after a quick resume
+        // Rooms known already, e.g. after a quick resume, and security when connected already
         ui.Post(RefreshRooms);
+        if (connection.Status.State == ConnectionState.Connected) OnConnectionChanged(ConnectionState.Connected, connection.Status.Message);
     }
 
     /// <summary>Stop following the engine.</summary>
@@ -660,9 +663,56 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     [RelayCommand]
     private void CloseDirectory() => RoomDirectory = null;
 
-    /// <summary>Hide the security panel.</summary>
+    /// <summary>Hide the security panel, and see whether the suggestion above the rooms still applies.</summary>
     [RelayCommand]
-    private void CloseSecurity() => Security = null;
+    private void CloseSecurity()
+    {
+        // Closed, then checked again
+        Security = null;
+        _ = CheckSecurityAsync();
+    }
+
+    /// <summary>A suggestion above the rooms to set up recovery, or to verify this device, until it is done or dismissed; empty for none.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSecuritySuggestion))]
+    public partial string SecuritySuggestion { get; set; } = "";
+
+    /// <summary>Whether there is a security suggestion.</summary>
+    public bool HasSecuritySuggestion => SecuritySuggestion.Length > 0;
+
+    /// <summary>Check the account's cross-signing: suggest setting up recovery on a new account, which signs this device so that others see it verified, or verifying this device on an account that has it.</summary>
+    internal async Task CheckSecurityAsync()
+    {
+        // Nothing to suggest without encryption, or once dismissed
+        if (securitySuggestionDismissed || !connection.Crypto.Available)
+        {
+            SecuritySuggestion = "";
+            return;
+        }
+        SecurityStatus status;
+        try
+        {
+            status = await connection.Crypto.GetSecurityStatusAsync();
+        }
+        catch (Exception ex) when (ex is MatrixException or HttpRequestException or InvalidOperationException)
+        {
+            connection.Logger.LogInformation("Security status not available: {Error}", ex.Message);
+            return;
+        }
+        // Done
+        SecuritySuggestion = !status.CrossSigningSetUp ? "Set up recovery, so that others see this device as verified, and a recovery key unlocks your messages on new devices."
+            : !status.ThisDeviceCrossSigned ? "Verify this device with another of yours, or with your recovery key, so that others see it as verified and it reads your older messages."
+            : "";
+    }
+
+    /// <summary>Hide the security suggestion until the app starts again.</summary>
+    [RelayCommand]
+    private void DismissSecuritySuggestion()
+    {
+        // For this session
+        securitySuggestionDismissed = true;
+        SecuritySuggestion = "";
+    }
 
     /// <summary>Follow a verification from the engine's background thread on the UI thread.</summary>
     private void OnVerificationChanged(Verification verification)
@@ -680,6 +730,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         {
             Verification.Update(state);
             if (state == VerificationState.Done && Security is SecurityViewModel security) _ = security.RefreshAsync();
+            if (state == VerificationState.Done) _ = CheckSecurityAsync();
             return;
         }
 
@@ -983,7 +1034,16 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     }
 
     /// <summary>Show the engine's connection state.</summary>
-    private void OnConnectionChanged(ConnectionState state, string? message) => ui.Post(() => StatusText = Describe(state, message));
+    private void OnConnectionChanged(ConnectionState state, string? message) => ui.Post(() =>
+    {
+        // Status, and the security check once connected the first time
+        StatusText = Describe(state, message);
+        if (state == ConnectionState.Connected && !securityChecked)
+        {
+            securityChecked = true;
+            _ = CheckSecurityAsync();
+        }
+    });
 
     /// <summary>Show the open room's outbox again when a message there was sent or failed.</summary>
     private void OnOutboxChanged(string roomId) => ui.Post(() => { if (SelectedRoom?.RoomId == roomId) _ = RefreshPendingAsync(roomId); });

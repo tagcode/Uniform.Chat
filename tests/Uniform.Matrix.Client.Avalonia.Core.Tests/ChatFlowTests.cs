@@ -203,7 +203,7 @@ public class ChatFlowTests
         }
     }
 
-    /// <summary>One device sets up recovery after the password prompt; a second device of the same account is verified by comparing emoji, and recovers with the key.</summary>
+    /// <summary>A new account is asked to set up recovery; one device sets it up after the password prompt; a second device of the same account is asked to verify itself, is verified by comparing emoji, and recovers with the key.</summary>
     [AvaloniaFact]
     public async Task SetUpRecoveryAndVerify()
     {
@@ -215,8 +215,10 @@ public class ChatFlowTests
 
         try
         {
-            // Act: set up recovery on the first device, confirming with the password
+            // Act: the new account is asked to set up recovery; set it up on the first device, confirming with the password
             ChatViewModel firstChat = await SignInAsync(first, grace.UserId!);
+            await WaitUntilAsync(() => firstChat.HasSecuritySuggestion, "the suggestion to set up recovery");
+            Assert.StartsWith("Set up recovery", firstChat.SecuritySuggestion);
             await firstChat.OpenSecurityCommand.ExecuteAsync(null);
             SecurityViewModel firstSecurity = firstChat.Security!;
             Assert.True(firstSecurity.CanSetUp, string.Join("; ", firstSecurity.Lines.Select(l => $"{l.Label}: {l.Value}")) + firstSecurity.Message);
@@ -230,9 +232,13 @@ public class ChatFlowTests
             string recoveryKey = firstSecurity.NewRecoveryKey;
             Assert.Contains(firstSecurity.Lines, l => l.Label == "This device" && l.Value == "Verified");
             await CaptureAsync(first, "security.png");
+            firstChat.CloseSecurityCommand.Execute(null);
+            await WaitUntilAsync(() => !firstChat.HasSecuritySuggestion, "the suggestion to go away");
 
-            // Act: the second device asks to be verified; the first accepts, both compare
+            // Act: the second device is asked to verify itself, and asks; the first accepts, both compare
             ChatViewModel secondChat = await SignInAsync(second, grace.UserId!);
+            await WaitUntilAsync(() => secondChat.HasSecuritySuggestion, "the suggestion to verify the second device");
+            Assert.StartsWith("Verify this device", secondChat.SecuritySuggestion);
             await secondChat.OpenSecurityCommand.ExecuteAsync(null);
             Assert.True(secondChat.Security!.CanVerify);
             await secondChat.Security.VerifyCommand.ExecuteAsync(null);
@@ -247,6 +253,7 @@ public class ChatFlowTests
             // Assert: both finish verified
             await WaitUntilAsync(() => firstChat.Verification is { IsFinished: true } && secondChat.Verification is { IsFinished: true }, "the verification to finish");
             Assert.EndsWith("is verified.", secondChat.Verification.Message);
+            await WaitUntilAsync(() => !secondChat.HasSecuritySuggestion, "the second device's suggestion to go away");
             await firstSecurity.RefreshAsync();
             string secondDevice = secondChat.Security.Lines.Single(l => l.Label == "Device").Value;
             Assert.Equal(3, firstSecurity.Devices.Count);
