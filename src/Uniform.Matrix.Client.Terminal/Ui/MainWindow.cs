@@ -389,8 +389,8 @@ public sealed partial class MainWindow : Window
     /// <summary>Format one room list row: invite or direct mark, name and unread count; the number for Alt+N is added by <see cref="RefreshRooms"/>.</summary>
     private string FormatRoomRow(Room room)
     {
-        // Mark, name and unread count
-        string prefix = room.Membership == Memberships.Invite ? "+" : room.IsDirect ? "@" : " ";
+        // Mark, name and unread count; a direct chat named after a user ID has its @ already
+        string prefix = room.Membership == Memberships.Invite ? "+" : room.IsDirect && !room.DisplayName.StartsWith('@') ? "@" : " ";
         string unread = room.NotificationCount > 0 && room.RoomId != currentRoomId ? $" ({room.NotificationCount})" : "";
         // Return row
         return $"{prefix}{room.DisplayName}{unread}";

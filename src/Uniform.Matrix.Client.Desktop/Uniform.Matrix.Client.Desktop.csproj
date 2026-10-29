@@ -11,6 +11,9 @@
     <!-- The program is Uniform.Matrix: file managers take a name ending in .Desktop for a .desktop launcher, and do not run it -->
     <AssemblyName>Uniform.Matrix</AssemblyName>
     <RootNamespace>Uniform.Matrix.Client.Desktop</RootNamespace>
+    <!-- Code comments are for developers: no .xml documentation files in the published app -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
   </PropertyGroup>
 
   <!-- Package -->
