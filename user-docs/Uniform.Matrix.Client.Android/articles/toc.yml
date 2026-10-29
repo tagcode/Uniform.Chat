@@ -6,6 +6,8 @@
   uid: Uniform.Matrix.Client.Android.Rooms.Article
 - name: Messages and files
   uid: Uniform.Matrix.Client.Android.Messages.Article
+- name: Voice calls
+  uid: Uniform.Matrix.Client.Android.Calls.Article
 - name: Security
   uid: Uniform.Matrix.Client.Android.Security.Article
 - name: Notifications

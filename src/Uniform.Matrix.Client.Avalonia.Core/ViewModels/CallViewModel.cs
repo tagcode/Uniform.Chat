@@ -1,0 +1,264 @@
+namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Uniform.Matrix.Audio;
+using Uniform.Matrix.Calls;
+using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Matrix.WebRtc.Ice;
+
+/// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the loudspeaker; it tells about a call for a while after it ends.</summary>
+public sealed partial class CallViewModel : ViewModelBase, IDisposable
+{
+    /// <summary>How long the bar stays after a call ends.</summary>
+    private static readonly TimeSpan EndedShownFor = TimeSpan.FromSeconds(4);
+    private readonly CallService calls;
+    private readonly IUiDispatcher ui;
+    private readonly Func<bool, IAudioDevices>? audio;
+    private readonly Func<Task<bool>>? requestMicrophone;
+    private readonly INotifier? notifier;
+    private readonly Func<string, string> nameOf;
+    private readonly Func<string, IDisposable>? keepAlive;
+    private readonly Timer clock;
+    private IDisposable? keptAlive;
+
+    /// <summary>Follow the calls of <paramref name="calls"/>.</summary>
+    /// <param name="calls">The account's calls.</param>
+    /// <param name="ui">Dispatcher of the user interface thread.</param>
+    /// <param name="audio">Opens the platform's devices, given whether to use the loudspeaker; null where there is no audio.</param>
+    /// <param name="hasEarpiece">Whether the loudspeaker is a choice, as on phones.</param>
+    /// <param name="requestMicrophone">Asks for the microphone permission where needed, or null.</param>
+    /// <param name="notifier">System notifications, for ringing in the background; or null.</param>
+    /// <param name="nameOf">Returns a user's display name.</param>
+    /// <param name="keepAlive">Keeps a call going in the background, given the peer's name, until disposed; or null.</param>
+    public CallViewModel(CallService calls, IUiDispatcher ui, Func<bool, IAudioDevices>? audio, bool hasEarpiece, Func<Task<bool>>? requestMicrophone, INotifier? notifier, Func<string, string> nameOf, Func<string, IDisposable>? keepAlive = null)
+    {
+        // Devices as chosen when voice starts, and the call events
+        this.calls = calls;
+        this.ui = ui;
+        this.audio = audio;
+        HasEarpiece = hasEarpiece;
+        this.requestMicrophone = requestMicrophone;
+        this.notifier = notifier;
+        this.nameOf = nameOf;
+        this.keepAlive = keepAlive;
+        calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
+        calls.IncomingCall += OnIncoming;
+        calls.CallChanged += OnChanged;
+        clock = new Timer(_ => ui.Post(Refresh), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+    }
+
+    /// <summary>Whether the platform has audio, so calls can be made.</summary>
+    public bool CanCall => audio is not null;
+
+    /// <summary>Whether the loudspeaker is a choice.</summary>
+    public bool HasEarpiece { get; }
+
+    /// <summary>The call shown, or null.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsVisible))]
+    public partial VoiceCall? Current { get; set; }
+
+    /// <summary>Whether the bar shows.</summary>
+    public bool IsVisible => Current is not null;
+
+    /// <summary>Who the call is with.</summary>
+    [ObservableProperty]
+    public partial string PeerName { get; set; } = "";
+
+    /// <summary>What the call does, e.g. <c>Ringing…</c> or <c>01:23</c>.</summary>
+    [ObservableProperty]
+    public partial string StateText { get; set; } = "";
+
+    /// <summary>Whether an incoming call rings, to answer or decline.</summary>
+    [ObservableProperty]
+    public partial bool IsRinging { get; set; }
+
+    /// <summary>Whether the call goes on, to hang up.</summary>
+    [ObservableProperty]
+    public partial bool IsActive { get; set; }
+
+    /// <summary>Whether the microphone is muted.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MuteText))]
+    public partial bool IsMuted { get; set; }
+
+    /// <summary>Text of the mute button.</summary>
+    public string MuteText => IsMuted ? "Unmute" : "Mute";
+
+    /// <summary>Whether to play through the loudspeaker rather than the earpiece; only where <see cref="HasEarpiece"/>.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SpeakerText))]
+    public partial bool Loudspeaker { get; set; }
+
+    /// <summary>Text of the speaker button.</summary>
+    public string SpeakerText => Loudspeaker ? "Earpiece" : "Speaker";
+
+    /// <summary>A failure to show, e.g. a missing microphone permission; empty for none.</summary>
+    [ObservableProperty]
+    public partial string Error { get; set; } = "";
+
+    /// <summary>Call the other member of a direct room, asking for the microphone first where needed.</summary>
+    public async Task PlaceCallAsync(string roomId)
+    {
+        // Permission, then the call
+        Error = "";
+        if (!await HasMicrophoneAsync()) return;
+        try
+        {
+            Show(await calls.PlaceCallAsync(roomId));
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // On a room that cannot be called, or the server
+            Error = $"Calling failed: {ex.Message}";
+        }
+    }
+
+    /// <summary>Answer the ringing call.</summary>
+    [RelayCommand]
+    private async Task AnswerAsync()
+    {
+        // Permission, then the answer
+        if (Current is not VoiceCall call) return;
+        if (!await HasMicrophoneAsync()) return;
+        await RunAsync("Answering", () => call.AnswerAsync());
+    }
+
+    /// <summary>Decline the ringing call.</summary>
+    [RelayCommand]
+    private Task RejectAsync() => Current is VoiceCall call ? RunAsync("Declining", () => call.RejectAsync()) : Task.CompletedTask;
+
+    /// <summary>Hang up, or cancel a call that rings.</summary>
+    [RelayCommand]
+    private Task HangupAsync() => Current is VoiceCall call ? RunAsync("Hanging up", () => call.HangupAsync()) : Task.CompletedTask;
+
+    /// <summary>Mute or unmute the microphone.</summary>
+    [RelayCommand]
+    private void ToggleMute()
+    {
+        // The call keeps it
+        if (Current is not VoiceCall call) return;
+        call.Muted = !call.Muted;
+    }
+
+    /// <summary>Switch between the earpiece and the loudspeaker, reopening the devices of a running call.</summary>
+    [RelayCommand]
+    private async Task ToggleSpeakerAsync()
+    {
+        // The choice, then the devices
+        Loudspeaker = !Loudspeaker;
+        if (Current is VoiceCall call) await RunAsync("Switching the speaker", () => call.RestartAudioAsync());
+    }
+
+    /// <summary>Stop following the calls.</summary>
+    public void Dispose()
+    {
+        // Events and the clock
+        calls.IncomingCall -= OnIncoming;
+        calls.CallChanged -= OnChanged;
+        clock.Dispose();
+        KeepAlive(false);
+    }
+
+    /// <summary>Keep the app going in the background while a call is active, and stop when not.</summary>
+    private void KeepAlive(bool active)
+    {
+        // Start once, stop once
+        if (active && keptAlive is null && keepAlive is not null) keptAlive = keepAlive(PeerName);
+        if (active || keptAlive is null) return;
+        keptAlive.Dispose();
+        keptAlive = null;
+    }
+
+    /// <summary>Ring: show the call, and notify for when the app is in the background.</summary>
+    private void OnIncoming(VoiceCall call)
+    {
+        // Bar, then the notification
+        ui.Post(() => Show(call));
+        if (notifier is not null) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+    }
+
+    /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>
+    private void OnChanged(VoiceCall call) => ui.Post(() =>
+    {
+        // The shown call, or one that replaces an ended one
+        if (Current is not null && Current != call && Current.State != CallState.Ended) return;
+        Show(call);
+    });
+
+    /// <summary>Show a call, and hide it a while after it ends.</summary>
+    private void Show(VoiceCall call)
+    {
+        // Shown
+        Current = call;
+        PeerName = nameOf(call.PeerUserId);
+        Refresh();
+        if (call.State != CallState.Ended) return;
+        // Hidden later, unless another call came
+        _ = Task.Delay(EndedShownFor).ContinueWith(_ => ui.Post(() => { if (Current == call) Current = null; }), TaskScheduler.Default);
+    }
+
+    /// <summary>Update the texts and buttons from the call, every second for the duration.</summary>
+    private void Refresh()
+    {
+        // Nothing shown
+        if (Current is not VoiceCall call) return;
+        IsRinging = call.State == CallState.Ringing;
+        IsActive = call.State is not (CallState.Ringing or CallState.Ended);
+        IsMuted = call.Muted;
+        KeepAlive(IsActive);
+        bool relayed = call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed;
+        // Done
+        StateText = call.State switch
+        {
+            CallState.Ringing => "Incoming voice call",
+            CallState.Inviting => "Calling…",
+            CallState.Connecting => "Connecting…",
+            CallState.Connected => $"{Duration(call)}{(relayed ? " · relayed" : "")}{(call.Muted ? " · muted" : "")}",
+            CallState.Reconnecting => "Reconnecting…",
+            _ => $"Call ended: {EndText(call)}",
+        };
+    }
+
+    /// <summary>Return the time since voice started, as <c>m:ss</c>.</summary>
+    private static string Duration(VoiceCall call) => call.ConnectedAt is DateTimeOffset start ? (DateTimeOffset.UtcNow - start).ToString(@"m\:ss") : "";
+
+    /// <summary>Return why a call ended, for people.</summary>
+    private static string EndText(VoiceCall call) => call.EndReason switch
+    {
+        "user_hangup" => call.EndedByPeer ? "they hung up" : "you hung up",
+        "rejected" => call.EndedByPeer ? "declined" : "you declined",
+        "invite_timeout" => call.IsIncoming ? "missed" : "no answer",
+        "ice_failed" => "no connection",
+        "answered_elsewhere" => "answered on another device",
+        "rejected_elsewhere" => "declined on another device",
+        string reason => reason,
+        null => "ended",
+    };
+
+    /// <summary>Return whether the microphone may be used, asking where needed, and say so when not.</summary>
+    private async Task<bool> HasMicrophoneAsync()
+    {
+        // Granted, or no permission needed
+        if (requestMicrophone is null || await requestMicrophone()) return true;
+        Error = "Calls need the microphone permission.";
+        // On refusal
+        return false;
+    }
+
+    /// <summary>Run a call action, showing what failed.</summary>
+    private async Task RunAsync(string what, Func<Task> action)
+    {
+        // Errors to the bar
+        Error = "";
+        try
+        {
+            await action();
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            Error = $"{what} failed: {ex.Message}";
+        }
+    }
+}

@@ -25,6 +25,8 @@ public sealed record GuiPlatform
     public bool HasEarpiece { get; init; }
     /// <summary>Ask for permission to record, where the platform needs it; return whether it is granted. Null where none is needed.</summary>
     public Func<Task<bool>>? RequestMicrophoneAsync { get; init; }
+    /// <summary>Keep a call with the named peer going while the app is in the background, e.g. a foreground service on Android; dispose the result when the call ends. Null where nothing is needed.</summary>
+    public Func<string, IDisposable>? KeepCallAlive { get; init; }
 
     /// <summary>Return the platform of the desktop app on this operating system.</summary>
     public static GuiPlatform Desktop() => new()

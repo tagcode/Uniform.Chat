@@ -4,6 +4,8 @@
   uid: Uniform.Matrix.Client.Desktop.Rooms.Article
 - name: Messages and files
   uid: Uniform.Matrix.Client.Desktop.Messages.Article
+- name: Voice calls
+  uid: Uniform.Matrix.Client.Desktop.Calls.Article
 - name: Security
   uid: Uniform.Matrix.Client.Desktop.Security.Article
 - name: Notifications

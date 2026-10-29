@@ -29,16 +29,17 @@ public sealed class MainActivity : AvaloniaMainActivity
         base.OnCreate(savedInstanceState);
     }
 
-    /// <summary>Ask for the microphone permission, unless granted already; return whether it is granted.</summary>
+    /// <summary>Ask for the microphone permission, and on Android 13 the one for notifications, which calls show, unless granted already; return whether the microphone is granted.</summary>
     public static Task<bool> RequestMicrophoneAsync()
     {
         // Granted already, or no activity to ask from
         if (current is not MainActivity activity) return Task.FromResult(false);
-        if (activity.CheckSelfPermission(Manifest.Permission.RecordAudio) == Permission.Granted) return Task.FromResult(true);
+        bool notifications = Notifications.Allowed(activity);
+        if (activity.CheckSelfPermission(Manifest.Permission.RecordAudio) == Permission.Granted && notifications) return Task.FromResult(true);
 
         // Ask; the answer comes to OnRequestPermissionsResult
         activity.microphoneAnswer = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        activity.RequestPermissions([Manifest.Permission.RecordAudio], MicrophoneRequest);
+        activity.RequestPermissions(!notifications && OperatingSystem.IsAndroidVersionAtLeast(33) ? [Manifest.Permission.RecordAudio, Manifest.Permission.PostNotifications] : [Manifest.Permission.RecordAudio], MicrophoneRequest);
         // Return the answer to come
         return activity.microphoneAnswer.Task;
     }
@@ -49,7 +50,8 @@ public sealed class MainActivity : AvaloniaMainActivity
         // The microphone's answer
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode != MicrophoneRequest) return;
-        microphoneAnswer?.TrySetResult(grantResults.Length > 0 && grantResults[0] == Permission.Granted);
+        int microphone = Array.IndexOf(permissions, Manifest.Permission.RecordAudio);
+        microphoneAnswer?.TrySetResult(microphone >= 0 && microphone < grantResults.Length && grantResults[microphone] == Permission.Granted);
         microphoneAnswer = null;
     }
 }

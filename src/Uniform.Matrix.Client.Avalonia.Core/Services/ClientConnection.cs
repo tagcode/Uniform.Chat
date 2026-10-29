@@ -4,9 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Uniform.Matrix.Calls;
 using Uniform.Matrix.Client;
 using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Client.Services;
+using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Client;
@@ -31,6 +33,7 @@ public sealed class ClientConnection : IAsyncDisposable
         Status = host.Services.GetRequiredService<ConnectionStatus>();
         Media = host.Services.GetRequiredService<MediaCache>();
         Crypto = host.Services.GetRequiredService<CryptoService>();
+        Calls = host.Services.GetRequiredService<CallService>();
         Logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Matrix.Client.Avalonia.Core");
     }
 
@@ -50,6 +53,8 @@ public sealed class ClientConnection : IAsyncDisposable
     public MediaCache Media { get; }
     /// <summary>End-to-end encryption.</summary>
     public CryptoService Crypto { get; }
+    /// <summary>Voice calls.</summary>
+    public CallService Calls { get; }
     /// <summary>Log of the user interface, written to the session log.</summary>
     public ILogger Logger { get; }
 
@@ -79,12 +84,17 @@ public sealed class ClientConnection : IAsyncDisposable
         // Engine with the form's password
         builder.AddMatrixClient();
         builder.Services.AddSingleton<ICredentialPrompt>(new GuiCredentialPrompt(signIn.Password));
+        builder.Services.AddSingleton<CallService>();
         platform.ConfigureServices?.Invoke(builder.Services);
         IHost host = builder.Build();
         await host.StartAsync(cancellationToken);
         // Return connection
         return new ClientConnection(host, signIn.UserId);
     }
+
+    /// <summary>Return a user's display name from the rooms shared with them, or the user ID when none is known.</summary>
+    public string DisplayNameOf(string userId) =>
+        Processor.Read(rooms => rooms?.Rooms.Values.Select(room => room.Members.TryGetValue(userId, out RoomMemberInfo? member) ? member.DisplayName : null).FirstOrDefault(name => !string.IsNullOrWhiteSpace(name))) ?? userId;
 
     /// <summary>Wait until the engine has logged in; throw with the engine's reason when it fails, e.g. a wrong password.</summary>
     public async Task<MatrixClient> WaitForLoginAsync(CancellationToken cancellationToken = default)

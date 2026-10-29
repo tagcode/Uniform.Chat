@@ -19,11 +19,42 @@
       <Setter Property="Grid.ColumnSpan" Value="2" />
       <Setter Property="BorderThickness" Value="0" />
     </Style>
+    <Style Selector="WrapPanel#CallButtons">
+      <Setter Property="Grid.Column" Value="1" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector=".narrow WrapPanel#CallButtons">
+      <Setter Property="Grid.Row" Value="1" />
+      <Setter Property="Grid.Column" Value="0" />
+      <Setter Property="Grid.ColumnSpan" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="Margin" Value="-4,6,0,0" />
+    </Style>
     <Style Selector=".narrow DockPanel#RoomArea">
       <Setter Property="Grid.Column" Value="0" />
       <Setter Property="Grid.ColumnSpan" Value="2" />
     </Style>
   </UserControl.Styles>
+
+  <DockPanel>
+
+  <!-- Call bar, above everything, so an incoming call shows whatever is open -->
+  <Border DockPanel.Dock="Top" Classes="call" DataContext="{Binding Call}" IsVisible="{Binding IsVisible, FallbackValue=False}" x:DataType="vm:CallViewModel">
+    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+      <StackPanel Grid.Column="0" VerticalAlignment="Center">
+        <TextBlock Classes="title" Text="{Binding PeerName}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{Binding StateText}" TextTrimming="CharacterEllipsis" />
+      </StackPanel>
+      <WrapPanel x:Name="CallButtons" VerticalAlignment="Center">
+        <Button Classes="accent" Margin="4,2" Content="Answer" Command="{Binding AnswerCommand}" IsVisible="{Binding IsRinging}" />
+        <Button Margin="4,2" Content="Decline" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
+        <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
+        <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
+        <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
+      </WrapPanel>
+      <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </Grid>
+  </Border>
 
   <Grid ColumnDefinitions="Auto,*">
 
@@ -105,6 +136,7 @@
           </StackPanel>
           <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
             <TextBlock Classes="hint" VerticalAlignment="Center" Text="🔒 Encrypted" IsVisible="{Binding SelectedRoom.IsEncrypted, FallbackValue=False}" />
+            <Button Classes="icon" Content="📞" ToolTip.Tip="Voice call" Command="{Binding CallRoomCommand}" IsVisible="{Binding CanCallRoom}" />
             <Button Classes="icon" Content="⋮" ToolTip.Tip="Room" Command="{Binding LoadMembersCommand}" IsVisible="{Binding !SelectedRoom.IsInvite, FallbackValue=False}">
               <Button.Flyout>
                 <Flyout Placement="BottomEdgeAlignedRight">
@@ -277,4 +309,5 @@
       </Border>
     </Border>
   </Grid>
+  </DockPanel>
 </UserControl>

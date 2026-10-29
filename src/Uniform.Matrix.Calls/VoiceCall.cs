@@ -343,18 +343,7 @@ public sealed class VoiceCall : IAsyncDisposable
         try
         {
             if (State == CallState.Ended) return;
-            if (devices() is IAudioDevices audio)
-            {
-                try
-                {
-                    media = new VoiceMedia(peer, audio) { Muted = muted };
-                    media.Start();
-                }
-                catch (Exception e)
-                {
-                    logger.LogWarning(e, "Audio devices of call {CallId} did not open", CallId);
-                }
-            }
+            StartMedia(peer);
             ConnectedAt = DateTimeOffset.UtcNow;
             logger.LogInformation("Call {CallId} connected from {Local} to {Remote}", CallId, peer.Ice?.SelectedLocal, peer.Ice?.SelectedRemote);
             SetState(CallState.Connected);
@@ -362,6 +351,41 @@ public sealed class VoiceCall : IAsyncDisposable
         finally
         {
             gate.Release();
+        }
+    }
+
+    /// <summary>Reopen the microphone and speaker, e.g. to switch between the earpiece and the loudspeaker, which phones choose when the speaker opens.</summary>
+    public async Task RestartAudioAsync()
+    {
+        // While voice flows
+        await gate.WaitAsync();
+        try
+        {
+            if (State is not (CallState.Connected or CallState.Reconnecting) || connection is null) return;
+            if (media is not null) await media.DisposeAsync();
+            media = null;
+            StartMedia(connection);
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
+    /// <summary>Open the devices and start the voice, unless there are none; a device that fails leaves the call without voice, not ended.</summary>
+    private void StartMedia(AudioPeerConnection peer)
+    {
+        // Devices as chosen now
+        if (devices() is not IAudioDevices audio) return;
+        try
+        {
+            media = new VoiceMedia(peer, audio) { Muted = muted };
+            media.Start();
+        }
+        catch (Exception e)
+        {
+            // On devices that did not open
+            logger.LogWarning(e, "Audio devices of call {CallId} did not open", CallId);
         }
     }
 

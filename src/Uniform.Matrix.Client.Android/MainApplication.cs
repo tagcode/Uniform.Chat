@@ -31,6 +31,8 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             Audio = loudspeaker => new AndroidAudioDevices(this, loudspeaker),
             HasEarpiece = true,
             RequestMicrophoneAsync = MainActivity.RequestMicrophoneAsync,
+            Notifier = new AndroidNotifier(this),
+            KeepCallAlive = peer => CallForegroundService.Start(this, peer),
         };
         base.OnCreate();
     }

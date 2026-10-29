@@ -46,7 +46,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <param name="signOut">Called by <see cref="SignOutCommand"/> to end the session and return to the sign-in form.</param>
     /// <param name="notifier">System notifications, or null for none.</param>
     /// <param name="settings">App settings, shown in the settings panel; null hides it.</param>
-    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null)
+    /// <param name="call">The call bar; null for no calls.</param>
+    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null, CallViewModel? call = null)
     {
         // Dependencies
         this.connection = connection;
@@ -55,6 +56,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         this.signOut = signOut;
         this.notifier = notifier;
         Settings = settings;
+        Call = call;
         Messages = new MessageList(connection.UserId);
         Messages.Items.CollectionChanged += (_, e) => ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
         IsNarrow = singlePane;
@@ -64,6 +66,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Rooms, invites first, then favourites, others and low priority, each by name.</summary>
     public ObservableCollection<RoomItemViewModel> Rooms { get; } = [];
 
+    /// <summary>The call bar; null for no calls.</summary>
+    public CallViewModel? Call { get; }
+
     /// <summary>The open room's timeline.</summary>
     public MessageList Messages { get; }
 
@@ -72,8 +77,20 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>The open room, or null.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasOpenRoom), nameof(ShowRoomList), nameof(ShowRoom))]
+    [NotifyPropertyChangedFor(nameof(HasOpenRoom), nameof(ShowRoomList), nameof(ShowRoom), nameof(CanCallRoom))]
     public partial RoomItemViewModel? SelectedRoom { get; set; }
+
+    /// <summary>Whether the open room has one other member, who can be voice called.</summary>
+    public bool CanCallRoom => Call?.CanCall == true && SelectedRoom is { IsOneToOne: true, IsInvite: false };
+
+    /// <summary>Voice call the other member of the open room.</summary>
+    [RelayCommand]
+    private async Task CallRoomAsync()
+    {
+        // The call bar does the rest
+        if (Call is null || SelectedRoom is not RoomItemViewModel room) return;
+        await Call.PlaceCallAsync(room.RoomId);
+    }
 
     /// <summary>Text being written.</summary>
     [ObservableProperty]
@@ -199,6 +216,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         connection.Processor.EventsDecrypted -= OnEventsDecrypted;
         connection.Outbox.RoomChanged -= OnOutboxChanged;
         connection.Crypto.VerificationChanged -= OnVerificationChanged;
+        Call?.Dispose();
         await stopping.CancelAsync();
         if (consuming is not null) await consuming.ContinueWith(_ => { }, TaskScheduler.Default);
         stopping.Dispose();

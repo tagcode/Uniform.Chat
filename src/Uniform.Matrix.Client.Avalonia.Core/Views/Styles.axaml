@@ -31,6 +31,19 @@
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAccentBrush}" />
     <Setter Property="Opacity" Value="0.9" />
   </Style>
+  <Style Selector="Border.call">
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="Background" Value="#1B5E3A" />
+    <Setter Property="TextElement.Foreground" Value="White" />
+  </Style>
+  <Style Selector="Button.danger">
+    <Setter Property="Background" Value="#C62828" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+  <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#E53935" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
   <Style Selector="Border.notice">
     <Setter Property="Padding" Value="12,6" />
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />

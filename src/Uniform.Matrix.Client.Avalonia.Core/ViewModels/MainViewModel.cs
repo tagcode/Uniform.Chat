@@ -103,7 +103,8 @@ public sealed partial class MainViewModel : ViewModelBase
 
         // Chat over the running engine
         connection = started;
-        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings);
+        CallViewModel call = new(started.Calls, ui, platform.Audio, platform.HasEarpiece, platform.RequestMicrophoneAsync, platform.Notifier, started.DisplayNameOf, platform.KeepCallAlive);
+        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call);
         chat.Start();
         Page = chat;
         return null;

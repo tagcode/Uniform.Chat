@@ -34,6 +34,10 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
     [ObservableProperty]
     public partial bool IsDirect { get; set; }
 
+    /// <summary>Whether the room has two members, joined or invited: a direct chat even when not marked as one, which can be voice called.</summary>
+    [ObservableProperty]
+    public partial bool IsOneToOne { get; set; }
+
     /// <summary>Whether messages are end-to-end encrypted.</summary>
     [ObservableProperty]
     public partial bool IsEncrypted { get; set; }
@@ -90,6 +94,7 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         Topic = room.Topic;
         IsInvite = room.Membership == Memberships.Invite;
         IsDirect = room.IsDirect;
+        IsOneToOne = room.JoinedMemberCount + room.InvitedMemberCount == 2;
         IsEncrypted = room.IsEncrypted;
         Unread = isOpen ? 0 : room.NotificationCount;
         IsHighlighted = !isOpen && room.HighlightCount > 0;
