@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.Calls\Uniform.Matrix.Calls.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Gui.Terminal\Uniform.Matrix.Gui.Terminal.csproj" />
   </ItemGroup>

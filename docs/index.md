@@ -57,6 +57,7 @@ src/
   Uniform.Matrix.Hosting/                Settings layers, option catalog and editor, session logging; any .NET host
   Uniform.Matrix.Gui.Terminal/           Terminal.Gui components: settings window, log window, dialogs, text wrapping
   Uniform.Matrix.Audio/                  Voice frames for calls: Opus (Concentus), microphone and speaker (NAudio)
+  Uniform.Matrix.WebRtc/                 WebRTC subset for voice: STUN, TURN, ICE, DTLS-SRTP (BouncyCastle), RTP, SDP
   Uniform.Matrix.Client/                 Headless client: AddMatrixClient, services, storage, room state
     Configuration/                       Matrix and storage options, per-account paths
     Services/                            Session, sync, outbox, media cache, encryption, worker
@@ -65,6 +66,7 @@ src/
     State/                               RoomStore and Room: client-side room state built from sync
     Formatting/                          Markdown to HTML for sending, HTML to text and event descriptions for display
     MatrixKeyTransport.cs,               EncryptedMedia.cs  Encryption over a MatrixClient
+  Uniform.Matrix.Calls/                  1:1 voice calls (m.call.*) on the client engine, WebRtc and Audio
   Uniform.Matrix.Client.Terminal/        Terminal client app
     Configuration/                       Display options
     Ui/                                  Main window, message log, image previews, client dialogs

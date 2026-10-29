@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Package -->
+  <PropertyGroup>
+    <Version>0.1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>A WebRTC subset in pure C# for voice calls: SDP, STUN, TURN, ICE, DTLS-SRTP and RTP, with BouncyCastle for DTLS.</Description>
+    <PackageTags>webrtc;stun;turn;ice;dtls;srtp;rtp;sdp;voip</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Uniform.Matrix.WebRtc.Tests" />
+  </ItemGroup>
+
+</Project>
+

@@ -11,8 +11,12 @@ items:
   href: Uniform.Matrix.Gui.Terminal/toc.yml
 - name: Uniform.Matrix.Audio
   href: Uniform.Matrix.Audio/toc.yml
+- name: Uniform.Matrix.WebRtc
+  href: Uniform.Matrix.WebRtc/toc.yml
 - name: Uniform.Matrix.Client
   href: Uniform.Matrix.Client/toc.yml
+- name: Uniform.Matrix.Calls
+  href: Uniform.Matrix.Calls/toc.yml
 - name: Uniform.Matrix.Client.Terminal
   href: Uniform.Matrix.Client.Terminal/toc.yml
 - name: Uniform.Matrix.Client.Avalonia.Core

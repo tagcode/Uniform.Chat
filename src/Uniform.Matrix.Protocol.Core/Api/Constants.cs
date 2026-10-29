@@ -47,6 +47,20 @@ public static class EventTypes
     public const string KeyVerificationDone = "m.key.verification.done";
     /// <summary>Key verification cancelled.</summary>
     public const string KeyVerificationCancel = "m.key.verification.cancel";
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#voice-over-ip">1:1 call</see>: the caller's offer, content <see cref="CallInviteContent"/>.</summary>
+    public const string CallInvite = "m.call.invite";
+    /// <summary>1:1 call: trickled ICE candidates, content <see cref="CallCandidatesContent"/>.</summary>
+    public const string CallCandidates = "m.call.candidates";
+    /// <summary>1:1 call: the callee's answer, content <see cref="CallAnswerContent"/>.</summary>
+    public const string CallAnswer = "m.call.answer";
+    /// <summary>1:1 call: the caller picks one of the answers, content <see cref="CallSelectAnswerContent"/>.</summary>
+    public const string CallSelectAnswer = "m.call.select_answer";
+    /// <summary>1:1 call: the callee declines before answering, content <see cref="CallRejectContent"/>.</summary>
+    public const string CallReject = "m.call.reject";
+    /// <summary>1:1 call: renegotiation, e.g. to add video; not supported here.</summary>
+    public const string CallNegotiate = "m.call.negotiate";
+    /// <summary>1:1 call: ends the call, content <see cref="CallHangupContent"/>.</summary>
+    public const string CallHangup = "m.call.hangup";
     /// <summary>Room power levels.</summary>
     public const string RoomPowerLevels = "m.room.power_levels";
     /// <summary>State event marking a room as end-to-end encrypted.</summary>

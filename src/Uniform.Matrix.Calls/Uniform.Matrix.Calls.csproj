@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Package -->
+  <PropertyGroup>
+    <Version>0.1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Matrix 1:1 voice calls (m.call.*) for the Uniform.Matrix client engine: signalling over room events, WebRTC media with Uniform.Matrix.WebRtc, and voice through Uniform.Matrix.Audio.</Description>
+    <PackageTags>matrix;voip;calls;webrtc;opus</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- Readme shown on nuget.org -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Uniform.Matrix.Calls.Tests" />
+  </ItemGroup>
+
+</Project>

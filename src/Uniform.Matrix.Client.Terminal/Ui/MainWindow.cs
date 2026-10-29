@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TuiAttribute = global::Terminal.Gui.Drawing.Attribute;
+using Uniform.Matrix.Calls;
 using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Client.State;
@@ -32,6 +33,7 @@ using global::Terminal.Gui.Views;
 /// <item><description>MainWindow.Security.cs: encryption status, recovery and device verification.</description></item>
 /// <item><description>MainWindow.Admin.cs: room administration: name, avatar, kick, ban and power levels.</description></item>
 /// <item><description>MainWindow.Tools.cs: settings and log windows.</description></item>
+/// <item><description>MainWindow.Calls.cs: voice calls.</description></item>
 /// </list>
 /// </remarks>
 public sealed partial class MainWindow : Window
@@ -55,6 +57,7 @@ public sealed partial class MainWindow : Window
     private readonly FileLoggerProvider fileLogger;
     private readonly StorageOptions storageOptions;
     private readonly CryptoService crypto;
+    private readonly CallService calls;
     private readonly ILogger<MainWindow> logger;
     private readonly string ownUserId;
 
@@ -63,7 +66,8 @@ public sealed partial class MainWindow : Window
     private readonly ListView memberList = new() { Title = "Members", X = Pos.AnchorEnd(MemberListWidth), Y = 1, Width = MemberListWidth, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
     private readonly Label inputPrefix = new() { X = 0, Y = Pos.AnchorEnd(2) };
     private readonly TextField input = new() { Y = Pos.AnchorEnd(2), Width = Dim.Fill() };
-    private readonly Shortcut statusText = new() { Title = "", HelpText = "Connecting…", Width = Dim.Fill() };
+    private readonly Label statusText = new() { Text = "Connecting…", X = 1, Width = Dim.Fill() };
+    private string statusMessage = "Connecting…";
     private readonly ObservableCollection<string> roomRows = [];
     private readonly List<string> roomIds = [];
     private readonly HashSet<string> roomsWithHighlight = [];
@@ -74,7 +78,7 @@ public sealed partial class MainWindow : Window
     private bool updatingRooms;
 
     /// <summary>Create the window and start listening to sync, outbox and connection changes.</summary>
-    public MainWindow(IApplication app, ClientSession session, SyncProcessor processor, OutboxSender outbox, ClientStore store, ConnectionStatus status, MediaCache mediaCache, CryptoService crypto, AccountPaths paths, IOptionsMonitor<UiOptions> uiOptions, SettingsStore settings, OptionCatalog optionCatalog, IHostEnvironment environment, IConfiguration configuration, FileLoggerProvider fileLogger, IOptions<StorageOptions> storageOptions, ILogger<MainWindow> logger)
+    public MainWindow(IApplication app, ClientSession session, SyncProcessor processor, OutboxSender outbox, ClientStore store, ConnectionStatus status, MediaCache mediaCache, CryptoService crypto, CallService calls, AccountPaths paths, IOptionsMonitor<UiOptions> uiOptions, SettingsStore settings, OptionCatalog optionCatalog, IHostEnvironment environment, IConfiguration configuration, FileLoggerProvider fileLogger, IOptions<StorageOptions> storageOptions, ILogger<MainWindow> logger)
     {
         // Store dependencies
         this.app = app;
@@ -92,6 +96,7 @@ public sealed partial class MainWindow : Window
         this.fileLogger = fileLogger;
         this.storageOptions = storageOptions.Value;
         this.crypto = crypto;
+        this.calls = calls;
         this.logger = logger;
         ownUserId = paths.UserId.ToString();
 
@@ -122,6 +127,9 @@ public sealed partial class MainWindow : Window
         uiOptions.OnChange(_ => app.Invoke(OnUiOptionsChanged));
         crypto.VerificationChanged += v => { VerificationState state = v.State; app.Invoke(() => OnVerificationChanged(v, state)); };
         crypto.VerificationIgnored += (sender, device, reason) => app.Invoke(() => ShowStatus($"Verification request of {sender} {device} ignored: {reason}"));
+        calls.Devices = OpenCallDevices;
+        calls.CallChanged += call => app.Invoke(() => OnCallChanged(call));
+        calls.IncomingCall += call => app.Invoke(() => OnCallChanged(call));
         _ = Task.Run(ConsumeSyncChangesAsync);
     }
 
@@ -150,6 +158,8 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "Direct _message…", HelpText = "Start a chat with a user", Action = StartDirectChat },
             new Line(),
             new MenuItem { Title = "Send _file…", HelpText = "Upload a file here", Action = SendFile },
+            new MenuItem { Title = "_Call", HelpText = "Voice call this direct chat", Action = PlaceCall },
+            new MenuItem { Title = "_Hang up", HelpText = "End the call", Action = HangupCall },
             new MenuItem { Title = "_Invite…", HelpText = "Invite a user here", Action = InviteUser },
             new MenuItem { Title = "Set _topic…", HelpText = "Change the topic", Action = SetTopic },
             new MenuItem { Title = "Set nam_e…", HelpText = "Change the room name", Action = SetRoomName },
@@ -329,11 +339,11 @@ public sealed partial class MainWindow : Window
     /// <summary>Show the connection state again after a temporary status message.</summary>
     private void RestoreStatus() => ShowStatus(DescribeConnection(status.State, status.Message));
 
-    /// <summary>Show <paramref name="text"/> in the status bar, followed by who is typing.</summary>
+    /// <summary>Show <paramref name="text"/> in the status bar, after who is typing.</summary>
     private void ShowStatus(string text)
     {
         // Keep the base text for typing updates
-        statusText.HelpText = text;
+        statusMessage = text;
         RefreshTyping();
     }
 
@@ -342,10 +352,8 @@ public sealed partial class MainWindow : Window
     {
         // Names of others typing
         List<string> typing = currentRoomId is null ? [] : processor.Read(r => r?.TryGetRoom(currentRoomId, out Room? room) == true ? room.TypingUserIds.Where(u => u != ownUserId).Select(room.GetMemberDisplayName).ToList() : []);
-        // Show; the status bar sizes items at layout, so lay out again
-        statusText.Title = typing.Count == 0 ? "" : $"{string.Join(", ", typing)} typing…";
-        statusText.SetNeedsLayout();
-        statusText.SuperView?.SetNeedsLayout();
+        // Show, with the status after it
+        statusText.Text = typing.Count == 0 ? statusMessage : $"{string.Join(", ", typing)} typing…  {statusMessage}";
     }
 
     /// <summary>Rebuild the room list: invites, favourites, others, low priority; keep the selection.</summary>
@@ -641,6 +649,11 @@ public sealed partial class MainWindow : Window
             case "settings" or "set": ShowSettings(); break;
             case "logs" or "log": ShowLogs(); break;
             case "audiotest": TestAudio(); break;
+            case "call": PlaceCall(); break;
+            case "answer": AnswerCall(); break;
+            case "reject": RejectCall(); break;
+            case "hangup": HangupCall(); break;
+            case "mute": ToggleMute(); break;
             case "encryption": _ = ShowEncryptionAsync(); break;
             case "recover": RecoverWithKey(); break;
             case "verify": VerifyUser(argument.Length > 0 ? argument : ownUserId); break;
@@ -909,6 +922,9 @@ public sealed partial class MainWindow : Window
         "/settings       view and change options",
         "/logs           read this and earlier session logs",
         "/audiotest      hear yourself through Opus, to test microphone and speaker",
+        "/call           voice call the other member of this direct chat",
+        "/answer /reject answer or decline a ringing call",
+        "/hangup /mute   end the call, or mute and unmute the microphone",
         "/encryption     keys, recovery and backup",
         "/recover        unlock old messages with the recovery key",
         "/verify [@user] verify your other device, or a user, with emoji",

@@ -110,7 +110,19 @@ the back gesture;
 the keyboard pushing the composer up;
 long-press menus instead of right-click.
 
+# Stun/Turn
+
+- Uniform.Stun.Protocol
+  Uniform.Turn.Protocol
+  Uniform.Stun
+  Uniform.Turn
+  Uniform.Sturn.Hosting
+  Uniform.Sturn.Host
+
 # Embedded help
 
 For desktop clients, F1 could open in system browser the user documentations that are already included in the release.
 
+# Android Flutter UI
+
+Prototype with Flutter+Avalania.

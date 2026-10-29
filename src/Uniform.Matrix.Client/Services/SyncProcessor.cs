@@ -27,6 +27,9 @@ public sealed class SyncProcessor
     /// <summary>Raised with a room ID after stored events of it were decrypted with a late room key, so a shown log can reload.</summary>
     public event Action<string>? EventsDecrypted;
 
+    /// <summary>Raised with the changes of each processed sync after they are applied, for services beside the frontend, e.g. calls; on the sync loop, so handlers return quickly.</summary>
+    public event Action<SyncChanges>? Applied;
+
     /// <summary>Changes of each processed sync, in order; reads by one frontend.</summary>
     public ChannelReader<SyncChanges> Changes => changes.Reader;
 
@@ -44,6 +47,7 @@ public sealed class SyncProcessor
         SyncChanges applied;
         lock (gate) applied = (rooms ??= new RoomStore(ownUserId)).Apply(sync);
         // Publish, then catch up on events that waited for keys
+        Applied?.Invoke(applied);
         await changes.Writer.WriteAsync(applied, cancellationToken);
         await DecryptWithReceivedKeysAsync(cancellationToken);
     }

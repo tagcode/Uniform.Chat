@@ -1,3 +1,4 @@
+using Uniform.Matrix.Calls;
 using Uniform.Matrix.Client.Terminal;
 using Uniform.Matrix.Client.Terminal.Configuration;
 using Uniform.Matrix.Client.Terminal.Ui;
@@ -50,6 +51,7 @@ builder.AddMatrixClient();
 builder.Services.AddOptionSection<UiOptions>(builder.Configuration, UiOptions.Section);
 builder.Services.AddOptionSection<AudioOptions>(builder.Configuration, AudioOptions.Section);
 builder.Services.AddSingleton<ICredentialPrompt, TuiCredentialPrompt>();
+builder.Services.AddSingleton<CallService>();
 
 // Start services, run the UI until quit, then stop services
 using IHost host = builder.Build();

@@ -30,6 +30,11 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/devices` | Manage your sessions |
 | `/settings` | View and change options |
 | `/logs` | Read this and earlier session logs |
+| `/call` | Voice call the other member of this direct chat |
+| `/answer` | Answer the ringing call |
+| `/reject` | Decline the ringing call |
+| `/hangup` | End the call, or cancel one that rings |
+| `/mute` | Mute or unmute your microphone in the call |
 | `/audiotest` | Hear yourself a second later, through the Opus codec of calls, to test the microphone and speaker; close the dialog to stop |
 | `/encryption` | Show encryption, recovery and backup state |
 | `/recover` | Unlock older messages with the recovery key |

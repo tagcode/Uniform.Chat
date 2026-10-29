@@ -179,4 +179,8 @@ public sealed partial class MatrixClient
         // Send
         return SendAsync(HttpMethod.Post, $"_matrix/client/v3/rooms/{Escape(roomId)}/read_markers", body, authenticated: true, cancellationToken);
     }
+
+    /// <summary>Return <see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv3voipturnserver">TURN credentials</see> for calls; empty when the server has none.</summary>
+    public Task<TurnServerResponse> GetTurnServerAsync(CancellationToken cancellationToken = default) =>
+        SendAsync<TurnServerResponse>(HttpMethod.Get, "_matrix/client/v3/voip/turnServer", body: null, authenticated: true, cancellationToken);
 }

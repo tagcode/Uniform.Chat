@@ -192,13 +192,13 @@ public sealed class ClientStore
         return await db.Outbox.AsNoTracking().Where(m => m.State == OutboxState.Pending).OrderBy(m => m.Id).ToListAsync(cancellationToken);
     }
 
-    /// <summary>Return outbox messages of a room that are not confirmed, for showing them as pending or failed.</summary>
+    /// <summary>Return the messages (<see cref="EventTypes.RoomMessage"/>) of a room in the outbox that are not confirmed, for showing them as pending or failed; other events, such as reactions and call signalling, are left out.</summary>
     public async Task<IReadOnlyList<OutboxMessage>> GetUnsentAsync(string roomId, CancellationToken cancellationToken = default)
     {
         // Query unsent in enqueue order
         await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         // Return messages
-        return await db.Outbox.AsNoTracking().Where(m => m.RoomId == roomId && m.State != OutboxState.Sent).OrderBy(m => m.Id).ToListAsync(cancellationToken);
+        return await db.Outbox.AsNoTracking().Where(m => m.RoomId == roomId && m.State != OutboxState.Sent && m.EventType == EventTypes.RoomMessage).OrderBy(m => m.Id).ToListAsync(cancellationToken);
     }
 
     /// <summary>Mark a message accepted by the server as <paramref name="eventId"/>.</summary>

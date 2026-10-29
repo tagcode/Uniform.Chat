@@ -4,7 +4,7 @@ title: Uniform.Matrix.Audio
 ---
 # Uniform.Matrix.Audio
 
-Voice audio for calls, the first part of calling: microphone and speaker through [NAudio](https://github.com/naudio/NAudio), and the [Opus](https://opus-codec.org/) codec through [Concentus](https://github.com/lostromb/concentus), a pure C# port of libopus. Nothing here knows about Matrix or the network yet; the call code built on it will.
+Voice audio for calls, the first part of calling: microphone and speaker through [NAudio](https://github.com/naudio/NAudio), and the [Opus](https://opus-codec.org/) codec through [Concentus](https://github.com/lostromb/concentus), a pure C# port of libopus. Nothing here knows about Matrix or the network; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
 
 ## Voice frames
 
