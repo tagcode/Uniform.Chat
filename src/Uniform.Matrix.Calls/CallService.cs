@@ -18,6 +18,7 @@ public sealed class CallService : IAsyncDisposable
     private readonly SyncProcessor processor;
     private readonly OutboxSender outbox;
     private readonly ClientSession session;
+    private readonly NetworkMonitor network;
     private readonly ILogger<CallService> logger;
     private readonly ConcurrentDictionary<string, VoiceCall> calls = new();
     private readonly string partyId = RandomNumberGenerator.GetString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 10);
@@ -25,14 +26,16 @@ public sealed class CallService : IAsyncDisposable
     private DateTimeOffset turnExpires;
 
     /// <summary>Follow the synced timelines for call events.</summary>
-    public CallService(SyncProcessor processor, OutboxSender outbox, ClientSession session, ILogger<CallService> logger)
+    public CallService(SyncProcessor processor, OutboxSender outbox, ClientSession session, NetworkMonitor network, ILogger<CallService> logger)
     {
-        // Dependencies, and the sync hook
+        // Dependencies, the sync hook, and network changes
         this.processor = processor;
         this.outbox = outbox;
         this.session = session;
+        this.network = network;
         this.logger = logger;
         processor.Applied += OnApplied;
+        network.Changed += OnNetworkChanged;
     }
 
     /// <summary>Open the microphone and speaker of a call; the platform's devices by default, which Android replaces.</summary>
@@ -78,7 +81,15 @@ public sealed class CallService : IAsyncDisposable
     {
         // Each active call
         processor.Applied -= OnApplied;
+        network.Changed -= OnNetworkChanged;
         foreach (VoiceCall call in ActiveCalls) await call.HangupAsync();
+    }
+
+    /// <summary>Restart ICE of the connected calls on the new network, as their path on the old one is gone.</summary>
+    private void OnNetworkChanged()
+    {
+        // Each call that has media
+        foreach (VoiceCall call in ActiveCalls.Where(c => c.State is CallState.Connected or CallState.Reconnecting)) _ = call.RestartIceAsync("network changed");
     }
 
     /// <summary>Route the call events of a sync.</summary>
@@ -183,6 +194,7 @@ public sealed class CallService : IAsyncDisposable
         EventTypes.CallSelectAnswer => ev.TryGetContent(out CallSelectAnswerContent? content) ? content : null,
         EventTypes.CallReject => ev.TryGetContent(out CallRejectContent? content) ? content : null,
         EventTypes.CallHangup => ev.TryGetContent(out CallHangupContent? content) ? content : null,
+        EventTypes.CallNegotiate => ev.TryGetContent(out CallNegotiateContent? content) ? content : null,
         _ => null,
     };
 }

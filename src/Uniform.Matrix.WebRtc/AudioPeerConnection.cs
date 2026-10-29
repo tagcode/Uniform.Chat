@@ -61,6 +61,10 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     private SrtpSession? outbound;
     private SrtpSession? inbound;
     private Task? gathering;
+    private IceAgent? restarting;
+    private SessionDescription? lastLocal;
+    private string? remoteUfrag;
+    private string? restartRemoteUfrag;
 
     /// <summary>Create a connection; nothing happens until an offer is made or accepted.</summary>
     public AudioPeerConnection(PeerConnectionOptions? options = null) => this.options = options ?? new PeerConnectionOptions();
@@ -70,6 +74,9 @@ public sealed class AudioPeerConnection : IAsyncDisposable
 
     /// <summary>The ICE agent, once an offer is made or accepted; e.g. to see the selected candidates.</summary>
     public IceAgent? Ice => ice;
+
+    /// <summary>Whether an ICE restart is under way, between its offer and its connecting.</summary>
+    public bool IsRestarting => restarting is not null;
 
     /// <summary>Raised for each local candidate, to trickle to the peer.</summary>
     public event Action<IceCandidate>? CandidateGathered;
@@ -88,8 +95,9 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     {
         // Agent and offer
         IceAgent agent = Start(controlling: true);
+        lastLocal = AudioSdp.CreateOffer(Local(agent));
         // Return the offer
-        return AudioSdp.CreateOffer(Local(agent)).ToString();
+        return lastLocal.ToString();
     }
 
     /// <summary>Accept the peer's offer, and start gathering; return the answer, in which this side is the DTLS client.</summary>
@@ -102,8 +110,9 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         IceAgent agent = Start(controlling: false);
         dtlsClient = true;
         SetRemote(audio);
+        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent));
         // Return the answer
-        return AudioSdp.CreateAnswer(sdp, Local(agent)).ToString();
+        return lastLocal.ToString();
     }
 
     /// <summary>Accept the peer's answer to this side's offer.</summary>
@@ -118,13 +127,104 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         SetRemote(audio);
     }
 
-    /// <summary>Add a candidate the peer trickled, as its <c>candidate:</c> attribute; unusable ones are ignored.</summary>
+    /// <summary>Add a candidate the peer trickled, as its <c>candidate:</c> attribute, to the restarting agent while ICE restarts; unusable ones are ignored.</summary>
     public void AddRemoteCandidate(string candidate)
     {
         // Parsed, then paired
-        if (ice is null || IceCandidate.Parse(candidate) is not IceCandidate parsed) return;
+        if ((restarting ?? ice) is not IceAgent agent || IceCandidate.Parse(candidate) is not IceCandidate parsed) return;
         // Done
-        ice.AddRemoteCandidate(parsed);
+        agent.AddRemoteCandidate(parsed);
+    }
+
+    /// <summary>Start an <see href="https://www.rfc-editor.org/rfc/rfc8445#section-9">ICE restart</see>, e.g. after the network changed: a new agent with new credentials gathers on the networks there are now, while DTLS and SRTP go on; return the offer for the peer. This side controls the new agent.</summary>
+    /// <exception cref="InvalidOperationException">Before the first offer and answer.</exception>
+    public string CreateRestartOffer()
+    {
+        // Assert a negotiated connection; a restart under way gives way
+        if (ice is null || dtls is null || lastLocal is null) throw new InvalidOperationException("Offer and answer first.");
+        CancelRestart();
+        IceAgent agent = NewAgent(controlling: true);
+        restarting = agent;
+        lastLocal = AudioSdp.CreateRestartOffer(lastLocal, Local(agent));
+        // Return offer
+        return lastLocal.ToString();
+    }
+
+    /// <summary>Answer the peer's new offer: an ICE restart when its credentials changed, with a new agent this side is controlled in, else the same connection; this side keeps its DTLS role either way.</summary>
+    /// <exception cref="InvalidOperationException">Before the first offer and answer, or when the offer has no Opus audio.</exception>
+    public string AcceptRestartOffer(string offer)
+    {
+        // The peer's audio
+        if (ice is null || dtls is null) throw new InvalidOperationException("Offer and answer first.");
+        SessionDescription sdp = SessionDescription.Parse(offer);
+        RemoteAudio audio = AudioSdp.Read(sdp) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
+        string setup = dtlsClient ? "active" : "passive";
+
+        // Same credentials: nothing to restart
+        if (audio.Ufrag == remoteUfrag)
+        {
+            lastLocal = AudioSdp.CreateAnswer(sdp, Local(ice), setup);
+            return lastLocal.ToString();
+        }
+
+        // New credentials: a new agent, this side's own restart giving way
+        CancelRestart();
+        IceAgent agent = NewAgent(controlling: false);
+        restarting = agent;
+        restartRemoteUfrag = audio.Ufrag;
+        agent.SetRemoteCredentials(audio.Ufrag, audio.Password);
+        foreach (IceCandidate candidate in audio.Candidates) agent.AddRemoteCandidate(candidate);
+        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), setup);
+        // Return answer
+        return lastLocal.ToString();
+    }
+
+    /// <summary>Take the peer's answer to this side's restart offer.</summary>
+    /// <exception cref="InvalidOperationException">When the answer has no Opus audio.</exception>
+    public void AcceptRestartAnswer(string answer)
+    {
+        // The new agent's peer credentials
+        if (restarting is not IceAgent agent) return;
+        RemoteAudio audio = AudioSdp.Read(SessionDescription.Parse(answer)) ?? throw new InvalidOperationException("The answer has no Opus audio over DTLS-SRTP.");
+        restartRemoteUfrag = audio.Ufrag;
+        agent.SetRemoteCredentials(audio.Ufrag, audio.Password);
+        // Done
+        foreach (IceCandidate candidate in audio.Candidates) agent.AddRemoteCandidate(candidate);
+    }
+
+    /// <summary>Connect the restarting agent, and move the media to it; return whether it connected. The old agent goes on until then.</summary>
+    public async Task<bool> ReconnectAsync(CancellationToken cancellationToken = default)
+    {
+        // The agent of this restart
+        if (restarting is not IceAgent agent) return false;
+        using CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, stopping.Token);
+        bool connected = await agent.ConnectAsync(options.ConnectTimeout, linked.Token);
+        if (restarting != agent) return false;
+        if (!connected)
+        {
+            CancelRestart();
+            return false;
+        }
+
+        // Switch, then close the old one
+        IceAgent old = ice!;
+        ice = agent;
+        restarting = null;
+        remoteUfrag = restartRemoteUfrag;
+        SetState(PeerConnectionState.Connected);
+        await old.DisposeAsync();
+        // Done
+        return true;
+    }
+
+    /// <summary>Abandon an ICE restart under way.</summary>
+    public void CancelRestart()
+    {
+        // Close its agent
+        if (restarting is not IceAgent agent) return;
+        restarting = null;
+        // Done
+        _ = agent.DisposeAsync().AsTask();
     }
 
     /// <summary>Connect ICE, then DTLS; return whether media can flow.</summary>
@@ -186,23 +286,33 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         if (State == PeerConnectionState.Closed) return;
         await stopping.CancelAsync();
         dtls?.Dispose();
+        CancelRestart();
         if (ice is not null) await ice.DisposeAsync();
         if (gathering is not null) await gathering.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         // Done
         SetState(PeerConnectionState.Closed);
     }
 
-    /// <summary>Create the ICE agent, and start gathering.</summary>
+    /// <summary>Create the first ICE agent, and start gathering.</summary>
     private IceAgent Start(bool controlling)
     {
         // Once
         if (ice is not null) throw new InvalidOperationException("An offer was already made or accepted.");
+        ice = NewAgent(controlling);
+        // Return agent
+        return ice;
+    }
+
+    /// <summary>Create an ICE agent whose candidates and data go to this connection, and whose state counts while it is the current one; start gathering.</summary>
+    private IceAgent NewAgent(bool controlling)
+    {
+        // Agent and its events
         IceAgent agent = new(new IceOptions { Controlling = controlling, Servers = options.Servers, IncludeLoopback = options.IncludeLoopback, RelayOnly = options.RelayOnly });
-        ice = agent;
         agent.CandidateGathered += candidate => CandidateGathered?.Invoke(candidate);
         agent.DataReceived += OnData;
-        agent.StateChanged += OnIceState;
-        gathering = GatherAsync(agent);
+        agent.StateChanged += state => { if (agent == ice) OnIceState(state); };
+        Task previous = gathering ?? Task.CompletedTask;
+        gathering = Task.WhenAll(previous, GatherAsync(agent));
         // Return agent
         return agent;
     }
@@ -222,11 +332,11 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     {
         // ICE, then DTLS, which takes records from now on
         payloadType = audio.OpusPayloadType;
+        remoteUfrag = audio.Ufrag;
         ice!.SetRemoteCredentials(audio.Ufrag, audio.Password);
         foreach (IceCandidate candidate in audio.Candidates) ice.AddRemoteCandidate(candidate);
-        IceAgent agent = ice;
-        // Done
-        dtls = new DtlsSrtp(certificate, dtlsClient, audio.Fingerprint, datagram => agent.SendAsync(datagram, stopping.Token).AsTask().Wait());
+        // Done; DTLS goes over whichever agent is current
+        dtls = new DtlsSrtp(certificate, dtlsClient, audio.Fingerprint, datagram => ice!.SendAsync(datagram, stopping.Token).AsTask().Wait());
         dtls.Closed += () => SetState(PeerConnectionState.Closed);
     }
 

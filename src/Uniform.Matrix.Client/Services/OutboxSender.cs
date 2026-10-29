@@ -60,6 +60,9 @@ public sealed class OutboxSender
         return message;
     }
 
+    /// <summary>Try the pending messages again now, e.g. after the network changed, instead of after the retry interval.</summary>
+    public void Wake() => signal.Release();
+
     /// <summary>Send pending messages until done or <paramref name="cancellationToken"/> is cancelled, retrying transient failures after <see cref="MatrixOptions.OutboxRetryInterval"/>.</summary>
     public async Task RunAsync(MatrixClient client, CancellationToken cancellationToken)
     {

@@ -38,6 +38,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             ScreenOffNearEar = () => new NearEarScreenOff(this),
         };
         base.OnCreate();
+        NetworkWatcher.Start(this);
     }
 
     /// <summary>Add the Inter font, as on desktops.</summary>

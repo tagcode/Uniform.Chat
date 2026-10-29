@@ -84,6 +84,15 @@ public sealed record CallSelectAnswerContent : CallContent
     public required string SelectedPartyId { get; init; }
 }
 
+/// <summary>Content of <see cref="EventTypes.CallNegotiate"/>: a new offer or its answer during a call, e.g. to restart ICE after a network change.</summary>
+public sealed record CallNegotiateContent : CallContent
+{
+    /// <summary>The offer or answer.</summary>
+    public required CallSessionDescription Description { get; init; }
+    /// <summary>Milliseconds an offer is valid after it was sent.</summary>
+    public long? Lifetime { get; init; }
+}
+
 /// <summary>Content of <see cref="EventTypes.CallReject"/>.</summary>
 public sealed record CallRejectContent : CallContent;
 

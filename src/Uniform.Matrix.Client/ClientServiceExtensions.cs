@@ -57,6 +57,7 @@ public static class ClientServiceExtensions
         services.AddSingleton<SyncProcessor>();
         services.AddSingleton<OutboxSender>();
         services.AddSingleton<ConnectionStatus>();
+        services.AddSingleton<NetworkMonitor>();
         services.AddHostedService<MatrixWorker>();
         // Return builder
         return builder;

@@ -18,10 +18,11 @@ public sealed class MatrixWorker : BackgroundService
     private readonly MatrixOptions options;
     private readonly ConnectionStatus status;
     private readonly CryptoService crypto;
+    private readonly NetworkMonitor network;
     private readonly ILogger<MatrixWorker> logger;
 
     /// <summary>Create the worker.</summary>
-    public MatrixWorker(ClientStore store, ClientSession session, SyncProcessor processor, OutboxSender outbox, IOptions<MatrixOptions> options, ConnectionStatus status, CryptoService crypto, ILogger<MatrixWorker> logger)
+    public MatrixWorker(ClientStore store, ClientSession session, SyncProcessor processor, OutboxSender outbox, IOptions<MatrixOptions> options, ConnectionStatus status, CryptoService crypto, NetworkMonitor network, ILogger<MatrixWorker> logger)
     {
         // Store dependencies
         this.store = store;
@@ -31,6 +32,7 @@ public sealed class MatrixWorker : BackgroundService
         this.options = options.Value;
         this.status = status;
         this.crypto = crypto;
+        this.network = network;
         this.logger = logger;
     }
 
@@ -48,7 +50,16 @@ public sealed class MatrixWorker : BackgroundService
             await client.RetryTransientAsync(async token => { await crypto.StartAsync(client, token); return true; }, OnSyncRetry, stoppingToken);
             int decrypted = await processor.RetryStoredEncryptedAsync(stoppingToken);
             if (decrypted > 0) logger.LogInformation("Decrypted {Count} stored events with known keys", decrypted);
-            await Task.WhenAll(SyncAsync(client, stoppingToken), outbox.RunAsync(client, stoppingToken));
+
+            // On another network, sync and send again at once, rather than wait for requests on the old one to time out
+            void OnNetworkChanged()
+            {
+                client.InterruptSync();
+                outbox.Wake();
+            }
+            network.Changed += OnNetworkChanged;
+            try { await Task.WhenAll(SyncAsync(client, stoppingToken), outbox.RunAsync(client, stoppingToken)); }
+            finally { network.Changed -= OnNetworkChanged; }
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {

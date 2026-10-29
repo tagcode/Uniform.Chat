@@ -38,9 +38,12 @@ public static class AudioSdp
         return sdp;
     }
 
-    /// <summary>Return the answer to <paramref name="offer"/>: its audio section accepted, with this side the DTLS client, and the other sections rejected.</summary>
+    /// <summary>Return the answer to <paramref name="offer"/>: its audio section accepted, with this side the DTLS client unless <paramref name="setup"/> says otherwise, and the other sections rejected.</summary>
+    /// <param name="offer">The peer's offer.</param>
+    /// <param name="local">This side's audio.</param>
+    /// <param name="setup">This side's DTLS role: <c>active</c> for a new connection, the current role when answering a renegotiation.</param>
     /// <exception cref="InvalidOperationException">When the offer has no audio with Opus over DTLS-SRTP.</exception>
-    public static SessionDescription CreateAnswer(SessionDescription offer, LocalAudio local)
+    public static SessionDescription CreateAnswer(SessionDescription offer, LocalAudio local, string setup = "active")
     {
         // The audio section to accept
         RemoteAudio remote = Read(offer) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
@@ -56,13 +59,45 @@ public static class AudioSdp
             {
                 answered = true;
                 string direction = media.Get("sendonly") is not null ? "recvonly" : media.Get("recvonly") is not null ? "sendonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
-                sdp.Media.Add(Audio(local, mid, remote.OpusPayloadType, "active", direction));
+                sdp.Media.Add(Audio(local, mid, remote.OpusPayloadType, setup, direction));
                 continue;
             }
             sdp.Media.Add(new MediaDescription { Kind = media.Kind, Port = 0, Protocol = media.Protocol, Formats = [.. media.Formats.Take(1)], Lines = ["c=IN IP4 0.0.0.0"], Attributes = [$"mid:{mid}", "inactive"] });
         }
         // Return answer
         return sdp;
+    }
+
+    /// <summary>Return an offer that restarts ICE: <paramref name="previous"/>, this side's last offer or answer, with the new ICE credentials of <paramref name="local"/>, <c>setup:actpass</c>, no candidates, and the session version increased; the sections and their order stay, rejected ones too, as renegotiation requires.</summary>
+    public static SessionDescription CreateRestartOffer(SessionDescription previous, LocalAudio local)
+    {
+        // Session lines, the origin's version one more
+        SessionDescription sdp = new();
+        foreach (string line in previous.Lines) sdp.Lines.Add(line.StartsWith("o=", StringComparison.Ordinal) ? NextVersion(line) : line);
+        sdp.Attributes.AddRange(previous.Attributes);
+
+        // Sections with new credentials and an open DTLS role
+        foreach (MediaDescription media in previous.Media)
+        {
+            List<string> attributes = [.. media.Attributes.Where(a => !a.StartsWith("candidate:", StringComparison.Ordinal) && a != "end-of-candidates").Select(a =>
+                a.StartsWith("ice-ufrag:", StringComparison.Ordinal) ? $"ice-ufrag:{local.Ufrag}"
+                : a.StartsWith("ice-pwd:", StringComparison.Ordinal) ? $"ice-pwd:{local.Password}"
+                : a.StartsWith("setup:", StringComparison.Ordinal) ? "setup:actpass"
+                : a)];
+            sdp.Media.Add(media with { Formats = [.. media.Formats], Lines = [.. media.Lines], Attributes = attributes });
+        }
+        // Return offer
+        return sdp;
+    }
+
+    /// <summary>Return an origin line with its session version one more.</summary>
+    private static string NextVersion(string origin)
+    {
+        // o=username session-id version …
+        string[] fields = origin.Split(' ');
+        if (fields.Length > 2 && long.TryParse(fields[2], CultureInfo.InvariantCulture, out long version)) fields[2] = (version + 1).ToString(CultureInfo.InvariantCulture);
+        // Return line
+        return string.Join(' ', fields);
     }
 
     /// <summary>Return the peer's audio from its offer or answer: the first audio section with Opus and DTLS-SRTP; null when there is none.</summary>

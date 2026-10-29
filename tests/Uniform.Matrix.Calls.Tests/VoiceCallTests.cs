@@ -38,6 +38,32 @@ public class VoiceCallTests
         Assert.Equal("user_hangup", bob.EndReason);
     }
 
+    /// <summary>Alice restarts ICE during the call, as after a network change; the call reconnects over new agents and both still hear each other.</summary>
+    [Fact]
+    public async Task RestartIceDuringCall()
+    {
+        // A connected call with sound both ways
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        FakeAudio aliceAudio = new(440), bobAudio = new(660);
+        await using Pair pair = new(aliceAudio, bobAudio);
+        await pair.Alice.InviteAsync(cancellationToken);
+        VoiceCall bob = await pair.Ringing.Task.WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
+        await bob.AnswerAsync(cancellationToken);
+        await WaitForAsync(() => pair.Alice.State == CallState.Connected && bob.State == CallState.Connected, cancellationToken);
+        await WaitForAsync(() => aliceAudio.Speaker?.Energy > 0 && bobAudio.Speaker?.Energy > 0, cancellationToken);
+
+        // Restart, and wait for both to be connected again
+        await pair.Alice.RestartIceAsync("test", cancellationToken);
+        Assert.Equal(CallState.Reconnecting, pair.Alice.State);
+        await WaitForAsync(() => pair.Alice.State == CallState.Connected && bob.State == CallState.Connected, cancellationToken);
+
+        // Sound keeps coming both ways
+        double aliceHeard = aliceAudio.Speaker!.Energy, bobHeard = bobAudio.Speaker!.Energy;
+        await WaitForAsync(() => aliceAudio.Speaker.Energy > aliceHeard && bobAudio.Speaker.Energy > bobHeard, cancellationToken);
+        // Done
+        Assert.Equal(CallState.Connected, pair.Alice.State);
+    }
+
     /// <summary>Bob rejects; Alice's call ends as rejected by the peer.</summary>
     [Fact]
     public async Task Reject()

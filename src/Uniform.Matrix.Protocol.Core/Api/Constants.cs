@@ -59,7 +59,7 @@ public static class EventTypes
     public const string CallSelectAnswer = "m.call.select_answer";
     /// <summary>1:1 call: the callee declines before answering, content <see cref="CallRejectContent"/>.</summary>
     public const string CallReject = "m.call.reject";
-    /// <summary>1:1 call: renegotiation, e.g. to add video; not supported here.</summary>
+    /// <summary>1:1 call: renegotiation during the call, e.g. to restart ICE after a network change, content <see cref="CallNegotiateContent"/>.</summary>
     public const string CallNegotiate = "m.call.negotiate";
     /// <summary>1:1 call: ends the call, content <see cref="CallHangupContent"/>.</summary>
     public const string CallHangup = "m.call.hangup";

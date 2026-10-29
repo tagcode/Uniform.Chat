@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
   <!-- Matrix servers are reached over the network -->
   <uses-permission android:name="android.permission.INTERNET" />
+  <!-- Moving the sync and calls to a new network when the phone switches -->
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <!-- Voice: the microphone, and switching call audio to the loudspeaker -->
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />

@@ -34,6 +34,12 @@ public sealed class VoiceCall : IAsyncDisposable
     public static readonly TimeSpan InviteLifetime = TimeSpan.FromSeconds(60);
     /// <summary>How long gathered candidates wait to be sent together.</summary>
     private static readonly TimeSpan CandidateBatchDelay = TimeSpan.FromMilliseconds(100);
+    /// <summary>How long the path may be down before this side restarts ICE, and between restarts.</summary>
+    private static readonly TimeSpan RestartDelay = TimeSpan.FromSeconds(2);
+    /// <summary>How long a call may try to reconnect before it ends.</summary>
+    private static readonly TimeSpan ReconnectLimit = TimeSpan.FromSeconds(45);
+    /// <summary>How long a restart offer is valid.</summary>
+    private static readonly TimeSpan NegotiateLifetime = TimeSpan.FromSeconds(10);
     /// <summary>How long to wait for the peer's hangup after it closed the connection.</summary>
     private static readonly TimeSpan PeerHangupWait = TimeSpan.FromSeconds(5);
     private readonly string partyId;
@@ -54,6 +60,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private bool remoteDescribed;
     private bool flushScheduled;
     private bool muted;
+    private int watchingReconnect;
 
     /// <summary>Create a call; <see cref="CallService"/> does.</summary>
     /// <param name="roomId">Room of the call.</param>
@@ -212,6 +219,9 @@ public sealed class VoiceCall : IAsyncDisposable
                 case EventTypes.CallReject:
                     if (sender == PeerUserId && !IsIncoming) await EndAsync("rejected", byPeer: true);
                     if (sender == ownUserId && IsIncoming) await EndAsync("rejected_elsewhere", byPeer: false);
+                    break;
+                case EventTypes.CallNegotiate when content is CallNegotiateContent negotiate:
+                    if (sender == PeerUserId && (peerPartyId is null || content.PartyId is null || content.PartyId == peerPartyId)) await OnNegotiateAsync(negotiate);
                     break;
                 case EventTypes.CallHangup when content is CallHangupContent hangup:
                     if (sender == PeerUserId && (peerPartyId is null || content.PartyId is null || content.PartyId == peerPartyId)) await EndAsync(hangup.Reason ?? "user_hangup", byPeer: true);
@@ -389,12 +399,113 @@ public sealed class VoiceCall : IAsyncDisposable
         }
     }
 
-    /// <summary>Follow the peer connection: reconnecting while ICE is down; ended when it fails, or when the peer closes it and its hangup does not follow.</summary>
+    /// <summary>Restart ICE, e.g. after the network changed: a new offer in <c>m.call.negotiate</c>, and the media move to the new path once it connects; nothing while a restart is under way.</summary>
+    public async Task RestartIceAsync(string reason, CancellationToken cancellationToken = default)
+    {
+        // Connected calls, one restart at a time
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            if (State is not (CallState.Connected or CallState.Reconnecting) || connection is null || connection.IsRestarting) return;
+            string offer = connection.CreateRestartOffer();
+            logger.LogInformation("Restarting ICE of call {CallId}: {Reason}", CallId, reason);
+            await send(EventTypes.CallNegotiate, new CallNegotiateContent { CallId = CallId, PartyId = partyId, Lifetime = (long)NegotiateLifetime.TotalMilliseconds, Description = new CallSessionDescription { Type = "offer", Sdp = offer } }, cancellationToken);
+            SetState(CallState.Reconnecting);
+        }
+        finally
+        {
+            gate.Release();
+        }
+        // Done
+        WatchReconnect();
+    }
+
+    /// <summary>Take the peer's renegotiation: answer its offer, restarting ICE when its credentials changed, or take its answer to this side's restart. When both restart at once, the caller's offer wins.</summary>
+    private async Task OnNegotiateAsync(CallNegotiateContent negotiate)
+    {
+        // During the call only
+        if (connection is null || State is not (CallState.Connected or CallState.Reconnecting)) return;
+        string sdp = negotiate.Description.Sdp;
+        if (negotiate.Description.Type == "answer")
+        {
+            connection.AcceptRestartAnswer(sdp);
+            _ = ReconnectMediaAsync();
+            return;
+        }
+
+        // An offer, unless ours goes first
+        if (negotiate.Description.Type != "offer" || (connection.IsRestarting && !IsIncoming)) return;
+        string answer = connection.AcceptRestartOffer(sdp);
+        await send(EventTypes.CallNegotiate, new CallNegotiateContent { CallId = CallId, PartyId = partyId, Description = new CallSessionDescription { Type = "answer", Sdp = answer } }, ending.Token);
+        if (!connection.IsRestarting) return;
+        logger.LogInformation("Peer restarted ICE of call {CallId}", CallId);
+        SetState(CallState.Reconnecting);
+        _ = ReconnectMediaAsync();
+        // Done
+        WatchReconnect();
+    }
+
+    /// <summary>Connect the restarted ICE agent; the call is connected again when it does.</summary>
+    private async Task ReconnectMediaAsync()
+    {
+        // The new path, then connected again; the connection may never have left Connected, when the old path still worked
+        if (connection is not AudioPeerConnection peer) return;
+        bool connected;
+        try { connected = await peer.ReconnectAsync(ending.Token); }
+        catch (OperationCanceledException) { return; }
+        if (connected && State == CallState.Reconnecting) SetState(CallState.Connected);
+        // Done
+        if (connected) logger.LogInformation("Call {CallId} reconnected from {Local} to {Remote}", CallId, peer.Ice?.SelectedLocal, peer.Ice?.SelectedRemote);
+        else logger.LogInformation("ICE restart of call {CallId} did not connect", CallId);
+    }
+
+    /// <summary>While reconnecting, restart ICE every <see cref="RestartDelay"/> when no restart is under way, and hang up after <see cref="ReconnectLimit"/>; one watcher at a time.</summary>
+    private void WatchReconnect()
+    {
+        // Once
+        if (Interlocked.Exchange(ref watchingReconnect, 1) == 1) return;
+        _ = WatchReconnectAsync();
+    }
+
+    /// <summary>Watch a reconnection until it succeeds, the call ends, or time is up.</summary>
+    private async Task WatchReconnectAsync()
+    {
+        // Until connected again
+        DateTime started = DateTime.UtcNow;
+        try
+        {
+            while (State == CallState.Reconnecting)
+            {
+                await Task.Delay(RestartDelay, ending.Token);
+                if (State != CallState.Reconnecting) break;
+                if (DateTime.UtcNow - started > ReconnectLimit)
+                {
+                    await HangupAsync("ice_failed");
+                    break;
+                }
+                if (connection?.IsRestarting == false) await RestartIceAsync("connection lost", ending.Token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Ended
+        }
+        finally
+        {
+            Interlocked.Exchange(ref watchingReconnect, 0);
+        }
+    }
+
+    /// <summary>Follow the peer connection: reconnecting while ICE is down, restarting it if it stays down; ended when it fails, or when the peer closes it and its hangup does not follow.</summary>
     private void OnConnectionState(PeerConnectionState state)
     {
         // After connecting only
         if (State is not (CallState.Connected or CallState.Reconnecting)) return;
-        if (state == PeerConnectionState.Disconnected) SetState(CallState.Reconnecting);
+        if (state == PeerConnectionState.Disconnected)
+        {
+            SetState(CallState.Reconnecting);
+            WatchReconnect();
+        }
         else if (state == PeerConnectionState.Connected) SetState(CallState.Connected);
         else if (state == PeerConnectionState.Failed) _ = HangupAsync("ice_failed");
         // Done

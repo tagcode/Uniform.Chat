@@ -11,6 +11,17 @@ public sealed partial class MatrixClient
     public TimeSpan SyncRetryDelay { get; set; } = TimeSpan.FromSeconds(1);
     /// <summary>Longest wait between failed syncs in <see cref="SyncLoopAsync"/>.</summary>
     public TimeSpan SyncRetryMaxDelay { get; set; } = TimeSpan.FromSeconds(60);
+    private CancellationTokenSource? currentSync;
+    private bool syncInterrupted;
+
+    /// <summary>Abandon the long-poll of <see cref="SyncLoopAsync"/> that is under way and sync again at once, without waiting; e.g. after the network changed, as a request on the old network would only fail when it times out.</summary>
+    public void InterruptSync()
+    {
+        // The loop sees the flag and skips its wait
+        syncInterrupted = true;
+        try { currentSync?.Cancel(); }
+        catch (ObjectDisposedException) { }
+    }
 
     /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#get_matrixclientv3sync">Syncs</see> once; waits up to <paramref name="timeout"/> for new events.</summary>
     /// <param name="since">Previous <see cref="SyncResponse.NextBatch"/>; null for an initial sync.</param>
@@ -49,7 +60,23 @@ public sealed partial class MatrixClient
         // Sync until cancelled
         while (true)
         {
-            (SyncResponse? response, Exception? error) = await TrySyncAsync(since, pollTimeout, filter, cancellationToken);
+            // Each request cancellable on its own, by InterruptSync
+            SyncResponse? response;
+            Exception? error;
+            using (CancellationTokenSource request = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+            {
+                currentSync = request;
+                syncInterrupted = false;
+                try { (response, error) = await TrySyncAsync(since, pollTimeout, filter, request.Token); }
+                catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested && syncInterrupted) { (response, error) = (null, null); }
+                currentSync = null;
+            }
+            if (response is null && error is null)
+            {
+                // Interrupted: again at once, with the backoff reset
+                delay = SyncRetryDelay;
+                continue;
+            }
             if (response is null)
             {
                 onRetry?.Invoke(error!, delay);

@@ -62,9 +62,9 @@ public sealed class IceAgent : IAsyncDisposable
     /// <summary>How long the controlling agent waits for better pairs after the first works.</summary>
     private static readonly TimeSpan NominationDelay = TimeSpan.FromMilliseconds(300);
     /// <summary>Interval of consent checks on the selected pair.</summary>
-    private static readonly TimeSpan ConsentInterval = TimeSpan.FromSeconds(5);
-    /// <summary>How long without consent counts as disconnected.</summary>
-    private static readonly TimeSpan ConsentTimeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan ConsentInterval = TimeSpan.FromSeconds(2);
+    /// <summary>How long without consent counts as disconnected, e.g. after the network changed; short, so that a call can restart ICE soon.</summary>
+    private static readonly TimeSpan ConsentTimeout = TimeSpan.FromSeconds(7);
     private readonly IceOptions options;
     private readonly UdpClient socket = new(new IPEndPoint(IPAddress.Any, 0));
     private readonly UdpClient? socket6;
