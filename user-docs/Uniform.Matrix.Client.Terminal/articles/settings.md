@@ -17,7 +17,7 @@ Settings come from these places; later ones override earlier ones:
 Every setting can be given on the command line as `--Section:Name=value`. The ones you need at the start:
 
 ```bash
-Uniform.Matrix.Client.Terminal --Matrix:UserId=@alice:matrix.org --Matrix:Password=secret
+./Uniform.Matrix --Matrix:UserId=@alice:matrix.org --Matrix:Password=secret
 ```
 
 - `Matrix:UserId` is your full Matrix ID, such as `@alice:matrix.org`. It is needed at every start, as it chooses your local data; save it in the settings file to start without options. Without one, the client asks for it in the window.

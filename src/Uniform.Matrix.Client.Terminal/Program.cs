@@ -12,8 +12,8 @@ using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Core;
 
-// Read appsettings.json next to the executable, not from the working directory
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory });
+// Read appsettings.json next to the executable, not from the working directory; the ApplicationName names the settings and data folders, not the program file
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = "Uniform.Matrix.Client.Terminal" });
 
 // User settings file below environment and command line, and changes applied in the settings window on top
 builder.AddSettings();

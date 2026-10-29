@@ -138,3 +138,8 @@ Prototype with Flutter+Avalania.
 # User management
 
 Admin user manages other users through matrix protocol.
+
+# Desktop Client
+
+- The Text Size setting doesn't affect the text size in the chat window, nor the room title, nor the "Uniform.Matrix" application name.
+- The range of sizes should be wider, add: very small, very large

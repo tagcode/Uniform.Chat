@@ -14,4 +14,6 @@ The desktop app builds with the rest of the solution:
 dotnet run --project src/Uniform.Matrix.Client.Desktop
 ```
 
+The program file is `Uniform.Matrix` (`Uniform.Matrix.exe` on Windows), not the project's name: file managers on Linux match names ending in `.Desktop` to `.desktop` launchers regardless of case, and would not run it.
+
 Releases publish it as a self-contained single file for `linux-x64`, `linux-arm64`, `win-x64` and `win-arm64`; see [Building](xref:Uniform.Matrix.Building.Article).

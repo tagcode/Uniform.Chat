@@ -6,6 +6,8 @@ uid: Uniform.Matrix.Client.Terminal.Article
 
 The terminal app: [`Program`](xref:Uniform.Matrix.Client.Desktop.Program) calls [`AddSettings`](xref:Uniform.Matrix.Hosting.HostingExtensions.AddSettings*), [`AddMatrixClient`](xref:Uniform.Matrix.Client.ClientServiceExtensions.AddMatrixClient*) and registers its [`UiOptions`](xref:Uniform.Matrix.Client.Terminal.Configuration.UiOptions), then runs the UI.
 
+The program file is `Uniform.Matrix` (`Uniform.Matrix.exe` on Windows), like the desktop app's. `Program` sets the host's application name to `Uniform.Matrix.Client.Terminal`, because the settings, data and log folders are named after it, not after the program file.
+
 ## User interface
 
 [`Program`](xref:Uniform.Matrix.Client.Desktop.Program) creates the Terminal.Gui application first, starts the host's background services and then runs [`MainWindow`](xref:Uniform.Matrix.Client.Terminal.Ui.MainWindow) on the main thread until the user quits. Background work never touches views directly: sync changes, outbox changes and connection status are marshalled with `IApplication.Invoke`, and the password prompt shows its dialog the same way.

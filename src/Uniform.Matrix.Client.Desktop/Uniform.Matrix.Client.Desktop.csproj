@@ -8,6 +8,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\Uniform.Matrix.Client.Avalonia.Core\Assets\icon.ico</ApplicationIcon>
+    <!-- The program is Uniform.Matrix: file managers take a name ending in .Desktop for a .desktop launcher, and do not run it -->
+    <AssemblyName>Uniform.Matrix</AssemblyName>
+    <RootNamespace>Uniform.Matrix.Client.Desktop</RootNamespace>
   </PropertyGroup>
 
   <!-- Package -->

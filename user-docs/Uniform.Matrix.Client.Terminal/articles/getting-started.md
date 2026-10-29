@@ -17,10 +17,10 @@ To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft
 
 ## Run
 
-Start the client; on Windows, run `Uniform.Matrix.Client.Terminal.exe`:
+Start the client; on Windows, run `Uniform.Matrix.exe`:
 
 ```bash
-./Uniform.Matrix.Client.Terminal
+./Uniform.Matrix
 ```
 
 The first time, it asks for your full Matrix user ID, such as `@alice:matrix.org`. Give the server address too only when the server cannot be found from the user ID, for example `http://localhost:8008` for a server of your own on this computer. Then it asks for your password and logs in. After a successful login it saves the user ID and address to your settings, and remembers the session, so later runs start straight away without asking.

@@ -20,7 +20,7 @@ The Uniform.Matrix app for Windows and Linux: rooms, messages, files and end-to-
 
 ### Windows
 
-Download `uniform-matrix-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases) and unpack it anywhere; the `docs` folder in it has this guide (open `docs/index.html`). Then run `Uniform.Matrix.Client.Desktop.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
+Download `uniform-matrix-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases) and unpack it anywhere; the `docs` folder in it has this guide (open `docs/index.html`). Then run `Uniform.Matrix.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
 
 ### Linux
 
@@ -29,8 +29,10 @@ Download `uniform-matrix-desktop-<version>-linux-x64.tar.gz` (or `linux-arm64`),
 ```bash
 tar -xzf uniform-matrix-desktop-*-linux-x64.tar.gz
 cd uniform-matrix-desktop-*-linux-x64
-./Uniform.Matrix.Client.Desktop
+./Uniform.Matrix
 ```
+
+You can also start it by double-clicking `Uniform.Matrix` in the file manager.
 
 To add it to the application menu, run `./install-desktop-entry.sh` in the same folder. Run it again if you move the folder, and `./install-desktop-entry.sh --uninstall` removes the entry.
 

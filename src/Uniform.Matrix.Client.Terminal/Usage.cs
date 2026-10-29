@@ -34,7 +34,7 @@ internal static class Usage
     public static string Text(string? userId, bool askedForHelp, string settingsPath, IReadOnlyList<OptionInfo> options)
     {
         // Program name as the user typed it, and why help is shown
-        string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Matrix.Client.Terminal";
+        string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Matrix";
         string section = MatrixOptions.Section;
         string problem = askedForHelp ? "" : string.IsNullOrWhiteSpace(userId) ? "Give your Matrix user ID to start.\n\n" : $"\"{userId}\" is not a Matrix user ID; it looks like @alice:matrix.org.\n\n";
 
