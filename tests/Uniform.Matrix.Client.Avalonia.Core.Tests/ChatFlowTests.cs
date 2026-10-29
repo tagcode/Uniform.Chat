@@ -21,7 +21,8 @@ using Uniform.Matrix.Protocol.Core;
 /// <summary>The app's view models against our homeserver in memory: sign in, rooms, messages both ways, resume and sign out.</summary>
 public class ChatFlowTests
 {
-    private static readonly TimeSpan Patience = TimeSpan.FromSeconds(20);
+    /// <summary>How long to wait for a condition; generous, as CI runs the test assemblies in parallel on few cores.</summary>
+    private static readonly TimeSpan Patience = TimeSpan.FromSeconds(45);
 
     /// <summary>Wait on the UI thread until <paramref name="condition"/> holds; fail with <paramref name="what"/> after a while.</summary>
     private static async Task WaitUntilAsync(Func<bool> condition, string what)

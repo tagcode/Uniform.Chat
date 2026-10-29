@@ -14,7 +14,10 @@ public class BrowserTests
     {
         // Browser, and our side
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
-        await using Chromium? chromium = await Chromium.StartAsync(cancellationToken);
+        Chromium? started;
+        try { started = await Chromium.StartAsync(cancellationToken); }
+        catch (ChromiumUnavailableException ex) { Assert.Skip(ex.Message); return; }
+        await using Chromium? chromium = started;
         if (chromium is null) { Assert.Skip("Chromium is not installed."); return; }
         await using AudioPeerConnection peer = new(new PeerConnectionOptions { IncludeLoopback = true });
         VoiceDecoder decoder = new();

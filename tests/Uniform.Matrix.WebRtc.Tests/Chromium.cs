@@ -32,7 +32,7 @@ internal sealed partial class Chromium : IAsyncDisposable
         if (executable is null) return null;
         string profile = Path.Combine(Path.GetTempPath(), "uniform-matrix-chromium-" + Guid.NewGuid().ToString("N"));
         ProcessStartInfo start = new(executable) { RedirectStandardError = true, RedirectStandardOutput = true };
-        foreach (string argument in new[] { "--headless=new", "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0", "--autoplay-policy=no-user-gesture-required", $"--user-data-dir={profile}", "about:blank" }) start.ArgumentList.Add(argument);
+        foreach (string argument in new[] { "--headless=new", "--no-sandbox", "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0", "--autoplay-policy=no-user-gesture-required", $"--user-data-dir={profile}", "about:blank" }) start.ArgumentList.Add(argument);
         Process process = Process.Start(start)!;
         Chromium chromium = new(process, profile);
 
@@ -40,11 +40,18 @@ internal sealed partial class Chromium : IAsyncDisposable
         using CancellationTokenSource limit = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         limit.CancelAfter(TimeSpan.FromSeconds(30));
         int port = 0;
+        List<string> output = [];
         while (port == 0 && await process.StandardError.ReadLineAsync(limit.Token) is string line)
         {
+            output.Add(line);
             if (DevToolsLine().Match(line) is { Success: true } match) port = int.Parse(match.Groups[1].Value);
         }
-        if (port == 0) throw new InvalidOperationException("Chromium did not start DevTools.");
+        if (port == 0)
+        {
+            // On a browser that cannot run here, e.g. in a container: its own words
+            await chromium.DisposeAsync();
+            throw new ChromiumUnavailableException(string.Join('\n', output.TakeLast(10)));
+        }
         _ = DrainAsync(process.StandardError);
         using HttpClient http = new();
         JsonArray targets = (await http.GetFromJsonAsync<JsonArray>($"http://127.0.0.1:{port}/json/list", limit.Token))!;
@@ -122,3 +129,6 @@ internal sealed partial class Chromium : IAsyncDisposable
     [GeneratedRegex(@"DevTools listening on ws://[^:]+:(\d+)/")]
     private static partial Regex DevToolsLine();
 }
+
+/// <summary>Chromium is installed but did not start DevTools here, e.g. on a CI runner whose kernel denies its sandbox; the message has its last output.</summary>
+internal sealed class ChromiumUnavailableException(string output) : Exception($"Chromium did not start DevTools:\n{output}");

@@ -28,4 +28,4 @@ The first call asks for the microphone permission, and on Android 13 and later a
 
 ## When there is no sound
 
-Try *Test audio…* in the [settings](xref:Uniform.Matrix.Client.Desktop.Settings.Article): you hear yourself a second later. If you hear nothing there, choose the microphone and speaker in the system's sound settings.
+Try *Test audio…* in the settings: you hear yourself a second later. If you hear nothing there, choose the microphone and speaker in the system's sound settings.

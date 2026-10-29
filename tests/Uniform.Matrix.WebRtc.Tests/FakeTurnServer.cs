@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using Uniform.Matrix.WebRtc.Stun;
 
 /// <summary>A TURN server just big enough for tests, on loopback: one client, one allocation, long-term credentials with a 401 challenge, permissions, channels, and relaying through its own socket.</summary>
+/// <remarks>Its two loops share the client, permissions and channels under one lock.</remarks>
 internal sealed class FakeTurnServer : IAsyncDisposable
 {
     /// <summary>Realm of the credentials.</summary>
@@ -18,6 +19,7 @@ internal sealed class FakeTurnServer : IAsyncDisposable
     private readonly HashSet<IPAddress> permitted = [];
     private readonly Dictionary<ushort, IPEndPoint> channels = [];
     private readonly CancellationTokenSource stopping = new();
+    private readonly Lock gate = new();
     private readonly Task serving;
     private readonly Task relaying;
     private IPEndPoint? client;
@@ -57,14 +59,17 @@ internal sealed class FakeTurnServer : IAsyncDisposable
         while (!cancellationToken.IsCancellationRequested)
         {
             UdpReceiveResult received = await server.ReceiveAsync(cancellationToken);
-            client = received.RemoteEndPoint;
+            IPEndPoint sender = received.RemoteEndPoint;
+            lock (gate) client = sender;
             byte[] datagram = received.Buffer;
 
             // Channel data to a bound peer
             if (datagram[0] is >= 64 and <= 79)
             {
                 ushort channel = BinaryPrimitives.ReadUInt16BigEndian(datagram);
-                if (channels.TryGetValue(channel, out IPEndPoint? bound)) await relay.SendAsync(datagram.AsMemory(4, BinaryPrimitives.ReadUInt16BigEndian(datagram.AsSpan(2))), bound, cancellationToken);
+                IPEndPoint? bound;
+                lock (gate) channels.TryGetValue(channel, out bound);
+                if (bound is not null) await relay.SendAsync(datagram.AsMemory(4, BinaryPrimitives.ReadUInt16BigEndian(datagram.AsSpan(2))), bound, cancellationToken);
                 continue;
             }
 
@@ -73,13 +78,16 @@ internal sealed class FakeTurnServer : IAsyncDisposable
             IPEndPoint? peer = message.Get(StunAttributeTypes.XorPeerAddress) is byte[] address ? StunAddress.DecodeXor(address, message.TransactionId) : null;
             if (message.Class == StunClass.Indication)
             {
-                if (message.Method == StunMethod.Send && peer is not null && permitted.Contains(peer.Address)) await relay.SendAsync(message.Get(StunAttributeTypes.Data)!, peer, cancellationToken);
+                bool allowed;
+                lock (gate) allowed = peer is not null && permitted.Contains(peer.Address);
+                if (message.Method == StunMethod.Send && allowed) await relay.SendAsync(message.Get(StunAttributeTypes.Data)!, peer, cancellationToken);
                 continue;
             }
 
             // Requests: challenged without integrity
-            StunMessage response = StunMessage.CheckIntegrity(datagram, key) ? Answer(message, peer) : Error(message, 401);
-            await server.SendAsync(response.Encode(response.Class == StunClass.Success ? key : null), client, cancellationToken);
+            StunMessage response;
+            lock (gate) response = StunMessage.CheckIntegrity(datagram, key) ? Answer(message, peer) : Error(message, 401);
+            await server.SendAsync(response.Encode(response.Class == StunClass.Success ? key : null), sender, cancellationToken);
         }
     }
 
@@ -127,25 +135,31 @@ internal sealed class FakeTurnServer : IAsyncDisposable
         while (!cancellationToken.IsCancellationRequested)
         {
             UdpReceiveResult received = await relay.ReceiveAsync(cancellationToken);
-            if (client is null || !permitted.Contains(received.RemoteEndPoint.Address)) continue;
+            IPEndPoint? to;
+            KeyValuePair<ushort, IPEndPoint> bound;
+            lock (gate)
+            {
+                to = client;
+                if (to is null || !permitted.Contains(received.RemoteEndPoint.Address)) continue;
+                bound = channels.FirstOrDefault(c => c.Value.Equals(received.RemoteEndPoint));
+            }
             byte[] data = received.Buffer;
 
             // Channel data
-            KeyValuePair<ushort, IPEndPoint> bound = channels.FirstOrDefault(c => c.Value.Equals(received.RemoteEndPoint));
             if (bound.Value is not null)
             {
                 byte[] datagram = new byte[4 + data.Length];
                 BinaryPrimitives.WriteUInt16BigEndian(datagram, bound.Key);
                 BinaryPrimitives.WriteUInt16BigEndian(datagram.AsSpan(2), (ushort)data.Length);
                 data.CopyTo(datagram, 4);
-                await server.SendAsync(datagram, client, cancellationToken);
+                await server.SendAsync(datagram, to, cancellationToken);
                 continue;
             }
 
             // Data indication
             StunMessage indication = new(StunMethod.Data, StunClass.Indication);
             indication.Add(StunAttributeTypes.XorPeerAddress, StunAddress.EncodeXor(received.RemoteEndPoint, indication.TransactionId)).Add(StunAttributeTypes.Data, data);
-            await server.SendAsync(indication.Encode(), client, cancellationToken);
+            await server.SendAsync(indication.Encode(), to, cancellationToken);
         }
     }
 }
