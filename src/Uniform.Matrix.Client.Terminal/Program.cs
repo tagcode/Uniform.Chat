@@ -24,6 +24,17 @@ string homeserverKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.Homeserve
 string? userId = builder.Configuration[userIdKey];
 bool hasUserId = UserId.TryParse(userId, out _);
 bool askedForHelp = Usage.IsHelp(args);
+
+// Without a terminal, e.g. double-clicked in a file manager: open one, or end instead of running with nowhere to draw
+if (!askedForHelp && !Usage.CanAsk)
+{
+    if (TerminalWindow.TryReopen(args)) return 0;
+    if (hasUserId)
+    {
+        Console.Error.WriteLine("Uniform.Matrix is a terminal app: start it in a terminal.");
+        return 2;
+    }
+}
 if (askedForHelp || !hasUserId && !Usage.CanAsk)
 {
     OptionCatalog settings = new([new OptionSection(MatrixOptions.Section, typeof(MatrixOptions)), new OptionSection(StorageOptions.Section, typeof(StorageOptions)), new OptionSection(UiOptions.Section, typeof(UiOptions)), new OptionSection(AudioOptions.Section, typeof(AudioOptions))]);

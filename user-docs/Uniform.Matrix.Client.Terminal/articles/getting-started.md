@@ -23,6 +23,8 @@ Start the client; on Windows, run `Uniform.Matrix.exe`:
 ./Uniform.Matrix
 ```
 
+Double-clicking `Uniform.Matrix` in a file manager works too: on Linux it opens itself in a terminal window, the desktop's default terminal or the one in the `TERMINAL` environment variable.
+
 The first time, it asks for your full Matrix user ID, such as `@alice:matrix.org`. Give the server address too only when the server cannot be found from the user ID, for example `http://localhost:8008` for a server of your own on this computer. Then it asks for your password and logs in. After a successful login it saves the user ID and address to your settings, and remembers the session, so later runs start straight away without asking.
 
 You can also give them on the command line, which skips the question: `--Matrix:UserId=@alice:matrix.org`, and `--Matrix:Homeserver=http://localhost:8008` when needed. Without a terminal to ask in, for example with input redirected, the client prints this help instead. Messages are kept in a local database under `~/.local/share/uniform-matrix-client-terminal/`, and messages you write are kept there until the server has received them, so nothing is lost when the connection drops.
