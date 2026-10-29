@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<!-- Package -->
+	<PropertyGroup>
+		<Version>0.1.0.0</Version>
+		<!-- All three apply together, not a choice between them -->
+		<PackageLicenseExpression>MIT AND LGPL-3.0-only AND GPL-3.0-only</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>Package aggregation for server packages: one reference brings in the Uniform.Matrix homeserver engine and its hosting, and the packages that join them later.</Description>
+		<PackageTags>matrix;homeserver;server;hosting</PackageTags>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<!-- Readme shown on nuget.org -->
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />
+		<ProjectReference Include="..\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
+	</ItemGroup>
+
+</Project>

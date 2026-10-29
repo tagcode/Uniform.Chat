@@ -16,6 +16,7 @@
     <Project Path="src/Uniform.Matrix.Server/Uniform.Matrix.Server.csproj" />
     <Project Path="src/Uniform.Matrix.Server.Host/Uniform.Matrix.Server.Host.csproj" />
     <Project Path="src/Uniform.Matrix.WebRtc/Uniform.Matrix.WebRtc.csproj" />
+    <Project Path="src/Uniform/Uniform.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Uniform.Matrix.Protocol.Tests/Uniform.Matrix.Protocol.Tests.csproj" />
