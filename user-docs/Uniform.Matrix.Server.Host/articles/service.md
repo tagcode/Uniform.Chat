@@ -61,7 +61,7 @@ systemd connects the server's input to `/dev/null` and its output to the journal
 
 ## As a system service (Ubuntu)
 
-On a server, run it as a system service: it starts at boot, runs as a user of its own, and is controlled with `sudo systemctl`. The steps below put the program in `/opt/uniform-matrix-server`, the settings in `/etc/uniform-matrix`, and the data in `/var/lib/uniform-matrix`.
+On a server, run it as a system service: it starts at boot, runs as a user of its own, and is controlled with `sudo systemctl`. The steps below put the program in `/opt/uniform-matrix`, the settings in `/etc/uniform-matrix`, and the data in `/var/lib/uniform-matrix`.
 
 1. Create a system user for the server, with no login:
 
@@ -69,15 +69,15 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
    sudo useradd --system --home-dir /var/lib/uniform-matrix --shell /usr/sbin/nologin uniform-matrix
    ```
 
-2. Unpack the downloaded release in `/opt/uniform-matrix-server`; or, from the source, publish it there:
+2. Unpack the downloaded release in `/opt/uniform-matrix`; or, from the source, publish it there:
 
    ```bash
-   sudo mkdir -p /opt/uniform-matrix-server
-   sudo tar -xzf uniform-matrix-server-<version>-linux-x64.tar.gz -C /opt/uniform-matrix-server --strip-components=1
+   sudo mkdir -p /opt/uniform-matrix
+   sudo tar -xzf uniform-matrix-server-<version>-linux-x64.tar.gz -C /opt/uniform-matrix --strip-components=1
    ```
 
    ```bash
-   sudo dotnet publish src/Uniform.Matrix.Server.Host -c Release -o /opt/uniform-matrix-server
+   sudo dotnet publish src/Uniform.Matrix.Server.Host -c Release -o /opt/uniform-matrix
    ```
 
 3. Write the settings to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`, readable only by the server, as it may hold secrets such as the TURN secret. For example, behind nginx on the same machine:
@@ -104,7 +104,7 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
 
    [Installing](xref:Uniform.Matrix.Server.Host.Install.Article) has a complete example with federation and calls, and the nginx site in front; [Settings](xref:Uniform.Matrix.Server.Host.Settings.Article) lists every option.
 
-4. Write the unit file `/etc/systemd/system/uniform-matrix-server.service`:
+4. Write the unit file `/etc/systemd/system/uniform-matrix.service`:
 
    ```ini
    [Unit]
@@ -115,7 +115,7 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
    [Service]
    User=uniform-matrix
    Group=uniform-matrix
-   ExecStart=/opt/uniform-matrix-server/Uniform.Matrix.Server.Host --Host:Ui=None
+   ExecStart=/opt/uniform-matrix/Uniform.Matrix.Server.Host --Host:Ui=None
    WorkingDirectory=/var/lib/uniform-matrix
    # Settings from /etc/uniform-matrix, data in /var/lib/uniform-matrix
    Environment=XDG_CONFIG_HOME=/etc/uniform-matrix
@@ -143,24 +143,24 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
 
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable --now uniform-matrix-server
+   sudo systemctl enable --now uniform-matrix
    ```
 
 Then control it with `systemctl`, and read its log from the journal:
 
 | Command | Does |
 |---|---|
-| `sudo systemctl status uniform-matrix-server` | Show whether it runs, and the latest log lines |
-| `sudo systemctl stop uniform-matrix-server` | Stop it |
-| `sudo systemctl start uniform-matrix-server` | Start it |
-| `sudo systemctl restart uniform-matrix-server` | Restart it, e.g. after changing the settings |
-| `sudo systemctl disable uniform-matrix-server` | Not start it at boot any more |
-| `journalctl -u uniform-matrix-server -f` | Follow the log |
-| `journalctl -u uniform-matrix-server --since today` | Today's log |
+| `sudo systemctl status uniform-matrix` | Show whether it runs, and the latest log lines |
+| `sudo systemctl stop uniform-matrix` | Stop it |
+| `sudo systemctl start uniform-matrix` | Start it |
+| `sudo systemctl restart uniform-matrix` | Restart it, e.g. after changing the settings |
+| `sudo systemctl disable uniform-matrix` | Not start it at boot any more |
+| `journalctl -u uniform-matrix -f` | Follow the log |
+| `journalctl -u uniform-matrix --since today` | Today's log |
 
 The server also keeps its own log files in `/var/lib/uniform-matrix/uniform-matrix-server-host/logs`, with its database and signing key; see [Files](xref:Uniform.Matrix.Server.Host.Files.Article).
 
-To update, stop the server, unpack or publish the new version over `/opt/uniform-matrix-server`, and start it; it updates its database at start. Back up `/var/lib/uniform-matrix` first.
+To update, stop the server, unpack or publish the new version over `/opt/uniform-matrix`, and start it; it updates its database at start. Back up `/var/lib/uniform-matrix` first.
 
 > [!NOTE]
 > To serve HTTPS itself, without a proxy, the server needs to read the certificate and to listen on port 443:
