@@ -26,6 +26,40 @@ public sealed class SettingsTests : IDisposable
         return (configuration, new SettingsStore(configuration, applied, SettingsPath));
     }
 
+    /// <summary>The layers of a real host, lowest first: appsettings.json, the settings file, environment variables, the command line, then applied changes; each key comes from the highest layer that sets it, which the settings window shows as its source.</summary>
+    [Fact]
+    public void LayerInHostOrder()
+    {
+        // Each layer sets one more key than the one above it
+        File.WriteAllText(Path.Combine(directory, "appsettings.json"), """{ "Precedence": { "A": "appsettings", "B": "appsettings", "C": "appsettings", "D": "appsettings", "E": "appsettings" } }""");
+        File.WriteAllText(SettingsPath, """{ "Precedence": { "B": "file", "C": "file", "D": "file", "E": "file" } }""");
+        string[] variables = ["Precedence__C", "Precedence__D", "Precedence__E"];
+        foreach (string variable in variables) Environment.SetEnvironmentVariable(variable, "environment");
+        try
+        {
+            // A host as the apps build it, with the settings file and the applied layer
+            Microsoft.Extensions.Hosting.HostApplicationBuilder builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder(new Microsoft.Extensions.Hosting.HostApplicationBuilderSettings { ContentRootPath = directory, Args = ["--Precedence:D=command line", "--Precedence:E=command line"] });
+            AppliedConfigurationProvider applied = SettingsStore.AddLayers(builder.Configuration, SettingsPath);
+            IConfigurationRoot configuration = (IConfigurationRoot)builder.Configuration;
+            SettingsStore store = new(configuration, applied, SettingsPath);
+            applied.Set("Precedence:E", "applied");
+
+            // Each from its highest layer
+            Assert.Equal("appsettings", configuration["Precedence:A"]);
+            Assert.Equal("file", configuration["Precedence:B"]);
+            Assert.Equal("environment", configuration["Precedence:C"]);
+            Assert.Equal("command line", configuration["Precedence:D"]);
+            Assert.Equal("applied", configuration["Precedence:E"]);
+            // Done
+            Assert.Equal("environment", store.GetSource("Precedence:C"));
+            Assert.Equal("command line", store.GetSource("Precedence:D"));
+        }
+        finally
+        {
+            foreach (string variable in variables) Environment.SetEnvironmentVariable(variable, null);
+        }
+    }
+
     /// <summary>Every option has a description from the XML documentation, a default, and the right flags.</summary>
     [Fact]
     public void CanListOptionsWithDescriptions()
