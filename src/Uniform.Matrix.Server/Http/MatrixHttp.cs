@@ -1,6 +1,7 @@
 namespace Uniform.Matrix.Server.Http;
 
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Http;
@@ -56,8 +57,9 @@ public static class MatrixHttp
         }
         catch (Exception ex) when (ex is JsonException or BadHttpRequestException && !context.Response.HasStarted)
         {
-            string errcode = ex is JsonException || ex.InnerException is JsonException ? ErrorCodes.BadJson : ErrorCodes.NotJson;
-            await WriteErrorAsync(context, HttpStatusCode.BadRequest, errcode, ex.Message);
+            // A missing or unreadable query parameter, else a body that is not JSON or not the expected JSON
+            (string errcode, string message) = ParameterError(ex.Message) ?? (ex is JsonException || ex.InnerException is JsonException ? ErrorCodes.BadJson : ErrorCodes.NotJson, ex.Message);
+            await WriteErrorAsync(context, HttpStatusCode.BadRequest, errcode, message);
             return;
         }
         catch (Exception ex) when (!context.Response.HasStarted && !context.RequestAborted.IsCancellationRequested)
@@ -82,6 +84,17 @@ public static class MatrixHttp
         context.Response.StatusCode = (int)status;
         // Done
         return context.Response.WriteAsJsonAsync(new ErrorResponse { Errcode = errcode, Error = error }, MatrixJson.Options);
+    }
+
+    /// <summary>Return the Matrix error of ASP.NET's message about a request parameter: <c>M_MISSING_PARAM</c> when a required one is missing, <c>M_INVALID_PARAM</c> when one cannot be read, with the parameter's name; null for other messages.</summary>
+    private static (string Errcode, string Message)? ParameterError(string message)
+    {
+        // "Required parameter "string token" was not provided from query string."
+        if (Regex.Match(message, @"^Required parameter ""[^""]*?(\w+)"" was not provided") is { Success: true } missing) return (ErrorCodes.MissingParam, $"Missing parameter {missing.Groups[1].Value}.");
+        // "Failed to bind parameter "int limit" from "abc"."
+        if (Regex.Match(message, @"^Failed to bind parameter ""[^""]*?(\w+)"" from") is { Success: true } invalid) return (ErrorCodes.InvalidParam, $"Invalid parameter {invalid.Groups[1].Value}.");
+        // Return none
+        return null;
     }
 }
 

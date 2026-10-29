@@ -73,9 +73,9 @@ server {
 
 # HTTPS: clients and other servers
 server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    http2 on;
+    # HTTP/2 as a listen flag, which nginx before 1.25.1 needs, e.g. Ubuntu's; newer ones prefer "http2 on;"
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name example.org;
 
     ssl_certificate     /etc/letsencrypt/live/example.org/fullchain.pem;

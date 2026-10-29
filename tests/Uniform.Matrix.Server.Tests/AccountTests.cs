@@ -53,6 +53,27 @@ public class AccountTests
         await Assert.ThrowsAsync<UserInteractiveAuthException>(() => token.CreateClient().RegisterAsync("alice", Password, "third", cancellationToken: Ct));
         RegisterResponse registered = await token.CreateClient().RegisterAsync("alice", Password, "second", cancellationToken: Ct);
         Assert.NotNull(registered.AccessToken);
+
+        // Act and assert: a token's validity, at the spec's v1 address and v3, and never with registration closed
+        Assert.True(await IsTokenValidAsync(token, "v1", "first"));
+        Assert.True(await IsTokenValidAsync(token, "v3", "second"));
+        Assert.False(await IsTokenValidAsync(token, "v1", "third"));
+        Assert.False(await IsTokenValidAsync(closed, "v1", "first"));
+
+        // Act and assert: without the token, the spec's error for a missing parameter
+        HttpResponseMessage missing = await token.CreateHttpClient().GetAsync("/_matrix/client/v1/register/m.login.registration_token/validity", Ct);
+        Assert.Equal(System.Net.HttpStatusCode.BadRequest, missing.StatusCode);
+        Assert.Equal(ErrorCodes.MissingParam, System.Text.Json.Nodes.JsonNode.Parse(await missing.Content.ReadAsStringAsync(Ct))!["errcode"]!.GetValue<string>());
+    }
+
+    /// <summary>Return what the server says of a registration token's validity.</summary>
+    private static async Task<bool> IsTokenValidAsync(TestHomeserver server, string version, string registrationToken)
+    {
+        // Unauthenticated GET
+        HttpResponseMessage response = await server.CreateHttpClient().GetAsync($"/_matrix/client/{version}/register/m.login.registration_token/validity?token={Uri.EscapeDataString(registrationToken)}", Ct);
+        response.EnsureSuccessStatusCode();
+        // Return the flag
+        return System.Text.Json.Nodes.JsonNode.Parse(await response.Content.ReadAsStringAsync(Ct))!["valid"]!.GetValue<bool>();
     }
 
     /// <summary>Wrong passwords, invalid names and unknown tokens are refused with the right error codes.</summary>

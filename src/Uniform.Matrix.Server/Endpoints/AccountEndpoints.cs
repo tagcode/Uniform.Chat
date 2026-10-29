@@ -29,8 +29,12 @@ public static class AccountEndpoints
         client.MapGet("/register/available", async (string username, AccountService accounts, CancellationToken cancellationToken) => await accounts.IsAvailableAsync(username, cancellationToken)
             ? MatrixHttp.Json(new JsonObject { ["available"] = true })
             : MatrixHttp.Error(HttpStatusCode.BadRequest, ErrorCodes.UserInUse, "The user ID is already taken."));
-        client.MapGet("/register/m.login.registration_token/validity", (string token, IOptionsMonitor<ServerOptions> options) =>
-            MatrixHttp.Json(new JsonObject { ["valid"] = options.CurrentValue.Registration == RegistrationMode.Token && IsRegistrationToken(options.CurrentValue, token) }));
+        // Whether a registration token is valid, at the spec's v1 address and v3 for older clients; rate-limited, as it can be guessed at
+        foreach (RouteGroupBuilder version in new[] { routes.MapGroup("/_matrix/client/v1"), client })
+        {
+            version.MapGet("/register/m.login.registration_token/validity", (string token, IOptionsMonitor<ServerOptions> options) =>
+                MatrixHttp.Json(new JsonObject { ["valid"] = options.CurrentValue.Registration == RegistrationMode.Token && IsRegistrationToken(options.CurrentValue, token) })).RequireRateLimiting(RateLimits.Logins);
+        }
 
         // Session
         client.MapGet("/account/whoami", (HttpContext http) => MatrixHttp.Json(new WhoAmIResponse { UserId = http.GetRequester().UserId, DeviceId = http.GetRequester().DeviceId, IsGuest = false })).RequireAccessToken();
