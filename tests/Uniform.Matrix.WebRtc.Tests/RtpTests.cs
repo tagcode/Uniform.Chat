@@ -33,7 +33,7 @@ public class RtpTests
         Assert.False(RtpPacket.IsRtcp([0x80, 0x80 | 111]));
     }
 
-    /// <summary>Fill, then play in order across the sequence's wrap, concealing a lost packet and dropping a late one.</summary>
+    /// <summary>Fill, then play in order across the sequence's wrap; skip a lost packet once later ones pile up, and drop it when it comes after.</summary>
     [Fact]
     public void PlayInOrder()
     {
@@ -45,20 +45,45 @@ public class RtpTests
         buffer.Add(Packet(0x0000));
         buffer.Add(Packet(0xFFFF));
 
-        // In order across the wrap, then a gap for 1
+        // In order across the wrap
         Assert.Equal(0xFFFE, buffer.Next(out playing)!.Sequence);
         Assert.True(playing);
         Assert.Equal(0xFFFF, buffer.Next(out _)!.Sequence);
         Assert.Equal(0x0000, buffer.Next(out _)!.Sequence);
+
+        // 1 missing: waited for while few are behind it, lost when three are
         buffer.Add(Packet(2));
         Assert.Null(buffer.Next(out playing));
         Assert.True(playing);
+        Assert.Equal(0, buffer.Lost);
+        buffer.Add(Packet(3));
+        buffer.Add(Packet(4));
+        Assert.Null(buffer.Next(out _));
         Assert.Equal(1, buffer.Lost);
 
         // 1 is late now
         buffer.Add(Packet(1));
         // Done
         Assert.Equal(2, buffer.Next(out _)!.Sequence);
+    }
+
+    /// <summary>Wait for a packet that is late when the buffer runs dry, and play it when it comes, rather than skipping it.</summary>
+    [Fact]
+    public void WaitForLatePacket()
+    {
+        // Playing, then dry
+        JitterBuffer buffer = new(1);
+        buffer.Add(Packet(10));
+        Assert.Equal(10, buffer.Next(out _)!.Sequence);
+        Assert.Null(buffer.Next(out bool playing));
+        Assert.True(playing);
+
+        // The late one plays
+        buffer.Add(Packet(11));
+        Assert.Equal(11, buffer.Next(out _)!.Sequence);
+        // Done
+        Assert.Equal(0, buffer.Lost);
+        Assert.Equal(1, buffer.Underruns);
     }
 
     /// <summary>Return a packet with a sequence number.</summary>

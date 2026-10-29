@@ -34,6 +34,8 @@ public sealed class VoiceCall : IAsyncDisposable
     public static readonly TimeSpan InviteLifetime = TimeSpan.FromSeconds(60);
     /// <summary>How long gathered candidates wait to be sent together.</summary>
     private static readonly TimeSpan CandidateBatchDelay = TimeSpan.FromMilliseconds(100);
+    /// <summary>How long to wait for the peer's hangup after it closed the connection.</summary>
+    private static readonly TimeSpan PeerHangupWait = TimeSpan.FromSeconds(5);
     private readonly string partyId;
     private readonly string ownUserId;
     private readonly CallEventSender send;
@@ -354,6 +356,7 @@ public sealed class VoiceCall : IAsyncDisposable
                 }
             }
             ConnectedAt = DateTimeOffset.UtcNow;
+            logger.LogInformation("Call {CallId} connected from {Local} to {Remote}", CallId, peer.Ice?.SelectedLocal, peer.Ice?.SelectedRemote);
             SetState(CallState.Connected);
         }
         finally
@@ -362,15 +365,26 @@ public sealed class VoiceCall : IAsyncDisposable
         }
     }
 
-    /// <summary>Follow the peer connection: reconnecting while ICE is down, ended when it closes or fails.</summary>
+    /// <summary>Follow the peer connection: reconnecting while ICE is down; ended when it fails, or when the peer closes it and its hangup does not follow.</summary>
     private void OnConnectionState(PeerConnectionState state)
     {
         // After connecting only
         if (State is not (CallState.Connected or CallState.Reconnecting)) return;
         if (state == PeerConnectionState.Disconnected) SetState(CallState.Reconnecting);
         else if (state == PeerConnectionState.Connected) SetState(CallState.Connected);
+        else if (state == PeerConnectionState.Failed) _ = HangupAsync("ice_failed");
         // Done
-        else if (state is PeerConnectionState.Failed or PeerConnectionState.Closed) _ = HangupAsync("ice_failed");
+        else if (state == PeerConnectionState.Closed) _ = AwaitHangupAsync();
+    }
+
+    /// <summary>Wait for the peer's hangup after it closed the connection, as Element closes before its hangup event arrives; hang up when none comes.</summary>
+    private async Task AwaitHangupAsync()
+    {
+        // The hangup ends the call meanwhile
+        try { await Task.Delay(PeerHangupWait, ending.Token); }
+        catch (OperationCanceledException) { return; }
+        // Done
+        await HangupAsync("ice_failed");
     }
 
     /// <summary>Hang up an outgoing call, or stop ringing an incoming one, when nobody answered in time.</summary>
@@ -396,7 +410,11 @@ public sealed class VoiceCall : IAsyncDisposable
         EndedByPeer = byPeer;
         SetState(CallState.Ended);
         await ending.CancelAsync();
-        if (media is not null) await media.DisposeAsync();
+        if (media is not null)
+        {
+            await media.DisposeAsync();
+            logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for", CallId, media.Sent, media.Received, media.Lost, media.Underruns);
+        }
         if (connection is not null) await connection.DisposeAsync();
         // Done
         logger.LogInformation("Call {CallId} in {RoomId} ended: {Reason}", CallId, RoomId, reason);

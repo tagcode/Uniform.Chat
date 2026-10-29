@@ -1,6 +1,7 @@
 namespace Uniform.Matrix.WebRtc.Rtp;
 
-/// <summary>Puts received RTP packets back in order and evens out their arrival, for a player that takes one frame every packet interval: it holds a few packets before the first one plays, and then gives the next in sequence, or null for a lost one so that the decoder conceals it.</summary>
+/// <summary>Puts received RTP packets back in order and evens out their arrival, for a player that takes one frame every packet interval: it holds a few packets before the first one plays, and then gives the next in sequence, or null so that the decoder conceals a frame.</summary>
+/// <remarks>A packet that has not arrived when its turn comes is waited for, as it is usually late rather than lost; only when later packets pile up behind it is it skipped as lost. Waiting adds delay, which <c>capacityPackets</c> bounds.</remarks>
 /// <param name="delayPackets">How many packets to hold before playing; three of 20 ms are 60 ms of delay.</param>
 /// <param name="capacityPackets">How many packets to hold at most; when more come, e.g. after a stall, the oldest are dropped to catch up.</param>
 public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
@@ -15,8 +16,11 @@ public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
     /// <summary>Packets held.</summary>
     public int Count { get { lock (gate) return packets.Count; } }
 
-    /// <summary>Packets that were not there when their turn came.</summary>
+    /// <summary>Packets skipped as lost: missing while later ones were held.</summary>
     public long Lost { get; private set; }
+
+    /// <summary>Turns when the next packet had not arrived yet, and a frame was concealed while waiting for it.</summary>
+    public long Underruns { get; private set; }
 
     /// <summary>Add a received packet; late ones, whose turn has passed, and duplicates are dropped.</summary>
     public void Add(RtpPacket packet)
@@ -53,7 +57,7 @@ public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
                 next = packets.Keys.First();
             }
 
-            // The next in sequence, or a gap
+            // The next in sequence
             isPlaying = true;
             if (packets.Remove(next, out RtpPacket? packet))
             {
@@ -61,16 +65,27 @@ public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
                 missing = 0;
                 return packet;
             }
-            next++;
-            Lost++;
 
-            // A long gap with nothing held: the stream stopped, so fill again
-            if (++missing > capacityPackets / 2 && packets.Count == 0)
+            // Nothing held: late, not lost, so conceal and keep waiting for it; after a long silence, fill again
+            if (packets.Count == 0)
             {
+                Underruns++;
+                if (++missing <= capacityPackets / 2) return null;
                 playing = false;
                 isPlaying = false;
                 missing = 0;
+                return null;
             }
+
+            // A gap before held packets: lost once enough later ones are here, else it may still come
+            if (packets.Count < delayPackets)
+            {
+                Underruns++;
+                return null;
+            }
+            next++;
+            Lost++;
+            missing = 0;
             // On loss
             return null;
         }

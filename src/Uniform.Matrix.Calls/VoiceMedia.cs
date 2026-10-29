@@ -20,6 +20,8 @@ public sealed class VoiceMedia : IAsyncDisposable
     private readonly CancellationTokenSource stopping = new();
     private readonly Lock encoding = new();
     private Task? playing;
+    private long received;
+    private long sent;
 
     /// <summary>Open the devices for a connection; nothing records or plays until <see cref="Start"/>.</summary>
     public VoiceMedia(AudioPeerConnection connection, IAudioDevices devices)
@@ -29,7 +31,7 @@ public sealed class VoiceMedia : IAsyncDisposable
         microphone = new MicrophoneFrames(devices.OpenMicrophone());
         speaker = new SpeakerFrames(devices.OpenSpeaker());
         microphone.FrameCaptured += OnFrame;
-        connection.AudioReceived += jitter.Add;
+        connection.AudioReceived += OnPacket;
     }
 
     /// <summary>Whether the microphone is muted; muted frames are not sent, and the next one sent is marked.</summary>
@@ -37,6 +39,15 @@ public sealed class VoiceMedia : IAsyncDisposable
 
     /// <summary>Frames received that were lost, and concealed.</summary>
     public long Lost => jitter.Lost;
+
+    /// <summary>Frames concealed while waiting for a late packet.</summary>
+    public long Underruns => jitter.Underruns;
+
+    /// <summary>Frames received.</summary>
+    public long Received => Interlocked.Read(ref received);
+
+    /// <summary>Frames sent.</summary>
+    public long Sent => Interlocked.Read(ref sent);
 
     /// <summary>Start recording and playing.</summary>
     public void Start()
@@ -51,7 +62,7 @@ public sealed class VoiceMedia : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         // Microphone, the player, then the speaker
-        connection.AudioReceived -= jitter.Add;
+        connection.AudioReceived -= OnPacket;
         microphone.FrameCaptured -= OnFrame;
         microphone.Stop();
         microphone.Dispose();
@@ -82,7 +93,16 @@ public sealed class VoiceMedia : IAsyncDisposable
             return;
         }
         // Done
+        Interlocked.Increment(ref sent);
         _ = connection.SendAudioAsync(packet, frame.Length).AsTask();
+    }
+
+    /// <summary>Count a received packet, and buffer it.</summary>
+    private void OnPacket(RtpPacket packet)
+    {
+        // Into the jitter buffer
+        Interlocked.Increment(ref received);
+        jitter.Add(packet);
     }
 
     /// <summary>Top up the speaker from the jitter buffer every tick, until stopped.</summary>
