@@ -128,6 +128,59 @@ public class OlmMachineTests
         Assert.Equal("late", Body(await bob.DecryptRoomEventAsync(RoomId, ev, Ct)));
     }
 
+    /// <summary>A room key that never arrived is asked for from the device that sent it, which shared its session with us, and it answers.</summary>
+    [Fact]
+    public async Task CanRequestKeyFromSender()
+    {
+        // Arrange: Bob's copy of the key is lost on the way
+        using OlmMachine alice = await CreateDeviceAsync(Alice, "A1");
+        using OlmMachine bob = await CreateDeviceAsync(Bob, "B1");
+        ClientEvent ev = AsEvent(await alice.EncryptRoomEventAsync(RoomId, EventTypes.RoomMessage, Text("lost"), [Alice, Bob], cancellationToken: Ct), Alice, "$1");
+        server.Sync(Bob, "B1");
+        Assert.Equal(DecryptionStatus.MissingKey, (await bob.DecryptRoomEventAsync(RoomId, ev, Ct)).Status);
+
+        // Act: Bob asks, Alice answers, Bob receives
+        await bob.ReceiveSyncAsync(server.Sync(Bob, "B1"), Ct);
+        await alice.ReceiveSyncAsync(server.Sync(Alice, "A1"), Ct);
+        await bob.ReceiveSyncAsync(server.Sync(Bob, "B1"), Ct);
+
+        // Assert
+        Assert.Equal("lost", Body(await bob.DecryptRoomEventAsync(RoomId, ev, Ct)));
+    }
+
+    /// <summary>A device that lost its Olm session cannot decrypt the next to-device message; it starts a new session with an m.dummy, and the sender's next key decrypts.</summary>
+    [Fact]
+    public async Task CanRecoverWedgedSession()
+    {
+        // Arrange: a working session, then Bob loses it
+        using OlmMachine alice = await CreateDeviceAsync(Alice, "A1");
+        (ICryptoStore store, ForgetfulStore forgetful) = ForgetfulStore.Over(new InMemoryCryptoStore());
+        using OlmMachine bob = await CreateDeviceAsync(Bob, "B1", store);
+        ClientEvent first = AsEvent(await alice.EncryptRoomEventAsync(RoomId, EventTypes.RoomMessage, Text("first"), [Alice, Bob], cancellationToken: Ct), Alice, "$1");
+        await bob.ReceiveSyncAsync(server.Sync(Bob, "B1"), Ct);
+        Assert.Equal("first", Body(await bob.DecryptRoomEventAsync(RoomId, first, Ct)));
+        await forgetful.ForgetOlmSessions(alice.IdentityKeys.Curve25519);
+        List<string> failures = [];
+        bob.ToDeviceDecryptionFailed += (sender, _, _) => failures.Add(sender);
+        bool? recovered = null;
+        bob.WedgedSessionRecovered += (_, _, sent) => recovered = sent;
+
+        // Act: the next key fails; Bob recovers; Alice's key after that arrives
+        await alice.DiscardOutboundSessionAsync(RoomId, Ct);
+        ClientEvent second = AsEvent(await alice.EncryptRoomEventAsync(RoomId, EventTypes.RoomMessage, Text("second"), [Alice, Bob], cancellationToken: Ct), Alice, "$2");
+        await bob.ReceiveSyncAsync(server.Sync(Bob, "B1"), Ct);
+        Assert.Equal(Alice, Assert.Single(failures));
+        Assert.True(recovered);
+        await alice.ReceiveSyncAsync(server.Sync(Alice, "A1"), Ct);
+        await alice.DiscardOutboundSessionAsync(RoomId, Ct);
+        ClientEvent third = AsEvent(await alice.EncryptRoomEventAsync(RoomId, EventTypes.RoomMessage, Text("third"), [Alice, Bob], cancellationToken: Ct), Alice, "$3");
+        await bob.ReceiveSyncAsync(server.Sync(Bob, "B1"), Ct);
+
+        // Assert
+        Assert.Equal("third", Body(await bob.DecryptRoomEventAsync(RoomId, third, Ct)));
+        Assert.Single(failures);
+    }
+
     /// <summary>A key is bound to its room, and a ciphertext cannot be replayed as another event.</summary>
     [Fact]
     public async Task CanRejectOtherRoomAndReplay()

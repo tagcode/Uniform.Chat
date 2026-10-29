@@ -27,6 +27,8 @@ public static class EventTypes
     public const string RoomKeyRequest = "m.room_key_request";
     /// <summary>To-device answer to <see cref="RoomKeyRequest"/>, carrying an exported session key.</summary>
     public const string ForwardedRoomKey = "m.forwarded_room_key";
+    /// <summary>To-device event with no content, sent over a new Olm session to replace a wedged one.</summary>
+    public const string Dummy = "m.dummy";
     /// <summary>To-device request for a secret, e.g. a cross-signing key, from another of the user's devices.</summary>
     public const string SecretRequest = "m.secret.request";
     /// <summary>To-device answer to <see cref="SecretRequest"/>.</summary>

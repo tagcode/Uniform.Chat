@@ -31,10 +31,15 @@ public sealed partial class OlmMachine
         if (content.Ciphertext.ValueKind != JsonValueKind.Object || !content.Ciphertext.TryGetProperty(account.IdentityKeys.Curve25519, out JsonElement ours)) return null;
         OlmMessage message = new(ours.GetProperty("type").GetInt32(), ours.GetProperty("body").GetString()!);
 
-        // Existing session, else a new one from a pre-key message
+        // Existing session, else a new one from a pre-key message; a failure means the sessions went out of step
         byte[]? plaintext = await DecryptWithExistingSessionAsync(senderKey, message, cancellationToken);
         if (plaintext is null && message.Type == 0) plaintext = await CreateInboundSessionAsync(senderKey, message, cancellationToken);
-        if (plaintext is null) return null;
+        if (plaintext is null)
+        {
+            ToDeviceDecryptionFailed?.Invoke(ev.Sender, senderKey, message.Type == 0 ? "pre-key message matches no session and makes none" : "no session decrypts the message");
+            await RecoverWedgedSessionAsync(ev.Sender, senderKey, cancellationToken);
+            return null;
+        }
 
         // Payload must be from the claimed sender to this device
         if (JsonNode.Parse(plaintext) is not JsonObject payload) return null;
@@ -45,6 +50,20 @@ public sealed partial class OlmMachine
         if (payload["keys"]?["ed25519"]?.GetValue<string>() is not string signingKey) return null;
         // Return decrypted event
         return new DecryptedToDeviceEvent { Type = type, Content = innerContent, Sender = ev.Sender, SenderKey = senderKey, SenderSigningKey = signingKey };
+    }
+
+    /// <summary>Start a new Olm session with a device whose message could not be decrypted, and send it an <c>m.dummy</c> over it, so that the device uses the new session from then on, as <see href="https://spec.matrix.org/latest/client-server-api/#recovering-from-undecryptable-messages">the spec recovers wedged sessions</see>; at most once per <see cref="WedgedSessionRetry"/> per device.</summary>
+    private async Task RecoverWedgedSessionAsync(string sender, string senderKey, CancellationToken cancellationToken)
+    {
+        // Not too often, and only for a known device
+        DateTimeOffset now = time.GetUtcNow();
+        if (wedgedRecoveries.TryGetValue(senderKey, out DateTimeOffset last) && now - last < WedgedSessionRetry) return;
+        wedgedRecoveries[senderKey] = now;
+        await UpdateDeviceListsAsync([sender], cancellationToken);
+        if (GetDevices(sender).FirstOrDefault(d => d.Curve25519Key == senderKey) is not DeviceInfo device) return;
+        // Done
+        bool sent = await SendEncryptedAsync(device, EventTypes.Dummy, [], cancellationToken, newSession: true);
+        WedgedSessionRecovered?.Invoke(sender, device.DeviceId, sent);
     }
 
     /// <summary>Try the stored sessions with <paramref name="senderKey"/>; for pre-key messages only the matching one.</summary>
@@ -122,14 +141,17 @@ public sealed partial class OlmMachine
     }
 
     /// <summary>Return an Olm session for each device, claiming one-time keys for devices without one; devices whose key cannot be claimed or verified are left out.</summary>
-    private async Task<Dictionary<DeviceInfo, OlmSession>> GetOutboundOlmSessionsAsync(IReadOnlyCollection<DeviceInfo> devices, CancellationToken cancellationToken)
+    /// <param name="devices">Devices to encrypt for.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="newSessions">Whether to claim keys for new sessions even where a session exists, e.g. to recover a wedged one.</param>
+    private async Task<Dictionary<DeviceInfo, OlmSession>> GetOutboundOlmSessionsAsync(IReadOnlyCollection<DeviceInfo> devices, CancellationToken cancellationToken, bool newSessions = false)
     {
         // Newest stored session per device
         Dictionary<DeviceInfo, OlmSession> sessions = [];
         List<DeviceInfo> missing = [];
         foreach (DeviceInfo device in devices)
         {
-            OlmSessionRecord? record = (await store.LoadOlmSessionsAsync(device.Curve25519Key, cancellationToken)).MaxBy(r => r.LastUsed);
+            OlmSessionRecord? record = newSessions ? null : (await store.LoadOlmSessionsAsync(device.Curve25519Key, cancellationToken)).MaxBy(r => r.LastUsed);
             if (record is null) missing.Add(device);
             else sessions[device] = OlmSession.FromPickle(record.Pickle, pickleKey);
         }

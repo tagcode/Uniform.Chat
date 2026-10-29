@@ -55,8 +55,8 @@ public sealed partial class OlmMachine
             InboundGroupSessionRecord? record = await store.LoadInboundGroupSessionAsync(roomId, sessionId, cancellationToken);
             if (record is null)
             {
-                // Our other devices may have it
-                QueueKeyRequest(roomId, sessionId, content.SenderKey);
+                // Our other devices may have it, or the device that sent it can send it again
+                QueueKeyRequest(roomId, sessionId, content.SenderKey, clientEvent.Sender, content.DeviceId);
                 return new RoomEventDecryption { Status = DecryptionStatus.MissingKey, Event = clientEvent, SessionId = sessionId, Error = "room key not received" };
             }
 
