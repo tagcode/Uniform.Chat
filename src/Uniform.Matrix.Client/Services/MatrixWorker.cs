@@ -84,6 +84,7 @@ public sealed class MatrixWorker : BackgroundService
         await processor.ProcessAsync(first, userId, cancellationToken);
         logger.LogInformation("Initial sync done: {Rooms} joined rooms", first.Rooms.Join.Count);
         status.Set(ConnectionState.Connected);
+        _ = processor.LoadMembersOfUnnamedRoomsAsync(client, cancellationToken);
 
         // Follow updates; a success after retries restores the connected state
         await foreach (SyncResponse sync in client.SyncLoopAsync(first.NextBatch, filter, options.SyncTimeout, OnSyncRetry, cancellationToken))

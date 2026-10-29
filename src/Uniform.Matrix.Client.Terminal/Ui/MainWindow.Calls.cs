@@ -135,6 +135,7 @@ public sealed partial class MainWindow
         "ice_failed" => "no connection",
         "answered_elsewhere" => "answered on another device",
         "rejected_elsewhere" => "declined on another device",
+        "replaced" => "they called again",
         string reason => reason,
         null => "ended",
     };

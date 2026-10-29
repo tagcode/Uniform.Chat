@@ -234,6 +234,9 @@ public sealed class VoiceCall : IAsyncDisposable
         }
     }
 
+    /// <summary>End a call that rings, without telling the peer, because the peer called again with a new invite that replaces it.</summary>
+    internal Task ReplaceAsync() => EndAsync("replaced", byPeer: true);
+
     /// <summary>End the call without telling the peer, and release the media.</summary>
     public async ValueTask DisposeAsync() => await EndAsync("disposed", byPeer: false);
 

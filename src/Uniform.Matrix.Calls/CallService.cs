@@ -21,6 +21,7 @@ public sealed class CallService : IAsyncDisposable
     private readonly NetworkMonitor network;
     private readonly ILogger<CallService> logger;
     private readonly ConcurrentDictionary<string, VoiceCall> calls = new();
+    private readonly ConcurrentDictionary<string, WaitingInvite> waiting = new();
     private readonly string partyId = RandomNumberGenerator.GetString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 10);
     private IReadOnlyList<IceServer> turnServers = [];
     private DateTimeOffset turnExpires;
@@ -66,7 +67,14 @@ public sealed class CallService : IAsyncDisposable
         string[] others = processor.Read(rooms => rooms?.TryGetRoom(roomId, out Room? room) == true ? room.Members.Values.Where(m => m.IsActive && m.UserId != ownUserId).Select(m => m.UserId).ToArray() : null)
             ?? throw new InvalidOperationException("The room is not known.");
         if (others.Length != 1) throw new InvalidOperationException("Voice calls need a room with exactly one other member.");
-        if (FindCall(roomId) is not null) throw new InvalidOperationException("The room already has a call.");
+
+        // Their call rings already: answer it rather than call over it
+        if (FindCall(roomId) is VoiceCall existing)
+        {
+            if (existing.State != CallState.Ringing) throw new InvalidOperationException("The room already has a call.");
+            await existing.AnswerAsync(cancellationToken);
+            return existing;
+        }
 
         // A new call, ringing
         VoiceCall call = Create(roomId, Guid.NewGuid().ToString("N"), ownUserId, others[0], null, await OptionsAsync(client, cancellationToken));
@@ -124,6 +132,12 @@ public sealed class CallService : IAsyncDisposable
                     await call.HandleAsync(ev.Sender, ev.Type, content);
                     continue;
                 }
+                if (content is CallHangupContent or CallRejectContent && waiting.TryGetValue(roomId, out WaitingInvite? kept) && kept.Invite.CallId == content.CallId)
+                {
+                    // A kept invite was withdrawn
+                    waiting.TryRemove(roomId, out _);
+                    continue;
+                }
                 if (content is CallInviteContent invite) await RingAsync(client, roomId, ownUserId, ev, invite);
             }
             catch (Exception e)
@@ -133,32 +147,96 @@ public sealed class CallService : IAsyncDisposable
         }
     }
 
-    /// <summary>Ring for an invite to this user that has not expired.</summary>
+    /// <summary>Ring for an invite to this user that has not expired; when the room has a call with the same person, settle it as <see href="https://spec.matrix.org/latest/client-server-api/#glare">glare</see> or as the peer starting over.</summary>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Both called at once: the call with the lower call ID wins on both sides. When it is theirs, ours is hung up and theirs answered, as this user wanted to talk; when it is ours, theirs is kept, and rings if ours ends while it is still valid.</description></item>
+    /// <item><description>Their earlier invite still rings: it is replaced by the new one, which rings.</description></item>
+    /// <item><description>A call with them connects, is connected or reconnects: they started over, e.g. after it broke on their side; ours is hung up and theirs answered.</description></item>
+    /// </list>
+    /// </remarks>
     private async Task RingAsync(MatrixClient client, string roomId, string ownUserId, ClientEvent ev, CallInviteContent invite)
     {
-        // From someone else, to this user, still valid, and no other call in the room
+        // From someone else, to this user, still valid
         if (ev.Sender == ownUserId || (invite.Invitee is not null && invite.Invitee != ownUserId)) return;
         TimeSpan age = TimeSpan.FromMilliseconds(ev.Unsigned?.Age ?? Math.Max(0, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - ev.OriginServerTs));
         TimeSpan remaining = TimeSpan.FromMilliseconds(invite.Lifetime > 0 ? invite.Lifetime : VoiceCall.InviteLifetime.TotalMilliseconds) - age;
-        if (remaining <= TimeSpan.Zero || FindCall(roomId) is not null)
+        if (remaining <= TimeSpan.Zero)
         {
-            logger.LogInformation("Invite of call {CallId} ignored: {Remaining} left, other call {Other}", invite.CallId, remaining, FindCall(roomId)?.CallId);
+            logger.LogInformation("Invite of call {CallId} ignored: expired {Ago} ago", invite.CallId, -remaining);
             return;
         }
 
-        // Ringing until answered or expired
+        // A call in the room already: only with the same person, settled by its state
+        bool answer = false;
+        if (FindCall(roomId) is VoiceCall other)
+        {
+            if (other.PeerUserId != ev.Sender)
+            {
+                logger.LogInformation("Invite of call {CallId} ignored: the room has call {Other} with {Peer}", invite.CallId, other.CallId, other.PeerUserId);
+                return;
+            }
+            if (other.State == CallState.Inviting && string.CompareOrdinal(invite.CallId, other.CallId) > 0)
+            {
+                // Glare, ours wins: keep theirs for when ours ends
+                waiting[roomId] = new WaitingInvite(ev, invite, DateTimeOffset.UtcNow + remaining);
+                logger.LogInformation("Both called: call {CallId} kept waiting, our call {Other} goes on", invite.CallId, other.CallId);
+                return;
+            }
+            if (other.State == CallState.Ringing) await other.ReplaceAsync();
+            else
+            {
+                // Glare that theirs wins, or they started over: ours ends, theirs is answered
+                logger.LogInformation("Call {CallId} replaces call {Other} ({State})", invite.CallId, other.CallId, other.State);
+                await other.HangupAsync();
+                answer = true;
+            }
+        }
+
+        // Ringing until answered or expired, or answered at once
         VoiceCall call = Create(roomId, invite.CallId, ownUserId, ev.Sender, invite, await OptionsAsync(client, CancellationToken.None));
         call.Ring(remaining);
+        if (!answer)
+        {
+            IncomingCall?.Invoke(call);
+            return;
+        }
         // Done
+        CallChanged?.Invoke(call);
+        await call.AnswerAsync();
+    }
+
+    /// <summary>Ring for the invite kept waiting in a room, when the call that won over it ended and the invite is still valid.</summary>
+    private async Task RingWaitingAsync(string roomId)
+    {
+        // A valid kept invite, and no other call
+        if (!waiting.TryRemove(roomId, out WaitingInvite? kept) || FindCall(roomId) is not null) return;
+        TimeSpan remaining = kept.Expires - DateTimeOffset.UtcNow;
+        if (remaining <= TimeSpan.Zero) return;
+        MatrixClient client = await session.WhenReady;
+        VoiceCall call = Create(roomId, kept.Invite.CallId, client.UserId!, kept.Event.Sender, kept.Invite, await OptionsAsync(client, CancellationToken.None));
+        call.Ring(remaining);
+        // Done
+        logger.LogInformation("Call {CallId} that waited rings now", kept.Invite.CallId);
         IncomingCall?.Invoke(call);
     }
+
+    /// <summary>An invite kept while this side's own call to the same person rang, as that call won the glare.</summary>
+    /// <param name="Event">The invite event.</param>
+    /// <param name="Invite">Its content.</param>
+    /// <param name="Expires">When it stops being valid.</param>
+    private sealed record WaitingInvite(ClientEvent Event, CallInviteContent Invite, DateTimeOffset Expires);
 
     /// <summary>Create and register a call.</summary>
     private VoiceCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
     {
         // Events through the outbox, changes to the listeners
         VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger);
-        call.Changed += c => CallChanged?.Invoke(c);
+        call.Changed += c =>
+        {
+            CallChanged?.Invoke(c);
+            if (c.State == CallState.Ended) _ = RingWaitingAsync(c.RoomId);
+        };
         calls[callId] = call;
         // Return call
         return call;

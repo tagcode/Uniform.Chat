@@ -141,4 +141,20 @@ public sealed class SyncProcessor
             rooms.ApplyMembers(room, members);
         }
     }
+
+    /// <summary>Load the whole member list of joined rooms that are named after their members, i.e. have neither a name nor an alias, and whose summary is unknown; then announce them.</summary>
+    /// <remarks>With lazy-loaded members, a sync from a stored position, as at every start, has no room summary, so such a room, e.g. a direct chat, knows only this user and is named "Empty Room". Rooms with a name are left alone, as large public rooms are.</remarks>
+    public async Task LoadMembersOfUnnamedRoomsAsync(MatrixClient client, CancellationToken cancellationToken = default)
+    {
+        // Rooms that need their members for a name
+        List<Room> unnamed = Read(store => store?.Rooms.Values.Where(r => r.Membership == Memberships.Join && r.Name is null && r.CanonicalAlias is null && r.Heroes is null).ToList() ?? []);
+        if (unnamed.Count == 0) return;
+        foreach (Room room in unnamed)
+        {
+            try { await LoadMembersAsync(client, room.RoomId, cancellationToken); }
+            catch (Exception ex) when (ex is MatrixException or HttpRequestException) { }
+        }
+        // Done: the rooms' names and counts changed
+        await changes.Writer.WriteAsync(new SyncChanges { UnreadChanged = unnamed }, cancellationToken);
+    }
 }

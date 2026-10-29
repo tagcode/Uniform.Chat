@@ -751,8 +751,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         // Notifications compare with the rooms known before
         if (notifier is not null && Settings?.Notifications != false) Notify(changes);
 
-        // Rooms, then the open one
+        // Rooms, then the open one, whose member count may decide calls
         RefreshRooms();
+        OnPropertyChanged(nameof(CanCallRoom));
         if (!singlePane && !IsNarrow && SelectedRoom is null && Rooms.Count > 0) SelectedRoom = Rooms[0];
         if (SelectedRoom is not RoomItemViewModel open) return;
 
