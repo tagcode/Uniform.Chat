@@ -638,3 +638,44 @@ html.index {
 .footer, .pull-right a {
    color: #cccccc;
 }
+
+/* Code snippets: a copy button at the top right corner, shown on hover or keyboard focus */
+.code-block {
+  position: relative;
+}
+
+.code-block .copy-code {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #dddddd;
+  background-color: #333333e6;
+  border: 1px solid #666666;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  cursor: pointer;
+}
+
+.code-block:hover .copy-code,
+.code-block .copy-code:focus {
+  opacity: 1;
+}
+
+.code-block .copy-code:hover {
+  background-color: #444444;
+}
+
+.code-block .copy-code.done {
+  color: #9be29b;
+  border-color: #5a9a5a;
+}
+
+/* The off-screen text area of copying without the Clipboard API */
+.copy-code-buffer {
+  position: fixed;
+  top: -1000px;
+  opacity: 0;
+}
