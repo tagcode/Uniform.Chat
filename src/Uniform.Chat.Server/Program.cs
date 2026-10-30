@@ -115,6 +115,6 @@ internal partial class Program
     /// <summary>Log category of start-up failures that the console shows in its own words.</summary>
     private const string StartupCategory = "Uniform.Chat.Server.Startup";
 
-    /// <summary>Application name, which names the settings, data and log folders: <c>~/.config/uniform-chat-server</c> and <c>~/.local/share/uniform-chat-server</c> on Linux.</summary>
-    private const string ApplicationName = "Uniform.Chat.Server";
+    /// <summary>Application name, which names the settings, data and log folders: <c>~/.config/uniform-chat-server</c> and <c>~/.local/share/uniform-chat-server</c> on Linux; ASP.NET also loads the assembly of this name at start, so it is the program's assembly name.</summary>
+    private const string ApplicationName = "uniform-chat-server";
 }
