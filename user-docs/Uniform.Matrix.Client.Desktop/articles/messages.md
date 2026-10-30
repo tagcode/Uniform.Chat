@@ -21,6 +21,14 @@ Right-click a message, or press and hold it on a phone, for its actions:
 - *Edit* puts your own message back in the message box; Enter sends the new text.
 - *Copy text* copies it.
 - *Delete* removes your own message for everyone.
+- *Report message* and *Report sender* send a report, with the reason you pick, to the admins of your server; see below.
+- *Block sender* hides the person's messages and invites.
+
+## Reporting and blocking
+
+Report messages, people and rooms that break the rules: spam, harassment, sexual or violent content, or anything illegal. Reports go to the admins of **your** server, who can act on them; the person reported is not told. Report a message or its sender from the message's menu, and a room from the room's *⋮* menu with *Report room…*.
+
+Blocking someone hides their messages and invites from you, on all your devices; they are not told. Block from a message's menu with *Block sender*, or from the room's *⋮* menu with *Block* next to their name. *Unblock* there, or in *⋮ → Security and recovery…* under *Blocked users*, shows their new messages again.
 
 ## Files
 

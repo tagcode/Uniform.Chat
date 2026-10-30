@@ -1,2 +1,6 @@
 - name: Guide
   href: articles/
+- name: User policy
+  uid: Uniform.Matrix.Client.Android.UserPolicy.Article
+- name: Privacy policy
+  uid: Uniform.Matrix.Client.Android.PrivacyPolicy.Article

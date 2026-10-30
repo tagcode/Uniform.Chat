@@ -146,18 +146,37 @@ Admin user manages other users through matrix protocol.
 
 # Google Play
 
-
-
-- User-generated content: Reporting, Blocking, Accept button for server's Terms
 - Background sync service: The app keeps syncing with the screen off through a foreground service of type remoteMessaging. Play allows that type only for relaying texts to another device, such as a web client paired with the phone. A permanent sync connection doesn't fit, and reviewers check this against a demo video. Ways out:
   - Use push notifications through a push gateway. This is what Play-store Matrix clients do; it's the push work your approved-packages list already allows.
   - Keep the service only in a separate build for direct APK or F-Droid releases.
   - Declare it as specialUse with a written justification, which Google reviews case by case and may refuse.
 - Service type for calls. Calls now use the microphone type. The type Google intends for voice-over-IP calls is phoneCall, together with microphone and the MANAGE_OWN_CALLS permission. Ideally the app would also register its calls with Android's telephony system. The demo video is simple: "user starts a call".
-- Privacy policy URL
-  - can be short: the app sends data only to the server the user chooses, and the developer collects nothing.
-  - ser-docs/Uniform.Matrix.Client.Android/privacy-policy.md
 - Microphone permission timing: the app asks for it at startup. Asking the first time a call starts is better practice, and it's what Google's permission guidance recommends.
+- on Android 13 and later, the app asks for notification permission only at the first call. Until then, message notifications stay off.
 - The name: "Matrix" is a trademark of The Matrix.org Foundation, and the Metadata and Intellectual Property policies apply to store names. 
   - Foundation's trademark guidelines
   - Listing title like "Uniform — Matrix chat", before you publish.
+- Registering calls with Android's telephony system (ConnectionService).
+
+- package name: io.github.tagcode.uniform.matrix
+
+# 'Matrix' is trademarked name
+
+- Using "Matrix" as part of an app's own name needs the Foundation's written permission, so the safe route is a separate brand that says it works with Matrix. This is my reading of their policy, not legal advice.
+
+- Matrix.org Foundation's trademark policy:
+
+```none
+Names need consent: company names, domain names and commercial apps related to Matrix need prior written consent. Product, app, service and domain names shouldn't include their marks unless the use is compatible with the protocol or supports the Foundation.
+Open source isn't exempt: a free licence doesn't grant use of the trademark. Open-source projects should choose a distinct brand that makes clear they aren't affiliated with the Foundation.
+Descriptions are allowed: without asking, you may say a product "works with" or "is compatible with" Matrix, and describe or link to the Matrix protocol, as long as it's accurate and implies no affiliation.
+What's registered: the branding page names only the logo as registered (US and UK, plus WIPO protection for the EU and Canada). It says some common terms are their word marks but doesn't list which, so assume "Matrix" is one.
+```
+
+- Play title like "Uniform — chat for Matrix protocol"
+- Library and NuGet names Uniform.Matrix.*, namespaces
+  - They name the protocol a library implements, and community libraries such as matrix-nio and matrix-bot-sdk have long done the same. 
+  - Not covered in writing, so best included in a permission request.
+
+- "Uniform" on Android and desktop, "Uniform Terminal" for the terminal client, and describe them as "for Matrix" in text. 
+

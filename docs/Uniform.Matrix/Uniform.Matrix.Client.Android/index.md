@@ -6,7 +6,7 @@ uid: Uniform.Matrix.Client.Android.Article
 
 The Android entry point of the graphical app in [Uniform.Matrix.Client.Avalonia.Core](xref:Uniform.Matrix.Client.Avalonia.Core.Article): the activity, the manifest and the resources.
 
-`MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so [`AppDirectories`](xref:Uniform.Matrix.Hosting.AppDirectories) and the engine need no Android code. The activity resizes for the keyboard. The app has internet permission only, and Android backup is off, so encryption keys stay on the device.
+`MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so [`AppDirectories`](xref:Uniform.Matrix.Hosting.AppDirectories) and the engine need no Android code. The activity resizes for the keyboard. Android backup is off, so encryption keys stay on the device.
 
 ## Build and install
 
@@ -23,3 +23,21 @@ dotnet build src/Uniform.Matrix.Client.Android -t:Install \
 ```bash
 adb reverse tcp:8008 tcp:8008
 ```
+
+## Background work
+
+Two foreground services keep the app working off screen, each with a notification:
+
+- `SyncForegroundService` keeps syncing while the app is in the background or the screen is off; without it, Android's restricted networking cuts the app off. Its type is `specialUse`, as no other type fits a connection to the user's own server, with the reason in the `android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE` property; Google Play reviews that reason.
+- `CallForegroundService` keeps a call going: of the types `phoneCall` and `microphone`, which needs the `MANAGE_OWN_CALLS` permission.
+
+Google Play asks for each type to be declared under *App content → Foreground service permissions*, with a short video of the user starting it, and for `USE_FULL_SCREEN_INTENT`, which rings incoming calls over the lock screen.
+
+## Call audio
+
+The microphone and speaker of a call share Android's communication mode for the length of the call (`CommunicationMode`): in it, the phone routes voice to the earpiece and runs its echo cancellation between the speaker and the microphone. The microphone records from the voice communication source and also turns on the platform's echo canceller and noise suppressor, kept for the whole recording, since a collected effect is released.
+
+## Policies
+
+The sign-in form links to the [user policy](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/user-policy.md) and [privacy policy](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/privacy-policy.md) in the user guide, at their GitHub addresses; Google Play needs the privacy policy's address too.
+

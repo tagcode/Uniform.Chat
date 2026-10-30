@@ -32,5 +32,13 @@ Press **Ctrl+Up** to select the newest message, move with the arrow keys, and pr
 | Save file | S | Attachments only. Downloads the file to `~/Downloads`. |
 | Open link | L | Messages with room or user links, such as `https://matrix.to/#/#room:server`. Opens a room you are in or a direct chat you have, or offers to join the room or start a chat. With several links, pick one. |
 | Delete | D | Your own messages only, after confirmation. Deletes it for everyone. |
+| Report | P | Others' messages. Sends a report, with the reason you pick, to the admins of your server. |
+| Block sender | B | Others' messages. Hides the sender's messages and invites, as `/ignore` does. |
 
 Esc returns to the input line. Replies show what they answer, like `<bob> [re alice: lunch at noon?] sure`.
+
+## Reporting and blocking
+
+Report messages, people and rooms that break the rules: spam, harassment, sexual or violent content, or anything illegal. Reports go to the admins of **your** server; the person reported is not told. Report a message from its actions, a person with `/report @user:server`, and the open room with `/report`.
+
+`/ignore @user:server` blocks someone: their messages and invites no longer show, on all your devices, and they are not told. `/ignore` alone lists whom you block, and `/unignore @user:server` shows their new messages again.

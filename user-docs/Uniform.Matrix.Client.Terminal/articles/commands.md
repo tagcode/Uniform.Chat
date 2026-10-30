@@ -39,4 +39,7 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 | `/encryption` | Show encryption, recovery and backup state |
 | `/recover` | Unlock older messages with the recovery key |
 | `/verify [@user:server]` | Verify this device with your other devices, or a user, with emoji |
+| `/ignore [@user:server]` | Block a user: their messages and invites no longer show; without a user, list whom you block |
+| `/unignore @user:server` | Unblock a user |
+| `/report [@user:server]` | Report a user, or without one this room, to your server's admins |
 | `/quit` | Exit |
