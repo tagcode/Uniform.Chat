@@ -187,3 +187,7 @@ For terminal client, server remote admin features.
 
 - A) SQLCipher (the SQLitePCLRaw.bundle_e_sqlcipher package) encrypts the whole database. The key goes into the Android Keystore, Windows DPAPI, or the Linux Secret Service.
 - B) Own encryption: AES-GCM on the message and outbox contents with a key from the same keystores. No new dependency.
+
+# Uniform.Matrix.Gui.Terminal
+
+Rename to Uniform.Gui.Terminal.
