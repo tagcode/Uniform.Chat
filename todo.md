@@ -123,17 +123,13 @@ long-press menus instead of right-click.
 
 For desktop clients, F1 could open in system browser the user documentations that are already included in the release.
 
-# Android Flutter UI
-
-Prototype with Flutter+Avalania.
-
 # README.md
 
 - Clean up package README.md.
 
-# Voice messages
+# Android/Flutter
 
-
+- Prototype flutter GUI with Avalonia.
 
 # User management
 
@@ -143,6 +139,17 @@ Admin user manages other users through matrix protocol.
 
 - The Text Size setting doesn't affect the text size in the chat window, nor the room title, nor the "Uniform.Matrix" application name.
 - The range of sizes should be wider, add: very small, very large
+
+# Voice calls
+
+- Schildichat interoperability
+
+# F-Droid
+
+- build.gradle file
+- instructions to build the app
+- https://gitlab.com/fdroid/fdroiddata?utm_source=chatgpt.com
+
 
 # Google Play
 
