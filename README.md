@@ -1,4 +1,4 @@
-# Uniform.Matrix
+# Uniform.Chat
 
 A pure .NET implementation of the [Matrix](https://spec.matrix.org/latest/) chat protocol.
 
