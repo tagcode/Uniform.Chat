@@ -273,10 +273,18 @@ public sealed class SlidingSyncService
     /// <summary>Return the user's joined and invited rooms, most recent activity first.</summary>
     private static async Task<List<(string RoomId, string Membership, long Bump)>> RoomsByActivityAsync(ServerDbContext db, string userId, CancellationToken cancellationToken)
     {
-        // Memberships here, and invites to rooms on other servers
-        List<(string RoomId, string Membership, long Stream)> memberships = [.. (await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == userId && (s.Membership == Memberships.Join || s.Membership == Memberships.Invite)).Select(s => new { s.RoomId, s.Membership, s.Stream }).ToListAsync(cancellationToken)).Select(m => (m.RoomId, m.Membership!, m.Stream))];
+        // Memberships here, and invites to rooms on other servers; none from ignored users
+        HashSet<string> ignored = await Visibility.IgnoredUsersAsync(db, userId, cancellationToken);
+        List<CurrentStateRow> rows = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == userId && (s.Membership == Memberships.Join || s.Membership == Memberships.Invite)).ToListAsync(cancellationToken);
+        HashSet<string> ignoredInvites = [];
+        if (ignored.Count > 0)
+        {
+            List<string> invites = [.. rows.Where(r => r.Membership == Memberships.Invite).Select(r => r.EventId)];
+            ignoredInvites = [.. await db.Events.IgnoreQueryFilters().AsNoTracking().Where(e => invites.Contains(e.EventId) && ignored.Contains(e.Sender)).Select(e => e.EventId).ToListAsync(cancellationToken)];
+        }
+        List<(string RoomId, string Membership, long Stream)> memberships = [.. rows.Where(r => !ignoredInvites.Contains(r.EventId)).Select(m => (m.RoomId, m.Membership!, m.Stream))];
         HashSet<string> local = [.. memberships.Select(m => m.RoomId)];
-        memberships.AddRange((await db.RemoteInvites.AsNoTracking().Where(i => i.UserId == userId && i.Membership == Memberships.Invite).Select(i => new { i.RoomId, i.Stream }).ToListAsync(cancellationToken)).Where(i => !local.Contains(i.RoomId)).Select(i => (i.RoomId, Memberships.Invite, i.Stream)));
+        memberships.AddRange((await db.RemoteInvites.AsNoTracking().Where(i => i.UserId == userId && i.Membership == Memberships.Invite).Select(i => new { i.RoomId, i.Stream, i.Sender }).ToListAsync(cancellationToken)).Where(i => !local.Contains(i.RoomId) && !ignored.Contains(i.Sender)).Select(i => (i.RoomId, Memberships.Invite, i.Stream)));
         HashSet<string> forgotten = [.. await db.ForgottenRooms.AsNoTracking().Where(f => f.UserId == userId).Select(f => f.RoomId).ToListAsync(cancellationToken)];
 
         // The latest event of each joined room, else the membership's position

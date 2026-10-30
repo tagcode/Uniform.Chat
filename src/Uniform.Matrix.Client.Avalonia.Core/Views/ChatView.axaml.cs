@@ -189,9 +189,46 @@ public partial class ChatView : UserControl
             menu.Items.Add(new Separator());
             menu.Items.Add(CreateMenuItem("Delete", () => _ = chat.DeleteAsync(message)));
         }
+
+        // Others' messages can be reported, and their sender reported or blocked
+        if (!message.IsOwn && !message.IsInfo && message.EventId is not null && message.SenderId is string senderId)
+        {
+            menu.Items.Add(new Separator());
+            menu.Items.Add(CreateReportMenu("Report message", reason => _ = chat.ReportMessageAsync(message, reason)));
+            menu.Items.Add(CreateReportMenu("Report sender", reason => _ = chat.ReportUserAsync(senderId, reason)));
+            menu.Items.Add(CreateMenuItem("Block sender", () => _ = chat.SetBlockedAsync(senderId, blocked: true)));
+        }
         // Done
         MessageMenu = menu;
         menu.ShowAt(item, showAtPointer: true);
+    }
+
+    /// <summary>Return a menu item whose items are the report reasons; choosing one runs <paramref name="report"/> with it.</summary>
+    private static MenuItem CreateReportMenu(string header, Action<string> report)
+    {
+        // One item per reason
+        MenuItem item = new() { Header = header };
+        foreach (string reason in ChatViewModel.ReportReasons) item.Items.Add(CreateMenuItem(reason, () => report(reason)));
+        // Return menu
+        return item;
+    }
+
+    /// <summary>Ask why the open room is reported, then report it.</summary>
+    private void OnReportRoomClick(object? sender, RoutedEventArgs e)
+    {
+        // Reasons as a menu at the button
+        if (model is null || sender is not Control button) return;
+        ChatViewModel chat = model;
+        MenuFlyout menu = new();
+        foreach (string reason in ChatViewModel.ReportReasons) menu.Items.Add(CreateMenuItem(reason, () => _ = chat.ReportRoomAsync(reason)));
+        menu.ShowAt(button);
+    }
+
+    /// <summary>Block or unblock the member of the clicked row.</summary>
+    private void OnBlockMemberClick(object? sender, RoutedEventArgs e)
+    {
+        // The row's member, the other way round
+        if (model is not null && (sender as Control)?.DataContext is MemberItem member) _ = model.SetBlockedAsync(member.UserId, !member.IsBlocked);
     }
 
     /// <summary>The message menu shown last, for tests.</summary>

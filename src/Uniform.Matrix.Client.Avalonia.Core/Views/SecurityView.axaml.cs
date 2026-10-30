@@ -41,4 +41,11 @@ public partial class SecurityView : UserControl
             security.Message = $"Copying failed: {exception.Message}";
         }
     }
+
+    /// <summary>Unblock the user of the clicked row.</summary>
+    private void OnUnblockClick(object? sender, RoutedEventArgs e)
+    {
+        // The row's user ID
+        if (DataContext is SecurityViewModel model && (sender as Control)?.Tag is string userId) _ = model.UnblockAsync(userId);
+    }
 }

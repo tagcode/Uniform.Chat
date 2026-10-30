@@ -156,4 +156,52 @@ public class AccountTests
         await Assert.ThrowsAsync<MatrixException>(() => d.WhoAmIAsync(Ct));
         Assert.Null(a.Session);
     }
+
+    /// <summary>With terms configured, registering lists them and needs them accepted; with a token, the terms come first and the token after.</summary>
+    [Fact]
+    public async Task AcceptTermsToRegister()
+    {
+        // Arrange
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Server:Registration"] = "Token", ["Server:RegistrationTokens"] = "secret", ["Server:TermsUrl"] = "https://example.org/terms", ["Server:PrivacyPolicyUrl"] = "https://example.org/privacy" });
+
+        // Act
+        RegistrationRequirements requirements = await server.CreateClient().GetRegistrationRequirementsAsync(Ct);
+        UserInteractiveAuthException refused = await Assert.ThrowsAsync<UserInteractiveAuthException>(() => server.CreateClient().RegisterAsync("alice", Password, "secret", cancellationToken: Ct));
+        RegisterResponse registered = await server.CreateClient().RegisterAsync("alice", Password, "secret", acceptTerms: true, cancellationToken: Ct);
+
+        // Assert
+        Assert.True(requirements.Supported);
+        Assert.True(requirements.NeedsToken);
+        Assert.Equal(["https://example.org/terms", "https://example.org/privacy"], requirements.Policies.Select(p => p.Url));
+        Assert.Equal("Terms of Service", requirements.Policies[0].Name);
+        Assert.Contains(refused.Response.Flows, f => f.Stages.SequenceEqual([AuthTypes.Terms, AuthTypes.RegistrationToken]));
+        Assert.NotNull(registered.AccessToken);
+    }
+
+    /// <summary>Deactivating needs the password; then the user has left their rooms, cannot log in, and the name stays taken.</summary>
+    [Fact]
+    public async Task DeactivateAccount()
+    {
+        // Arrange: Alice in Bob's room
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient bob = server.CreateClient();
+        await bob.RegisterAsync("bob", Password, cancellationToken: Ct);
+        MatrixClient alice = server.CreateClient();
+        await alice.RegisterAsync("alice", Password, cancellationToken: Ct);
+        await alice.SetDisplayNameAsync("Alice", Ct);
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await alice.JoinRoomAsync(roomId, cancellationToken: Ct);
+        string userId = alice.UserId!;
+
+        // Act
+        await Assert.ThrowsAsync<UserInteractiveAuthException>(() => alice.DeactivateAccountAsync("wrong", Ct));
+        await alice.DeactivateAccountAsync(Password, Ct);
+
+        // Assert
+        MemberContent member = await bob.GetStateEventAsync<MemberContent>(roomId, EventTypes.RoomMember, userId, Ct);
+        Assert.Equal(Memberships.Leave, member.Membership);
+        Assert.Null(alice.Session);
+        await Assert.ThrowsAsync<MatrixException>(() => server.CreateClient().LoginWithPasswordAsync("alice", Password, cancellationToken: Ct));
+        Assert.False(await server.CreateClient().IsUsernameAvailableAsync("alice", Ct));
+    }
 }

@@ -2,8 +2,9 @@ namespace Uniform.Matrix.Client.Avalonia.Core.Views;
 
 using global::Avalonia.Controls;
 using global::Avalonia.Interactivity;
+using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
 
-/// <summary>The sign-in form.</summary>
+/// <summary>The sign-in form, which also creates accounts.</summary>
 public partial class LoginView : UserControl
 {
     /// <summary>Create the view.</summary>
@@ -16,5 +17,21 @@ public partial class LoginView : UserControl
         base.OnLoaded(e);
         if (string.IsNullOrEmpty(UserIdBox.Text)) UserIdBox.Focus();
         else PasswordBox.Focus();
+    }
+
+    /// <summary>Open the policy address in the button's <see cref="Control.Tag"/> in the system's browser.</summary>
+    private async void OnLinkClick(object? sender, RoutedEventArgs e)
+    {
+        // Assert an address and a launcher
+        if ((sender as Control)?.Tag is not string address || !Uri.TryCreate(address, UriKind.Absolute, out Uri? uri) || TopLevel.GetTopLevel(this) is not TopLevel top) return;
+        try
+        {
+            if (!await top.Launcher.LaunchUriAsync(uri) && DataContext is LoginViewModel model) model.ErrorMessage = $"No app opens {address} here.";
+        }
+        catch (Exception exception)
+        {
+            // On error tell, since nothing awaits this handler
+            if (DataContext is LoginViewModel model) model.ErrorMessage = $"Opening {address} failed: {exception.Message}";
+        }
     }
 }

@@ -120,8 +120,8 @@ public sealed class ClientConnection : IAsyncDisposable
     /// <summary>Log out on the server, which deletes this device, then stop the engine.</summary>
     public async Task LogOutAsync()
     {
-        // Best effort: an unreachable server still ends the local session
-        if (Session.WhenReady.IsCompletedSuccessfully)
+        // Best effort: an unreachable server still ends the local session; a deleted account has none left
+        if (Session.WhenReady.IsCompletedSuccessfully && (await Session.WhenReady).Session is not null)
         {
             try
             {

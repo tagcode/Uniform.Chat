@@ -19,6 +19,8 @@ public sealed record GuiPlatform
     public INotifier? Notifier { get; init; }
     /// <summary>Changes to the engine's services, e.g. a test HTTP handler.</summary>
     public Action<IServiceCollection>? ConfigureServices { get; init; }
+    /// <summary>HTTP handler for requests outside the engine, such as creating an account; null for the default. Tests route them to a server in memory.</summary>
+    public Func<HttpMessageHandler>? HttpHandler { get; init; }
     /// <summary>Open the platform's microphone and speaker, given whether to use the loudspeaker rather than an earpiece; null where there is no audio.</summary>
     public Func<bool, IAudioDevices>? Audio { get; init; }
     /// <summary>Whether the platform has an earpiece, so that the loudspeaker is a choice, as on phones.</summary>

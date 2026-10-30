@@ -20,6 +20,9 @@ Settings come from these places; later ones override earlier ones:
 | `Server:Registration` | `Disabled` | Who can create accounts: `Disabled`, `Open` (anyone), or `Token` (anyone with a registration token). |
 | `Server:TrustedProxies` | not set | Addresses of reverse proxies, such as nginx, whose `X-Forwarded-For` header gives the client's address, separated by commas. Set it when the server runs behind a proxy, so rate limits count each client instead of the proxy. Other senders' headers are ignored. ↻ |
 | `Server:RegistrationTokens` | not set | Tokens for `Token` registration, separated by commas. |
+| `Server:TermsUrl` | not set | Address of terms of service that new users accept when registering. |
+| `Server:PrivacyPolicyUrl` | not set | Address of a privacy policy that new users accept when registering. |
+| `Server:PoliciesVersion` | `1.0` | Version of the terms and privacy policy; raise it when they change. |
 | `Media:MaxUploadSize` | `52428800` | Largest file users can upload, in bytes (50 MiB). |
 | `Media:MaxThumbnailSourcePixels` | `40000000` | Largest image, in pixels, that thumbnails are made from; larger images get none. |
 | `Media:AllowUnauthenticatedDownloads` | `false` | Also serve files at the old `/_matrix/media/v3` download addresses, which need no login, for older clients. Anyone with a link can then fetch a file, so leave it off unless a client needs it. |

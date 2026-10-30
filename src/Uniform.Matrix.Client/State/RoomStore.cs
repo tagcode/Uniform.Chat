@@ -44,6 +44,9 @@ public sealed class RoomStore
     /// <summary>Ignored user IDs from <see cref="EventTypes.IgnoredUserList"/>.</summary>
     public IReadOnlySet<string> IgnoredUsers => ignoredUsers;
 
+    /// <summary>Replace <see cref="IgnoredUsers"/> at once, e.g. right after changing the list on the server, before the sync brings it.</summary>
+    public void SetIgnoredUsers(IEnumerable<string> userIds) => ignoredUsers = [.. userIds];
+
     /// <summary>Return a known room by ID.</summary>
     public bool TryGetRoom(string roomId, [NotNullWhen(true)] out Room? room) => rooms.TryGetValue(roomId, out room);
 

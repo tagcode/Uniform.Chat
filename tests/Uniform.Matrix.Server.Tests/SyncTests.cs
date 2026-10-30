@@ -267,4 +267,39 @@ public class SyncTests
         Assert.Equal("Old", rename.Unsigned?.PrevContent?.GetProperty("name").GetString());
         Assert.Contains(Bodies((await alice.GetMessagesAsync(roomId, limit: 100, cancellationToken: Ct)).Chunk), b => b == "secret");
     }
+
+    /// <summary>Messages and invites of an ignored user are left out of sync and history, while their membership changes still show; ignoring no more brings their new messages back.</summary>
+    [Fact]
+    public async Task LeaveOutIgnoredUsers()
+    {
+        // Arrange: Bob and Carol in Alice's room
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient alice = await UserAsync(server, "alice");
+        MatrixClient bob = await UserAsync(server, "bob");
+        MatrixClient carol = await UserAsync(server, "carol");
+        string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Preset = RoomPresets.PublicChat }, Ct);
+        await bob.JoinRoomAsync(roomId, cancellationToken: Ct);
+        await carol.JoinRoomAsync(roomId, cancellationToken: Ct);
+
+        // Act: Bob ignores Carol, who writes and invites him elsewhere
+        await bob.IgnoreUserAsync(carol.UserId!, Ct);
+        await SayAsync(alice, roomId, "from alice");
+        await SayAsync(carol, roomId, "from carol");
+        string carolsRoom = await carol.CreateRoomAsync(new CreateRoomRequest { Name = "Trap" }, Ct);
+        await carol.InviteAsync(carolsRoom, bob.UserId!, cancellationToken: Ct);
+        SyncResponse sync = await bob.SyncAsync(cancellationToken: Ct);
+        MessagesResponse history = await bob.GetMessagesAsync(roomId, limit: 50, cancellationToken: Ct);
+
+        // Assert: only Alice's message, Carol's join still there, and no invite
+        Assert.Equal(["from alice"], Bodies(sync.Rooms.Join[roomId].Timeline.Events));
+        Assert.Contains(sync.Rooms.Join[roomId].Timeline.Events.Concat(sync.Rooms.Join[roomId].State.Events), e => e.Type == EventTypes.RoomMember && e.StateKey == carol.UserId);
+        Assert.Equal(["from alice"], Bodies(history.Chunk));
+        Assert.False(sync.Rooms.Invite.ContainsKey(carolsRoom));
+
+        // Act and assert: no longer ignored, Carol's next message arrives
+        await bob.UnignoreUserAsync(carol.UserId!, Ct);
+        await SayAsync(carol, roomId, "carol again");
+        SyncResponse after = await bob.SyncAsync(since: sync.NextBatch, cancellationToken: Ct);
+        Assert.Contains("carol again", Bodies(after.Rooms.Join[roomId].Timeline.Events));
+    }
 }

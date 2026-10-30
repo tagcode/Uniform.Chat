@@ -40,7 +40,7 @@ public sealed partial class MainWindow
         logger.LogDebug("Selected message {EventId}, log focused: {Focused}", timeline.SelectedEntry?.EventId, timeline.HasFocus);
     }
 
-    /// <summary>Show actions for the selected message: reply, react, edit, delete, save attachment.</summary>
+    /// <summary>Show actions for the selected message: reply, react, edit, delete, save attachment, report, block the sender.</summary>
     private void ShowMessageActions()
     {
         // Assert selected event of the open room
@@ -61,6 +61,8 @@ public sealed partial class MainWindow
         if (attachment) actions.Add(("_Save file", () => _ = SaveAttachmentAsync(content!)));
         if (links.Count > 0) actions.Add(("Open _link", () => OpenLink(links)));
         if (own && ev.Unsigned?.RedactedBecause is null) actions.Add(("_Delete", () => DeleteMessage(roomId, ev)));
+        if (!own && message) actions.Add(("Re_port", () => ReportMessage(roomId, ev)));
+        if (!own) actions.Add(("_Block sender", () => SetIgnored(ev.Sender, ignored: true)));
         actions.Add(("_Close", () => { }));
 
         // Ask, then run after this dialog has fully closed, so a follow-up dialog does not receive the same key

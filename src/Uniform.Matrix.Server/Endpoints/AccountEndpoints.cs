@@ -13,7 +13,7 @@ using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
 
-/// <summary>Registration, <see href="https://spec.matrix.org/latest/client-server-api/#login">login</see>, logout, whoami, password change and capabilities.</summary>
+/// <summary>Registration, <see href="https://spec.matrix.org/latest/client-server-api/#login">login</see>, logout, whoami, password change, deactivation and capabilities.</summary>
 public static class AccountEndpoints
 {
     /// <summary>Map the account endpoints under <c>/_matrix/client/v3</c>.</summary>
@@ -41,6 +41,7 @@ public static class AccountEndpoints
         client.MapPost("/logout", async (HttpContext http, AccountService accounts, CancellationToken cancellationToken) => { await accounts.LogoutAsync(http.GetRequester(), cancellationToken); return MatrixHttp.Json(new JsonObject()); }).RequireAccessToken();
         client.MapPost("/logout/all", async (HttpContext http, AccountService accounts, CancellationToken cancellationToken) => { await accounts.LogoutAllAsync(http.GetRequester().UserId, cancellationToken); return MatrixHttp.Json(new JsonObject()); }).RequireAccessToken();
         client.MapPost("/account/password", ChangePasswordAsync).RequireAccessToken();
+        client.MapPost("/account/deactivate", DeactivateAsync).RequireAccessToken().RequireRateLimiting(RateLimits.Logins);
 
         // What clients may do here
         client.MapGet("/capabilities", () => MatrixHttp.Json(new JsonObject
@@ -79,17 +80,42 @@ public static class AccountEndpoints
         ServerOptions server = options.CurrentValue;
         if (kind == "guest") throw new MatrixException(HttpStatusCode.Forbidden, "M_GUEST_ACCESS_FORBIDDEN", "Guest access is not allowed.");
         if (server.Registration == RegistrationMode.Disabled) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Registration is disabled.");
-        if (body.Password is null) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing password.");
         if (body.Username is not null && !await accounts.IsAvailableAsync(body.Username, cancellationToken)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.UserInUse, "The user ID is already taken.");
 
-        // Dummy stage for open registration, a token otherwise
+        // Accepting the policies when there are some, then a dummy stage for open registration or a token; a request without a password still learns the flow
         string stage = server.Registration == RegistrationMode.Open ? AuthTypes.Dummy : AuthTypes.RegistrationToken;
-        await auth.AuthenticateAsync(body.Auth, [[stage]], (type, data, _) => Task.FromResult(type == AuthTypes.Dummy || IsRegistrationToken(server, data["token"]?.GetValue<string>())), cancellationToken);
+        JsonObject? terms = TermsParameters(server);
+        IReadOnlyList<string> flow = terms is null ? [stage] : [AuthTypes.Terms, stage];
+        IReadOnlyDictionary<string, JsonObject>? parameters = terms is null ? null : new Dictionary<string, JsonObject> { [AuthTypes.Terms] = terms };
+        await auth.AuthenticateAsync(body.Auth, [flow], (type, data, _) => Task.FromResult(type is AuthTypes.Dummy or AuthTypes.Terms || IsRegistrationToken(server, data["token"]?.GetValue<string>())), parameters, cancellationToken);
+        if (body.Password is null) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing password.");
 
         // Create
         RegisterResponse response = await accounts.RegisterAsync(body.Username, body.Password, body.DeviceId, body.InitialDeviceDisplayName, body.InhibitLogin == true, admin: false, cancellationToken);
         // Return account
         return MatrixHttp.Json(response);
+    }
+
+    /// <summary>Return the parameters of the <see cref="AuthTypes.Terms"/> stage: the configured terms of service and privacy policy; null when neither is set.</summary>
+    private static JsonObject? TermsParameters(ServerOptions server)
+    {
+        // Each configured policy, in English
+        JsonObject policies = [];
+        if (server.TermsUrl is { Length: > 0 } terms) policies["terms_of_service"] = new JsonObject { ["version"] = server.PoliciesVersion, ["en"] = new JsonObject { ["name"] = "Terms of Service", ["url"] = terms } };
+        if (server.PrivacyPolicyUrl is { Length: > 0 } privacy) policies["privacy_policy"] = new JsonObject { ["version"] = server.PoliciesVersion, ["en"] = new JsonObject { ["name"] = "Privacy Policy", ["url"] = privacy } };
+        // Return parameters, or none
+        return policies.Count == 0 ? null : new JsonObject { ["policies"] = policies };
+    }
+
+    /// <summary>Deactivate the requester's account after password auth; their user ID stays taken.</summary>
+    private static async Task<IResult> DeactivateAsync(HttpContext http, JsonObject body, AccountService accounts, AccountDeactivation deactivation, UserInteractiveAuth auth, CancellationToken cancellationToken)
+    {
+        // Password of the account, then deactivate
+        Requester requester = http.GetRequester();
+        await RequirePasswordAsync(requester, body["auth"] as JsonObject, accounts, auth, cancellationToken);
+        await deactivation.DeactivateAsync(requester.UserId, cancellationToken);
+        // Return result; no identity server is bound
+        return MatrixHttp.Json(new JsonObject { ["id_server_unbind_result"] = "no-support" });
     }
 
     /// <summary>Change the password after password auth; log out other devices unless asked not to.</summary>
@@ -118,7 +144,7 @@ public static class AccountEndpoints
             bool self = user == requester.UserId || $"@{user}:{accounts.ServerName}" == requester.UserId;
             // Return verification
             return self && await accounts.CheckPasswordAsync(requester.UserId, password, token);
-        }, cancellationToken);
+        }, null, cancellationToken);
 
     /// <summary>Return whether <paramref name="token"/> is a configured registration token, compared in constant time.</summary>
     private static bool IsRegistrationToken(ServerOptions server, string? token)

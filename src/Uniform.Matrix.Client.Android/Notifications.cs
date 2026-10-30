@@ -83,8 +83,8 @@ internal sealed class AndroidNotifier(Context context) : INotifier
     }
 }
 
-/// <summary>Keeps a call going while the app is in the background: a foreground service of the microphone type, which Android requires for recording then, with an ongoing notification.</summary>
-[Service(Exported = false, ForegroundServiceType = ForegroundService.TypeMicrophone)]
+/// <summary>Keeps a call going while the app is in the background: a foreground service of the phone call type, for voice over IP, and the microphone type, which Android requires for recording then, with an ongoing notification.</summary>
+[Service(Exported = false, ForegroundServiceType = ForegroundService.TypePhoneCall | ForegroundService.TypeMicrophone)]
 public sealed class CallForegroundService : Service
 {
     private const string PeerExtra = "peer";
@@ -109,10 +109,11 @@ public sealed class CallForegroundService : Service
     /// <summary>Go to the foreground with the call's notification.</summary>
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
-        // Ongoing notification, typed as a microphone service where Android asks
+        // Ongoing notification, typed as a call with the microphone where Android asks; Android 10 knows only the call type
         string peer = intent?.GetStringExtra(PeerExtra) ?? "";
         Notification notification = Notifications.Build(this, Notifications.OngoingCall, "Voice call", $"In a call with {peer}", ongoing: true);
-        if (OperatingSystem.IsAndroidVersionAtLeast(30)) StartForeground(NotificationId, notification, ForegroundService.TypeMicrophone);
+        if (OperatingSystem.IsAndroidVersionAtLeast(30)) StartForeground(NotificationId, notification, ForegroundService.TypePhoneCall | ForegroundService.TypeMicrophone);
+        else if (OperatingSystem.IsAndroidVersionAtLeast(29)) StartForeground(NotificationId, notification, ForegroundService.TypePhoneCall);
         else StartForeground(NotificationId, notification);
         // Done
         return StartCommandResult.NotSticky;
@@ -134,7 +135,9 @@ public sealed class CallForegroundService : Service
 }
 
 /// <summary>Keeps the engine syncing while the app is off screen or the screen is off: a foreground service, without which Android's restricted networking cuts the app off, so that no message or call arrives. Push notifications would replace it.</summary>
-[Service(Exported = false, ForegroundServiceType = ForegroundService.TypeRemoteMessaging)]
+/// <remarks>Of the special use type, as no other fits a connection to the user's own server; the subtype tells Google Play's review why.</remarks>
+[Service(Exported = false, ForegroundServiceType = ForegroundService.TypeSpecialUse)]
+[Property("android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE", Value = "Keeps the connection to the Matrix homeserver the user chose open, to receive messages and incoming voice calls in real time without Google push services; Matrix servers of other organisations cannot send through Firebase Cloud Messaging.")]
 public sealed class SyncForegroundService : Service
 {
     private const int NotificationId = 4;
@@ -157,9 +160,9 @@ public sealed class SyncForegroundService : Service
     /// <summary>Go to the foreground with the quiet connection notification.</summary>
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
-        // Typed as remote messaging where Android asks
+        // Typed as special use where Android asks
         Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform.Matrix", "Connected, for messages and calls", ongoing: true);
-        if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeRemoteMessaging);
+        if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeSpecialUse);
         else StartForeground(NotificationId, notification);
         // Done
         return StartCommandResult.NotSticky;

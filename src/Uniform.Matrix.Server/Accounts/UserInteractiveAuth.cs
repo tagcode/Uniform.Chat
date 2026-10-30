@@ -31,8 +31,9 @@ public sealed class UserInteractiveAuth
     /// <param name="auth">The request's <c>auth</c> object, or null on the first attempt.</param>
     /// <param name="flows">Accepted stage combinations.</param>
     /// <param name="checkStage">Returns whether the stage of the given type is passed by the <c>auth</c> object.</param>
+    /// <param name="parameters">Parameters of stages by type, e.g. the policies of <see cref="AuthTypes.Terms"/>; null for none.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public async Task AuthenticateAsync(JsonObject? auth, IReadOnlyList<IReadOnlyList<string>> flows, Func<string, JsonObject, CancellationToken, Task<bool>> checkStage, CancellationToken cancellationToken)
+    public async Task AuthenticateAsync(JsonObject? auth, IReadOnlyList<IReadOnlyList<string>> flows, Func<string, JsonObject, CancellationToken, Task<bool>> checkStage, IReadOnlyDictionary<string, JsonObject>? parameters, CancellationToken cancellationToken)
     {
         // Existing session, else a new one
         RemoveExpired();
@@ -59,7 +60,7 @@ public sealed class UserInteractiveAuth
         UserInteractiveAuthResponse response = new()
         {
             Flows = [.. flows.Select(f => new AuthFlow { Stages = f })],
-            Params = new Dictionary<string, JsonObject>(),
+            Params = parameters ?? new Dictionary<string, JsonObject>(),
             Session = session.Id,
             Completed = [.. session.Completed],
             Errcode = error is null ? null : ErrorCodes.Forbidden,

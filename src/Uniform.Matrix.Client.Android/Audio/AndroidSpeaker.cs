@@ -6,7 +6,7 @@ using NAudio.Wave;
 using Uniform.Matrix.Audio;
 
 /// <summary>The phone's earpiece or loudspeaker through <see cref="AudioTrack"/>, as an NAudio <see cref="IWavePlayer"/> playing the voice format as call audio.</summary>
-/// <remarks>Call audio goes to the earpiece; for the loudspeaker, the phone is put in communication mode with the built-in speaker as the communication device, and back when playing stops.</remarks>
+/// <remarks>Plays in <see cref="CommunicationMode"/>, so call audio goes to the earpiece and the phone's echo cancellation hears it; for the loudspeaker, the built-in speaker becomes the communication device.</remarks>
 /// <param name="context">Context for the audio service.</param>
 /// <param name="loudspeaker">Whether to play through the loudspeaker rather than the earpiece.</param>
 public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePlayer
@@ -44,6 +44,7 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         // Assert a source, not already playing
         if (source is null) throw new InvalidOperationException("Init first.");
         if (playing) return;
+        CommunicationMode.Enter(context);
         RouteToLoudspeaker(loudspeaker);
         AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(AudioUsageKind.VoiceCommunication)!.SetContentType(AudioContentType.Speech)!.Build()!;
         AudioFormat format = new AudioFormat.Builder().SetEncoding(Encoding.Pcm16bit)!.SetSampleRate(VoiceFormat.SampleRate)!.SetChannelMask(ChannelOut.Mono)!.Build()!;
@@ -106,6 +107,7 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         {
             track?.Stop();
             RouteToLoudspeaker(false);
+            CommunicationMode.Exit(context);
             playing = false;
             PlaybackState = PlaybackState.Stopped;
         }
@@ -113,12 +115,11 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         PlaybackStopped?.Invoke(this, new StoppedEventArgs(error));
     }
 
-    /// <summary>Route call audio to the loudspeaker, or back to the default.</summary>
+    /// <summary>Route call audio to the loudspeaker, or back to the default; the mode is <see cref="CommunicationMode"/>'s.</summary>
     private void RouteToLoudspeaker(bool on)
     {
         // Only when asked for, and back
         if (audio is null || !loudspeaker) return;
-        audio.Mode = on ? Mode.InCommunication : Mode.Normal;
         if (OperatingSystem.IsAndroidVersionAtLeast(31))
         {
             if (!on)

@@ -22,6 +22,9 @@ public sealed class MessageList
         this.ownUserId = ownUserId;
     }
 
+    /// <summary>Return whether the user has blocked, i.e. ignores, a sender, whose messages are then not shown; null shows all.</summary>
+    public Func<string, bool>? IsBlocked { get; init; }
+
     /// <summary>Items in time order, unsent messages last.</summary>
     public ObservableCollection<MessageViewModel> Items { get; } = [];
 
@@ -100,7 +103,8 @@ public sealed class MessageList
     /// <summary>Return the item for an event, or null for events that are not shown.</summary>
     private MessageViewModel? Create(Room room, ClientEvent clientEvent)
     {
-        // Non-messages: a description, or nothing
+        // Nothing from blocked users but their state changes; non-messages: a description, or nothing
+        if (clientEvent.StateKey is null && clientEvent.Sender != ownUserId && IsBlocked?.Invoke(clientEvent.Sender) == true) return null;
         string sender = room.GetMemberDisplayName(clientEvent.Sender);
         bool own = clientEvent.Sender == ownUserId;
         if (clientEvent.Type != EventTypes.RoomMessage)

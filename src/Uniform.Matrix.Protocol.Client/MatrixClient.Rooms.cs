@@ -39,6 +39,18 @@ public sealed partial class MatrixClient
     public Task ForgetRoomAsync(string roomId, CancellationToken cancellationToken = default) =>
         SendAsync(HttpMethod.Post, $"_matrix/client/v3/rooms/{Escape(roomId)}/forget", new { }, authenticated: true, cancellationToken);
 
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#post_matrixclientv3roomsroomidreporteventid">Reports</see> an event as objectionable to the admins of this user's server.</summary>
+    public Task ReportEventAsync(string roomId, string eventId, string? reason = null, CancellationToken cancellationToken = default) =>
+        SendAsync(HttpMethod.Post, $"_matrix/client/v3/rooms/{Escape(roomId)}/report/{Escape(eventId)}", new { reason }, authenticated: true, cancellationToken);
+
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#post_matrixclientv3roomsroomidreport">Reports</see> a room as objectionable to the admins of this user's server.</summary>
+    public Task ReportRoomAsync(string roomId, string? reason = null, CancellationToken cancellationToken = default) =>
+        SendAsync(HttpMethod.Post, $"_matrix/client/v3/rooms/{Escape(roomId)}/report", new { reason = reason ?? "" }, authenticated: true, cancellationToken);
+
+    /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#post_matrixclientv3usersuseridreport">Reports</see> a user as objectionable to the admins of this user's server.</summary>
+    public Task ReportUserAsync(string userId, string? reason = null, CancellationToken cancellationToken = default) =>
+        SendAsync(HttpMethod.Post, $"_matrix/client/v3/users/{Escape(userId)}/report", new { reason = reason ?? "" }, authenticated: true, cancellationToken);
+
     /// <summary><see href="https://spec.matrix.org/latest/client-server-api/#post_matrixclientv3roomsroomidinvite">Invites</see> <paramref name="userId"/> to a room.</summary>
     public Task InviteAsync(string roomId, string userId, string? reason = null, CancellationToken cancellationToken = default) => SendMembershipAsync(roomId, "invite", userId, reason, cancellationToken);
 

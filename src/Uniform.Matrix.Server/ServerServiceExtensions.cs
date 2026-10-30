@@ -101,6 +101,7 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<ServerStatus>();
         builder.Services.AddSingleton<AccountService>();
         builder.Services.AddSingleton<AdminService>();
+        builder.Services.AddSingleton<AccountDeactivation>();
         builder.Services.AddSingleton<UserInteractiveAuth>();
         builder.Services.AddSingleton<ServerKeys>();
         builder.Services.AddSingleton<ServerStream>();

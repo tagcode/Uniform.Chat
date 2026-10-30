@@ -341,6 +341,99 @@ public class ChatFlowTests
         }
     }
 
+    /// <summary>The sign-in form creates an account after the server's policies are accepted, then signs in; the account is deleted from the security panel with the password, which returns to the form and ends the account.</summary>
+    [AvaloniaFact]
+    public async Task CreateAndDeleteAccount()
+    {
+        // Arrange: a server with terms
+        await using LocalServer server = await LocalServer.StartAsync(new Dictionary<string, string?> { ["Server:TermsUrl"] = "https://example.org/terms" });
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            // Act: create an account; the first attempt shows the policies
+            model.Login.SwitchModeCommand.Execute(null);
+            Assert.Equal("Create account", model.Login.ActionText);
+            model.Login.UserId = $"@judy:{LocalServer.ServerName}";
+            model.Login.Password = "password";
+            model.Login.Homeserver = LocalServer.Address;
+            await model.Login.SignInCommand.ExecuteAsync(null);
+            Assert.True(model.Login.HasPolicies);
+            Assert.Equal("https://example.org/terms", model.Login.Policies.Single().Url);
+            Assert.StartsWith("Read and accept", model.Login.ErrorMessage);
+            await CaptureAsync(model, "create-account.png", 400, 760);
+            model.Login.AcceptTerms = true;
+            await model.Login.SignInCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => model.Page is ChatViewModel, "the chat page of the new account");
+            ChatViewModel chat = (ChatViewModel)model.Page;
+
+            // Act: delete it, a wrong password first
+            await chat.OpenSecurityCommand.ExecuteAsync(null);
+            SecurityViewModel security = chat.Security!;
+            security.StartDeleteAccountCommand.Execute(null);
+            security.Password = "wrong";
+            await security.ConfirmDeleteAccountCommand.ExecuteAsync(null);
+            Assert.Equal("The password was not accepted.", security.Message);
+            security.Password = "password";
+            await security.ConfirmDeleteAccountCommand.ExecuteAsync(null);
+
+            // Assert: back on the form, and the account cannot sign in
+            await WaitUntilAsync(() => model.Page is LoginViewModel, "the sign-in form");
+            MatrixClient again = new(new HttpClient(server.Platform("").HttpHandler!()), new Uri(LocalServer.Address));
+            await Assert.ThrowsAsync<MatrixException>(() => again.LoginWithPasswordAsync($"@judy:{LocalServer.ServerName}", "password"));
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>Another member's message can be reported with a reason, which the server keeps for its admin; blocking the sender hides their messages, and unblocking from the security panel shows them again.</summary>
+    [AvaloniaFact]
+    public async Task ReportAndBlock()
+    {
+        // Arrange: Mallory writes in Kim's room
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient kim = await server.RegisterAsync("kim");
+        MatrixClient mallory = await server.RegisterAsync("mallory");
+        string roomId = await kim.CreateRoomAsync(new CreateRoomRequest { Name = "Garden", Preset = RoomPresets.PublicChat });
+        await mallory.JoinRoomAsync(roomId);
+        await mallory.SendTextAsync(roomId, "buy cheap pills");
+        await kim.SendTextAsync(roomId, "welcome");
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel chat = await SignInAsync(model, kim.UserId!);
+            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text == "buy cheap pills"), "Mallory's message");
+            MessageViewModel spam = chat.Messages.Items.Single(m => m.Text == "buy cheap pills");
+
+            // Act and assert: report it
+            await chat.ReportMessageAsync(spam, "Spam");
+            IReadOnlyList<Uniform.Matrix.Server.Rooms.Report> reports = await server.Services.GetRequiredService<Uniform.Matrix.Server.Rooms.ReportService>().GetAsync(includeResolved: false, CancellationToken.None);
+            Assert.Contains(reports, r => r.EventId == spam.EventId && r.Reporter == kim.UserId && r.Reason == "Spam");
+            await WaitUntilAsync(() => chat.Notice.StartsWith("Reported"), "the notice of the report");
+
+            // Act and assert: block Mallory; her message goes, Kim's stays
+            await chat.SetBlockedAsync(mallory.UserId!, blocked: true);
+            await WaitUntilAsync(() => !chat.Messages.Items.Any(m => m.Text == "buy cheap pills") && chat.Messages.Items.Any(m => m.Text == "welcome"), "Mallory's message to be hidden");
+            chat.LoadMembersCommand.Execute(null);
+            Assert.True(chat.Members.Single(m => m.UserId == mallory.UserId).IsBlocked);
+            Assert.Contains(mallory.UserId!, await kim.GetIgnoredUsersAsync());
+
+            // Act and assert: unblock from the security panel
+            await chat.OpenSecurityCommand.ExecuteAsync(null);
+            Assert.Equal([mallory.UserId!], chat.Security!.BlockedUsers);
+            await chat.Security.UnblockAsync(mallory.UserId!);
+            Assert.Empty(chat.Security.BlockedUsers);
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "buy cheap pills"), "Mallory's message back");
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
     /// <summary>Records notifications instead of showing them.</summary>
     private sealed class RecordingNotifier : INotifier
     {

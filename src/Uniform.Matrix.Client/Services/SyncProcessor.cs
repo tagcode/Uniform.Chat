@@ -103,6 +103,19 @@ public sealed class SyncProcessor
         lock (gate) if (rooms?.TryGetRoom(roomId, out Room? room) == true) room.Replace(decrypted);
     }
 
+    /// <summary>Return whether the user ignores, i.e. has blocked, <paramref name="userId"/>.</summary>
+    public bool IsIgnored(string userId) => Read(r => r?.IgnoredUsers.Contains(userId) == true);
+
+    /// <summary>Ignore <paramref name="userId"/>, i.e. block them, or stop ignoring them, on the server, and apply the new list at once; the server then leaves out their messages and invites.</summary>
+    public async Task SetIgnoredAsync(MatrixClient client, string userId, bool ignored, CancellationToken cancellationToken = default)
+    {
+        // Change on the server, then here
+        if (ignored) await client.IgnoreUserAsync(userId, cancellationToken);
+        else await client.UnignoreUserAsync(userId, cancellationToken);
+        IReadOnlyCollection<string> users = await client.GetIgnoredUsersAsync(cancellationToken);
+        lock (gate) rooms?.SetIgnoredUsers(users);
+    }
+
     /// <summary>Run <paramref name="read"/> on the room state while no sync is applied.</summary>
     public T Read<T>(Func<RoomStore?, T> read)
     {

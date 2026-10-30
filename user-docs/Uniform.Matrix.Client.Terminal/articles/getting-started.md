@@ -37,6 +37,14 @@ Each run writes its own log under `~/.local/share/uniform-matrix-client-terminal
 
 To log out on the server, choose File → Log out. Quitting with Ctrl+Q keeps the session.
 
+## Create an account
+
+On the first start, give the user ID you want, such as `@alice:example.org`, where the part after `:` is the server, and choose *Create account*. The client asks for a password twice, then for what the server needs: a registration token from the server's admin, and acceptance of its policies, shown with their addresses. It then creates the account and logs in. Many servers do not let apps create accounts: then make the account on the server's website and log in here.
+
+## Delete the account
+
+*File → Delete account…* asks you to confirm, then for your password. You leave every room, your name and picture are removed, and every device is signed out. The account cannot be used again, and nobody can take its user ID. The client then quits and forgets the user ID.
+
 ## Troubleshooting
 
 | Message | Meaning |

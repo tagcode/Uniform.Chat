@@ -1,13 +1,15 @@
 namespace Uniform.Matrix.Client.Terminal.Ui;
 
 using System.Collections.ObjectModel;
+using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Gui.Terminal;
+using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using global::Terminal.Gui.App;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
 
-/// <summary>Modal dialogs of the client: first sign-in, room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
+/// <summary>Modal dialogs of the client: first sign-in and creating an account, room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
 public static class ClientDialogs
 {
     /// <summary>Let the user search the public room directory of their server or another one; return the room to join with the server it was listed on, or null.</summary>
@@ -72,11 +74,14 @@ public static class ClientDialogs
         return (new MatrixLink { Target = chosen.CanonicalAlias ?? chosen.RoomId, Via = shownServer.Length > 0 ? [shownServer] : [] }, shownServer);
     }
 
-    /// <summary>Ask for the user ID and, when needed, the server address on first start; return them, or null when cancelled.</summary>
+    /// <summary>Address of the app's user policy, which people accept by signing in.</summary>
+    public const string UserPolicyUrl = "https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/user-policy.md";
+
+    /// <summary>Ask for the user ID and, when needed, the server address on first start, and whether to create the account; return them, or null when cancelled.</summary>
     /// <param name="app">Running application.</param>
     /// <param name="userId">User ID to show at first, e.g. an invalid one from the command line.</param>
     /// <param name="homeserver">Server address to show at first.</param>
-    public static (string UserId, string? Homeserver)? AskSignIn(IApplication app, string? userId, string? homeserver)
+    public static (string UserId, string? Homeserver, bool CreateAccount)? AskSignIn(IApplication app, string? userId, string? homeserver)
     {
         // Ask until the entries are valid or the dialog is closed; each round shows what was wrong
         string id = userId ?? "";
@@ -84,8 +89,8 @@ public static class ClientDialogs
         string problem = "";
         while (true)
         {
-            (bool accepted, id, server) = RunSignIn(app, id, server, problem);
-            if (!accepted) return null;
+            (int? button, id, server) = RunSignIn(app, id, server, problem);
+            if (button is not (1 or 2)) return null;
             if (!UserId.TryParse(id, out _))
             {
                 problem = id.Length == 0 ? "Give your user ID." : $"\"{id}\" is not a user ID; it looks like @alice:matrix.org.";
@@ -97,12 +102,12 @@ public static class ClientDialogs
                 continue;
             }
             // Return entries
-            return (id, server.Length > 0 ? server : null);
+            return (id, server.Length > 0 ? server : null, button == 1);
         }
     }
 
-    /// <summary>Show the sign-in dialog once; return whether it was accepted and the trimmed entries.</summary>
-    private static (bool Accepted, string UserId, string Homeserver) RunSignIn(IApplication app, string userId, string homeserver, string problem)
+    /// <summary>Show the sign-in dialog once; return the button pressed (1 create account, 2 sign in), or null when closed, and the trimmed entries.</summary>
+    private static (int? Button, string UserId, string Homeserver) RunSignIn(IApplication app, string userId, string homeserver, string problem)
     {
         // Fields with a line for problems; the password is asked for after this, when logging in
         using Dialog dialog = new() { Title = "Sign in to Matrix", Width = Dim.Percent(60) };
@@ -112,16 +117,81 @@ public static class ClientDialogs
         Label serverLabel = new() { Text = "Server address, only when it cannot be found from the user ID:", X = 1, Y = Pos.Bottom(userField) + 1, Width = Dim.Fill(1) };
         TextField serverField = new() { Text = homeserver, X = 1, Y = Pos.Bottom(serverLabel), Width = Dim.Fill(1) };
         Label hint = new() { Text = "For example http://localhost:8008 for a server on this computer.", X = 1, Y = Pos.Bottom(serverField), Width = Dim.Fill(1) };
-        Label problemLabel = new() { Text = problem, X = 1, Y = Pos.Bottom(hint) + 1, Width = Dim.Fill(1) };
-        dialog.Add(intro, userLabel, userField, serverLabel, serverField, hint, problemLabel);
+        Label policy = new() { Text = $"By continuing you accept the user policy: no illegal, abusive or harmful content.\n{UserPolicyUrl}", X = 1, Y = Pos.Bottom(hint) + 1, Width = Dim.Fill(1) };
+        Label problemLabel = new() { Text = problem, X = 1, Y = Pos.Bottom(policy) + 1, Width = Dim.Fill(1) };
+        dialog.Add(intro, userLabel, userField, serverLabel, serverField, hint, policy, problemLabel);
         dialog.AddButton(new Button { Text = "_Quit" });
+        dialog.AddButton(new Button { Text = "_Create account" });
         dialog.AddButton(new Button { Text = "_Sign in", IsDefault = true });
 
         // Run; Enter in a field accepts with the default button
         userField.SetFocus();
         app.Run(dialog);
         // Return entries
-        return (dialog.Result == 1, userField.Text.Trim(), serverField.Text.Trim());
+        return (dialog.Result, userField.Text.Trim(), serverField.Text.Trim());
+    }
+
+    /// <summary>Create the account of <paramref name="userId"/>: ask for a password twice, then the registration token and the server's policies when it has them; return the password to sign in with, or null when cancelled.</summary>
+    /// <param name="app">Running application.</param>
+    /// <param name="userId">User ID to create.</param>
+    /// <param name="homeserver">Server address, or null to find it from the user ID.</param>
+    public static string? CreateAccount(IApplication app, string userId, string? homeserver)
+    {
+        // Password twice
+        if (Dialogs.Ask(app, "Create account", $"A password for {userId}:", secret: true) is not { Length: > 0 } password) return null;
+        if (Dialogs.Ask(app, "Create account", "The same password again:", secret: true) != password)
+        {
+            Dialogs.Error(app, "Create account", "The passwords differ.");
+            return null;
+        }
+
+        // What the server needs; network calls run off the UI thread, whose context is busy waiting
+        using HttpClient http = new() { Timeout = TimeSpan.FromSeconds(30) };
+        UserId id = UserId.Parse(userId);
+        Uri server;
+        RegistrationRequirements requirements;
+        try
+        {
+            (server, requirements) = Task.Run(async () =>
+            {
+                Uri found = await AccountRegistration.FindHomeserverAsync(http, id, homeserver);
+                return (found, await AccountRegistration.GetRequirementsAsync(http, found));
+            }).GetAwaiter().GetResult();
+        }
+        catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException)
+        {
+            Dialogs.Error(app, "Create account", ex is MatrixException { Errcode: ErrorCodes.Forbidden } ? "This server does not let apps create accounts." : ex.Message);
+            return null;
+        }
+        if (!requirements.Supported)
+        {
+            Dialogs.Error(app, "Create account", "This server needs a step this app cannot do, such as a captcha or an email. Create the account on the server's website, then sign in here.");
+            return null;
+        }
+
+        // Token and policies when asked for
+        string? token = requirements.NeedsToken ? Dialogs.Ask(app, "Create account", "Registration token from the server's admin:")?.Trim() : null;
+        if (requirements.NeedsToken && string.IsNullOrEmpty(token)) return null;
+        bool accepted = requirements.Policies.Count == 0 || Dialogs.Choose(app, "Create account", $"The server's policies:\n{string.Join("\n", requirements.Policies.Select(p => $"{p.Name}: {p.Url}"))}", ["_Cancel", "I _accept them"]) == 1;
+        if (!accepted) return null;
+
+        // Register; the login that follows uses the same password
+        try
+        {
+            Task.Run(() => AccountRegistration.RegisterAsync(http, server, id, password, token, requirements.Policies.Count > 0)).GetAwaiter().GetResult();
+        }
+        catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException or UserInteractiveAuthException)
+        {
+            Dialogs.Error(app, "Create account", ex switch
+            {
+                MatrixException { Errcode: ErrorCodes.UserInUse } => $"{userId} is taken; choose another.",
+                UserInteractiveAuthException => "The server did not accept the registration token.",
+                _ => ex.Message,
+            });
+            return null;
+        }
+        // Return password
+        return password;
     }
 
     /// <summary>Ask for a reaction from common emoji or typed text; return null when cancelled.</summary>

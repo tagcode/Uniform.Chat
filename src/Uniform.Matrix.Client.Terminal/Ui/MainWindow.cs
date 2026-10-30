@@ -34,6 +34,7 @@ using global::Terminal.Gui.Views;
 /// <item><description>MainWindow.Admin.cs: room administration: name, avatar, kick, ban and power levels.</description></item>
 /// <item><description>MainWindow.Tools.cs: settings and log windows.</description></item>
 /// <item><description>MainWindow.Calls.cs: voice calls.</description></item>
+/// <item><description>MainWindow.Moderation.cs: reporting, blocking users and deleting the account.</description></item>
 /// </list>
 /// </remarks>
 public sealed partial class MainWindow : Window
@@ -147,6 +148,7 @@ public sealed partial class MainWindow : Window
             new MenuItem { Title = "_Devices…", HelpText = "See and log out sessions", Action = () => _ = ManageDevicesAsync() },
             new MenuItem { Title = "_Settings…", HelpText = "View and change options", Action = ShowSettings },
             new MenuItem { Title = "_Log out…", HelpText = "End the session on the server", Action = LogOut },
+            new MenuItem { Title = "Delete _account…", HelpText = "Deactivate the account for good", Action = DeleteAccount },
             new Line(),
             new MenuItem { Title = "_Quit", HelpText = "Exit, keeping the session", Key = Key.Q.WithCtrl, Action = () => app.RequestStop() },
         ]),
@@ -567,7 +569,7 @@ public sealed partial class MainWindow : Window
 
     /// <summary>Format events of <paramref name="roomId"/> under the state lock.</summary>
     private List<TimelineEntry> Format(string roomId, IEnumerable<ClientEvent> events) => processor.Read(r =>
-        r is not null && r.TryGetRoom(roomId, out Room? room) ? events.Select(e => MessageFormatter.Format(room, e, ownUserId, timeline.FindEvent)).OfType<TimelineEntry>().ToList() : []);
+        r is not null && r.TryGetRoom(roomId, out Room? room) ? events.Where(e => e.StateKey is not null || e.Sender == ownUserId || !r.IgnoredUsers.Contains(e.Sender)).Select(e => MessageFormatter.Format(room, e, ownUserId, timeline.FindEvent)).OfType<TimelineEntry>().ToList() : []);
 
     /// <summary>Reload unsent messages of <paramref name="roomId"/> and show them if it is still open.</summary>
     private async Task RefreshPendingAsync(string roomId)
@@ -682,6 +684,9 @@ public sealed partial class MainWindow : Window
             case "unalias": RemoveAlias(argument); break;
             case "publish": SetDirectoryListing(listed: true); break;
             case "unpublish": SetDirectoryListing(listed: false); break;
+            case "ignore" or "block": SetIgnored(argument, ignored: true); break;
+            case "unignore" or "unblock": SetIgnored(argument, ignored: false); break;
+            case "report": Report(argument); break;
             case "quit" or "exit": app.RequestStop(); break;
             case "help": ShowHelp(); break;
             default: Dialogs.Error(app, "Unknown command", $"/{parts[0]} is not a command. See Help → Commands and keys."); break;
@@ -939,6 +944,9 @@ public sealed partial class MainWindow : Window
         "/encryption     keys, recovery and backup",
         "/recover        unlock old messages with the recovery key",
         "/verify [@user] verify your other device, or a user, with emoji",
+        "/ignore @user   block a user: their messages and invites no longer show; /ignore alone lists them",
+        "/unignore @user unblock a user",
+        "/report [@user] report this room, or a user, to your server's admins; messages from their actions (Enter)",
         "/quit           exit",
         "",
         "Alt+1…9         go to room 1…9",

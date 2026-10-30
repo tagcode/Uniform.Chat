@@ -39,6 +39,37 @@ public sealed record UserInteractiveAuthResponse
     public string? Error { get; init; }
 }
 
+/// <summary>A policy of the <see cref="AuthTypes.Terms"/> stage, such as terms of service, that the user reads and accepts, in one language.</summary>
+public sealed record TermsPolicy
+{
+    /// <summary>Policy key, e.g. <c>terms_of_service</c>.</summary>
+    public required string Id { get; init; }
+    /// <summary>Version of the policy.</summary>
+    public string? Version { get; init; }
+    /// <summary>Name for people, e.g. <c>Terms of Service</c>.</summary>
+    public required string Name { get; init; }
+    /// <summary>Address of the policy document.</summary>
+    public required string Url { get; init; }
+
+    /// <summary>Return the policies of the <see cref="AuthTypes.Terms"/> stage in <paramref name="response"/>, in <paramref name="language"/> when offered, else English, else the first language; empty without the stage.</summary>
+    public static IReadOnlyList<TermsPolicy> From(UserInteractiveAuthResponse response, string language = "en")
+    {
+        // The stage's parameters
+        if (response.Params?.GetValueOrDefault(AuthTypes.Terms)?["policies"] is not JsonObject policies) return [];
+        List<TermsPolicy> found = [];
+        foreach ((string id, JsonNode? policy) in policies)
+        {
+            // One language of each
+            if (policy is not JsonObject fields) continue;
+            JsonObject? text = fields[language] as JsonObject ?? fields["en"] as JsonObject ?? fields.Select(f => f.Value).OfType<JsonObject>().FirstOrDefault();
+            if (text?["url"]?.GetValue<string>() is not string url) continue;
+            found.Add(new TermsPolicy { Id = id, Version = fields["version"]?.GetValue<string>(), Name = text["name"]?.GetValue<string>() ?? id, Url = url });
+        }
+        // Return policies
+        return found;
+    }
+}
+
 /// <summary>One accepted combination of auth stages.</summary>
 public sealed record AuthFlow
 {

@@ -11,7 +11,7 @@ using Uniform.Matrix.Audio;
 public sealed class AndroidAudioDevices(Context context, bool loudspeaker) : IAudioDevices
 {
     /// <summary>Open the microphone.</summary>
-    public IWaveIn OpenMicrophone() => new AndroidMicrophone();
+    public IWaveIn OpenMicrophone() => new AndroidMicrophone(context);
 
     /// <summary>Open the earpiece or loudspeaker.</summary>
     public IWavePlayer OpenSpeaker() => new AndroidSpeaker(context, loudspeaker);

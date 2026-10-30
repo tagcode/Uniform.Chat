@@ -143,3 +143,21 @@ Admin user manages other users through matrix protocol.
 
 - The Text Size setting doesn't affect the text size in the chat window, nor the room title, nor the "Uniform.Matrix" application name.
 - The range of sizes should be wider, add: very small, very large
+
+# Google Play
+
+
+
+- User-generated content: Reporting, Blocking, Accept button for server's Terms
+- Background sync service: The app keeps syncing with the screen off through a foreground service of type remoteMessaging. Play allows that type only for relaying texts to another device, such as a web client paired with the phone. A permanent sync connection doesn't fit, and reviewers check this against a demo video. Ways out:
+  - Use push notifications through a push gateway. This is what Play-store Matrix clients do; it's the push work your approved-packages list already allows.
+  - Keep the service only in a separate build for direct APK or F-Droid releases.
+  - Declare it as specialUse with a written justification, which Google reviews case by case and may refuse.
+- Service type for calls. Calls now use the microphone type. The type Google intends for voice-over-IP calls is phoneCall, together with microphone and the MANAGE_OWN_CALLS permission. Ideally the app would also register its calls with Android's telephony system. The demo video is simple: "user starts a call".
+- Privacy policy URL
+  - can be short: the app sends data only to the server the user chooses, and the developer collects nothing.
+  - ser-docs/Uniform.Matrix.Client.Android/privacy-policy.md
+- Microphone permission timing: the app asks for it at startup. Asking the first time a call starts is better practice, and it's what Google's permission guidance recommends.
+- The name: "Matrix" is a trademark of The Matrix.org Foundation, and the Metadata and Intellectual Property policies apply to store names. 
+  - Foundation's trademark guidelines
+  - Listing title like "Uniform — Matrix chat", before you publish.

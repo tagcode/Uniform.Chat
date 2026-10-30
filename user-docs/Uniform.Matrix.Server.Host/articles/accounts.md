@@ -16,8 +16,16 @@ To let people register in their own account:
    ```
 
    Or change `Server:Registration` in the settings window and Apply, as above.
-2. Register in a client that lets you type the homeserver address, such as Element Desktop: choose "Create account", edit the homeserver, and enter `http://localhost:8008`. With `Token`, the client asks for the token.
+2. Register in a client that lets you type the homeserver address, such as the Uniform.Matrix apps or Element Desktop: choose "Create account", give the homeserver `http://localhost:8008`, and with `Token` the token.
 3. Close registration again when you are done.
+
+To have new users accept your terms of service or privacy policy, set `Server:TermsUrl` and `Server:PrivacyPolicyUrl` to the addresses of the documents. Registering then shows them with their links, and the account is created only after the user accepts them. When you change the documents, raise `Server:PoliciesVersion`.
+
+## Deleting accounts
+
+Users can delete their own account from their client, confirming with their password; in the Uniform.Matrix apps, see their guides. The account is deactivated: the user leaves every room, their display name and avatar are cleared, every device is logged out, and the password no longer works. The user ID stays taken, so nobody can register it again and pose as them. Messages they sent stay in the rooms.
+
+The admin can deactivate and reactivate accounts in the dashboard's Users window.
 
 Registration also works from the command line:
 

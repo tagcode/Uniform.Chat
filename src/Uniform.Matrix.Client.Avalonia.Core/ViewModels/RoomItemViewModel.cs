@@ -138,10 +138,15 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 /// <param name="IsInvited">Whether the user is invited but not joined.</param>
 /// <param name="CanVerify">Whether they can be verified from here: someone else, with encryption on.</param>
 /// <param name="IsVerified">Whether this device has verified them.</param>
-public sealed record MemberItem(string UserId, string Name, bool IsInvited, bool CanVerify, bool IsVerified = false)
+/// <param name="IsOwn">Whether this is the user themselves.</param>
+/// <param name="IsBlocked">Whether the user has blocked them.</param>
+public sealed record MemberItem(string UserId, string Name, bool IsInvited, bool CanVerify, bool IsVerified = false, bool IsOwn = false, bool IsBlocked = false)
 {
+    /// <summary>Get the text of the button that blocks or unblocks them.</summary>
+    public string BlockText => IsBlocked ? "Unblock" : "Block";
+
     /// <summary>Get the second line, e.g. <c>@bob:example.org · invited</c> or <c>@bob:example.org · verified</c>.</summary>
-    public string Details => string.Join(" · ", new[] { UserId, IsInvited ? "invited" : null, IsVerified ? "verified" : null }.OfType<string>());
+    public string Details => string.Join(" · ", new[] { UserId, IsInvited ? "invited" : null, IsVerified ? "verified" : null, IsBlocked ? "blocked" : null }.OfType<string>());
 
     /// <summary>Whether to offer verifying: possible, and not done yet.</summary>
     public bool ShowVerify => CanVerify && !IsVerified;

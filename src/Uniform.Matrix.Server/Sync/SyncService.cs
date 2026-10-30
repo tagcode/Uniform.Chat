@@ -268,8 +268,9 @@ public sealed class SyncService
         List<CurrentStateRow> memberships = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == requester.UserId).ToListAsync(cancellationToken);
         HashSet<string> forgotten = [.. await db.ForgottenRooms.AsNoTracking().Where(f => f.UserId == requester.UserId).Select(f => f.RoomId).ToListAsync(cancellationToken)];
         JsonObject ruleset = await pushRules.GetRulesetAsync(requester.UserId, cancellationToken);
+        HashSet<string> ignored = await Visibility.IgnoredUsersAsync(db, requester.UserId, cancellationToken);
 
-        // One section per room with something to say
+        // One section per room with something to say; invites from ignored users are not
         JsonObject join = [], invite = [], leave = [];
         foreach (CurrentStateRow member in memberships)
         {
@@ -281,6 +282,7 @@ public sealed class SyncService
                     if (await BuildRoomAsync(db, requester, member, initial ? null : from, current, filter, ruleset, cancellationToken) is JsonObject joined) join[member.RoomId] = joined;
                     break;
                 case Memberships.Invite when from is null || member.Stream > from:
+                    if (ignored.Count > 0 && ignored.Contains(await db.Events.IgnoreQueryFilters().AsNoTracking().Where(e => e.EventId == member.EventId).Select(e => e.Sender).SingleOrDefaultAsync(cancellationToken) ?? "")) break;
                     invite[member.RoomId] = new JsonObject { ["invite_state"] = new JsonObject { ["events"] = new JsonArray([.. await StrippedStateAsync(db, member, cancellationToken)]) } };
                     break;
                 case Memberships.Leave or Memberships.Ban when from is null ? filter.IncludeLeave : member.Stream > from:
@@ -293,7 +295,7 @@ public sealed class SyncService
         long invitesSince = from ?? -1;
         foreach (RemoteInviteRow remote in await db.RemoteInvites.AsNoTracking().Where(i => i.UserId == requester.UserId && i.Stream > invitesSince && i.Stream <= current).ToListAsync(cancellationToken))
         {
-            if (!filter.IncludesRoom(remote.RoomId) || memberships.Any(m => m.RoomId == remote.RoomId)) continue;
+            if (!filter.IncludesRoom(remote.RoomId) || memberships.Any(m => m.RoomId == remote.RoomId) || ignored.Contains(remote.Sender)) continue;
             if (remote.Membership == Memberships.Invite) invite[remote.RoomId] = new JsonObject { ["invite_state"] = new JsonObject { ["events"] = RemoteInviteState(remote) } };
             else if (from is not null) leave[remote.RoomId] = new JsonObject { ["timeline"] = new JsonObject { ["events"] = new JsonArray() }, ["state"] = new JsonObject { ["events"] = new JsonArray() } };
         }

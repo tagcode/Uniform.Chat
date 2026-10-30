@@ -81,6 +81,38 @@
       </StackPanel>
     </Border>
 
+    <!-- Blocked users -->
+    <StackPanel Spacing="4" IsVisible="{Binding HasBlockedUsers}">
+      <TextBlock Classes="subtitle" Text="Blocked users" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Their messages and invites do not show." />
+      <ItemsControl ItemsSource="{Binding BlockedUsers}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+              <TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Unblock" Tag="{Binding}" Click="OnUnblockClick" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Deleting the account -->
+    <StackPanel Spacing="6">
+      <TextBlock Classes="subtitle" Text="Account" />
+      <Button Classes="danger" Content="Delete account…" Command="{Binding StartDeleteAccountCommand}" HorizontalAlignment="Left" IsVisible="{Binding !IsDeletingAccount}" />
+      <Border Classes="notice" IsVisible="{Binding IsDeletingAccount}">
+        <StackPanel Spacing="6">
+          <TextBlock TextWrapping="Wrap" Text="Delete the account for good? You leave every room, your name and picture are removed, and every device is signed out. The user ID cannot be used again. Enter your password to confirm." />
+          <TextBox x:Name="DeletePasswordBox" Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" />
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+            <Button Classes="danger" Content="Delete account" Command="{Binding ConfirmDeleteAccountCommand}" />
+            <Button Content="Cancel" Command="{Binding CancelDeleteAccountCommand}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+
     <TextBlock Text="{Binding Message}" TextWrapping="Wrap" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
   </StackPanel>
 </UserControl>

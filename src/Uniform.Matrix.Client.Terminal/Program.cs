@@ -48,13 +48,23 @@ using IApplication app = Application.Create();
 app.Init();
 builder.Services.AddSingleton(app);
 
-// First start: ask for the user ID in the window; it is saved once the login works
+// First start: ask for the user ID in the window, creating the account when asked; it is saved once the login works
 (string UserId, string? Homeserver)? entered = null;
-if (!hasUserId)
+while (!hasUserId)
 {
-    entered = ClientDialogs.AskSignIn(app, userId, builder.Configuration[homeserverKey]);
-    if (entered is not var (enteredUserId, enteredHomeserver)) return 0;
-    builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { [userIdKey] = enteredUserId, [homeserverKey] = enteredHomeserver ?? builder.Configuration[homeserverKey] });
+    if (ClientDialogs.AskSignIn(app, userId, builder.Configuration[homeserverKey]) is not var (enteredUserId, enteredHomeserver, createAccount)) return 0;
+    string? newPassword = null;
+    if (createAccount && (newPassword = ClientDialogs.CreateAccount(app, enteredUserId, enteredHomeserver ?? builder.Configuration[homeserverKey])) is null)
+    {
+        // Back to the form
+        userId = enteredUserId;
+        continue;
+    }
+    entered = (enteredUserId, enteredHomeserver);
+    Dictionary<string, string?> signIn = new() { [userIdKey] = enteredUserId, [homeserverKey] = enteredHomeserver ?? builder.Configuration[homeserverKey] };
+    if (newPassword is not null) signIn[$"{MatrixOptions.Section}:{nameof(MatrixOptions.Password)}"] = newPassword;
+    builder.Configuration.AddInMemoryCollection(signIn);
+    break;
 }
 
 // Client services and options, then the terminal's own display and audio options

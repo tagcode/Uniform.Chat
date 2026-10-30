@@ -26,19 +26,39 @@ public sealed record DeviceItem(string DeviceId, string Name, string Details, bo
     public bool CanSignOut => !IsThisDevice;
 }
 
-/// <summary>Encryption status of this device and the account, with what is missing: set up recovery, recover with a key, or verify with another device.</summary>
+/// <summary>Encryption status of this device and the account, with what is missing: set up recovery, recover with a key, or verify with another device; also the blocked users, and deleting the account.</summary>
 public sealed partial class SecurityViewModel : ViewModelBase
 {
     private readonly ClientConnection connection;
     private readonly Func<Task> recovered;
+    private readonly Func<Task>? blockingChanged;
+    private readonly Func<Task>? accountDeleted;
 
-    /// <summary>Create the panel for <paramref name="connection"/>; <paramref name="recovered"/> runs after keys were restored, to show messages again.</summary>
-    public SecurityViewModel(ClientConnection connection, Func<Task> recovered)
+    /// <summary>Create the panel for <paramref name="connection"/>.</summary>
+    /// <param name="connection">The signed-in account.</param>
+    /// <param name="recovered">Runs after keys were restored, to show messages again.</param>
+    /// <param name="blockingChanged">Runs after a user was unblocked, to show their messages again.</param>
+    /// <param name="accountDeleted">Runs after the account was deleted, to return to the sign-in form.</param>
+    public SecurityViewModel(ClientConnection connection, Func<Task> recovered, Func<Task>? blockingChanged = null, Func<Task>? accountDeleted = null)
     {
         // Status loads with RefreshAsync
         this.connection = connection;
         this.recovered = recovered;
+        this.blockingChanged = blockingChanged;
+        this.accountDeleted = accountDeleted;
     }
+
+    /// <summary>Users the account has blocked, by user ID.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasBlockedUsers))]
+    public partial IReadOnlyList<string> BlockedUsers { get; set; } = [];
+
+    /// <summary>Get whether anyone is blocked.</summary>
+    public bool HasBlockedUsers => BlockedUsers.Count > 0;
+
+    /// <summary>Whether deleting the account waits for the password.</summary>
+    [ObservableProperty]
+    public partial bool IsDeletingAccount { get; set; }
 
     /// <summary>Status lines: device, fingerprint, cross-signing, verification, backup and recovery.</summary>
     [ObservableProperty]
@@ -105,6 +125,9 @@ public sealed partial class SecurityViewModel : ViewModelBase
     /// <summary>Load the status from the server and decide what to offer.</summary>
     public async Task RefreshAsync()
     {
+        // Blocked users as the last sync told
+        LoadBlockedUsers();
+
         // Encryption starts shortly after sign-in
         IsBusy = true;
         await connection.Crypto.WhenStarted.WaitAsync(TimeSpan.FromSeconds(15)).ContinueWith(_ => { }, TaskScheduler.Default);
@@ -289,6 +312,80 @@ public sealed partial class SecurityViewModel : ViewModelBase
         SigningOut = null;
         Password = "";
     }
+
+    /// <summary>Unblock <paramref name="userId"/>, so their messages and invites show again.</summary>
+    public async Task UnblockAsync(string userId)
+    {
+        // Assert a login
+        if (!connection.Session.WhenReady.IsCompletedSuccessfully) return;
+        try
+        {
+            await connection.Processor.SetIgnoredAsync(await connection.Session.WhenReady, userId, ignored: false);
+            Message = $"Unblocked {userId}.";
+        }
+        catch (Exception exception) when (exception is MatrixException or HttpRequestException)
+        {
+            // On error tell
+            Message = $"Unblocking {userId} failed: {exception.Message}";
+            return;
+        }
+        LoadBlockedUsers();
+        if (blockingChanged is not null) await blockingChanged();
+    }
+
+    /// <summary>Ask for the password to delete the account.</summary>
+    [RelayCommand]
+    private void StartDeleteAccount()
+    {
+        // Confirmation with the password
+        Password = "";
+        IsDeletingAccount = true;
+    }
+
+    /// <summary>Keep the account.</summary>
+    [RelayCommand]
+    private void CancelDeleteAccount()
+    {
+        // Forget the password too
+        IsDeletingAccount = false;
+        Password = "";
+    }
+
+    /// <summary>Delete, i.e. deactivate, the account on the server with <see cref="Password"/>, then return to the sign-in form.</summary>
+    [RelayCommand]
+    private async Task ConfirmDeleteAccountAsync()
+    {
+        // Assert a login
+        if (!connection.Session.WhenReady.IsCompletedSuccessfully) return;
+        IsBusy = true;
+        try
+        {
+            MatrixClient client = await connection.Session.WhenReady;
+            await client.DeactivateAccountAsync(Password);
+            IsDeletingAccount = false;
+            Password = "";
+        }
+        catch (UserInteractiveAuthException)
+        {
+            Message = "The password was not accepted.";
+            return;
+        }
+        catch (Exception exception) when (exception is MatrixException or HttpRequestException)
+        {
+            Message = $"Deleting the account failed: {exception.Message}";
+            return;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+        // Done; the account is gone, so is the session
+        if (accountDeleted is not null) await accountDeleted();
+    }
+
+    /// <summary>Fill <see cref="BlockedUsers"/> from the account data the sync brought.</summary>
+    private void LoadBlockedUsers() => BlockedUsers = connection.Processor.Read(store => store?.IgnoredUsers.Order(StringComparer.Ordinal).ToList() ?? []);
 
     /// <summary>Load the account's devices with their trust from the device keys.</summary>
     private async Task LoadDevicesAsync()

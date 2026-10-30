@@ -28,14 +28,15 @@ internal sealed class LocalServer : IAsyncDisposable
         this.directory = directory;
     }
 
-    /// <summary>Start a server with its own data directory.</summary>
-    public static async Task<LocalServer> StartAsync()
+    /// <summary>Start a server with its own data directory, and <paramref name="settings"/> on top of open registration.</summary>
+    public static async Task<LocalServer> StartAsync(IReadOnlyDictionary<string, string?>? settings = null)
     {
         // Server as the app runs it, quietly
         string directory = Directory.CreateTempSubdirectory("uniform-matrix-gui-server-").FullName;
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Matrix.Client.Avalonia.Core.Tests.Server", EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Server:ServerName"] = ServerName, ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory });
+        if (settings is not null) builder.Configuration.AddInMemoryCollection(settings);
         builder.Logging.ClearProviders();
         builder.AddMatrixServer();
         WebApplication app = builder.Build();
@@ -44,6 +45,9 @@ internal sealed class LocalServer : IAsyncDisposable
         // Return server
         return new LocalServer(app, directory);
     }
+
+    /// <summary>The server's services, e.g. to look at reports.</summary>
+    public IServiceProvider Services => app.Services;
 
     /// <summary>Register a user with our protocol client and return it logged in.</summary>
     public async Task<MatrixClient> RegisterAsync(string name, string password = "password")
@@ -62,6 +66,7 @@ internal sealed class LocalServer : IAsyncDisposable
         DeviceName = "Uniform.Matrix tests",
         Settings = new Dictionary<string, string?> { ["Storage:DataDirectory"] = dataDirectory, ["Matrix:SyncTimeout"] = "00:00:02" },
         ConfigureServices = services => services.AddHttpClient(ClientSession.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => app.GetTestServer().CreateHandler()),
+        HttpHandler = () => app.GetTestServer().CreateHandler(),
     };
 
     /// <summary>Stop the server and delete its data.</summary>

@@ -7,11 +7,13 @@
   <!-- Voice: the microphone, and switching call audio to the loudspeaker -->
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-  <!-- Calls go on in the background: a foreground service of the microphone type -->
+  <!-- Calls go on in the background: a foreground service of the phone call and microphone types; managing its own calls is what the phone call type needs -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-  <!-- Messages and calls arrive with the screen off: a foreground service that keeps syncing -->
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+  <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+  <!-- Messages and calls arrive with the screen off: a foreground service of the special use type that keeps syncing -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
   <!-- Notifications of messages, incoming calls and the ongoing call -->
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
   <!-- Ringing: vibration, the incoming call over the lock screen, and the screen off near the ear -->

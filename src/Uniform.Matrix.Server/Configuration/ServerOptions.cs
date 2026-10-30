@@ -29,6 +29,12 @@ public sealed record ServerOptions
     /// <summary>Comma-separated tokens that allow registering when <see cref="Registration"/> is <see cref="RegistrationMode.Token"/>.</summary>
     [Secret]
     public string? RegistrationTokens { get; set; }
+    /// <summary>Address of the terms of service that new users accept when registering, e.g. <c>https://example.org/terms.html</c>; none when unset.</summary>
+    public string? TermsUrl { get; set; }
+    /// <summary>Address of the privacy policy that new users accept when registering; none when unset.</summary>
+    public string? PrivacyPolicyUrl { get; set; }
+    /// <summary>Version of <see cref="TermsUrl"/> and <see cref="PrivacyPolicyUrl"/>; change it when they change.</summary>
+    public string PoliciesVersion { get; set; } = "1.0";
 
     /// <summary>Addresses of reverse proxies whose <c>X-Forwarded-For</c> and <c>X-Forwarded-Proto</c> headers are believed, separated by commas, e.g. <c>192.168.1.2</c>; without them, the proxy's own address counts for rate limits and logs.</summary>
     [RestartRequired]

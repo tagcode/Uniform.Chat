@@ -1,16 +1,21 @@
 namespace Uniform.Matrix.Client.Android.Audio;
 
+using global::Android.Content;
 using global::Android.Media;
 using global::Android.Media.Audiofx;
 using NAudio.Wave;
 using Uniform.Matrix.Audio;
 
 /// <summary>The phone's microphone through <see cref="AudioRecord"/>, as an NAudio <see cref="IWaveIn"/> recording the voice format in 20 ms pieces.</summary>
-/// <remarks>Records from Android's voice communication source, which applies the phone's own echo cancellation and noise suppression where it has them; those effects are also turned on explicitly when available.</remarks>
-public sealed class AndroidMicrophone : IWaveIn
+/// <remarks>Records in <see cref="CommunicationMode"/> from Android's voice communication source, which applies the phone's own echo cancellation and noise suppression where it has them; those effects are also turned on explicitly when available, and kept for the recording, as a collected effect is released.</remarks>
+/// <param name="context">Context for the audio service.</param>
+public sealed class AndroidMicrophone(Context context) : IWaveIn
 {
     private const int ChunkBytes = VoiceFormat.FrameSamples * 2;
     private AudioRecord? record;
+    private AcousticEchoCanceler? echoCanceler;
+    private NoiseSuppressor? noiseSuppressor;
+    private bool inCommunication;
     private Thread? reader;
     private volatile bool recording;
 
@@ -28,11 +33,15 @@ public sealed class AndroidMicrophone : IWaveIn
     {
         // Assert not running, then the recorder with room for a few pieces
         if (recording) return;
+        if (!inCommunication) CommunicationMode.Enter(context);
+        inCommunication = true;
         int minimum = AudioRecord.GetMinBufferSize(VoiceFormat.SampleRate, ChannelIn.Mono, Encoding.Pcm16bit);
         record = new AudioRecord(AudioSource.VoiceCommunication, VoiceFormat.SampleRate, ChannelIn.Mono, Encoding.Pcm16bit, Math.Max(minimum, ChunkBytes * 4));
         if (record.State != State.Initialized) throw new InvalidOperationException("The microphone could not be opened; is the microphone permission granted?");
-        if (AcousticEchoCanceler.IsAvailable) AcousticEchoCanceler.Create(record.AudioSessionId)?.SetEnabled(true);
-        if (NoiseSuppressor.IsAvailable) NoiseSuppressor.Create(record.AudioSessionId)?.SetEnabled(true);
+        echoCanceler ??= AcousticEchoCanceler.IsAvailable ? AcousticEchoCanceler.Create(record.AudioSessionId) : null;
+        echoCanceler?.SetEnabled(true);
+        noiseSuppressor ??= NoiseSuppressor.IsAvailable ? NoiseSuppressor.Create(record.AudioSessionId) : null;
+        noiseSuppressor?.SetEnabled(true);
 
         // Read until stopped
         recording = true;
@@ -56,8 +65,14 @@ public sealed class AndroidMicrophone : IWaveIn
     {
         // Stop, then release
         StopRecording();
+        echoCanceler?.Release();
+        noiseSuppressor?.Release();
+        echoCanceler = null;
+        noiseSuppressor = null;
         record?.Release();
         record = null;
+        if (inCommunication) CommunicationMode.Exit(context);
+        inCommunication = false;
     }
 
     /// <summary>Read 20 ms pieces and raise them, until stopped or failed.</summary>

@@ -167,18 +167,20 @@
                       <ItemsControl ItemsSource="{Binding Members}">
                         <ItemsControl.ItemTemplate>
                           <DataTemplate x:DataType="vm:MemberItem">
-                            <Grid ColumnDefinitions="*,Auto" Margin="0,2">
+                            <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,2">
                               <StackPanel Grid.Column="0">
                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
                               </StackPanel>
                               <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyMemberClick" IsVisible="{Binding ShowVerify}" />
+                              <Button Grid.Column="2" Classes="link" Margin="8,0,0,0" Content="{Binding BlockText}" Click="OnBlockMemberClick" IsVisible="{Binding !IsOwn}" />
                             </Grid>
                           </DataTemplate>
                         </ItemsControl.ItemTemplate>
                       </ItemsControl>
                     </ScrollViewer>
                     <Separator />
+                    <Button Content="Report room…" Click="OnReportRoomClick" HorizontalAlignment="Stretch" />
                     <Button Content="Leave room" Command="{Binding LeaveRoomCommand}" HorizontalAlignment="Stretch" />
                   </StackPanel>
                 </Flyout>

@@ -59,7 +59,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         this.notifier = notifier;
         Settings = settings;
         Call = call;
-        Messages = new MessageList(connection.UserId);
+        Messages = new MessageList(connection.UserId) { IsBlocked = connection.Processor.IsIgnored };
         Messages.Items.CollectionChanged += (_, e) => ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
         IsNarrow = singlePane;
         StatusText = Describe(connection.Status.State, connection.Status.Message);
@@ -336,6 +336,49 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public Task DeleteAsync(MessageViewModel message) =>
         SelectedRoom is { IsInvite: false } room && message.CanDelete ? RunAsync("Deleting the message", client => client.RedactAsync(room.RoomId, message.EventId!)) : Task.CompletedTask;
 
+    /// <summary>Reasons offered when reporting a message, a user or a room.</summary>
+    public static IReadOnlyList<string> ReportReasons { get; } = ["Spam", "Harassment or hate", "Sexual or violent content", "Illegal content", "Other"];
+
+    /// <summary>Report <paramref name="message"/> of the open room to the admins of the user's server.</summary>
+    public async Task ReportMessageAsync(MessageViewModel message, string reason)
+    {
+        // Sent messages of the open room only
+        if (SelectedRoom is not { IsInvite: false } room || message.EventId is null || message.IsPending) return;
+        if (await RunAsync("Reporting the message", client => client.ReportEventAsync(room.RoomId, message.EventId, reason))) ui.Post(() => Notice = "Reported to the admins of your server. You can also block the sender from the message's menu.");
+    }
+
+    /// <summary>Report the user <paramref name="userId"/> to the admins of the user's server.</summary>
+    public async Task ReportUserAsync(string userId, string reason)
+    {
+        // Anyone but oneself
+        if (userId == connection.UserId) return;
+        if (await RunAsync("Reporting the user", client => client.ReportUserAsync(userId, reason))) ui.Post(() => Notice = $"Reported {userId} to the admins of your server.");
+    }
+
+    /// <summary>Report the open room to the admins of the user's server.</summary>
+    public async Task ReportRoomAsync(string reason)
+    {
+        // A room that is open
+        if (SelectedRoom is not RoomItemViewModel room) return;
+        if (await RunAsync("Reporting the room", client => client.ReportRoomAsync(room.RoomId, reason))) ui.Post(() => Notice = $"Reported {room.Name} to the admins of your server.");
+    }
+
+    /// <summary>Block <paramref name="userId"/>, so their messages and invites no longer show, or unblock them.</summary>
+    public async Task SetBlockedAsync(string userId, bool blocked)
+    {
+        // Anyone but oneself; the server keeps the list, as m.ignored_user_list
+        if (userId == connection.UserId) return;
+        if (!await RunAsync(blocked ? "Blocking" : "Unblocking", client => connection.Processor.SetIgnoredAsync(client, userId, blocked))) return;
+
+        // Show the room again without, or with, their messages
+        ui.Post(() =>
+        {
+            Notice = blocked ? $"Blocked {userId}: their messages and invites no longer show. Unblock them in Security and recovery." : $"Unblocked {userId}.";
+            LoadMembers();
+            if (SelectedRoom is RoomItemViewModel open) _ = OpenRoomAsync(open.RoomId);
+        });
+    }
+
     /// <summary>Return whether there is something to send.</summary>
     private bool CanSend() => Composer.Trim().Length > 0;
 
@@ -574,7 +617,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                 .Where(member => member.Membership is Memberships.Join or Memberships.Invite)
                 .OrderBy(member => member.Membership == Memberships.Join ? 0 : 1)
                 .ThenBy(member => room.GetMemberDisplayName(member.UserId), StringComparer.CurrentCultureIgnoreCase)
-                .Select(member => new MemberItem(member.UserId, room.GetMemberDisplayName(member.UserId), member.Membership == Memberships.Invite, canVerify && member.UserId != connection.UserId, canVerify && member.UserId != connection.UserId && connection.Crypto.IsUserVerified(member.UserId)))
+                .Select(member => new MemberItem(member.UserId, room.GetMemberDisplayName(member.UserId), member.Membership == Memberships.Invite, canVerify && member.UserId != connection.UserId, canVerify && member.UserId != connection.UserId && connection.Crypto.IsUserVerified(member.UserId), member.UserId == connection.UserId, store.IgnoredUsers.Contains(member.UserId)))
                 .ToList()
             : []);
         foreach (MemberItem member in members) Members.Add(member);
@@ -634,7 +677,10 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         {
             await connection.Processor.RetryStoredEncryptedAsync();
             if (SelectedRoom is RoomItemViewModel room) await OpenRoomAsync(room.RoomId);
-        });
+        }, async () =>
+        {
+            if (SelectedRoom is RoomItemViewModel room) await OpenRoomAsync(room.RoomId);
+        }, signOut);
         Security = security;
         await security.RefreshAsync();
     }
@@ -827,7 +873,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     private void Notify(SyncChanges changes)
     {
         // Collect under the lock, at most a few per sync; history and the first sync's invites are old news
-        List<(string Title, string Body)> notifications = connection.Processor.Read(_ =>
+        List<(string Title, string Body)> notifications = connection.Processor.Read(store =>
         {
             List<(string Title, string Body)> found = [];
             foreach (TimelineBatch batch in changes.Timeline)
@@ -835,7 +881,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                 if (IsActive && batch.Room.RoomId == SelectedRoom?.RoomId) continue;
                 foreach (ClientEvent clientEvent in batch.Events.Where(e => e.Type == EventTypes.RoomMessage && e.Sender != connection.UserId && e.Timestamp >= startedAt.AddMinutes(-1)))
                 {
-                    if (!clientEvent.TryGetContent(out MessageContent? content) || content.RelatesTo?.RelType == RelationTypes.Replace) continue;
+                    if (store?.IgnoredUsers.Contains(clientEvent.Sender) == true || !clientEvent.TryGetContent(out MessageContent? content) || content.RelatesTo?.RelType == RelationTypes.Replace) continue;
                     bool mentioned = content.Mentions?.UserIds?.Contains(connection.UserId) == true || content.Mentions?.Room == true;
                     if (!batch.Room.IsDirect && !mentioned) continue;
                     string sender = batch.Room.GetMemberDisplayName(clientEvent.Sender);
@@ -843,7 +889,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                     found.Add((batch.Room.IsDirect ? sender : $"{sender} in {batch.Room.DisplayName}", content.MessageType == MessageTypes.Emote ? $"* {sender} {text}" : text));
                 }
             }
-            foreach (Room invited in changes.Invited.Where(r => notifiedChanges && !roomsById.ContainsKey(r.RoomId)))
+            foreach (Room invited in changes.Invited.Where(r => notifiedChanges && !roomsById.ContainsKey(r.RoomId) && store?.IgnoredUsers.Contains(r.InviterUserId ?? "") != true))
                 found.Add(("Invitation", $"{(invited.InviterUserId is string inviter ? invited.GetMemberDisplayName(inviter) : "Someone")} invited you to {invited.DisplayName}"));
             return found.Take(3).ToList();
         });
