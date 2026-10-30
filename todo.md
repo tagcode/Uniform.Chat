@@ -157,3 +157,26 @@ Admin user manages other users through matrix protocol.
   - Foundation's trademark guidelines
   - Listing title like "Uniform — Matrix chat", before you publish.
 - Registering calls with Android's telephony system (ConnectionService).
+
+# Terminal remote admin
+
+For terminal client, server remote admin features. 
+
+# Android client
+
+- tiny ui glitch: When phone goes online, a message from outbox gets sent, it disappears from gui and appears once it is received. Instead "Not sent" should change to "sending" and then status disappears.
+
+# Logging
+
+- For desktop and android client
+  - A settings for log level.
+  - A window for perusing log files.
+
+# Encryption
+
+- Settings for encryption strength. Key size
+
+# Local encryption
+
+- A) SQLCipher (the SQLitePCLRaw.bundle_e_sqlcipher package) encrypts the whole database. The key goes into the Android Keystore, Windows DPAPI, or the Linux Secret Service.
+- B) Own encryption: AES-GCM on the message and outbox contents with a key from the same keystores. No new dependency.

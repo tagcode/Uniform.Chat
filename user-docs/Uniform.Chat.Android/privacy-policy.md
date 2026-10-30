@@ -26,9 +26,9 @@ What your server does with the data is set by its operator's own privacy policy 
 
 ## What stays on your device
 
-The apps store your session, your messages, your encryption keys and your settings on your device, so that they work offline and start quickly. The encryption keys are stored encrypted. Signing out ends the session on the server; uninstalling the Android app removes everything it stored.
+The apps store your session, your messages, your encryption keys and your settings on your device, so that they work offline and start quickly. The encryption keys for network traffic are stored encrypted. Room messages are stored locally unencrypted, so that messages can be searched. Signing out ends the session on the server; uninstalling the Android app removes everything it stored.
 
-The apps keep a log of their own activity on the device, to help you find problems. It stays on the device unless you share it yourself.
+The apps keep a log files on the device, to help you find problems. They stay on the device.
 
 ## Permissions on Android
 
