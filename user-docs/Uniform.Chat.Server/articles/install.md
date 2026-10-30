@@ -15,7 +15,7 @@ The server is a Matrix homeserver: it keeps accounts, rooms and messages, and cl
 
 ## Install
 
-Download `uniform-chat-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
+Download `uniform-chat-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The program is `uniform-chat-server`, or `uniform-chat-server.exe` on Windows. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
 
 To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Chat.Server --` from the repository root in place of the program in the examples below.
 
@@ -23,7 +23,7 @@ To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft
 
 A typical server on the internet runs behind a reverse proxy, such as nginx, which holds the HTTPS certificate; the server itself listens on plain HTTP on the same machine only. The example below is for `example.org`, with federation, sign-up by registration token, and voice calls through a TURN server; change the names, and leave out what you do not use.
 
-Write the settings to `~/.config/uniform-matrix-server-host/settings.json` of the user that runs the server, or, as a [system service](xref:Uniform.Chat.Server.Service.Article), to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`. Make the file readable only by that user, as it holds secrets.
+Write the settings to `~/.config/uniform-chat-server/settings.json` of the user that runs the server, or, as a [system service](xref:Uniform.Chat.Server.Service.Article), to `/etc/uniform-chat-server/settings.json`. Make the file readable only by that user, as it holds secrets.
 
 ```json
 {

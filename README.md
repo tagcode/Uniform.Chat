@@ -48,8 +48,8 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 │ Requests:   1520 answered, 3 in progress, 2 failed                               │
 │ Accounts:   4 users, 3 rooms                                                     │
 │                                                                                  │
-│ Data:       /home/alice/.local/share/uniform-matrix-server-host                  │
-│ Log:        /home/alice/.local/share/uniform-matrix-server-host/logs/2026-10-26… │
+│ Data:       /home/alice/.local/share/uniform-chat-server                         │
+│ Log:        /home/alice/.local/share/uniform-chat-server/logs/2026-10-26…        │
 │                                                                                  │
 │ F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q stops it.    │
 └──────────────────────────────────────────────────────────────────────────────────┘

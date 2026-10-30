@@ -15,9 +15,10 @@ Accounts, rooms, messages, sync, profiles, typing, receipts, the room directory,
 - [Run with the dashboard](xref:Uniform.Chat.Server.Dashboard.Article): the terminal dashboard and its windows.
 - [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article): as a background or systemd service.
 - [Settings](xref:Uniform.Chat.Server.Settings.Article): every setting and where settings come from.
-- [Accounts](xref:Uniform.Chat.Server.Accounts.Article): creating accounts and registration.
+- [User Management](xref:Uniform.Chat.Server.UserManagement.Article): creating accounts and registration.
 - [Connecting clients](xref:Uniform.Chat.Server.Clients.Article): the address clients use.
 - [Files](xref:Uniform.Chat.Server.Files.Article): where the database, keys, media and logs are.
+- [Updating](xref:Uniform.Chat.Server.Updating.Article): new versions, and moving a server from the names before Uniform Chat.
 - [Troubleshooting](xref:Uniform.Chat.Server.Troubleshooting.Article): common problems.
 
 For apps to chat with, see the guides of the [app for Windows, Linux and Android](https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Desktop/index.md) and the [terminal client](https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Terminal/index.md).

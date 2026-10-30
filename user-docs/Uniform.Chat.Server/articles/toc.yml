@@ -6,11 +6,13 @@
   uid: Uniform.Chat.Server.Service.Article
 - name: Settings
   uid: Uniform.Chat.Server.Settings.Article
-- name: Accounts
-  uid: Uniform.Chat.Server.Accounts.Article
+- name: User Management
+  uid: Uniform.Chat.Server.UserManagement.Article
 - name: Connecting clients
   uid: Uniform.Chat.Server.Clients.Article
 - name: Files
   uid: Uniform.Chat.Server.Files.Article
+- name: Updating
+  uid: Uniform.Chat.Server.Updating.Article
 - name: Troubleshooting
   uid: Uniform.Chat.Server.Troubleshooting.Article

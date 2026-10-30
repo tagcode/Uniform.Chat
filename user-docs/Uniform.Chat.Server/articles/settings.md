@@ -7,7 +7,7 @@ uid: Uniform.Chat.Server.Settings.Article
 Settings come from these places; later ones override earlier ones:
 
 1. `appsettings.json` next to the program
-2. `~/.config/uniform-matrix-server-host/settings.json`, written by the settings window
+2. `~/.config/uniform-chat-server/settings.json`, written by the settings window
 3. Environment variables, with `__` between parts: `Server__Registration=Open`
 4. The command line: `--Server:Registration=Open`
 5. Changes applied in the settings window, until the server stops
@@ -56,7 +56,7 @@ Settings come from these places; later ones override earlier ones:
 | `Calls:OpenIdTokenLifetime` | `01:00:00` | How long an OpenID token holds; call services use these tokens to check who a user is. |
 | `Tls:CertificatePath` | not set | Certificate file for `https://` addresses in `Urls`, with its intermediate certificates, such as [certbot](https://github.com/certbot/certbot)'s `fullchain.pem`. A path may start with `~/` for the home folder, also where the shell leaves it alone, as in `--Tls:CertificatePath=~/tls/fullchain.pem`. A renewed file is picked up within a minute, without a restart. ↻ |
 | `Tls:KeyPath` | not set | Private key of the certificate, such as [certbot](https://github.com/certbot/certbot)'s `privkey.pem`. Keep it readable only by the account that runs the server. ↻ |
-| `Storage:DataDirectory` | `~/.local/share/uniform-matrix-server-host` | Folder for the database, signing key, media and logs. ↻ |
+| `Storage:DataDirectory` | `~/.local/share/uniform-chat-server` | Folder for the database, signing key, media and logs. ↻ |
 | `Storage:DatabaseFileName` | `server.db` | Database file inside the data folder. ↻ |
 | `Storage:MediaDirectoryName` | `media` | Folder inside the data folder for uploaded files. ↻ |
 | `Storage:LogDirectoryName` | `logs` | Folder inside the data folder with one log file per session. ↻ |
@@ -72,6 +72,6 @@ Settings come from these places; later ones override earlier ones:
 To serve HTTPS itself, point the server at a certificate, for example [certbot](https://github.com/certbot/certbot)'s files, and use `https://` addresses:
 
 ```bash
-./Uniform.Chat.Server --Urls="https://0.0.0.0:8448" \
+./uniform-chat-server --Urls="https://0.0.0.0:8448" \
   --Tls:CertificatePath=/path/to/fullchain.pem --Tls:KeyPath=/path/to/privkey.pem
 ```

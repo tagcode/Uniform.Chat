@@ -13,7 +13,7 @@ using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
 
-// Read appsettings.json next to the executable, not from the working directory; the application name keeps the old folders
+// Read appsettings.json next to the executable, not from the working directory; the application name names the folders
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = ApplicationName });
 
 // Settings file and applied changes, then the server and this process's options
@@ -115,6 +115,6 @@ internal partial class Program
     /// <summary>Log category of start-up failures that the console shows in its own words.</summary>
     private const string StartupCategory = "Uniform.Chat.Server.Startup";
 
-    /// <summary>Application name, which names the settings, data and log folders, e.g. <c>~/.local/share/uniform-matrix-server-host</c>; kept from before the program was renamed, so that existing servers keep their data.</summary>
-    private const string ApplicationName = "Uniform.Matrix.Server.Host";
+    /// <summary>Application name, which names the settings, data and log folders: <c>~/.config/uniform-chat-server</c> and <c>~/.local/share/uniform-chat-server</c> on Linux.</summary>
+    private const string ApplicationName = "Uniform.Chat.Server";
 }

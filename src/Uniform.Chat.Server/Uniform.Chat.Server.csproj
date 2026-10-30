@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- The program is uniform-chat-server, as the service and its folders are named -->
+    <AssemblyName>uniform-chat-server</AssemblyName>
+    <RootNamespace>Uniform.Chat.Server</RootNamespace>
     <!-- Code comments are for developers: no .xml documentation files in the published app -->
     <PublishDocumentationFile>false</PublishDocumentationFile>
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>

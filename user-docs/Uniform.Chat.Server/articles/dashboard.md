@@ -7,7 +7,7 @@ uid: Uniform.Chat.Server.Dashboard.Article
 In the unpacked folder:
 
 ```bash
-./Uniform.Chat.Server
+./uniform-chat-server
 ```
 
 When started from a terminal, the server opens its dashboard and serves at `http://localhost:8008`:
@@ -20,8 +20,8 @@ When started from a terminal, the server opens its dashboard and serves at `http
 │ Requests:   1520 answered, 3 in progress, 2 failed                               │
 │ Accounts:   4 users, 3 rooms                                                     │
 │                                                                                  │
-│ Data:       /home/alice/.local/share/uniform-matrix-server-host                  │
-│ Log:        /home/alice/.local/share/uniform-matrix-server-host/logs/2026-10-26… │
+│ Data:       /home/alice/.local/share/uniform-chat-server                         │
+│ Log:        /home/alice/.local/share/uniform-chat-server/logs/2026-10-26…        │
 │                                                                                  │
 │ F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q stops it.    │
 └──────────────────────────────────────────────────────────────────────────────────┘
@@ -51,7 +51,7 @@ File → Settings lists every option with its current value, where the value com
 
 - **Edit** (or Enter) changes the selected option; options with fixed values offer a list.
 - **Apply** uses a change at once, until the server stops. Options marked ↻, such as the server name and the data folder, take effect only after a restart.
-- **Save** writes the changes to `~/.config/uniform-matrix-server-host/settings.json`, which is read at every start.
+- **Save** writes the changes to `~/.config/uniform-chat-server/settings.json`, which is read at every start.
 - **Reset** undoes one step at a time: first an edit that is not applied, then an applied change that is not saved. Pressed again, it removes the option from the settings file on save, so the default applies again.
 - Edited options are marked `*`, applied but unsaved ones `+`. Values given on the command line override the settings file.
 - Registration tokens are secret: they are never shown in the window.

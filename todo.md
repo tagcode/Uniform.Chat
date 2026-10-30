@@ -77,7 +77,7 @@ Keep the test server's registration closed and rate limits on, since unfinished 
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
-# Uniform.Matrix.Client.Desktop
+# Uniform.Chat.Desktop
 
 - The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?
 A theme that fits each platform.

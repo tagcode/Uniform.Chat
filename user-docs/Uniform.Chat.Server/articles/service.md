@@ -7,7 +7,7 @@ uid: Uniform.Chat.Server.Service.Article
 Without a terminal, for example as a service, the server runs without the dashboard and also writes its log to standard output:
 
 ```bash
-./Uniform.Chat.Server --Host:Ui=None
+./uniform-chat-server --Host:Ui=None
 ```
 
 `Host:Ui` chooses the mode:
@@ -22,30 +22,30 @@ Stop the server with Ctrl+C, or with `SIGTERM` from a service manager.
 
 ## As a user service
 
-To run the server as your own user, put the program in a folder of its own, e.g. `~/matrix-server`, then run it from a user unit.
+To run the server as your own user, put the program in a folder of its own, e.g. `~/uniform-chat-server`, then run it from a user unit. Its settings are in `~/.config/uniform-chat-server` and its data in `~/.local/share/uniform-chat-server`.
 
 Unpack the downloaded release there:
 
 ```bash
-mkdir -p ~/matrix-server
-tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C ~/matrix-server --strip-components=1
+mkdir -p ~/uniform-chat-server
+tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C ~/uniform-chat-server --strip-components=1
 ```
 
 Or, from the source, publish it there:
 
 ```bash
-dotnet publish src/Uniform.Chat.Server -c Release -o ~/matrix-server
+dotnet publish src/Uniform.Chat.Server -c Release -o ~/uniform-chat-server
 ```
 
 Then write the unit file:
 
 ```ini
-# ~/.config/systemd/user/matrix-server.service
+# ~/.config/systemd/user/uniform-chat-server.service
 [Unit]
-Description=Matrix homeserver
+Description=Uniform Chat homeserver
 
 [Service]
-ExecStart=%h/matrix-server/Uniform.Chat.Server
+ExecStart=%h/uniform-chat-server/uniform-chat-server
 Restart=on-failure
 
 [Install]
@@ -53,40 +53,40 @@ WantedBy=default.target
 ```
 
 ```bash
-systemctl --user enable --now matrix-server
-journalctl --user -u matrix-server -f
+systemctl --user enable --now uniform-chat-server
+journalctl --user -u uniform-chat-server -f
 ```
 
 systemd connects the server's input to `/dev/null` and its output to the journal, so `Auto` runs without the dashboard there and the log goes to the journal. A user service stops when you log out, unless lingering is on: `sudo loginctl enable-linger $USER`.
 
 ## As a system service (Ubuntu)
 
-On a server, run it as a system service: it starts at boot, runs as a user of its own, and is controlled with `sudo systemctl`. The steps below put the program in `/opt/uniform-matrix`, the settings in `/etc/uniform-matrix`, and the data in `/var/lib/uniform-matrix`.
+On a server, run it as a system service named `uniform-chat-server`: it starts at boot, runs as a user of its own, and is controlled with `sudo systemctl`. The steps below put the program in `/opt/uniform-chat-server`, the settings in `/etc/uniform-chat-server`, and the data in `/var/lib/uniform-chat-server`.
 
 1. Create a system user for the server, with no login:
 
    ```bash
-   sudo useradd --system --home-dir /var/lib/uniform-matrix --shell /usr/sbin/nologin uniform-matrix
+   sudo useradd --system --home-dir /var/lib/uniform-chat-server --shell /usr/sbin/nologin uniform-chat-server
    ```
 
-2. Unpack the downloaded release in `/opt/uniform-matrix`; or, from the source, publish it there:
+2. Unpack the downloaded release in `/opt/uniform-chat-server`; or, from the source, publish it there:
 
    ```bash
-   sudo mkdir -p /opt/uniform-matrix
-   sudo tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C /opt/uniform-matrix --strip-components=1
+   sudo mkdir -p /opt/uniform-chat-server
+   sudo tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C /opt/uniform-chat-server --strip-components=1
    ```
 
    ```bash
-   sudo dotnet publish src/Uniform.Chat.Server -c Release -o /opt/uniform-matrix
+   sudo dotnet publish src/Uniform.Chat.Server -c Release -o /opt/uniform-chat-server
    ```
 
-3. Write the settings to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`, readable only by the server, as it may hold secrets such as the TURN secret. For example, behind nginx on the same machine:
+3. Write the settings to `/etc/uniform-chat-server/settings.json`, readable only by the server, as it may hold secrets such as the TURN secret. For example, behind nginx on the same machine:
 
    ```bash
-   sudo mkdir -p /etc/uniform-matrix/uniform-matrix-server-host
-   sudo nano /etc/uniform-matrix/uniform-matrix-server-host/settings.json
-   sudo chown -R uniform-matrix:uniform-matrix /etc/uniform-matrix
-   sudo chmod 600 /etc/uniform-matrix/uniform-matrix-server-host/settings.json
+   sudo mkdir -p /etc/uniform-chat-server
+   sudo nano /etc/uniform-chat-server/settings.json
+   sudo chown -R uniform-chat-server:uniform-chat-server /etc/uniform-chat-server
+   sudo chmod 600 /etc/uniform-chat-server/settings.json
    ```
 
    ```json
@@ -104,7 +104,7 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
 
    [Installing](xref:Uniform.Chat.Server.Install.Article) has a complete example with federation and calls, and the nginx site in front; [Settings](xref:Uniform.Chat.Server.Settings.Article) lists every option.
 
-4. Write the unit file `/etc/systemd/system/uniform-matrix.service`:
+4. Write the unit file `/etc/systemd/system/uniform-chat-server.service`:
 
    ```ini
    [Unit]
@@ -113,14 +113,14 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
    Wants=network-online.target
 
    [Service]
-   User=uniform-matrix
-   Group=uniform-matrix
-   ExecStart=/opt/uniform-matrix/Uniform.Chat.Server --Host:Ui=None
-   WorkingDirectory=/var/lib/uniform-matrix
-   # Settings from /etc/uniform-matrix, data in /var/lib/uniform-matrix
-   Environment=XDG_CONFIG_HOME=/etc/uniform-matrix
-   Environment=XDG_DATA_HOME=/var/lib/uniform-matrix
-   StateDirectory=uniform-matrix
+   User=uniform-chat-server
+   Group=uniform-chat-server
+   ExecStart=/opt/uniform-chat-server/uniform-chat-server --Host:Ui=None
+   WorkingDirectory=/var/lib/uniform-chat-server
+   # Settings from /etc/uniform-chat-server, data in /var/lib/uniform-chat-server
+   Environment=XDG_CONFIG_HOME=/etc
+   Environment=XDG_DATA_HOME=/var/lib
+   StateDirectory=uniform-chat-server
    StateDirectoryMode=0700
    Restart=on-failure
    RestartSec=5
@@ -131,47 +131,43 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
    ProtectSystem=strict
    ProtectHome=true
    PrivateTmp=true
-   ReadWritePaths=/var/lib/uniform-matrix /etc/uniform-matrix
+   ReadWritePaths=/var/lib/uniform-chat-server /etc/uniform-chat-server
 
    [Install]
    WantedBy=multi-user.target
    ```
 
-   `/etc/uniform-matrix` is writable so that the settings window, if you ever run the dashboard as this user, can save there; take it out of `ReadWritePaths` to keep the settings read-only.
+   The server adds its own name to `XDG_CONFIG_HOME` and `XDG_DATA_HOME`, which gives the two folders above. `/etc/uniform-chat-server` is writable so that the settings window, if you ever run the dashboard as this user, can save there; take it out of `ReadWritePaths` to keep the settings read-only.
 
 5. Start it, and have it start at boot:
 
    ```bash
    sudo systemctl daemon-reload
-   sudo systemctl enable --now uniform-matrix
+   sudo systemctl enable --now uniform-chat-server
    ```
 
 Then control it with `systemctl`, and read its log from the journal:
 
 | Command | Does |
 |---|---|
-| `sudo systemctl status uniform-matrix` | Show whether it runs, and the latest log lines |
-| `sudo systemctl stop uniform-matrix` | Stop it |
-| `sudo systemctl start uniform-matrix` | Start it |
-| `sudo systemctl restart uniform-matrix` | Restart it, e.g. after changing the settings |
-| `sudo systemctl disable uniform-matrix` | Not start it at boot any more |
-| `journalctl -u uniform-matrix -f` | Follow the log |
-| `journalctl -u uniform-matrix --since today` | Today's log |
+| `sudo systemctl status uniform-chat-server` | Show whether it runs, and the latest log lines |
+| `sudo systemctl stop uniform-chat-server` | Stop it |
+| `sudo systemctl start uniform-chat-server` | Start it |
+| `sudo systemctl restart uniform-chat-server` | Restart it, e.g. after changing the settings |
+| `sudo systemctl disable uniform-chat-server` | Not start it at boot any more |
+| `journalctl -u uniform-chat-server -f` | Follow the log |
+| `journalctl -u uniform-chat-server --since today` | Today's log |
 
-The server also keeps its own log files in `/var/lib/uniform-matrix/uniform-matrix-server-host/logs`, with its database and signing key; see [Files](xref:Uniform.Chat.Server.Files.Article).
-
-To update, stop the server, unpack or publish the new version over `/opt/uniform-matrix`, and start it; it updates its database at start. Back up `/var/lib/uniform-matrix` first.
-
-Versions before the Uniform Chat name had the program `Uniform.Matrix.Server.Host`. When updating from one, change `ExecStart` in the unit file to `/opt/uniform-matrix/Uniform.Chat.Server`, run `sudo systemctl daemon-reload`, and remove the old program from `/opt/uniform-matrix`. The settings and data folders are the same as before.
+The server also keeps its own log files in `/var/lib/uniform-chat-server/logs`, with its database and signing key; see [Files](xref:Uniform.Chat.Server.Files.Article). To update the server, see [Updating](xref:Uniform.Chat.Server.Updating.Article).
 
 > [!NOTE]
 > To serve HTTPS itself, without a proxy, the server needs to read the certificate and to listen on port 443:
 > - Ports below 1024 need `AmbientCapabilities=CAP_NET_BIND_SERVICE` in the `[Service]` section; or listen on 8448 instead.
-> - certbot keeps its files readable only by root. Copy them where the server can read them in a deploy hook, e.g. `/etc/letsencrypt/renewal-hooks/deploy/uniform-matrix.sh`:
+> - certbot keeps its files readable only by root. Copy them where the server can read them in a deploy hook, e.g. `/etc/letsencrypt/renewal-hooks/deploy/uniform-chat-server.sh`:
 >
 >   ```bash
 >   #!/bin/sh
->   install -o uniform-matrix -g uniform-matrix -m 600 "$RENEWED_LINEAGE/fullchain.pem" "$RENEWED_LINEAGE/privkey.pem" /etc/uniform-matrix/tls/
+>   install -o uniform-chat-server -g uniform-chat-server -m 600 "$RENEWED_LINEAGE/fullchain.pem" "$RENEWED_LINEAGE/privkey.pem" /etc/uniform-chat-server/tls/
 >   ```
 >
->   and point `Tls:CertificatePath` and `Tls:KeyPath` at `/etc/uniform-matrix/tls/`. The server picks up renewed files without a restart.
+>   and point `Tls:CertificatePath` and `Tls:KeyPath` at `/etc/uniform-chat-server/tls/`. The server picks up renewed files without a restart.
