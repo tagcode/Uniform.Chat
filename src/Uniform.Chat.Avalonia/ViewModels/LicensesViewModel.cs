@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +17,7 @@ public sealed record LicenseEntry(string Group, string Name, string ResourceName
 public sealed partial class LicensesViewModel : ViewModelBase
 {
     private const string Prefix = "Licenses/";
-    private const string OwnLicense = "Uniform.Matrix";
+    private const string OwnLicense = "Uniform Chat";
     private static readonly string[] GroupOrder = ["", "Runtime", "Packages", "License texts"];
 
     /// <summary>Load the list from the app's embedded license texts; the app's own license and the notices are chosen first.</summary>

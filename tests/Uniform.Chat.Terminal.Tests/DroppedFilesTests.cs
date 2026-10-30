@@ -1,6 +1,6 @@
-namespace Uniform.Matrix.Client.Terminal.Tests;
+namespace Uniform.Chat.Terminal.Tests;
 
-using Uniform.Matrix.Client.Terminal.Ui;
+using Uniform.Chat.Terminal.Ui;
 
 /// <summary>Tests of <see cref="DroppedFiles"/>: files typed into the input line by drag and drop or paste.</summary>
 public class DroppedFilesTests

@@ -6,7 +6,7 @@
         {
           "src": "../src",
           "files": [ "Uniform.*/*.csproj" ],
-          "exclude": [ "Uniform.Matrix.Client.Android/*.csproj" ]
+          "exclude": [ "Uniform.Chat.Android/*.csproj" ]
         }
       ],
       "dest": "api",
@@ -22,9 +22,9 @@
     "xref": [ "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json" ],
     "template": [ "statictoc", "../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform.Matrix</span>",
-      "_appTitle": "Uniform.Matrix Developer Guide",
-      "_appName": "Uniform.Matrix",
+      "_appFooter": "<span>Uniform Chat</span>",
+      "_appTitle": "Uniform Chat Developer Guide",
+      "_appName": "Uniform Chat",
       "_enableSearch": true
     }
   }

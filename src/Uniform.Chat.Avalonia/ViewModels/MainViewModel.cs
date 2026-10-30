@@ -1,7 +1,7 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Core;
 
 /// <summary>The app's current page: the sign-in form, resuming, or the chat screen; it owns the running connection.</summary>

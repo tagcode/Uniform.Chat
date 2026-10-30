@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Tests;
+namespace Uniform.Chat.Avalonia.Tests;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +33,7 @@ internal sealed class LocalServer : IAsyncDisposable
     {
         // Server as the app runs it, quietly
         string directory = Directory.CreateTempSubdirectory("uniform-matrix-gui-server-").FullName;
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Matrix.Client.Avalonia.Core.Tests.Server", EnvironmentName = "Development" });
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Avalonia.Tests.Server", EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Server:ServerName"] = ServerName, ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory });
         if (settings is not null) builder.Configuration.AddInMemoryCollection(settings);
@@ -62,8 +62,8 @@ internal sealed class LocalServer : IAsyncDisposable
     /// <summary>Return the app's platform for this server: a data folder of its own, and the engine's HTTP calls routed to the server.</summary>
     public GuiPlatform Platform(string dataDirectory) => new()
     {
-        ApplicationName = "Uniform.Matrix.Client.Avalonia.Core.Tests",
-        DeviceName = "Uniform.Matrix tests",
+        ApplicationName = "Uniform.Chat.Avalonia.Tests",
+        DeviceName = "Uniform Chat tests",
         Settings = new Dictionary<string, string?> { ["Storage:DataDirectory"] = dataDirectory, ["Matrix:SyncTimeout"] = "00:00:02" },
         ConfigureServices = services => services.AddHttpClient(ClientSession.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => app.GetTestServer().CreateHandler()),
         HttpHandler = () => app.GetTestServer().CreateHandler(),

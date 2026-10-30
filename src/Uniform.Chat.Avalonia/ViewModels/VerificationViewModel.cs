@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Crypto;
 
 /// <summary>An emoji verification with another device as it goes: accept a request, compare emoji, then the outcome.</summary>

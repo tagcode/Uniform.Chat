@@ -1,7 +1,7 @@
 using Uniform.Matrix.Calls;
-using Uniform.Matrix.Client.Terminal;
-using Uniform.Matrix.Client.Terminal.Configuration;
-using Uniform.Matrix.Client.Terminal.Ui;
+using Uniform.Chat.Terminal;
+using Uniform.Chat.Terminal.Configuration;
+using Uniform.Chat.Terminal.Ui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,7 +13,7 @@ using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Core;
 
 // Read appsettings.json next to the executable, not from the working directory; the ApplicationName names the settings and data folders, not the program file
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = "Uniform.Matrix.Client.Terminal" });
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = "Uniform.Chat.Terminal" });
 
 // User settings file below environment and command line, and changes applied in the settings window on top
 builder.AddSettings();
@@ -31,7 +31,7 @@ if (!askedForHelp && !Usage.CanAsk)
     if (TerminalWindow.TryReopen(args)) return 0;
     if (hasUserId)
     {
-        Console.Error.WriteLine("Uniform.Matrix is a terminal app: start it in a terminal.");
+        Console.Error.WriteLine("Uniform Chat is a terminal app: start it in a terminal.");
         return 2;
     }
 }

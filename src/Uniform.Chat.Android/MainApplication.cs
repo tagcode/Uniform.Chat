@@ -1,14 +1,14 @@
-namespace Uniform.Matrix.Client.Android;
+namespace Uniform.Chat.Android;
 
 using global::Avalonia;
 using global::Avalonia.Android;
-using Uniform.Matrix.Client.Android.Audio;
-using Uniform.Matrix.Client.Avalonia.Core;
+using Uniform.Chat.Android.Audio;
+using Uniform.Chat.Avalonia;
 using global::Android.App;
 using global::Android.Runtime;
 
 /// <summary>The Android application: points the app's data and settings folders into its private storage, then starts the shared Avalonia app.</summary>
-[Application(Label = "Uniform.Matrix", Icon = "@drawable/icon")]
+[Application(Label = "Uniform Chat", Icon = "@drawable/icon")]
 public sealed class MainApplication : AvaloniaAndroidApplication<App>
 {
     /// <summary>Create the application; Android calls this.</summary>
@@ -25,8 +25,8 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
         Environment.SetEnvironmentVariable("XDG_CONFIG_HOME", Path.Combine(files, "config"));
         App.Platform = new GuiPlatform
         {
-            ApplicationName = "Uniform.Matrix.Client.Android",
-            DeviceName = "Uniform.Matrix on Android",
+            ApplicationName = "Uniform.Chat.Android",
+            DeviceName = "Uniform Chat on Android",
             SinglePane = true,
             Audio = loudspeaker => new AndroidAudioDevices(this, loudspeaker),
             HasEarpiece = true,

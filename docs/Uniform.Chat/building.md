@@ -10,7 +10,7 @@ dotnet build
 
 Every library generates its XML documentation file, so public members without doc comments show up as build warnings.
 
-The desktop and Android apps have their own notes: [Uniform.Matrix.Client.Desktop](xref:Uniform.Matrix.Client.Desktop.Article) and [Uniform.Matrix.Client.Android](xref:Uniform.Matrix.Client.Android.Article).
+The desktop and Android apps have their own notes: [Uniform.Chat.Desktop](xref:Uniform.Chat.Desktop.Article) and [Uniform.Chat.Android](xref:Uniform.Chat.Android.Article).
 
 ## Releasing
 

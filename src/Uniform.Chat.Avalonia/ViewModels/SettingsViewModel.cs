@@ -1,10 +1,10 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using System.Text.Json.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Colour theme of the app.</summary>

@@ -39,7 +39,7 @@ app.Run(window);
 
 ## About
 
-Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Matrix), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
+Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Chat), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
 
-- [How it works](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Gui.Terminal/index.md)
-- [Building](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/building.md) and [testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/testing.md)
+- [How it works](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/Uniform.Matrix.Gui.Terminal/index.md)
+- [Building](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/building.md) and [testing](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/testing.md)

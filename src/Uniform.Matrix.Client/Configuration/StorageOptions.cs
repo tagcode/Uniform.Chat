@@ -8,7 +8,7 @@ public sealed record StorageOptions
     /// <summary>Configuration section name.</summary>
     public const string Section = "Storage";
 
-    /// <summary>Root directory; when unset, the application's data directory, e.g. <c>~/.local/share/uniform-matrix-client-terminal</c>.</summary>
+    /// <summary>Root directory; when unset, the application's data directory, e.g. <c>~/.local/share/uniform-chat-terminal</c>.</summary>
     [RestartRequired]
     public string? DataDirectory { get; set; }
     /// <summary>Database file name inside each account directory.</summary>

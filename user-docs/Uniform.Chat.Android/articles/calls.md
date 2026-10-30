@@ -1,5 +1,5 @@
 ---
 title: Voice calls
-uid: Uniform.Matrix.Client.Android.Calls.Article
+uid: Uniform.Chat.Android.Calls.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/calls.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/calls.md)]

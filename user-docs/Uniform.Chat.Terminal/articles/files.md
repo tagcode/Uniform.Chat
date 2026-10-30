@@ -1,6 +1,6 @@
 ---
 title: Files and images
-uid: Uniform.Matrix.Client.Terminal.Files.Article
+uid: Uniform.Chat.Terminal.Files.Article
 ---
 # Files and images
 

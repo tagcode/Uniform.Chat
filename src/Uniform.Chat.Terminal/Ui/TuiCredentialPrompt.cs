@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Gui.Terminal;

@@ -1,18 +1,18 @@
 - name: Getting started
-  uid: Uniform.Matrix.Client.Terminal.GettingStarted.Article
+  uid: Uniform.Chat.Terminal.GettingStarted.Article
 - name: Interface
-  uid: Uniform.Matrix.Client.Terminal.Interface.Article
+  uid: Uniform.Chat.Terminal.Interface.Article
 - name: Messages
-  uid: Uniform.Matrix.Client.Terminal.Messages.Article
+  uid: Uniform.Chat.Terminal.Messages.Article
 - name: Joining rooms
-  uid: Uniform.Matrix.Client.Terminal.Joining.Article
+  uid: Uniform.Chat.Terminal.Joining.Article
 - name: Files and images
-  uid: Uniform.Matrix.Client.Terminal.Files.Article
+  uid: Uniform.Chat.Terminal.Files.Article
 - name: Encryption and devices
-  uid: Uniform.Matrix.Client.Terminal.Encryption.Article
+  uid: Uniform.Chat.Terminal.Encryption.Article
 - name: Room administration
-  uid: Uniform.Matrix.Client.Terminal.Rooms.Article
+  uid: Uniform.Chat.Terminal.Rooms.Article
 - name: Commands
-  uid: Uniform.Matrix.Client.Terminal.Commands.Article
+  uid: Uniform.Chat.Terminal.Commands.Article
 - name: Settings
-  uid: Uniform.Matrix.Client.Terminal.Settings.Article
+  uid: Uniform.Chat.Terminal.Settings.Article

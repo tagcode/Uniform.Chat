@@ -46,8 +46,8 @@ jobs:
       # The solution has the Android app, which needs its workload; the runner has the Android SDK and Java
       - run: dotnet workload install android
       # Live tests skip without testclient.txt; native vodozemac tests skip without the native library
-      - run: dotnet build Uniform.Matrix.slnx -c Release
-      - run: dotnet test --solution Uniform.Matrix.slnx -c Release --no-build
+      - run: dotnet build Uniform.Chat.slnx -c Release
+      - run: dotnet test --solution Uniform.Chat.slnx -c Release --no-build
 
   packages:
     name: Pack libraries
@@ -60,7 +60,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       # Packing builds the whole solution, the Android app too
       - run: dotnet workload install android
-      - run: dotnet pack Uniform.Matrix.slnx -c Release -o artifacts -p:Version=${{ needs.version.outputs.version }} -p:ContinuousIntegrationBuild=true
+      - run: dotnet pack Uniform.Chat.slnx -c Release -o artifacts -p:Version=${{ needs.version.outputs.version }} -p:ContinuousIntegrationBuild=true
       - uses: actions/upload-artifact@v5
         with:
           name: nuget
@@ -83,12 +83,12 @@ jobs:
       # Warnings fail the build, so broken links and missing uids are found here
       - name: Build guides
         run: |
-          for guide in desktop:Uniform.Matrix.Client.Desktop terminal:Uniform.Matrix.Client.Terminal server:Uniform.Matrix.Server.Host; do
+          for guide in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server; do
             IFS=: read -r kind folder <<< "$guide"
             dotnet docfx "user-docs/$folder/docfx.json" --warningsAsErrors
             mkdir -p guides && cp -r "user-docs/$folder/_site" "guides/$kind"
           done
-          dotnet docfx user-docs/Uniform.Matrix.Client.Android/docfx.json --warningsAsErrors
+          dotnet docfx user-docs/Uniform.Chat.Android/docfx.json --warningsAsErrors
       # The developer site with the API reference, checked the same way; not part of the release archives
       - name: Check developer site
         run: dotnet docfx docs/docfx.json --warningsAsErrors
@@ -124,9 +124,9 @@ jobs:
           RID: ${{ matrix.rid }}
         run: |
           mkdir -p release
-          for app in desktop:Uniform.Matrix.Client.Desktop terminal:Uniform.Matrix.Client.Terminal server:Uniform.Matrix.Server.Host; do
+          for app in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server; do
             IFS=: read -r kind project <<< "$app"
-            name="uniform-matrix-$kind-$VERSION-$RID"
+            name="uniform-chat-$kind-$VERSION-$RID"
             dotnet publish "src/$project" -c Release -r "$RID" --self-contained \
               -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true \
               -p:DebugType=embedded -p:IsTransformWebConfigDisabled=true -p:ContinuousIntegrationBuild=true \
@@ -194,4 +194,4 @@ jobs:
         run: |
           flags=()
           if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
-          gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Uniform.Matrix $VERSION" --generate-notes "${flags[@]}"
+          gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Uniform Chat $VERSION" --generate-notes "${flags[@]}"

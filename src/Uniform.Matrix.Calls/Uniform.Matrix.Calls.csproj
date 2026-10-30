@@ -11,8 +11,8 @@
   <PropertyGroup>
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Chat</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix 1:1 voice calls (m.call.*) for the Uniform.Matrix client engine: signalling over room events, WebRTC media with Uniform.Matrix.WebRtc, and voice through Uniform.Matrix.Audio.</Description>

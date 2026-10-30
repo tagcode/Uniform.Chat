@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Services;
+namespace Uniform.Chat.Avalonia.Services;
 
 using Uniform.Matrix.Client.Services;
 

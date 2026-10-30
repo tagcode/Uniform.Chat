@@ -1,6 +1,6 @@
 ---
 title: Encryption and devices
-uid: Uniform.Matrix.Client.Terminal.Encryption.Article
+uid: Uniform.Chat.Terminal.Encryption.Article
 ---
 # Encryption and devices
 

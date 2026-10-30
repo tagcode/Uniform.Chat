@@ -1,14 +1,14 @@
-namespace Uniform.Matrix.Client.Avalonia.Core;
+namespace Uniform.Chat.Avalonia;
 
 using global::Avalonia;
 using global::Avalonia.Controls.ApplicationLifetimes;
 using global::Avalonia.Markup.Xaml;
 using global::Avalonia.Styling;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
-using Uniform.Matrix.Client.Avalonia.Core.Views;
+using Uniform.Chat.Avalonia.Services;
+using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Views;
 
-/// <summary>The Uniform.Matrix chat app: one shared user interface for the desktop and Android apps.</summary>
+/// <summary>The Uniform Chat app: one shared user interface for the desktop and Android apps.</summary>
 public partial class App : Application
 {
     private MainViewModel? model;

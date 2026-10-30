@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-uid: Uniform.Matrix.Server.Host.Troubleshooting.Article
+uid: Uniform.Chat.Server.Troubleshooting.Article
 ---
 # Troubleshooting
 

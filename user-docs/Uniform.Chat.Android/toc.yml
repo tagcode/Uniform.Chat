@@ -1,6 +1,6 @@
 - name: Guide
   href: articles/
 - name: User policy
-  uid: Uniform.Matrix.Client.Android.UserPolicy.Article
+  uid: Uniform.Chat.Android.UserPolicy.Article
 - name: Privacy policy
-  uid: Uniform.Matrix.Client.Android.PrivacyPolicy.Article
+  uid: Uniform.Chat.Android.PrivacyPolicy.Article

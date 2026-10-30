@@ -1,18 +1,18 @@
 - name: Introduction
-  uid: Uniform.Matrix.Client.Android.Article
+  uid: Uniform.Chat.Android.Article
 - name: Getting started
-  uid: Uniform.Matrix.Client.Android.GettingStarted.Article
+  uid: Uniform.Chat.Android.GettingStarted.Article
 - name: Rooms
-  uid: Uniform.Matrix.Client.Android.Rooms.Article
+  uid: Uniform.Chat.Android.Rooms.Article
 - name: Messages and files
-  uid: Uniform.Matrix.Client.Android.Messages.Article
+  uid: Uniform.Chat.Android.Messages.Article
 - name: Voice calls
-  uid: Uniform.Matrix.Client.Android.Calls.Article
+  uid: Uniform.Chat.Android.Calls.Article
 - name: Security
-  uid: Uniform.Matrix.Client.Android.Security.Article
+  uid: Uniform.Chat.Android.Security.Article
 - name: Notifications
-  uid: Uniform.Matrix.Client.Android.Notifications.Article
+  uid: Uniform.Chat.Android.Notifications.Article
 - name: Settings
-  uid: Uniform.Matrix.Client.Android.Settings.Article
+  uid: Uniform.Chat.Android.Settings.Article
 - name: Phones and narrow windows
-  uid: Uniform.Matrix.Client.Android.Phones.Article
+  uid: Uniform.Chat.Android.Phones.Article

@@ -14,13 +14,13 @@ uid: Uniform.Matrix.Home.Article
 | [`Uniform.Matrix.Hosting`](xref:Uniform.Matrix.Hosting.Article) | Settings and logging for .NET host applications | Settings file layers, option catalog, session logs |
 | [`Uniform.Matrix.Gui.Terminal`](xref:Uniform.Matrix.Gui.Terminal.Article) | Terminal.Gui components | Settings window, log window, dialogs |
 | [`Uniform.Matrix.Client`](xref:Uniform.Matrix.Client.Article) | Headless client with local SQLite storage | Session, sync, outbox, media cache, encryption, room state |
-| [`Uniform.Matrix.Client.Terminal`](xref:Uniform.Matrix.Client.Terminal.Article) | Terminal client app (Terminal.Gui v2) | Rooms, messages, files, encryption, settings and logs |
-| [`Uniform.Matrix.Client.Avalonia.Core`](xref:Uniform.Matrix.Client.Avalonia.Core.Article) | Graphical app shared by desktop and Android (Avalonia) | Rooms, messages, files, encryption, verification, notifications on Linux |
-| [`Uniform.Matrix.Client.Desktop`](xref:Uniform.Matrix.Client.Desktop.Article) | Graphical app for Windows and Linux | Entry point, application menu entry |
-| [`Uniform.Matrix.Client.Android`](xref:Uniform.Matrix.Client.Android.Article) | Graphical app for Android | Entry point; no store release yet |
+| [`Uniform.Chat.Terminal`](xref:Uniform.Chat.Terminal.Article) | Terminal client app (Terminal.Gui v2) | Rooms, messages, files, encryption, settings and logs |
+| [`Uniform.Chat.Avalonia`](xref:Uniform.Chat.Avalonia.Article) | Graphical app shared by desktop and Android (Avalonia) | Rooms, messages, files, encryption, verification, notifications on Linux |
+| [`Uniform.Chat.Desktop`](xref:Uniform.Chat.Desktop.Article) | Graphical app for Windows and Linux | Entry point, application menu entry |
+| [`Uniform.Chat.Android`](xref:Uniform.Chat.Android.Article) | Graphical app for Android | Entry point; no store release yet |
 | [`Uniform.Matrix.Protocol.Server`](xref:Uniform.Matrix.Protocol.Server.Article) | Homeserver protocol: room versions, event format, signing, auth rules | Room versions 10, 11 and 12 |
 | [`Uniform.Matrix.Server`](xref:Uniform.Matrix.Server.Article) | Homeserver engine on ASP.NET Core and SQLite | Accounts, rooms, sync and sliding sync, media, encryption relay, directory, push, calls, federation |
-| [`Uniform.Matrix.Server.Host`](xref:Uniform.Matrix.Server.Host.Article) | Homeserver app, with or without the dashboard | Dashboard, users and rooms admin, settings and logs |
+| [`Uniform.Chat.Server`](xref:Uniform.Chat.Server.Article) | Homeserver app, with or without the dashboard | Dashboard, users and rooms admin, settings and logs |
 
 - [Building](xref:Uniform.Matrix.Building.Article): build the solution and the apps, and make releases.
 - [Testing](xref:Uniform.Matrix.Testing.Article): the test projects, live tests and the native test oracle.
@@ -67,42 +67,42 @@ src/
     Formatting/                          Markdown to HTML for sending, HTML to text and event descriptions for display
     MatrixKeyTransport.cs,               EncryptedMedia.cs  Encryption over a MatrixClient
   Uniform.Matrix.Calls/                  1:1 voice calls (m.call.*) on the client engine, WebRtc and Audio
-  Uniform.Matrix.Client.Terminal/        Terminal client app
+  Uniform.Chat.Terminal/        Terminal client app
     Configuration/                       Display options
     Ui/                                  Main window, message log, image previews, client dialogs
-  Uniform.Matrix.Client.Avalonia.Core/   Avalonia app shared by desktop and Android: views, view models, services
+  Uniform.Chat.Avalonia/   Avalonia app shared by desktop and Android: views, view models, services
     Services/                            One engine host per sign-in, remembered account, UI dispatcher
     ViewModels/                          Login, chat, room list items, message list
     Views/                               Windows and views in XAML, rich text, styles
-  Uniform.Matrix.Client.Desktop/         Windows and Linux entry point, Linux menu entry installer
-  Uniform.Matrix.Client.Android/         Android entry point, manifest and resources
+  Uniform.Chat.Desktop/         Windows and Linux entry point, Linux menu entry installer
+  Uniform.Chat.Android/         Android entry point, manifest and resources
   Uniform.Matrix.Protocol.Server/        Room versions, event format, hashing, signing, redaction, auth rules
   Uniform.Matrix.Server/                 Homeserver engine: AddMatrixServer, endpoints, services, storage
-  Uniform.Matrix.Server.Host/            Server app, with or without the dashboard
+  Uniform.Chat.Server/            Server app, with or without the dashboard
 tests/
   Uniform.Matrix.Protocol.Tests/         API and canonical JSON unit tests, live tests against the test server
   Uniform.Matrix.Protocol.Crypto.Tests/  Olm, Megolm, oracle, protocol and live encryption tests
   Uniform.Matrix.Hosting.Tests/          Settings and log file tests
   Uniform.Matrix.Client.Tests/           Room state, stores, services and rich text tests
-  Uniform.Matrix.Client.Terminal.Tests/  Option registration, message log and image tests
-  Uniform.Matrix.Client.Avalonia.Core.Tests/  View models against the in-memory server, headless rendering
+  Uniform.Chat.Terminal.Tests/  Option registration, message log and image tests
+  Uniform.Chat.Avalonia.Tests/  View models against the in-memory server, headless rendering
   Uniform.Matrix.Protocol.Server.Tests/  Event format and auth rule tests
   Uniform.Matrix.Server.Tests/           Server through our own client, in memory
 docs/                                    This site: the home page and the generated API reference (api/)
-  Uniform.Matrix/                        Building, testing, documentation, and one folder per project
+  Uniform.Chat/                          Building, testing, documentation, and one folder per project
 theme/                                   Changes to DocFX's statictoc template, for all sites
 user-docs/
-  Uniform.Matrix.Client.Desktop/         User guide of the desktop app
-  Uniform.Matrix.Client.Android/         User guide of the Android app, mostly the desktop guide's pages
-  Uniform.Matrix.Client.Terminal/        User guide of the terminal client
-  Uniform.Matrix.Server.Host/            User guide of the server
+  Uniform.Chat.Desktop/         User guide of the desktop app
+  Uniform.Chat.Android/         User guide of the Android app, mostly the desktop guide's pages
+  Uniform.Chat.Terminal/        User guide of the terminal client
+  Uniform.Chat.Server/            User guide of the server
   Uniform.Matrix.Core/                   Text included by more than one guide
 ```
 
 Dependencies point down; the protocol libraries know nothing of storage, hosting or UI:
 
 ```text
-Uniform.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform.Matrix.Protocol.Client ──► Uniform.Matrix.Protocol.Core
+Uniform.Chat.Terminal ──► Uniform.Matrix.Client ──► Uniform.Matrix.Protocol.Client ──► Uniform.Matrix.Protocol.Core
     │                              │   │
     │                              │   └──► Uniform.Matrix.Protocol.Crypto ──► Uniform.Matrix.Protocol.Core
     │                              └───────┐
@@ -113,15 +113,15 @@ Uniform.Matrix.Client.Terminal ──► Uniform.Matrix.Client ──► Uniform
 The graphical app uses the same engine, without the terminal components:
 
 ```text
-Uniform.Matrix.Client.Desktop ──┐
-                              ├──► Uniform.Matrix.Client.Avalonia.Core ──► Uniform.Matrix.Client ──► …
-Uniform.Matrix.Client.Android ──┘
+Uniform.Chat.Desktop ──┐
+                              ├──► Uniform.Chat.Avalonia ──► Uniform.Matrix.Client ──► …
+Uniform.Chat.Android ──┘
 ```
 
 The server side, which also uses Core through Crypto:
 
 ```text
-Uniform.Matrix.Server.Host ──► Uniform.Matrix.Server ──► Uniform.Matrix.Protocol.Server ──► Uniform.Matrix.Protocol.Crypto
+Uniform.Chat.Server ──► Uniform.Matrix.Server ──► Uniform.Matrix.Protocol.Server ──► Uniform.Matrix.Protocol.Crypto
     │                          │
     │                          └───────────┐
     │                                      ▼

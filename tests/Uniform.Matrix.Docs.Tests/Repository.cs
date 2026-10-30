@@ -2,7 +2,7 @@ namespace Uniform.Matrix.Docs.Tests;
 
 using System.Text.RegularExpressions;
 
-/// <summary>Files of the repository the tests check: found by walking up from the test binaries to <c>Uniform.Matrix.slnx</c>.</summary>
+/// <summary>Files of the repository the tests check: found by walking up from the test binaries to <c>Uniform.Chat.slnx</c>.</summary>
 internal static partial class Repository
 {
     /// <summary>Get the repository root.</summary>
@@ -30,10 +30,10 @@ internal static partial class Repository
         // Up from the binaries
         for (DirectoryInfo? directory = new(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
         {
-            if (File.Exists(Path.Combine(directory.FullName, "Uniform.Matrix.slnx"))) return directory.FullName;
+            if (File.Exists(Path.Combine(directory.FullName, "Uniform.Chat.slnx"))) return directory.FullName;
         }
         // On error no repository
-        throw new InvalidOperationException("Uniform.Matrix.slnx not found above the test binaries.");
+        throw new InvalidOperationException("Uniform.Chat.slnx not found above the test binaries.");
     }
 
     /// <summary>Front matter at the start of a file.</summary>

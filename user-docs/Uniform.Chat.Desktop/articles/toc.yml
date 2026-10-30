@@ -1,16 +1,16 @@
 - name: Getting started
-  uid: Uniform.Matrix.Client.Desktop.GettingStarted.Article
+  uid: Uniform.Chat.Desktop.GettingStarted.Article
 - name: Rooms
-  uid: Uniform.Matrix.Client.Desktop.Rooms.Article
+  uid: Uniform.Chat.Desktop.Rooms.Article
 - name: Messages and files
-  uid: Uniform.Matrix.Client.Desktop.Messages.Article
+  uid: Uniform.Chat.Desktop.Messages.Article
 - name: Voice calls
-  uid: Uniform.Matrix.Client.Desktop.Calls.Article
+  uid: Uniform.Chat.Desktop.Calls.Article
 - name: Security
-  uid: Uniform.Matrix.Client.Desktop.Security.Article
+  uid: Uniform.Chat.Desktop.Security.Article
 - name: Notifications
-  uid: Uniform.Matrix.Client.Desktop.Notifications.Article
+  uid: Uniform.Chat.Desktop.Notifications.Article
 - name: Settings
-  uid: Uniform.Matrix.Client.Desktop.Settings.Article
+  uid: Uniform.Chat.Desktop.Settings.Article
 - name: Phones and narrow windows
-  uid: Uniform.Matrix.Client.Desktop.Phones.Article
+  uid: Uniform.Chat.Desktop.Phones.Article

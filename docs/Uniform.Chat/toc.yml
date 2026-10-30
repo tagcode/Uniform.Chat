@@ -17,20 +17,20 @@ items:
   href: Uniform.Matrix.Client/toc.yml
 - name: Uniform.Matrix.Calls
   href: Uniform.Matrix.Calls/toc.yml
-- name: Uniform.Matrix.Client.Terminal
-  href: Uniform.Matrix.Client.Terminal/toc.yml
-- name: Uniform.Matrix.Client.Avalonia.Core
-  href: Uniform.Matrix.Client.Avalonia.Core/toc.yml
-- name: Uniform.Matrix.Client.Desktop
-  href: Uniform.Matrix.Client.Desktop/toc.yml
-- name: Uniform.Matrix.Client.Android
-  href: Uniform.Matrix.Client.Android/toc.yml
+- name: Uniform.Chat.Terminal
+  href: Uniform.Chat.Terminal/toc.yml
+- name: Uniform.Chat.Avalonia
+  href: Uniform.Chat.Avalonia/toc.yml
+- name: Uniform.Chat.Desktop
+  href: Uniform.Chat.Desktop/toc.yml
+- name: Uniform.Chat.Android
+  href: Uniform.Chat.Android/toc.yml
 - name: Uniform.Matrix.Protocol.Server
   href: Uniform.Matrix.Protocol.Server/toc.yml
 - name: Uniform.Matrix.Server
   href: Uniform.Matrix.Server/toc.yml
-- name: Uniform.Matrix.Server.Host
-  href: Uniform.Matrix.Server.Host/toc.yml
+- name: Uniform.Chat.Server
+  href: Uniform.Chat.Server/toc.yml
 - name: Building
   uid: Uniform.Matrix.Building.Article
 - name: Testing

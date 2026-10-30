@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Server.Host;
+namespace Uniform.Chat.Server;
 
 using Uniform.Matrix.Hosting;
 

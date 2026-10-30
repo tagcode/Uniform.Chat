@@ -1,6 +1,6 @@
 ---
 title: Rooms
-uid: Uniform.Matrix.Client.Desktop.Rooms.Article
+uid: Uniform.Chat.Desktop.Rooms.Article
 ---
 # Rooms
 

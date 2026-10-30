@@ -11,8 +11,8 @@
   <PropertyGroup>
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Chat</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Settings and logging for .NET host applications: layered settings file, option catalog and editor, and session logs.</Description>

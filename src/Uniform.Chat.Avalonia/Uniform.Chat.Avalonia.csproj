@@ -35,7 +35,7 @@
 
   <!-- License texts of the app and what it bundles, shown under Settings → Licences; LICENSES/overrides is already part of the package files -->
   <ItemGroup>
-    <EmbeddedResource Include="..\..\LICENSE" LogicalName="Licenses/Uniform.Matrix" />
+    <EmbeddedResource Include="..\..\LICENSE" LogicalName="Licenses/Uniform Chat" />
     <EmbeddedResource Include="..\..\THIRD-PARTY-NOTICES.md" LogicalName="Licenses/Third-party notices" />
     <EmbeddedResource Include="..\..\LICENSES\*.txt" LogicalName="Licenses/License texts/%(Filename)" />
     <EmbeddedResource Include="..\..\LICENSES\runtime\*.txt" LogicalName="Licenses/Runtime/%(Filename)" />
@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Uniform.Matrix.Client.Avalonia.Core.Tests" />
+    <InternalsVisibleTo Include="Uniform.Chat.Avalonia.Tests" />
   </ItemGroup>
 
 </Project>

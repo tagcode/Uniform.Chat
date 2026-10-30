@@ -1,6 +1,6 @@
 ---
 title: Phones and narrow windows
-uid: Uniform.Matrix.Client.Desktop.Phones.Article
+uid: Uniform.Chat.Desktop.Phones.Article
 ---
 # Phones and narrow windows
 

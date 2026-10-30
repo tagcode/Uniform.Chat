@@ -1,10 +1,10 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using System.Collections.ObjectModel;
 using global::Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client;
 using Uniform.Matrix.Client.Formatting;

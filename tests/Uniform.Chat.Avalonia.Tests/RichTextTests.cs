@@ -1,10 +1,10 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Tests;
+namespace Uniform.Chat.Avalonia.Tests;
 
 using global::Avalonia.Controls.Documents;
 using global::Avalonia.Headless;
 using global::Avalonia.Headless.XUnit;
 using global::Avalonia.Media;
-using Uniform.Matrix.Client.Avalonia.Core.Views;
+using Uniform.Chat.Avalonia.Views;
 
 /// <summary>Tests of <see cref="RichText"/>: how message HTML becomes styled text.</summary>
 public class RichTextTests

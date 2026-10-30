@@ -7,9 +7,9 @@
     "output": "_site",
     "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform.Matrix.Server.Host</span>",
-      "_appTitle": "Uniform.Matrix.Server.Host",
-      "_appName": "Uniform.Matrix.Server.Host",
+      "_appFooter": "<span>Uniform Chat Server</span>",
+      "_appTitle": "Uniform Chat Server",
+      "_appName": "Uniform Chat Server",
       "_enableSearch": true
     }
   }

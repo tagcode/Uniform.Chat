@@ -1,6 +1,6 @@
 ---
 title: Commands
-uid: Uniform.Matrix.Client.Terminal.Commands.Article
+uid: Uniform.Chat.Terminal.Commands.Article
 ---
 # Commands
 
@@ -8,7 +8,7 @@ uid: Uniform.Matrix.Client.Terminal.Commands.Article
 |---|---|
 | `/me text` | Action, shown as `* you text` |
 | `/plain text` | Send without Markdown formatting |
-| `/join #room:server` | Join a room by alias, room ID or link; see [Joining rooms](xref:Uniform.Matrix.Client.Terminal.Joining.Article) |
+| `/join #room:server` | Join a room by alias, room ID or link; see [Joining rooms](xref:Uniform.Chat.Terminal.Joining.Article) |
 | `/leave` | Leave the current room |
 | `/topic text` | Set the topic |
 | `/invite @user:server` | Invite a user |

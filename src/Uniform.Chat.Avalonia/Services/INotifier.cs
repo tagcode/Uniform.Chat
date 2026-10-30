@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Services;
+namespace Uniform.Chat.Avalonia.Services;
 
 /// <summary>System notifications of new messages, by platform; the app shows them while its window is in the background.</summary>
 public interface INotifier

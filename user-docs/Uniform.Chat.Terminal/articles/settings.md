@@ -1,13 +1,13 @@
 ---
 title: Settings
-uid: Uniform.Matrix.Client.Terminal.Settings.Article
+uid: Uniform.Chat.Terminal.Settings.Article
 ---
 # Settings
 
 Settings come from these places; later ones override earlier ones:
 
 1. `appsettings.json` next to the program
-2. `~/.config/uniform-matrix-client-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), written by the settings window
+2. `~/.config/uniform-chat-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), written by the settings window
 3. Environment variables, with `__` between parts: `Matrix__UserId=@alice:matrix.org`
 4. The command line: `--Matrix:UserId=@alice:matrix.org`
 5. Changes applied in the settings window, until the client exits
@@ -17,7 +17,7 @@ Settings come from these places; later ones override earlier ones:
 Every setting can be given on the command line as `--Section:Name=value`. The ones you need at the start:
 
 ```bash
-./Uniform.Matrix --Matrix:UserId=@alice:matrix.org --Matrix:Password=secret
+./Uniform.Chat --Matrix:UserId=@alice:matrix.org --Matrix:Password=secret
 ```
 
 - `Matrix:UserId` is your full Matrix ID, such as `@alice:matrix.org`. It is needed at every start, as it chooses your local data; save it in the settings file to start without options. Without one, the client asks for it in the window.
@@ -31,12 +31,12 @@ Every setting can be given on the command line as `--Section:Name=value`. The on
 | `Matrix:UserId` | not set | Your full Matrix ID, e.g. @alice:matrix.org. Needed at every start; save it in the settings file. |
 | `Matrix:Password` | not set | Password for the first login; asked for when not given. Not needed once you are logged in. |
 | `Matrix:Homeserver` | not set | Server address, when it cannot be found from the user ID, e.g. http://localhost:8008 for a server on this computer. |
-| `Matrix:DeviceName` | `Uniform.Matrix.Client.Terminal` | Display name of the device created at login. |
+| `Matrix:DeviceName` | `Uniform Chat Terminal` | Display name of the device created at login. |
 | `Matrix:SyncTimeout` | `00:00:30` | Long-poll time of each sync request. |
 | `Matrix:RequestTimeout` | `00:05:00` | How long to wait for the server to answer a request; joining a large room on another server can take minutes. |
 | `Matrix:TimelineLimit` | `50` | Timeline events per room in each sync. |
 | `Matrix:OutboxRetryInterval` | `00:00:15` | Wait before retrying unsent messages after a transient failure. |
-| `Storage:DataDirectory` | not set | Root directory; when unset, the application's data directory, e.g. ~/.local/share/uniform-matrix-client-terminal. |
+| `Storage:DataDirectory` | not set | Root directory; when unset, the application's data directory, e.g. ~/.local/share/uniform-chat-terminal. |
 | `Storage:DatabaseFileName` | `client.db` | Database file name inside each account directory. |
 | `Storage:MediaDirectoryName` | `media` | Media cache directory name inside each account directory. |
 | `Storage:LogDirectoryName` | `logs` | Directory inside DataDirectory with one log file per session. |
@@ -59,7 +59,7 @@ File → Settings (or `/settings`) lists every option with its current value, wh
 
 - **Edit** (or Enter) changes the selected option; options with fixed values, such as yes/no or the image preview style, offer a list.
 - **Apply** uses the changes now, until the client exits. Options marked ↻ take effect only after a restart.
-- **Save** writes the changes to `~/.config/uniform-matrix-client-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), which is read at every start.
+- **Save** writes the changes to `~/.config/uniform-chat-terminal/settings.json` (under `$XDG_CONFIG_HOME` when set), which is read at every start.
 - **Reset** undoes one step at a time: first an edit that is not applied, then an applied change that is not saved. Pressed again, it removes the option from the settings file on save, so the default applies again.
 - **Load** reads another settings file as changes to apply or save; **Export** writes the current settings to a file.
 

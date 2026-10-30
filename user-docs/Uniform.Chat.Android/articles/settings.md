@@ -1,5 +1,5 @@
 ---
 title: Settings
-uid: Uniform.Matrix.Client.Android.Settings.Article
+uid: Uniform.Chat.Android.Settings.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/settings.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/settings.md)]

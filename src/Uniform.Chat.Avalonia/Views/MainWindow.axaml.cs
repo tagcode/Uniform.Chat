@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using System.ComponentModel;
 using global::Avalonia.Controls;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>Desktop window around <see cref="MainView"/>; its title counts unread rooms, and its focus decides whether notifications show.</summary>
 public partial class MainWindow : Window
@@ -65,6 +65,6 @@ public partial class MainWindow : Window
         if (chat is not null) chat.IsActive = active;
     }
 
-    /// <summary>Show <c>Uniform.Matrix (3)</c> while three rooms have unread messages or are invites.</summary>
-    private void UpdateTitle() => Title = chat is { UnreadRooms: > 0 } open ? $"Uniform.Matrix ({open.UnreadRooms})" : "Uniform.Matrix";
+    /// <summary>Show <c>Uniform Chat (3)</c> while three rooms have unread messages or are invites.</summary>
+    private void UpdateTitle() => Title = chat is { UnreadRooms: > 0 } open ? $"Uniform Chat ({open.UnreadRooms})" : "Uniform Chat";
 }

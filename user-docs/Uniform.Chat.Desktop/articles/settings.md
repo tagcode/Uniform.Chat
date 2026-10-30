@@ -1,6 +1,6 @@
 ---
 title: Settings
-uid: Uniform.Matrix.Client.Desktop.Settings.Article
+uid: Uniform.Chat.Desktop.Settings.Article
 ---
 # Settings
 
@@ -14,4 +14,4 @@ On phones, the switch chooses the loudspeaker or the earpiece; with the earpiece
 
 ## Licences
 
-*Licences…* at the bottom of the settings shows the license of Uniform.Matrix and of everything the app includes: the .NET runtime and each library, with its copyright notice. Choose one in the list to read it; *‹* goes back to the settings, as does the back button on Android.
+*Licences…* at the bottom of the settings shows the license of Uniform Chat and of everything the app includes: the .NET runtime and each library, with its copyright notice. Choose one in the list to read it; *‹* goes back to the settings, as does the back button on Android.

@@ -11,8 +11,8 @@
   <PropertyGroup>
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/tagcode/Uniform.Matrix</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/tagcode/Uniform.Matrix</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tagcode/Uniform.Chat</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Matrix homeserver engine on ASP.NET Core and SQLite: accounts, rooms, sync, media, the end-to-end encryption relay and the room directory. Add it with AddMatrixServer and MapMatrixServer.</Description>

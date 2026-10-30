@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using global::Avalonia.Controls;
 using global::Avalonia.Interactivity;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>The sign-in form, which also creates accounts.</summary>
 public partial class LoginView : UserControl

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>Shown while the remembered account resumes its session.</summary>
 public sealed class ConnectingViewModel(string userId) : ViewModelBase

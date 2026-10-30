@@ -1,10 +1,10 @@
 ---
 title: Getting started
-uid: Uniform.Matrix.Client.Android.GettingStarted.Article
+uid: Uniform.Chat.Android.GettingStarted.Article
 ---
 # Getting started
 
-The Uniform.Matrix app for Android: rooms, messages, files and end-to-end encryption. It shows the room list and a room one at a time.
+The Uniform Chat app for Android: rooms, messages, files and end-to-end encryption. It shows the room list and a room one at a time.
 
 > [!NOTE]
 > The app is in early development. It covers everyday chatting and encryption; notifications are still to come.
@@ -16,7 +16,7 @@ The Uniform.Matrix app for Android: rooms, messages, files and end-to-end encryp
 
 ## Install
 
-There is no store release yet. To try it, build and install it on a phone connected with USB debugging; see the [developer notes of the Android app](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Client.Android/index.md).
+There is no store release yet. To try it, build and install it on a phone connected with USB debugging; see the [developer notes of the Android app](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/Uniform.Chat.Android/index.md).
 
 ## Sign in
 
@@ -39,7 +39,7 @@ The app then creates the account and signs in to it.
 
 *⋮ → Security and recovery…*, then *Delete account…* at the end. Confirm with your password. You leave every room, your name and picture are removed, and every device is signed out. The account cannot be used again, and nobody can take its user ID.
 
-Next, see [Rooms](xref:Uniform.Matrix.Client.Android.Rooms.Article) and [Messages and files](xref:Uniform.Matrix.Client.Android.Messages.Article).
+Next, see [Rooms](xref:Uniform.Chat.Android.Rooms.Article) and [Messages and files](xref:Uniform.Chat.Android.Messages.Article).
 
 ## Where things are kept
 

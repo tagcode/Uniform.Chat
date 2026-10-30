@@ -10,9 +10,9 @@
     "output": "_site",
     "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform.Matrix.Client.Desktop</span>",
-      "_appTitle": "Uniform.Matrix.Client.Desktop",
-      "_appName": "Uniform.Matrix.Client.Desktop",
+      "_appFooter": "<span>Uniform Chat</span>",
+      "_appTitle": "Uniform Chat",
+      "_appName": "Uniform Chat",
       "_enableSearch": true
     }
   }

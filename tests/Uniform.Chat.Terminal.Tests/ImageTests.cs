@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.Client.Terminal.Tests;
+namespace Uniform.Chat.Terminal.Tests;
 
 using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Text;
-using Uniform.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Chat.Terminal.Ui.Images;
 
 /// <summary>Unit tests for <see cref="DecodedImage"/> and <see cref="AsciiArt"/>.</summary>
 public class ImageTests

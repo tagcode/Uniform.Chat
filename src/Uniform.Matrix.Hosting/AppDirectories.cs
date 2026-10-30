@@ -3,10 +3,10 @@ namespace Uniform.Matrix.Hosting;
 using System.Text;
 
 /// <summary>Per-user directories of an application, following the <see href="https://specifications.freedesktop.org/basedir-spec/latest/">XDG base directories</see> on every platform.</summary>
-/// <example><code><![CDATA[string data = AppDirectories.Data("Uniform.Matrix.Client.Terminal"); // ~/.local/share/uniform-matrix-client-terminal]]></code></example>
+/// <example><code><![CDATA[string data = AppDirectories.Data("Uniform.Chat.Terminal"); // ~/.local/share/uniform-chat-terminal]]></code></example>
 public static class AppDirectories
 {
-    /// <summary>Return the directory name of an application: its name in lowercase with dashes, e.g. <c>uniform-matrix-client-terminal</c>.</summary>
+    /// <summary>Return the directory name of an application: its name in lowercase with dashes, e.g. <c>uniform-chat-terminal</c>.</summary>
     public static string Name(string applicationName)
     {
         // Lowercase, words joined by dashes

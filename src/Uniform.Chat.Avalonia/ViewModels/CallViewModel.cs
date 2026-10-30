@@ -1,10 +1,10 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Calls;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.WebRtc.Ice;
 
 /// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the loudspeaker; it tells about a call for a while after it ends.</summary>

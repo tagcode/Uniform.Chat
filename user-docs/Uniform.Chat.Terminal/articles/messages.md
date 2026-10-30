@@ -1,6 +1,6 @@
 ---
 title: Messages
-uid: Uniform.Matrix.Client.Terminal.Messages.Article
+uid: Uniform.Chat.Terminal.Messages.Article
 ---
 # Messages
 

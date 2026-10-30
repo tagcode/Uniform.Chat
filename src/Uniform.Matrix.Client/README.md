@@ -1,6 +1,6 @@
 # Uniform.Matrix.Client
 
-A Matrix client engine for the .NET generic host: login and session storage, sync with local SQLite storage, room state, an outbox that keeps messages until the server has them, a media cache, and end-to-end encryption with cross-signing, key backup and verification. It has no user interface; the [Uniform.Matrix terminal client](https://github.com/tagcode/Uniform.Matrix) is one built on it.
+A Matrix client engine for the .NET generic host: login and session storage, sync with local SQLite storage, room state, an outbox that keeps messages until the server has them, a media cache, and end-to-end encryption with cross-signing, key backup and verification. It has no user interface; the [Uniform.Matrix terminal client](https://github.com/tagcode/Uniform.Chat) is one built on it.
 
 ```bash
 dotnet add package Uniform.Matrix.Client
@@ -47,7 +47,7 @@ Each account has its own folder with `client.db` and `media/` under the data dir
 
 ## About
 
-Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Matrix), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
+Part of [Uniform.Matrix](https://github.com/tagcode/Uniform.Chat), a pure .NET implementation of the [Matrix specification](https://spec.matrix.org/latest/). Version 0.1 is an early pre-release: APIs may still change.
 
-- [How it works](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/Uniform.Matrix.Client/index.md)
-- [Building](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/building.md) and [testing](https://github.com/tagcode/Uniform.Matrix/blob/main/docs/Uniform.Matrix/testing.md)
+- [How it works](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/Uniform.Matrix.Client/index.md)
+- [Building](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/building.md) and [testing](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/testing.md)

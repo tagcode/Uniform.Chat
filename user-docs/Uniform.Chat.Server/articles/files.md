@@ -1,6 +1,6 @@
 ---
 title: Files
-uid: Uniform.Matrix.Server.Host.Files.Article
+uid: Uniform.Chat.Server.Files.Article
 ---
 # Files
 

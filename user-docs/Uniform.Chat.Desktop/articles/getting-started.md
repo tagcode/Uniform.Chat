@@ -1,10 +1,10 @@
 ---
 title: Getting started
-uid: Uniform.Matrix.Client.Desktop.GettingStarted.Article
+uid: Uniform.Chat.Desktop.GettingStarted.Article
 ---
 # Getting started
 
-The Uniform.Matrix app for Windows and Linux: rooms, messages, files and end-to-end encryption in a graphical window. In narrow windows it shows one pane at a time.
+The Uniform Chat app for Windows and Linux: rooms, messages, files and end-to-end encryption in a graphical window. In narrow windows it shows one pane at a time.
 
 ![The desktop app with a room open](../images/desktop.png)
 
@@ -20,19 +20,19 @@ The Uniform.Matrix app for Windows and Linux: rooms, messages, files and end-to-
 
 ### Windows
 
-Download `uniform-matrix-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases) and unpack it anywhere; the `docs` folder in it has this guide (open `docs/index.html`). Then run `Uniform.Matrix.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
+Download `uniform-chat-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere; the `docs` folder in it has this guide (open `docs/index.html`). Then run `Uniform.Chat.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
 
 ### Linux
 
-Download `uniform-matrix-desktop-<version>-linux-x64.tar.gz` (or `linux-arm64`), unpack it and run the app:
+Download `uniform-chat-desktop-<version>-linux-x64.tar.gz` (or `linux-arm64`), unpack it and run the app:
 
 ```bash
-tar -xzf uniform-matrix-desktop-*-linux-x64.tar.gz
-cd uniform-matrix-desktop-*-linux-x64
+tar -xzf uniform-chat-desktop-*-linux-x64.tar.gz
+cd uniform-chat-desktop-*-linux-x64
 ./Uniform.Matrix
 ```
 
-You can also start it by double-clicking `Uniform.Matrix` in the file manager.
+You can also start it by double-clicking `Uniform.Chat` in the file manager.
 
 To add it to the application menu, run `./install-desktop-entry.sh` in the same folder. Run it again if you move the folder, and `./install-desktop-entry.sh --uninstall` removes the entry.
 
@@ -41,7 +41,7 @@ To add it to the application menu, run `./install-desktop-entry.sh` in the same 
 With the [.NET 10 SDK](https://dotnet.microsoft.com/download), from the repository root:
 
 ```bash
-dotnet run --project src/Uniform.Matrix.Client.Desktop
+dotnet run --project src/Uniform.Chat.Desktop
 ```
 
 ## Sign in
@@ -65,13 +65,13 @@ The app then creates the account and signs in to it.
 
 *⋮ → Security and recovery…*, then *Delete account…* at the end. Confirm with your password. You leave every room, your name and picture are removed, and every device is signed out. The account cannot be used again, and nobody can take its user ID.
 
-Next, see [Rooms](xref:Uniform.Matrix.Client.Desktop.Rooms.Article) and [Messages and files](xref:Uniform.Matrix.Client.Desktop.Messages.Article).
+Next, see [Rooms](xref:Uniform.Chat.Desktop.Rooms.Article) and [Messages and files](xref:Uniform.Chat.Desktop.Messages.Article).
 
 ## Where things are kept
 
 | What | Where |
 |---|---|
-| Messages, keys and files | `~/.local/share/uniform-matrix-client-desktop/` |
-| Remembered account and settings | `~/.config/uniform-matrix-client-desktop/settings.json` |
+| Messages, keys and files | `~/.local/share/uniform-chat-desktop/` |
+| Remembered account and settings | `~/.config/uniform-chat-desktop/settings.json` |
 
 On Windows, `~` is your user folder, for example `C:\Users\alice`.

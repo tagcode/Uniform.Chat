@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Tests;
+namespace Uniform.Chat.Avalonia.Tests;
 
 using global::Avalonia;
 using global::Avalonia.Controls;
@@ -11,10 +11,10 @@ using global::Avalonia.Media.Imaging;
 using global::Avalonia.Platform;
 using global::Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Client.Services;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
-using Uniform.Matrix.Client.Avalonia.Core.Views;
+using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Views;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
@@ -73,7 +73,7 @@ public class ChatFlowTests
         MatrixClient alice = await server.RegisterAsync("alice");
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Kitchen", Topic = "Food talk", Preset = RoomPresets.PublicChat });
         await bob.SendTextAsync(roomId, "welcome to the kitchen");
-        await using (Stream logo = AssetLoader.Open(new Uri("avares://Uniform.Matrix.Client.Avalonia.Core/Assets/logo.png")))
+        await using (Stream logo = AssetLoader.Open(new Uri("avares://Uniform.Chat.Avalonia/Assets/logo.png")))
         {
             MxcUri avatar = await bob.UploadMediaAsync(logo, "image/png", "logo.png");
             await bob.SendStateEventAsync(roomId, EventTypes.RoomAvatar, new RoomAvatarContent { Url = avatar.ToString() });
@@ -723,7 +723,7 @@ public class ChatFlowTests
             await window.Clipboard!.SetTextAsync("pasted");
             window.KeyPress(Key.V, RawInputModifiers.Control, PhysicalKey.V, null);
             await WaitUntilAsync(() => chat.Composer == "pasted", "the pasted text");
-            await window.Clipboard!.SetBitmapAsync(new Bitmap(AssetLoader.Open(new Uri("avares://Uniform.Matrix.Client.Avalonia.Core/Assets/logo.png"))));
+            await window.Clipboard!.SetBitmapAsync(new Bitmap(AssetLoader.Open(new Uri("avares://Uniform.Chat.Avalonia/Assets/logo.png"))));
             window.KeyPress(Key.V, RawInputModifiers.Control, PhysicalKey.V, null);
             await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.IsAttachment && m.FileName?.EndsWith(".png") == true && m.EventId is not null), "the pasted image");
         }

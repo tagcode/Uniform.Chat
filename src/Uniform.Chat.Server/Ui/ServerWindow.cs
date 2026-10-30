@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Server.Host.Ui;
+namespace Uniform.Chat.Server.Ui;
 
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;

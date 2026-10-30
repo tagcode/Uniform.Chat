@@ -3,7 +3,7 @@ namespace Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Account and sync settings, configuration section <see cref="Section"/>.</summary>
-/// <example><code><![CDATA[dotnet run --project src/Uniform.Matrix.Client.Terminal -- --Matrix:UserId=@alice:matrix.org]]></code></example>
+/// <example><code><![CDATA[dotnet run --project src/Uniform.Chat.Terminal -- --Matrix:UserId=@alice:matrix.org]]></code></example>
 public sealed record MatrixOptions
 {
     /// <summary>Configuration section name.</summary>
@@ -20,7 +20,7 @@ public sealed record MatrixOptions
     public string? Password { get; set; }
     /// <summary>Display name of the device created at login.</summary>
     [RestartRequired]
-    public string DeviceName { get; set; } = "Uniform.Matrix.Client.Terminal";
+    public string DeviceName { get; set; } = "Uniform Chat Terminal";
     /// <summary>Long-poll time of each sync request.</summary>
     [RestartRequired]
     public TimeSpan SyncTimeout { get; set; } = TimeSpan.FromSeconds(30);

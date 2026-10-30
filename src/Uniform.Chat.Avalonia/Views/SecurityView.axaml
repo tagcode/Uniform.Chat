@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
-             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.SecurityView"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
+             x:Class="Uniform.Chat.Avalonia.Views.SecurityView"
              x:DataType="vm:SecurityViewModel">
   <StackPanel Spacing="10">
     <TextBlock Classes="title" Text="Security" />

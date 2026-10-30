@@ -1,12 +1,12 @@
 ---
 title: Privacy policy
-uid: Uniform.Matrix.Client.Android.PrivacyPolicy.Article
+uid: Uniform.Chat.Android.PrivacyPolicy.Article
 ---
 # Privacy policy
 
 *Last updated: 30 October 2026*
 
-This policy covers the Uniform.Matrix apps: the Android app, the desktop app and the terminal client. They are free, open-source [Matrix](https://matrix.org) chat clients, developed in the open at [github.com/tagcode/Uniform.Matrix](https://github.com/tagcode/Uniform.Matrix).
+This policy covers the Uniform Chat apps: the Android app, the desktop app and the terminal client. They are free, open-source [Matrix](https://matrix.org) chat clients, developed in the open at [github.com/tagcode/Uniform.Chat](https://github.com/tagcode/Uniform.Chat).
 
 ## In short
 
@@ -48,4 +48,4 @@ The apps are not meant for children under 13.
 
 ## Changes and contact
 
-Changes to this policy are published here, with a new date at the top. Questions about the apps and this policy are welcome as an issue at [github.com/tagcode/Uniform.Matrix/issues](https://github.com/tagcode/Uniform.Matrix/issues).
+Changes to this policy are published here, with a new date at the top. Questions about the apps and this policy are welcome as an issue at [github.com/tagcode/Uniform.Chat/issues](https://github.com/tagcode/Uniform.Chat/issues).

@@ -17,9 +17,9 @@
       "../../theme"
     ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform.Matrix.Client.Android</span>",
-      "_appTitle": "Uniform.Matrix.Client.Android",
-      "_appName": "Uniform.Matrix.Client.Android",
+      "_appFooter": "<span>Uniform Chat for Android</span>",
+      "_appTitle": "Uniform Chat for Android",
+      "_appName": "Uniform Chat for Android",
       "_enableSearch": true
     }
   }

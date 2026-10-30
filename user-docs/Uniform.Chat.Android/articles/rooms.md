@@ -1,5 +1,5 @@
 ---
 title: Rooms
-uid: Uniform.Matrix.Client.Android.Rooms.Article
+uid: Uniform.Chat.Android.Rooms.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/rooms.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/rooms.md)]

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Android;
+namespace Uniform.Chat.Android;
 
 using global::Android.Content;
 using global::Android.Net;

@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
-             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.SettingsView"
-             xmlns:views="using:Uniform.Matrix.Client.Avalonia.Core.Views"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
+             x:Class="Uniform.Chat.Avalonia.Views.SettingsView"
+             xmlns:views="using:Uniform.Chat.Avalonia.Views"
              x:DataType="vm:SettingsViewModel">
   <Panel>
   <StackPanel Spacing="12" IsVisible="{Binding ShowsSettings}">

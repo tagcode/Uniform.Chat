@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              xmlns:crypto="using:Uniform.Matrix.Protocol.Crypto"
-             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.VerificationView"
+             x:Class="Uniform.Chat.Avalonia.Views.VerificationView"
              x:DataType="vm:VerificationViewModel">
   <StackPanel Spacing="12">
     <TextBlock Classes="title" Text="Verify device" />

@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <ApplicationId>io.github.tagcode.uniform.matrix</ApplicationId>
-    <ApplicationTitle>Uniform.Matrix</ApplicationTitle>
+    <ApplicationId>rip.uniform.chat</ApplicationId>
+    <ApplicationTitle>Uniform Chat</ApplicationTitle>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uniform.Matrix.Client.Avalonia.Core\Uniform.Matrix.Client.Avalonia.Core.csproj" />
+    <ProjectReference Include="..\Uniform.Chat.Avalonia\Uniform.Chat.Avalonia.csproj" />
   </ItemGroup>
 
 </Project>

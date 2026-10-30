@@ -1,16 +1,16 @@
 - name: Installing
-  uid: Uniform.Matrix.Server.Host.Install.Article
+  uid: Uniform.Chat.Server.Install.Article
 - name: Run with the dashboard
-  uid: Uniform.Matrix.Server.Host.Dashboard.Article
+  uid: Uniform.Chat.Server.Dashboard.Article
 - name: Run without the dashboard
-  uid: Uniform.Matrix.Server.Host.Service.Article
+  uid: Uniform.Chat.Server.Service.Article
 - name: Settings
-  uid: Uniform.Matrix.Server.Host.Settings.Article
+  uid: Uniform.Chat.Server.Settings.Article
 - name: Accounts
-  uid: Uniform.Matrix.Server.Host.Accounts.Article
+  uid: Uniform.Chat.Server.Accounts.Article
 - name: Connecting clients
-  uid: Uniform.Matrix.Server.Host.Clients.Article
+  uid: Uniform.Chat.Server.Clients.Article
 - name: Files
-  uid: Uniform.Matrix.Server.Host.Files.Article
+  uid: Uniform.Chat.Server.Files.Article
 - name: Troubleshooting
-  uid: Uniform.Matrix.Server.Host.Troubleshooting.Article
+  uid: Uniform.Chat.Server.Troubleshooting.Article

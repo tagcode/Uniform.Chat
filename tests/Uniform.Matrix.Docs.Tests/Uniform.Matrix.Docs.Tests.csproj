@@ -27,8 +27,8 @@
 
   <!-- The apps whose settings the user guides list -->
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Uniform.Matrix.Client.Terminal\Uniform.Matrix.Client.Terminal.csproj" />
-    <ProjectReference Include="..\..\src\Uniform.Matrix.Server.Host\Uniform.Matrix.Server.Host.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Chat.Terminal\Uniform.Chat.Terminal.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Chat.Server\Uniform.Chat.Server.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Services;
+namespace Uniform.Chat.Avalonia.Services;
 
 /// <summary>What the user gave to sign in: the user ID, optionally the homeserver, and the password unless a stored session is resumed.</summary>
 public sealed record SignIn

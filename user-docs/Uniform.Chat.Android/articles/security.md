@@ -1,5 +1,5 @@
 ---
 title: Security
-uid: Uniform.Matrix.Client.Android.Security.Article
+uid: Uniform.Chat.Android.Security.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/security.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/security.md)]

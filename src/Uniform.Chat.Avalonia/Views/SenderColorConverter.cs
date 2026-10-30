@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using System.Globalization;
 using global::Avalonia.Data.Converters;

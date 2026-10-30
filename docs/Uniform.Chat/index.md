@@ -4,4 +4,4 @@ uid: Uniform.Matrix.Article
 ---
 # Uniform.Matrix
 
-<b>Uniform.Matrix</b> is a collection of .NET 10 class libraries and applications for the [Matrix](https://spec.matrix.org/latest/) chat protocol.
+<b>Uniform Chat</b> is a collection of applications for the [Matrix](https://spec.matrix.org/latest/) chat protocol, and the <b>Uniform.Matrix</b> .NET 10 class libraries they are built on: the `Uniform.Chat.*` projects are the apps and the server program, the `Uniform.Matrix.*` projects the libraries, named after the protocol they implement.

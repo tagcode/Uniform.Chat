@@ -1,6 +1,6 @@
 ---
 title: Settings
-uid: Uniform.Matrix.Server.Host.Settings.Article
+uid: Uniform.Chat.Server.Settings.Article
 ---
 # Settings
 
@@ -61,7 +61,7 @@ Settings come from these places; later ones override earlier ones:
 | `Storage:MediaDirectoryName` | `media` | Folder inside the data folder for uploaded files. ↻ |
 | `Storage:LogDirectoryName` | `logs` | Folder inside the data folder with one log file per session. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
-| `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](xref:Uniform.Matrix.Server.Host.Service.Article). ↻ |
+| `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article). ↻ |
 | `Logging:LogLevel:Default` | `Information` | Lowest level written to the log: `Trace`, `Debug`, `Information`, `Warning`, `Error`, `Critical` or `None`. |
 
 ↻ marks options that take effect after a restart.
@@ -72,6 +72,6 @@ Settings come from these places; later ones override earlier ones:
 To serve HTTPS itself, point the server at a certificate, for example [certbot](https://github.com/certbot/certbot)'s files, and use `https://` addresses:
 
 ```bash
-./Uniform.Matrix.Server.Host --Urls="https://0.0.0.0:8448" \
+./Uniform.Chat.Server --Urls="https://0.0.0.0:8448" \
   --Tls:CertificatePath=/path/to/fullchain.pem --Tls:KeyPath=/path/to/privkey.pem
 ```

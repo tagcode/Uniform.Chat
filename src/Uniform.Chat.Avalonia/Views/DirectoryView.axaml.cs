@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using global::Avalonia.Controls;
 using global::Avalonia.Input;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>The room directory: server and search fields, and the rooms found with a Join button each.</summary>
 public partial class DirectoryView : UserControl

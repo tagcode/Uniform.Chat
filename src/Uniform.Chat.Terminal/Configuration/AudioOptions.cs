@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal.Configuration;
+namespace Uniform.Chat.Terminal.Configuration;
 
 /// <summary>Microphone and speaker for the audio test and, later, calls, configuration section <see cref="Section"/>.</summary>
 public sealed record AudioOptions

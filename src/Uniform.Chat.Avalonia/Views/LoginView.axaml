@@ -1,12 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:Uniform.Matrix.Client.Avalonia.Core.ViewModels"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              xmlns:core="using:Uniform.Matrix.Protocol.Core"
-             x:Class="Uniform.Matrix.Client.Avalonia.Core.Views.LoginView"
+             x:Class="Uniform.Chat.Avalonia.Views.LoginView"
              x:DataType="vm:LoginViewModel">
   <ScrollViewer>
     <StackPanel MaxWidth="380" Margin="24" Spacing="12" VerticalAlignment="Center">
-      <Image Source="avares://Uniform.Matrix.Client.Avalonia.Core/Assets/logo.png" Width="96" Height="96" />
+      <Image Source="avares://Uniform.Chat.Avalonia/Assets/logo.png" Width="96" Height="96" />
       <TextBlock Classes="title" HorizontalAlignment="Center" Text="{Binding Title}" />
 
       <TextBlock Text="User ID" />

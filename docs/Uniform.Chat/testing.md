@@ -30,7 +30,7 @@ Most live tests use the first account. `LiveSecurityTests` use the second and th
 
 Every live test logs out at the end, so no stale devices are left on the account. Verification requests name the test device, so the account's other sessions are not asked.
 
-`Uniform.Matrix.Client.Avalonia.Core.Tests` drive the app's view models against the in-memory server, with Avalonia's headless platform and Skia rendering, so they need no display. Set `UNIFORM_MATRIX_SCREENSHOTS` to a folder to save the rendered chat window there. They pin xUnit v3 3.2, as `Avalonia.Headless.XUnit` 12 does not run on xUnit 4.
+`Uniform.Chat.Avalonia.Tests` drive the app's view models against the in-memory server, with Avalonia's headless platform and Skia rendering, so they need no display. Set `UNIFORM_MATRIX_SCREENSHOTS` to a folder to save the rendered chat window there. They pin xUnit v3 3.2, as `Avalonia.Headless.XUnit` 12 does not run on xUnit 4.
 
 ## Native test oracle
 

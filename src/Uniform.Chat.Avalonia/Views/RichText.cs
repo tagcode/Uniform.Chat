@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;

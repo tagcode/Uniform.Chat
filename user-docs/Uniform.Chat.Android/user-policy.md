@@ -1,12 +1,12 @@
 ---
 title: User policy
-uid: Uniform.Matrix.Client.Android.UserPolicy.Article
+uid: Uniform.Chat.Android.UserPolicy.Article
 ---
 # User policy
 
 *Last updated: 30 October 2026*
 
-By using the Uniform.Matrix apps you agree to this policy. It sets out what you must not post or send with them. Your Matrix server, which keeps your account, has its own terms as well, and its admins enforce them.
+By using the Uniform Chat apps you agree to this policy. It sets out what you must not post or send with them. Your Matrix server, which keeps your account, has its own terms as well, and its admins enforce them.
 
 ## Not allowed
 

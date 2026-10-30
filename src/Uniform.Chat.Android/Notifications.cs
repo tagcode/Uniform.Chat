@@ -1,10 +1,10 @@
-namespace Uniform.Matrix.Client.Android;
+namespace Uniform.Chat.Android;
 
 using global::Android.App;
 using global::Android.Content;
 using global::Android.Content.PM;
 using global::Android.OS;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 
 /// <summary>The app's notification channels, and notifications that open the app when tapped.</summary>
 internal static class Notifications
@@ -161,7 +161,7 @@ public sealed class SyncForegroundService : Service
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
         // Typed as special use where Android asks
-        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform.Matrix", "Connected, for messages and calls", ongoing: true);
+        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Connected, for messages and calls", ongoing: true);
         if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeSpecialUse);
         else StartForeground(NotificationId, notification);
         // Done

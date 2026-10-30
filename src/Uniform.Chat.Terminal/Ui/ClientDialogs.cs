@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
 using System.Collections.ObjectModel;
 using Uniform.Matrix.Client.Services;
@@ -75,7 +75,7 @@ public static class ClientDialogs
     }
 
     /// <summary>Address of the app's user policy, which people accept by signing in.</summary>
-    public const string UserPolicyUrl = "https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/user-policy.md";
+    public const string UserPolicyUrl = "https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Android/user-policy.md";
 
     /// <summary>Ask for the user ID and, when needed, the server address on first start, and whether to create the account; return them, or null when cancelled.</summary>
     /// <param name="app">Running application.</param>

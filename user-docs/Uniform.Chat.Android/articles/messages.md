@@ -1,5 +1,5 @@
 ---
 title: Messages and files
-uid: Uniform.Matrix.Client.Android.Messages.Article
+uid: Uniform.Chat.Android.Messages.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/messages.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/messages.md)]

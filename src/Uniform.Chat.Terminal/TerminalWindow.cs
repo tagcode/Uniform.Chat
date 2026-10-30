@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal;
+namespace Uniform.Chat.Terminal;
 
 using System.Diagnostics;
 

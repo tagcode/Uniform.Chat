@@ -1,6 +1,6 @@
-namespace Uniform.Matrix.Client.Desktop.Notifications;
+namespace Uniform.Chat.Desktop.Notifications;
 
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Tmds.DBus.Protocol;
 
 /// <summary>Notifications on Linux desktops through the session bus, as GNOME, KDE and most others show them.</summary>
@@ -28,7 +28,7 @@ public sealed class FreeDesktopNotifier : INotifier
         // Header, then the arguments in signature order
         using MessageWriter writer = DBusConnection.Session.GetMessageWriter();
         writer.WriteMethodCallHeader(destination: "org.freedesktop.Notifications", path: "/org/freedesktop/Notifications", @interface: "org.freedesktop.Notifications", member: "Notify", signature: "susssasa{sv}i");
-        writer.WriteString("Uniform.Matrix");
+        writer.WriteString("Uniform Chat");
         writer.WriteUInt32(replaces);
         writer.WriteString(icon);
         writer.WriteString(title);

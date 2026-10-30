@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Tests;
+namespace Uniform.Chat.Avalonia.Tests;
 
 using global::Avalonia.Headless.XUnit;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.Services;
+using Uniform.Chat.Avalonia.ViewModels;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Settings are saved on change, read back on the next start, and kept apart from the remembered account; headless so the test settings folder is in place.</summary>
@@ -66,7 +66,7 @@ public class SettingsTests
         settings.CloseLicensesCommand.Execute(null);
 
         // Assert
-        Assert.Equal("Uniform.Matrix", licenses.Entries[0].Name);
+        Assert.Equal("Uniform Chat", licenses.Entries[0].Name);
         Assert.Contains("MIT License", own);
         Assert.Contains(licenses.Entries, e => e.Group == "Runtime");
         Assert.Contains(licenses.Entries, e => e.Group == "Packages" && e.Name == "Avalonia");

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using System.Globalization;
 using global::Avalonia.Media.Imaging;

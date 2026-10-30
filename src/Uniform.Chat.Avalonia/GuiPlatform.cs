@@ -1,15 +1,15 @@
-namespace Uniform.Matrix.Client.Avalonia.Core;
+namespace Uniform.Chat.Avalonia;
 
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Audio;
 
 /// <summary>What the desktop and Android apps tell the shared user interface about their platform.</summary>
 public sealed record GuiPlatform
 {
-    /// <summary>Application name, which names the data and settings folders, e.g. <c>Uniform.Matrix.Client.Desktop</c>.</summary>
+    /// <summary>Application name, which names the data and settings folders, e.g. <c>Uniform.Chat.Desktop</c>.</summary>
     public required string ApplicationName { get; init; }
-    /// <summary>Display name of the device created at sign-in, e.g. <c>Uniform.Matrix on Linux</c>.</summary>
+    /// <summary>Display name of the device created at sign-in, e.g. <c>Uniform Chat on Linux</c>.</summary>
     public required string DeviceName { get; init; }
     /// <summary>Whether the screen shows one pane at a time, the room list or a room, as on phones.</summary>
     public bool SinglePane { get; init; }
@@ -39,8 +39,8 @@ public sealed record GuiPlatform
     /// <summary>Return the platform of the desktop app on this operating system.</summary>
     public static GuiPlatform Desktop() => new()
     {
-        ApplicationName = "Uniform.Matrix.Client.Desktop",
-        DeviceName = OperatingSystem.IsWindows() ? "Uniform.Matrix on Windows" : OperatingSystem.IsMacOS() ? "Uniform.Matrix on macOS" : "Uniform.Matrix on Linux",
+        ApplicationName = "Uniform.Chat.Desktop",
+        DeviceName = OperatingSystem.IsWindows() ? "Uniform Chat on Windows" : OperatingSystem.IsMacOS() ? "Uniform Chat on macOS" : "Uniform Chat on Linux",
         Audio = AudioDevices.ForThisPlatform() is null ? null : _ => AudioDevices.ForThisPlatform()!,
     };
 }

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Android.Audio;
+namespace Uniform.Chat.Android.Audio;
 
 using global::Android.Content;
 using global::Android.Media;

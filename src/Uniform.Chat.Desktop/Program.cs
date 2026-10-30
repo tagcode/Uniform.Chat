@@ -1,11 +1,11 @@
-namespace Uniform.Matrix.Client.Desktop;
+namespace Uniform.Chat.Desktop;
 
 using global::Avalonia;
-using Uniform.Matrix.Client.Desktop.Notifications;
-using Uniform.Matrix.Client.Avalonia.Core;
+using Uniform.Chat.Desktop.Notifications;
+using Uniform.Chat.Avalonia;
 using Uniform.Matrix.Hosting;
 
-/// <summary>Desktop entry point of the Uniform.Matrix chat app, for Windows and Linux.</summary>
+/// <summary>Desktop entry point of the Uniform Chat app, for Windows and Linux.</summary>
 public static class Program
 {
     /// <summary>Start Avalonia with the shared app; nothing that needs Avalonia may run before this.</summary>

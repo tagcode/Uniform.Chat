@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using global::Avalonia.Controls;
 using global::Avalonia.Input.Platform;
 using global::Avalonia.Interactivity;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>Encryption status with recovery set-up, recovery and verification.</summary>
 public partial class SecurityView : UserControl

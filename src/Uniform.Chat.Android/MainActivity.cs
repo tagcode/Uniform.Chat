@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Android;
+namespace Uniform.Chat.Android;
 
 using global::Avalonia.Android;
 using global::Android;
@@ -9,7 +9,7 @@ using global::Android.Views;
 
 /// <summary>The app's one screen; Avalonia draws the shared user interface into it.</summary>
 [Activity(
-    Label = "Uniform.Matrix",
+    Label = "Uniform Chat",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,

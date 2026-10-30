@@ -1,6 +1,6 @@
 - name: Introduction
-  uid: Uniform.Matrix.Client.Avalonia.Core.Article
+  uid: Uniform.Chat.Avalonia.Article
 - name: View models
-  uid: Uniform.Matrix.Client.Avalonia.Core.ViewModels.Article
+  uid: Uniform.Chat.Avalonia.ViewModels.Article
 - name: Views
-  uid: Uniform.Matrix.Client.Avalonia.Core.Views.Article
+  uid: Uniform.Chat.Avalonia.Views.Article

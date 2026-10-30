@@ -17,7 +17,7 @@ loopback.Start();
 Console.ReadLine();
 ```
 
-To encode and decode frames yourself, with [`MicrophoneFrames`](https://github.com/tagcode/Uniform.Matrix) delivering 960-sample frames from any NAudio `IWaveIn`:
+To encode and decode frames yourself, with [`MicrophoneFrames`](https://github.com/tagcode/Uniform.Chat) delivering 960-sample frames from any NAudio `IWaveIn`:
 
 ```csharp
 VoiceEncoder encoder = new();

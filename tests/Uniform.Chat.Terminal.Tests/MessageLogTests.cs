@@ -1,7 +1,7 @@
-namespace Uniform.Matrix.Client.Terminal.Tests;
+namespace Uniform.Chat.Terminal.Tests;
 
 using System.Text.Json;
-using Uniform.Matrix.Client.Terminal.Ui;
+using Uniform.Chat.Terminal.Ui;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;

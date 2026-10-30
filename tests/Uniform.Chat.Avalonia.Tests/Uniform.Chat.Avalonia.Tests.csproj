@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Uniform.Matrix.Client.Avalonia.Core\Uniform.Matrix.Client.Avalonia.Core.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Chat.Avalonia\Uniform.Chat.Avalonia.csproj" />
     <ProjectReference Include="..\..\src\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
   </ItemGroup>
 

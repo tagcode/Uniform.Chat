@@ -9,7 +9,7 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 
 ## Terminal client
 
-`Uniform.Matrix.Client.Terminal` is the terminal chat client: rooms, messages, files and image previews, end-to-end encryption with cross-signing, key backup and emoji verification, settings and logs.
+`Uniform.Chat.Terminal` is the terminal chat client: rooms, messages, files and image previews, end-to-end encryption with cross-signing, key backup and emoji verification, settings and logs.
 
 <pre>
  File  Room  View  Help
@@ -25,20 +25,20 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 </pre>
 
-- User guide: [Getting started](user-docs/Uniform.Matrix.Client.Terminal/articles/getting-started.md), [Interface](user-docs/Uniform.Matrix.Client.Terminal/articles/interface.md), [Settings](user-docs/Uniform.Matrix.Client.Terminal/articles/settings.md)
-- Developer guide: [Overview](docs/index.md), [Using the protocol client](docs/Uniform.Matrix/Uniform.Matrix.Protocol.Client/index.md)
+- User guide: [Getting started](user-docs/Uniform.Chat.Terminal/articles/getting-started.md), [Interface](user-docs/Uniform.Chat.Terminal/articles/interface.md), [Settings](user-docs/Uniform.Chat.Terminal/articles/settings.md)
+- Developer guide: [Overview](docs/index.md), [Using the protocol client](docs/Uniform.Chat/Uniform.Matrix.Protocol.Client/index.md)
 
 ## Desktop and Android client
 
-`Uniform.Matrix.Client.Desktop` and `Uniform.Matrix.Client.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
+`Uniform.Chat.Desktop` and `Uniform.Chat.Android` are the graphical client, built with [Avalonia](https://avaloniaui.net) on the same engine: rooms, formatted messages with replies, reactions and edits, files and image previews, invites and direct chats, and end-to-end encryption with recovery and emoji verification. It is newer than the terminal client and has fewer features.
 
-![The desktop client](user-docs/Uniform.Matrix.Client.Desktop/images/desktop.png)
+![The desktop client](user-docs/Uniform.Chat.Desktop/images/desktop.png)
 
-- User guide: [Getting started](user-docs/Uniform.Matrix.Client.Desktop/articles/getting-started.md), [Rooms](user-docs/Uniform.Matrix.Client.Desktop/articles/rooms.md), [Messages and files](user-docs/Uniform.Matrix.Client.Desktop/articles/messages.md)
+- User guide: [Getting started](user-docs/Uniform.Chat.Desktop/articles/getting-started.md), [Rooms](user-docs/Uniform.Chat.Desktop/articles/rooms.md), [Messages and files](user-docs/Uniform.Chat.Desktop/articles/messages.md)
 
 ## Server
 
-`Uniform.Matrix.Server.Host` is a homeserver with a dashboard in the terminal, or without one as a service: accounts, rooms, sync, profiles, typing and receipts, the room directory, files with thumbnails, and the encryption relay with cross-signing and key backup. Federation with other servers is not there yet.
+`Uniform.Chat.Server` is a homeserver with a dashboard in the terminal, or without one as a service: accounts, rooms, sync, profiles, typing and receipts, the room directory, files with thumbnails, and the encryption relay with cross-signing and key backup. Federation with other servers is not there yet.
 
 <pre>
 ┌Matrix server localhost───────────────────────────────────────────────────────────┐
@@ -55,8 +55,8 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 └──────────────────────────────────────────────────────────────────────────────────┘
 </pre>
 
-- User guide: [Installing](user-docs/Uniform.Matrix.Server.Host/articles/install.md), [Settings](user-docs/Uniform.Matrix.Server.Host/articles/settings.md)
-- Developer guide: [Server](docs/Uniform.Matrix/Uniform.Matrix.Server/index.md), [Overview](docs/index.md)
+- User guide: [Installing](user-docs/Uniform.Chat.Server/articles/install.md), [Settings](user-docs/Uniform.Chat.Server/articles/settings.md)
+- Developer guide: [Server](docs/Uniform.Chat/Uniform.Matrix.Server/index.md), [Overview](docs/index.md)
 
 ## Libraries
 
@@ -76,13 +76,13 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 Needs the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```bash
-dotnet build Uniform.Matrix.slnx
-dotnet test --solution Uniform.Matrix.slnx
-dotnet run --project src/Uniform.Matrix.Server.Host
-dotnet run --project src/Uniform.Matrix.Client.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
+dotnet build Uniform.Chat.slnx
+dotnet test --solution Uniform.Chat.slnx
+dotnet run --project src/Uniform.Chat.Server
+dotnet run --project src/Uniform.Chat.Terminal -- --Matrix:UserId=@alice:localhost --Matrix:Homeserver=http://localhost:8008
 ```
 
-See [Building](docs/Uniform.Matrix/building.md), [Testing](docs/Uniform.Matrix/testing.md) and [Documentation](docs/Uniform.Matrix/documentation.md) for the build, the tests and the documentation sites.
+See [Building](docs/Uniform.Chat/building.md), [Testing](docs/Uniform.Chat/testing.md) and [Documentation](docs/Uniform.Chat/documentation.md) for the build, the tests and the documentation sites.
 
 ## License
 

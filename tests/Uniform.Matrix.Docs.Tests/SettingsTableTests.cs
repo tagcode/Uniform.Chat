@@ -6,10 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Uniform.Matrix.Client;
-using Uniform.Matrix.Client.Terminal.Configuration;
+using Uniform.Chat.Terminal.Configuration;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
-using Uniform.Matrix.Server.Host;
+using Uniform.Chat.Server;
 
 /// <summary>The settings tables of the user guides match the options the apps register: every setting is listed, no row is for a setting that does not exist, and the defaults agree.</summary>
 public partial class SettingsTableTests
@@ -25,7 +25,7 @@ public partial class SettingsTableTests
         builder.Services.AddOptionSection<AudioOptions>(builder.Configuration, AudioOptions.Section);
 
         // Act and assert
-        AssertTable("user-docs/Uniform.Matrix.Client.Terminal/articles/settings.md", Options(builder.Services, builder.Configuration));
+        AssertTable("user-docs/Uniform.Chat.Terminal/articles/settings.md", Options(builder.Services, builder.Configuration));
     }
 
     /// <summary>The server's settings table lists its settings and their defaults; its <c>Urls</c> row, read by ASP.NET Core itself, has no section and is not compared.</summary>
@@ -42,7 +42,7 @@ public partial class SettingsTableTests
             builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 
             // Act and assert
-            AssertTable("user-docs/Uniform.Matrix.Server.Host/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));
+            AssertTable("user-docs/Uniform.Chat.Server/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));
         }
         finally
         {

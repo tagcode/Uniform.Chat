@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Views;
+namespace Uniform.Chat.Avalonia.Views;
 
 using System.Collections.Specialized;
 using global::Avalonia;
@@ -10,7 +10,7 @@ using global::Avalonia.Media.Imaging;
 using global::Avalonia.Platform.Storage;
 using global::Avalonia.Threading;
 using global::Avalonia.VisualTree;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>The chat screen: the room list and the open room; the code here handles scrolling, keys and the narrow layout.</summary>
 public partial class ChatView : UserControl

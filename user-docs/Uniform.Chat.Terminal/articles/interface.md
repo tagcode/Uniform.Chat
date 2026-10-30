@@ -1,6 +1,6 @@
 ---
 title: Interface
-uid: Uniform.Matrix.Client.Terminal.Interface.Article
+uid: Uniform.Chat.Terminal.Interface.Article
 ---
 # Interface
 

@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+namespace Uniform.Chat.Avalonia.ViewModels;
 
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Uniform.Matrix.Client.Avalonia.Core.Services;
+using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
@@ -13,10 +13,10 @@ using Uniform.Matrix.Protocol.Core;
 public sealed partial class LoginViewModel(Func<SignIn, Task> signIn, IAccountCreator? creator = null) : ViewModelBase
 {
     /// <summary>Address of the app's user policy, which people accept by signing in.</summary>
-    public const string UserPolicyUrl = "https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/user-policy.md";
+    public const string UserPolicyUrl = "https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Android/user-policy.md";
 
     /// <summary>Address of the app's privacy policy.</summary>
-    public const string PrivacyPolicyUrl = "https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/privacy-policy.md";
+    public const string PrivacyPolicyUrl = "https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Android/privacy-policy.md";
 
     /// <summary>Requirements of the server last asked, until the user ID or address changes.</summary>
     private RegistrationRequirements? requirements;

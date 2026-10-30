@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Android;
+namespace Uniform.Chat.Android;
 
 using global::Android.App;
 using global::Android.Content;
@@ -85,7 +85,7 @@ internal sealed class NearEarScreenOff : IDisposable
     {
         // The proximity level, when supported
         if (context.GetSystemService(Context.PowerService) is not PowerManager power || !power.IsWakeLockLevelSupported((int)WakeLockFlags.ProximityScreenOff)) return;
-        wakeLock = power.NewWakeLock(WakeLockFlags.ProximityScreenOff, "Uniform.Matrix:call");
+        wakeLock = power.NewWakeLock(WakeLockFlags.ProximityScreenOff, "UniformChat:call");
         wakeLock?.Acquire();
     }
 

@@ -1,7 +1,7 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
 using System.Text.Json;
-using Uniform.Matrix.Client.Terminal.Configuration;
+using Uniform.Chat.Terminal.Configuration;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client;
 using Uniform.Matrix.Client.Configuration;

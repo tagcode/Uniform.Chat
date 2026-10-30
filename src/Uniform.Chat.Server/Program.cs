@@ -1,5 +1,5 @@
-using Uniform.Matrix.Server.Host;
-using Uniform.Matrix.Server.Host.Ui;
+using Uniform.Chat.Server;
+using Uniform.Chat.Server.Ui;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +13,8 @@ using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
 
-// Read appsettings.json next to the executable, not from the working directory
-WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory });
+// Read appsettings.json next to the executable, not from the working directory; the application name keeps the old folders
+WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = ApplicationName });
 
 // Settings file and applied changes, then the server and this process's options
 builder.AddSettings();
@@ -113,5 +113,8 @@ static TlsCertificateException? FindTlsError(Exception exception)
 internal partial class Program
 {
     /// <summary>Log category of start-up failures that the console shows in its own words.</summary>
-    private const string StartupCategory = "Uniform.Matrix.Server.Host.Startup";
+    private const string StartupCategory = "Uniform.Chat.Server.Startup";
+
+    /// <summary>Application name, which names the settings, data and log folders, e.g. <c>~/.local/share/uniform-matrix-server-host</c>; kept from before the program was renamed, so that existing servers keep their data.</summary>
+    private const string ApplicationName = "Uniform.Matrix.Server.Host";
 }

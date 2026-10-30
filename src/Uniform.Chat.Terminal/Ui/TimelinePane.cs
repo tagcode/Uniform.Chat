@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
 using System.Collections.ObjectModel;
 using TuiAttribute = global::Terminal.Gui.Drawing.Attribute;

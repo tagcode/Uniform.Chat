@@ -1,5 +1,5 @@
 ---
 title: Notifications
-uid: Uniform.Matrix.Client.Android.Notifications.Article
+uid: Uniform.Chat.Android.Notifications.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/notifications.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/notifications.md)]

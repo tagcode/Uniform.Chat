@@ -7,9 +7,9 @@
     "output": "_site",
     "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform.Matrix.Client.Terminal</span>",
-      "_appTitle": "Uniform.Matrix.Client.Terminal",
-      "_appName": "Uniform.Matrix.Client.Terminal",
+      "_appFooter": "<span>Uniform Chat Terminal</span>",
+      "_appTitle": "Uniform Chat Terminal",
+      "_appName": "Uniform Chat Terminal",
       "_enableSearch": true
     }
   }

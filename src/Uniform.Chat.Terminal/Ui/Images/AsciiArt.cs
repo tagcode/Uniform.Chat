@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal.Ui.Images;
+namespace Uniform.Chat.Terminal.Ui.Images;
 
 using System.Text;
 

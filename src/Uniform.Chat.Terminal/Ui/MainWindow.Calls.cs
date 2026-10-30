@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
 using Microsoft.Extensions.Configuration;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Calls;
-using Uniform.Matrix.Client.Terminal.Configuration;
+using Uniform.Chat.Terminal.Configuration;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.WebRtc.Ice;
 

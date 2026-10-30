@@ -1,13 +1,13 @@
 ---
 title: Run without the dashboard
-uid: Uniform.Matrix.Server.Host.Service.Article
+uid: Uniform.Chat.Server.Service.Article
 ---
 # Run without the dashboard
 
 Without a terminal, for example as a service, the server runs without the dashboard and also writes its log to standard output:
 
 ```bash
-./Uniform.Matrix.Server.Host --Host:Ui=None
+./Uniform.Chat.Server --Host:Ui=None
 ```
 
 `Host:Ui` chooses the mode:
@@ -28,13 +28,13 @@ Unpack the downloaded release there:
 
 ```bash
 mkdir -p ~/matrix-server
-tar -xzf uniform-matrix-server-<version>-linux-x64.tar.gz -C ~/matrix-server --strip-components=1
+tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C ~/matrix-server --strip-components=1
 ```
 
 Or, from the source, publish it there:
 
 ```bash
-dotnet publish src/Uniform.Matrix.Server.Host -c Release -o ~/matrix-server
+dotnet publish src/Uniform.Chat.Server -c Release -o ~/matrix-server
 ```
 
 Then write the unit file:
@@ -45,7 +45,7 @@ Then write the unit file:
 Description=Matrix homeserver
 
 [Service]
-ExecStart=%h/matrix-server/Uniform.Matrix.Server.Host
+ExecStart=%h/matrix-server/Uniform.Chat.Server
 Restart=on-failure
 
 [Install]
@@ -73,11 +73,11 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
 
    ```bash
    sudo mkdir -p /opt/uniform-matrix
-   sudo tar -xzf uniform-matrix-server-<version>-linux-x64.tar.gz -C /opt/uniform-matrix --strip-components=1
+   sudo tar -xzf uniform-chat-server-<version>-linux-x64.tar.gz -C /opt/uniform-matrix --strip-components=1
    ```
 
    ```bash
-   sudo dotnet publish src/Uniform.Matrix.Server.Host -c Release -o /opt/uniform-matrix
+   sudo dotnet publish src/Uniform.Chat.Server -c Release -o /opt/uniform-matrix
    ```
 
 3. Write the settings to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`, readable only by the server, as it may hold secrets such as the TURN secret. For example, behind nginx on the same machine:
@@ -102,20 +102,20 @@ On a server, run it as a system service: it starts at boot, runs as a user of it
    }
    ```
 
-   [Installing](xref:Uniform.Matrix.Server.Host.Install.Article) has a complete example with federation and calls, and the nginx site in front; [Settings](xref:Uniform.Matrix.Server.Host.Settings.Article) lists every option.
+   [Installing](xref:Uniform.Chat.Server.Install.Article) has a complete example with federation and calls, and the nginx site in front; [Settings](xref:Uniform.Chat.Server.Settings.Article) lists every option.
 
 4. Write the unit file `/etc/systemd/system/uniform-matrix.service`:
 
    ```ini
    [Unit]
-   Description=Uniform.Matrix homeserver
+   Description=Uniform Chat homeserver
    After=network-online.target
    Wants=network-online.target
 
    [Service]
    User=uniform-matrix
    Group=uniform-matrix
-   ExecStart=/opt/uniform-matrix/Uniform.Matrix.Server.Host --Host:Ui=None
+   ExecStart=/opt/uniform-matrix/Uniform.Chat.Server --Host:Ui=None
    WorkingDirectory=/var/lib/uniform-matrix
    # Settings from /etc/uniform-matrix, data in /var/lib/uniform-matrix
    Environment=XDG_CONFIG_HOME=/etc/uniform-matrix
@@ -158,9 +158,11 @@ Then control it with `systemctl`, and read its log from the journal:
 | `journalctl -u uniform-matrix -f` | Follow the log |
 | `journalctl -u uniform-matrix --since today` | Today's log |
 
-The server also keeps its own log files in `/var/lib/uniform-matrix/uniform-matrix-server-host/logs`, with its database and signing key; see [Files](xref:Uniform.Matrix.Server.Host.Files.Article).
+The server also keeps its own log files in `/var/lib/uniform-matrix/uniform-matrix-server-host/logs`, with its database and signing key; see [Files](xref:Uniform.Chat.Server.Files.Article).
 
 To update, stop the server, unpack or publish the new version over `/opt/uniform-matrix`, and start it; it updates its database at start. Back up `/var/lib/uniform-matrix` first.
+
+Versions before the Uniform Chat name had the program `Uniform.Matrix.Server.Host`. When updating from one, change `ExecStart` in the unit file to `/opt/uniform-matrix/Uniform.Chat.Server`, run `sudo systemctl daemon-reload`, and remove the old program from `/opt/uniform-matrix`. The settings and data folders are the same as before.
 
 > [!NOTE]
 > To serve HTTPS itself, without a proxy, the server needs to read the certificate and to listen on port 443:

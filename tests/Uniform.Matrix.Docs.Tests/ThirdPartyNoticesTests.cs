@@ -7,10 +7,10 @@ public class ThirdPartyNoticesTests
 {
     /// <summary>A bundled package without its license file, or with one of another version, fails with the command that fixes it.</summary>
     [Theory]
-    [InlineData("Uniform.Matrix.Client.Terminal")]
-    [InlineData("Uniform.Matrix.Client.Desktop")]
-    [InlineData("Uniform.Matrix.Client.Android")]
-    [InlineData("Uniform.Matrix.Server.Host")]
+    [InlineData("Uniform.Chat.Terminal")]
+    [InlineData("Uniform.Chat.Desktop")]
+    [InlineData("Uniform.Chat.Android")]
+    [InlineData("Uniform.Chat.Server")]
     public void ListBundledPackages(string app)
     {
         // Arrange: the packages the app restores with files that ship

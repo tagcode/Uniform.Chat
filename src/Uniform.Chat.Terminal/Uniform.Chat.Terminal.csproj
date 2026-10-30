@@ -18,9 +18,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- The program is Uniform.Matrix, as the desktop app's; Program keeps the application name, and with it the settings and data folders -->
-    <AssemblyName>Uniform.Matrix</AssemblyName>
-    <RootNamespace>Uniform.Matrix.Client.Terminal</RootNamespace>
+    <!-- The program is Uniform.Chat, as the desktop app's; Program keeps the application name, and with it the settings and data folders -->
+    <AssemblyName>Uniform.Chat</AssemblyName>
+    <RootNamespace>Uniform.Chat.Terminal</RootNamespace>
     <!-- Code comments are for developers: no .xml documentation files in the published app -->
     <PublishDocumentationFile>false</PublishDocumentationFile>
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>

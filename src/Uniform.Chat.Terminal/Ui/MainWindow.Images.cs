@@ -1,6 +1,6 @@
-namespace Uniform.Matrix.Client.Terminal.Ui;
+namespace Uniform.Chat.Terminal.Ui;
 
-using Uniform.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Chat.Terminal.Ui.Images;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Gui.Terminal;

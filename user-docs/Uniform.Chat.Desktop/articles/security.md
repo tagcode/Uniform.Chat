@@ -1,6 +1,6 @@
 ---
 title: Security
-uid: Uniform.Matrix.Client.Desktop.Security.Article
+uid: Uniform.Chat.Desktop.Security.Article
 ---
 # Security
 

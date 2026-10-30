@@ -7,10 +7,10 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>..\Uniform.Matrix.Client.Avalonia.Core\Assets\icon.ico</ApplicationIcon>
-    <!-- The program is Uniform.Matrix: file managers take a name ending in .Desktop for a .desktop launcher, and do not run it -->
-    <AssemblyName>Uniform.Matrix</AssemblyName>
-    <RootNamespace>Uniform.Matrix.Client.Desktop</RootNamespace>
+    <ApplicationIcon>..\Uniform.Chat.Avalonia\Assets\icon.ico</ApplicationIcon>
+    <!-- The program is Uniform.Chat: file managers take a name ending in .Desktop for a .desktop launcher, and do not run it -->
+    <AssemblyName>Uniform.Chat</AssemblyName>
+    <RootNamespace>Uniform.Chat.Desktop</RootNamespace>
     <!-- Code comments are for developers: no .xml documentation files in the published app -->
     <PublishDocumentationFile>false</PublishDocumentationFile>
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
@@ -32,11 +32,11 @@
   <!-- Linux: an application menu entry, installed by the user from the unpacked folder -->
   <ItemGroup Condition="$(RuntimeIdentifier.StartsWith('linux'))">
     <None Include="Linux\install-desktop-entry.sh" CopyToPublishDirectory="PreserveNewest" Link="install-desktop-entry.sh" />
-    <None Include="..\Uniform.Matrix.Client.Avalonia.Core\Assets\icon.png" CopyToPublishDirectory="PreserveNewest" Link="uniform-matrix.png" />
+    <None Include="..\Uniform.Chat.Avalonia\Assets\icon.png" CopyToPublishDirectory="PreserveNewest" Link="uniform-chat.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uniform.Matrix.Client.Avalonia.Core\Uniform.Matrix.Client.Avalonia.Core.csproj" />
+    <ProjectReference Include="..\Uniform.Chat.Avalonia\Uniform.Chat.Avalonia.csproj" />
   </ItemGroup>
 
 </Project>

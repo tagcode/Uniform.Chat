@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 public partial class FrontMatterTests
 {
     /// <summary>The sites and their article files, from the repository root: the developer site, and each user guide's front page and articles.</summary>
-    public static TheoryData<string> Sites => ["docs", "user-docs/Uniform.Matrix.Client.Desktop", "user-docs/Uniform.Matrix.Client.Android", "user-docs/Uniform.Matrix.Client.Terminal", "user-docs/Uniform.Matrix.Server.Host"];
+    public static TheoryData<string> Sites => ["docs", "user-docs/Uniform.Chat.Desktop", "user-docs/Uniform.Chat.Android", "user-docs/Uniform.Chat.Terminal", "user-docs/Uniform.Chat.Server"];
 
     /// <summary>Each article of the site has front matter that follows the rules.</summary>
     [Theory]

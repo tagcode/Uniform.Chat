@@ -1,6 +1,6 @@
 ---
 title: Voice calls
-uid: Uniform.Matrix.Client.Desktop.Calls.Article
+uid: Uniform.Chat.Desktop.Calls.Article
 ---
 # Voice calls
 

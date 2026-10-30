@@ -1,20 +1,20 @@
 ---
-title: Uniform.Matrix.Client.Android
-uid: Uniform.Matrix.Client.Android.Article
+title: Uniform.Chat.Android
+uid: Uniform.Chat.Android.Article
 ---
-# Uniform.Matrix.Client.Android
+# Uniform.Chat.Android
 
-The Android entry point of the graphical app in [Uniform.Matrix.Client.Avalonia.Core](xref:Uniform.Matrix.Client.Avalonia.Core.Article): the activity, the manifest and the resources.
+The Android entry point of the graphical app in [Uniform.Chat.Avalonia](xref:Uniform.Chat.Avalonia.Article): the activity, the manifest and the resources.
 
 `MainApplication` sets `XDG_DATA_HOME` and `XDG_CONFIG_HOME` to the app's private files folder before anything else runs, so [`AppDirectories`](xref:Uniform.Matrix.Hosting.AppDirectories) and the engine need no Android code. The activity resizes for the keyboard. Android backup is off, so encryption keys stay on the device.
 
 ## Build and install
 
-The Android app is in `Uniform.Matrix.slnx`, so building the whole solution needs the Android workload; it also needs the Android SDK and JDK 17:
+The Android app is in `Uniform.Chat.slnx`, so building the whole solution needs the Android workload; it also needs the Android SDK and JDK 17:
 
 ```bash
 dotnet workload install android
-dotnet build src/Uniform.Matrix.Client.Android -t:Install \
+dotnet build src/Uniform.Chat.Android -t:Install \
   -p:AndroidSdkDirectory=$HOME/Android/Sdk -p:JavaSdkDirectory=/usr/lib/jvm/java-17-openjdk-amd64
 ```
 
@@ -39,5 +39,5 @@ The microphone and speaker of a call share Android's communication mode for the 
 
 ## Policies
 
-The sign-in form links to the [user policy](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/user-policy.md) and [privacy policy](https://github.com/tagcode/Uniform.Matrix/blob/main/user-docs/Uniform.Matrix.Client.Android/privacy-policy.md) in the user guide, at their GitHub addresses; Google Play needs the privacy policy's address too.
+The sign-in form links to the [user policy](https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Android/user-policy.md) and [privacy policy](https://github.com/tagcode/Uniform.Chat/blob/main/user-docs/Uniform.Chat.Android/privacy-policy.md) in the user guide, at their GitHub addresses; Google Play needs the privacy policy's address too.
 

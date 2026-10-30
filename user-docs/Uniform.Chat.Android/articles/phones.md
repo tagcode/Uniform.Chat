@@ -1,5 +1,5 @@
 ---
 title: Phones and narrow windows
-uid: Uniform.Matrix.Client.Android.Phones.Article
+uid: Uniform.Chat.Android.Phones.Article
 ---
-[!include[](../../Uniform.Matrix.Client.Desktop/articles/phones.md)]
+[!include[](../../Uniform.Chat.Desktop/articles/phones.md)]

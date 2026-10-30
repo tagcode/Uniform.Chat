@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Tests;
+namespace Uniform.Chat.Avalonia.Tests;
 
 using NAudio.Wave;
 using Uniform.Matrix.Audio;
-using Uniform.Matrix.Client.Avalonia.Core.ViewModels;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>The settings' audio test: asks for the microphone, loops it back through Opus, and reports what went through.</summary>
 public class AudioTestTests

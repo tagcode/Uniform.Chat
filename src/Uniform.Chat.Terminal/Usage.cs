@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Terminal;
+namespace Uniform.Chat.Terminal;
 
 using System.Runtime.InteropServices;
 using System.Text;
@@ -34,7 +34,7 @@ internal static class Usage
     public static string Text(string? userId, bool askedForHelp, string settingsPath, IReadOnlyList<OptionInfo> options)
     {
         // Program name as the user typed it, and why help is shown
-        string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Matrix";
+        string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Chat";
         string section = MatrixOptions.Section;
         string problem = askedForHelp ? "" : string.IsNullOrWhiteSpace(userId) ? "Give your Matrix user ID to start.\n\n" : $"\"{userId}\" is not a Matrix user ID; it looks like @alice:matrix.org.\n\n";
 
@@ -48,7 +48,7 @@ internal static class Usage
         }
         // Return help
         return $$"""
-            Uniform.Matrix, a Matrix chat client for the terminal
+            Uniform Chat, a Matrix chat client for the terminal
 
             {{problem}}Usage:
               {{program}} --{{section}}:UserId=@alice:matrix.org [--{{section}}:Password=...] [--Section:Setting=value ...]

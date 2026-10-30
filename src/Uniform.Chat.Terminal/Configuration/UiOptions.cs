@@ -1,6 +1,6 @@
-namespace Uniform.Matrix.Client.Terminal.Configuration;
+namespace Uniform.Chat.Terminal.Configuration;
 
-using Uniform.Matrix.Client.Terminal.Ui.Images;
+using Uniform.Chat.Terminal.Ui.Images;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Display settings, configuration section <see cref="Section"/>.</summary>

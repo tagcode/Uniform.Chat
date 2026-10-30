@@ -15,10 +15,10 @@ static partial class ThirdPartyNotices
     /// <summary>The apps by project, with how the notices name them.</summary>
     private static readonly (string Project, string Name)[] Apps =
     [
-        ("Uniform.Matrix.Client.Terminal", "terminal client"),
-        ("Uniform.Matrix.Client.Desktop", "desktop client"),
-        ("Uniform.Matrix.Client.Android", "Android client"),
-        ("Uniform.Matrix.Server.Host", "server"),
+        ("Uniform.Chat.Terminal", "terminal client"),
+        ("Uniform.Chat.Desktop", "desktop client"),
+        ("Uniform.Chat.Android", "Android client"),
+        ("Uniform.Chat.Server", "server"),
     ];
 
     /// <summary>Runtime packs bundled in self-contained apps, with the apps that bundle them.</summary>

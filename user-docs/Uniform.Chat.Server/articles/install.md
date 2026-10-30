@@ -1,10 +1,10 @@
 ---
 title: Installing
-uid: Uniform.Matrix.Server.Host.Install.Article
+uid: Uniform.Chat.Server.Install.Article
 ---
 # Installing
 
-The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform.Matrix clients or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
+The server is a Matrix homeserver: it keeps accounts, rooms and messages, and clients such as the Uniform Chat apps or Element connect to it. One program runs it either with a dashboard in the terminal, or without one as a background service.
 
 > [!NOTE]
 > The server is in early development. Accounts, rooms, messages, room state and sync work, as do profiles, presence, typing, read receipts, unread counts, push rules and push notifications through push gateways, room tags, previews of linked pages (when turned on), room aliases, the public room directory, user search, files and images with thumbnails, and end-to-end encryption with cross-signing, emoji verification and key backup. Federation with other servers is being built and is off by default: with `Federation:Enabled`, users can look up profiles on other servers, join their rooms and talk there, and browse their public room directories, and other servers' users can join rooms here.
@@ -15,15 +15,15 @@ The server is a Matrix homeserver: it keeps accounts, rooms and messages, and cl
 
 ## Install
 
-Download `uniform-matrix-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Matrix/releases) and unpack it anywhere. It needs nothing else installed. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
+Download `uniform-chat-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
 
-To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Matrix.Server.Host --` from the repository root in place of the program in the examples below.
+To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Chat.Server --` from the repository root in place of the program in the examples below.
 
 ## Example setup
 
 A typical server on the internet runs behind a reverse proxy, such as nginx, which holds the HTTPS certificate; the server itself listens on plain HTTP on the same machine only. The example below is for `example.org`, with federation, sign-up by registration token, and voice calls through a TURN server; change the names, and leave out what you do not use.
 
-Write the settings to `~/.config/uniform-matrix-server-host/settings.json` of the user that runs the server, or, as a [system service](xref:Uniform.Matrix.Server.Host.Service.Article), to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`. Make the file readable only by that user, as it holds secrets.
+Write the settings to `~/.config/uniform-matrix-server-host/settings.json` of the user that runs the server, or, as a [system service](xref:Uniform.Chat.Server.Service.Article), to `/etc/uniform-matrix/uniform-matrix-server-host/settings.json`. Make the file readable only by that user, as it holds secrets.
 
 ```json
 {
@@ -56,7 +56,7 @@ Write the settings to `~/.config/uniform-matrix-server-host/settings.json` of th
 | `Federation` | Talk with other Matrix servers. `WellKnownServer` is announced in `/.well-known/matrix/server`, so other servers reach this one on port 443 through nginx, and port 8448 need not be open. |
 | `Calls` | TURN servers for 1:1 calls, e.g. coturn with `use-auth-secret` and the same `static-auth-secret`; the server hands clients time-limited credentials. Leave the section out without a TURN server. |
 
-[Settings](xref:Uniform.Matrix.Server.Host.Settings.Article) lists every option.
+[Settings](xref:Uniform.Chat.Server.Settings.Article) lists every option.
 
 The nginx site, e.g. `/etc/nginx/sites-available/example.org`, enabled with a link in `sites-enabled`, passes Matrix's paths to the server, with a certificate from certbot:
 

@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.Client.Avalonia.Core.Services;
+namespace Uniform.Chat.Avalonia.Services;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +34,7 @@ public sealed class ClientConnection : IAsyncDisposable
         Media = host.Services.GetRequiredService<MediaCache>();
         Crypto = host.Services.GetRequiredService<CryptoService>();
         Calls = host.Services.GetRequiredService<CallService>();
-        Logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Matrix.Client.Avalonia.Core");
+        Logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Chat.Avalonia");
     }
 
     /// <summary>Signed-in user.</summary>

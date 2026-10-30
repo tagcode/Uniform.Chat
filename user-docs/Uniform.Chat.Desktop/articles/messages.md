@@ -1,6 +1,6 @@
 ---
 title: Messages and files
-uid: Uniform.Matrix.Client.Desktop.Messages.Article
+uid: Uniform.Chat.Desktop.Messages.Article
 ---
 # Messages and files
 
