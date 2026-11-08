@@ -1,6 +1,6 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
-# build the apps (desktop, terminal client, server) with their user guides for Windows and Linux, push the packages to NuGet.org with trusted publishing,
-# and create a GitHub release with the app archives.
+# build the apps (desktop, terminal client, server) with their user guides for Windows and Linux, and the signed Android APK,
+# push the packages to NuGet.org with trusted publishing, and create a GitHub release with the app archives and the APK.
 name: Release
 
 on:
@@ -149,6 +149,44 @@ jobs:
           # Only passed between jobs; the release and NuGet keep the published files
           retention-days: 1
 
+  android:
+    name: Android APK
+    needs: [version, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - run: dotnet workload install android
+      # Signed with the release key from the repository's secrets; the keystore is written outside the checkout and deleted after.
+      # The version code follows the version, e.g. 0.2.1 is 201; see the project file. Without the secrets the release has no APK.
+      - name: Build signed APK
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [[ -z "$ANDROID_KEYSTORE_BASE64" ]]; then
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret; the release has no Android APK"
+            exit 0
+          fi
+          keystore="$RUNNER_TEMP/release.keystore"
+          base64 -d <<< "$ANDROID_KEYSTORE_BASE64" > "$keystore"
+          trap 'rm -f "$keystore"' EXIT
+          dotnet publish src/Uniform.Chat.Android -c Release -p:Version="$VERSION" -p:ContinuousIntegrationBuild=true \
+            -p:AndroidSigningKeyStore="$keystore" -p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" -o publish/android
+          mkdir -p release
+          cp publish/android/rip.uniform.chat-Signed.apk "release/uniform-chat-android-$VERSION.apk"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: apps-android
+          path: release/*
+          if-no-files-found: ignore
+          retention-days: 1
+
   nuget:
     name: Publish to NuGet.org
     needs: [version, packages, apps]
@@ -174,7 +212,7 @@ jobs:
 
   release:
     name: GitHub release
-    needs: [version, nuget]
+    needs: [version, nuget, android]
     runs-on: ubuntu-latest
     permissions:
       contents: write

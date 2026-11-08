@@ -9,8 +9,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationId>rip.uniform.chat</ApplicationId>
     <ApplicationTitle>Uniform Chat</ApplicationTitle>
-    <ApplicationVersion>1</ApplicationVersion>
-    <ApplicationDisplayVersion>0.1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <!-- EF Core and the JSON records use reflection, so the code is not trimmed; ahead-of-time compilation needs trimming, so it is off too. A try with profiled ahead-of-time compilation and partial trimming started only about 10% faster on an old phone, and the trimmed build could no longer reach the server -->
@@ -25,6 +23,20 @@
     <Version>0.1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Android version from Version, e.g. -p:Version=0.2.1 from the release tag: the name 0.2.1, and the code 201 (major * 10000 + minor * 100 + patch), which goes up with every release as Android and app stores require -->
+  <PropertyGroup>
+    <_VersionCore>$([System.Text.RegularExpressions.Regex]::Match('$(Version)', '^\d+\.\d+\.\d+').Value)</_VersionCore>
+    <ApplicationDisplayVersion>$(_VersionCore)</ApplicationDisplayVersion>
+    <ApplicationVersion>$([MSBuild]::Add($([MSBuild]::Add($([MSBuild]::Multiply($(_VersionCore.Split('.')[0]), 10000)), $([MSBuild]::Multiply($(_VersionCore.Split('.')[1]), 100)))), $(_VersionCore.Split('.')[2])))</ApplicationVersion>
+  </PropertyGroup>
+
+  <!-- Release signing, when a keystore is given, e.g. by the release workflow: -p:AndroidSigningKeyStore=path -p:AndroidSigningKeyAlias=alias, with the passwords in the environment variables ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_PASSWORD, never on the command line -->
+  <PropertyGroup Condition="'$(AndroidSigningKeyStore)' != ''">
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningStorePass>env:ANDROID_KEYSTORE_PASSWORD</AndroidSigningStorePass>
+    <AndroidSigningKeyPass>env:ANDROID_KEY_PASSWORD</AndroidSigningKeyPass>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,21 @@
+Uniform Chat is a chat app for Matrix, the open network for secure, decentralized communication. Sign in on any Matrix homeserver, or create an account where the server allows it, and chat with people on any other Matrix server.
+
+<b>Features</b>
+<ul>
+<li>End-to-end encrypted direct chats and rooms</li>
+<li>Verify your other devices and your contacts by comparing emoji, also from within a chat</li>
+<li>Key backup and recovery, so new devices can read old messages</li>
+<li>Voice calls in direct chats</li>
+<li>Images and files, with previews</li>
+<li>Replies, reactions, edits and deletions</li>
+<li>Join public rooms from the room directory, or create your own</li>
+<li>Unread counts and notifications, set separately for direct messages, mentions, invites and calls</li>
+<li>Report messages, rooms and users to your server's admins, and block users</li>
+<li>Delete your account from the app</li>
+<li>A log viewer for finding out what went wrong</li>
+</ul>
+
+<b>Private by design</b>
+The app has no ads, trackers or analytics, and does not use Google services. Notifications come from the app's own connection to your homeserver, kept open in the background with a quiet notification, instead of a push service. Messages and keys are stored only on your phone and your homeserver.
+
+Uniform Chat is free and open-source software under the MIT license. The same project has a desktop app, a terminal client and a homeserver.

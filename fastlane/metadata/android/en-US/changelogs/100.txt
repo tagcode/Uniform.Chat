@@ -1,0 +1,1 @@
+First release on F-Droid: encrypted chats and rooms, device and contact verification, key backup, voice calls, images and files, notifications without Google services, reporting and blocking, and account registration and deletion.
