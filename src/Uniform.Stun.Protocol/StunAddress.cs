@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.WebRtc.Stun;
+namespace Uniform.Stun.Protocol;
 
 using System.Buffers.Binary;
 using System.Net;

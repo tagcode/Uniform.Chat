@@ -16,7 +16,7 @@
 		<RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Description>Package aggregation for server packages: one reference brings in the Uniform.Matrix homeserver engine and its hosting, and the packages that join them later.</Description>
+		<Description>Package aggregation for server packages: one reference brings in the Uniform.Matrix homeserver engine and its hosting, the Uniform.Turn STUN and TURN server with its hosting, and the packages that join them later.</Description>
 		<PackageTags>matrix;homeserver;server;hosting</PackageTags>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -30,6 +30,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />
 		<ProjectReference Include="..\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
+		<ProjectReference Include="..\Uniform.Stun.Hosting\Uniform.Stun.Hosting.csproj" />
 	</ItemGroup>
 
 </Project>

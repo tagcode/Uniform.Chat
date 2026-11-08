@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.WebRtc.Turn;
+namespace Uniform.Stun;
 
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Net;
-using Uniform.Matrix.WebRtc.Stun;
+using Uniform.Stun.Protocol;
 
 /// <summary>A <see href="https://www.rfc-editor.org/rfc/rfc8656">TURN</see> client over UDP: allocates a relayed address on a TURN server, permits peers, and relays datagrams to and from them, refreshing all until closed.</summary>
 /// <remarks>

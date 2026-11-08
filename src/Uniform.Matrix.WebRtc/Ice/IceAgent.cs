@@ -6,8 +6,8 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
-using Uniform.Matrix.WebRtc.Stun;
-using Uniform.Matrix.WebRtc.Turn;
+using Uniform.Stun;
+using Uniform.Stun.Protocol;
 
 /// <summary>A STUN or TURN server, as Matrix's <c>/voip/turnServer</c> lists them.</summary>
 /// <param name="Uri">URI such as <c>turn:turn.example.org:3478?transport=udp</c> or <c>stun:stun.example.org</c>; only UDP is used.</param>

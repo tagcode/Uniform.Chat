@@ -58,6 +58,13 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 - User guide: [Installing](user-docs/Uniform.Chat.Server/articles/install.md), [Settings](user-docs/Uniform.Chat.Server/articles/settings.md)
 - Developer guide: [Server](docs/Uniform.Chat/Uniform.Matrix.Server/index.md), [Overview](docs/index.md)
 
+## STUN and TURN server
+
+`uniform-stun-server` relays calls between people whose networks block direct connections, with credentials from a homeserver's shared secret. The homeserver has the same server built in: `--Turn:Enabled=true`.
+
+- User guide: [Running](user-docs/Uniform.Stun.Server/articles/running.md), [Calls through firewalls](user-docs/Uniform.Chat.Server/articles/turn.md)
+- Developer guide: [Uniform.Turn](docs/Uniform.Chat/Uniform.Turn/index.md)
+
 ## Libraries
 
 | Package | Contents |
@@ -70,6 +77,10 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 | `Uniform.Matrix.Client` | Client engine with local SQLite storage: sync, outbox, media cache, encryption, room state |
 | `Uniform.Matrix.Hosting` | Settings and logging for .NET host applications |
 | `Uniform.Matrix.Gui.Terminal` | Terminal.Gui settings window, log window and dialogs |
+| `Uniform.Stun.Protocol` | STUN and TURN messages, channel data and time-limited TURN credentials |
+| `Uniform.Stun` | STUN and TURN clients |
+| `Uniform.Turn` | STUN and TURN server: relaying over UDP, TCP and TLS, credentials, quotas, peer filtering |
+| `Uniform.Stun.Hosting` | The TURN server in a .NET host, with settings |
 
 ## Building
 

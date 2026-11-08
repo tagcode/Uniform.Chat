@@ -2,7 +2,9 @@ namespace Uniform.Matrix.WebRtc.Tests;
 
 using System.Net;
 using System.Threading.Channels;
+using Microsoft.Extensions.Logging.Abstractions;
 using Uniform.Matrix.WebRtc.Ice;
+using Uniform.Turn;
 
 /// <summary>Tests of <see cref="IceCandidate"/> and <see cref="IceAgent"/>.</summary>
 public class IceTests
@@ -107,23 +109,34 @@ public class IceTests
         await AssertExchangeAsync(first, second, cancellationToken);
     }
 
-    /// <summary>Connect two agents through TURN only, each on its own fake server.</summary>
+    /// <summary>Connect two agents through TURN only, each on its own server.</summary>
     [Fact]
     public async Task ConnectThroughRelays()
     {
-        // A server for each, and only relayed candidates
+        // A server for each on loopback, and only relayed candidates
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
-        await using FakeTurnServer callerServer = new("user", "pass"), calleeServer = new("user", "pass");
-        IceOptions Options(FakeTurnServer server, bool controlling) => new() { Controlling = controlling, IncludeLoopback = true, RelayOnly = true, Servers = [new IceServer($"turn:127.0.0.1:{server.Address.Port}?transport=udp", "user", "pass")] };
+        await using TurnServer callerServer = await StartTurnServerAsync(cancellationToken), calleeServer = await StartTurnServerAsync(cancellationToken);
+        IceOptions Options(TurnServer server, bool controlling) => new() { Controlling = controlling, IncludeLoopback = true, RelayOnly = true, Servers = [new IceServer($"turn:127.0.0.1:{server.UdpEndPoint!.Port}?transport=udp", "user", "pass")] };
         await using IceAgent caller = new(Options(callerServer, true));
         await using IceAgent callee = new(Options(calleeServer, false));
         await ConnectAsync(caller, callee, cancellationToken);
 
         // Relayed both ways
         Assert.Equal(IceCandidateType.Relayed, caller.SelectedLocal!.Type);
-        Assert.Equal(calleeServer.RelayAddress, caller.SelectedRemote!.Address);
+        Assert.Equal(IceCandidateType.Relayed, caller.SelectedRemote!.Type);
         // Done
         await AssertExchangeAsync(caller, callee, cancellationToken);
+    }
+
+    /// <summary>Return a started TURN server on loopback with the user <c>user</c> and password <c>pass</c>, relaying to loopback.</summary>
+    private static async Task<TurnServer> StartTurnServerAsync(CancellationToken cancellationToken)
+    {
+        // Any free port; loopback peers allowed, as both agents are here
+        TurnServerOptions options = new() { Realm = "test", ListenAddress = IPAddress.Loopback, Port = 0, Tcp = false, MinRelayPort = 45000, MaxRelayPort = 49999, DeniedPeers = [] };
+        TurnServer server = new(options, new StaticUserAuthenticator(new Dictionary<string, string> { ["user"] = "pass" }), NullLogger<TurnServer>.Instance);
+        await server.StartAsync(cancellationToken);
+        // Return server
+        return server;
     }
 
     /// <summary>Gather both, exchange credentials and candidates, and connect both.</summary>

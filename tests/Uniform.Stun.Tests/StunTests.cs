@@ -1,8 +1,8 @@
-namespace Uniform.Matrix.WebRtc.Tests;
+namespace Uniform.Stun.Tests;
 
 using System.Net;
 using System.Text;
-using Uniform.Matrix.WebRtc.Stun;
+using Uniform.Stun.Protocol;
 
 /// <summary>Tests of STUN messages against the <see href="https://www.rfc-editor.org/rfc/rfc5769">RFC 5769</see> test vectors, and of encoding.</summary>
 public class StunTests

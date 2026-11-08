@@ -8,10 +8,10 @@ The subset of WebRTC that a 1:1 voice call needs, in C#: one Opus audio stream e
 
 ## Layers
 
+STUN and TURN come from [Uniform.Stun](xref:Uniform.Stun.Article): [`StunClient`](xref:Uniform.Stun.StunClient) transactions and the [`TurnClient`](xref:Uniform.Stun.TurnClient), on the messages of [Uniform.Stun.Protocol](xref:Uniform.Stun.Protocol.Article).
+
 | Folder | What | Specification |
 |---|---|---|
-| `Stun/` | [`StunMessage`](xref:Uniform.Matrix.WebRtc.Stun.StunMessage) with MESSAGE-INTEGRITY and FINGERPRINT, XOR'ed addresses, and [`StunClient`](xref:Uniform.Matrix.WebRtc.Stun.StunClient) transactions with retransmission | [RFC 8489](https://www.rfc-editor.org/rfc/rfc8489) |
-| `Turn/` | [`TurnClient`](xref:Uniform.Matrix.WebRtc.Turn.TurnClient): allocation with long-term credentials, permissions, channels, Send and Data indications, refreshes | [RFC 8656](https://www.rfc-editor.org/rfc/rfc8656) |
 | `Ice/` | [`IceAgent`](xref:Uniform.Matrix.WebRtc.Ice.IceAgent): host, server-reflexive and relayed candidates, connectivity checks, role conflicts, nomination, peer-reflexive candidates, consent; [`IceCandidate`](xref:Uniform.Matrix.WebRtc.Ice.IceCandidate) as SDP writes it | [RFC 8445](https://www.rfc-editor.org/rfc/rfc8445), [RFC 8839](https://www.rfc-editor.org/rfc/rfc8839), [RFC 7675](https://www.rfc-editor.org/rfc/rfc7675) |
 | `Dtls/` | [`DtlsSrtp`](xref:Uniform.Matrix.WebRtc.Dtls.DtlsSrtp): DTLS 1.2 with BouncyCastle, use_srtp, the peer's certificate checked against its fingerprint, keys exported; [`DtlsCertificate`](xref:Uniform.Matrix.WebRtc.Dtls.DtlsCertificate) self-signed ECDSA | [RFC 5764](https://www.rfc-editor.org/rfc/rfc5764) |
 | `Srtp/` | [`SrtpSession`](xref:Uniform.Matrix.WebRtc.Srtp.SrtpSession): SRTP and SRTCP with AES_CM_128_HMAC_SHA1_80, rollover counters, replay windows | [RFC 3711](https://www.rfc-editor.org/rfc/rfc3711) |

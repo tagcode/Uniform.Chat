@@ -10,6 +10,7 @@ using Uniform.Chat.Terminal.Configuration;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Chat.Server;
+using Uniform.Stun.Hosting;
 
 /// <summary>The settings tables of the user guides match the options the apps register: every setting is listed, no row is for a setting that does not exist, and the defaults agree.</summary>
 public partial class SettingsTableTests
@@ -39,6 +40,7 @@ public partial class SettingsTableTests
             WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Matrix.Docs.Tests" });
             builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Storage:DataDirectory"] = directory });
             builder.AddMatrixServer();
+            builder.AddTurnServer();
             builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 
             // Act and assert
@@ -48,6 +50,18 @@ public partial class SettingsTableTests
         {
             Directory.Delete(directory, recursive: true);
         }
+    }
+
+    /// <summary>The STUN server's settings table lists its settings and their defaults.</summary>
+    [Fact]
+    public void MatchStunServerSettings()
+    {
+        // Arrange: the sections the program registers
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ApplicationName = "Uniform.Matrix.Docs.Tests", DisableDefaults = true });
+        builder.AddTurnServer();
+
+        // Act and assert
+        AssertTable("user-docs/Uniform.Stun.Server/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));
     }
 
     /// <summary>Return the options of the registered sections and the default log level, as the settings windows list them.</summary>

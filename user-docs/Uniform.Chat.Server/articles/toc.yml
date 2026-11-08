@@ -10,6 +10,8 @@
   uid: Uniform.Chat.Server.UserManagement.Article
 - name: Remote administration
   uid: Uniform.Chat.Server.RemoteAdmin.Article
+- name: Calls through firewalls
+  uid: Uniform.Chat.Server.Turn.Article
 - name: Connecting clients
   uid: Uniform.Chat.Server.Clients.Article
 - name: Files

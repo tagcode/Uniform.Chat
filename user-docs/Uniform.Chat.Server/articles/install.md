@@ -54,7 +54,7 @@ Write the settings to `~/.config/uniform-chat-server/settings.json` of the user 
 | `TrustedProxies` | nginx's address, so that rate limits and logs see each client's own address. |
 | `Registration`, `RegistrationTokens` | Anyone with a token can sign up; share the token with the people you invite. `Open` lets anyone sign up, `Disabled` no one. |
 | `Federation` | Talk with other Matrix servers. `WellKnownServer` is announced in `/.well-known/matrix/server`, so other servers reach this one on port 443 through nginx, and port 8448 need not be open. |
-| `Calls` | TURN servers for 1:1 calls, e.g. coturn with `use-auth-secret` and the same `static-auth-secret`; the server hands clients time-limited credentials. Leave the section out without a TURN server. |
+| `Calls` | TURN servers for 1:1 calls, e.g. coturn with `use-auth-secret` and the same `static-auth-secret`; the server hands clients time-limited credentials. Leave the section out without a TURN server, or use the built-in one, see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article). |
 
 [Settings](xref:Uniform.Chat.Server.Settings.Article) lists every option.
 

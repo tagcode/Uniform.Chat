@@ -1,12 +1,12 @@
-namespace Uniform.Matrix.WebRtc.Tests;
+namespace Uniform.Stun.Tests;
 
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
-using Uniform.Matrix.WebRtc.Stun;
-using Uniform.Matrix.WebRtc.Turn;
+using Uniform.Stun.Protocol;
+using Uniform.Stun;
 
 /// <summary>Tests of <see cref="TurnClient"/> with <see cref="FakeTurnServer"/>, and with a real TURN server when the environment names one.</summary>
 public class TurnTests

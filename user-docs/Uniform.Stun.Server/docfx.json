@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
+    ],
+    "output": "_site",
+    "template": [ "statictoc", "../../theme" ],
+    "globalMetadata": {
+      "_appFooter": "<span>Uniform STUN Server</span>",
+      "_appTitle": "Uniform STUN Server",
+      "_appName": "Uniform STUN Server",
+      "_enableSearch": true
+    }
+  }
+}

@@ -10,4 +10,6 @@ The program file is `uniform-chat-server` (`uniform-chat-server.exe` on Windows)
 
 Start-up errors that people can fix themselves are shown in two lines instead of a stack trace: a listen address that is already in use, with a hint about `--Urls`, and a TLS certificate that cannot be read, naming the setting and path. The full exception stays in the log file.
 
+With `Turn:Enabled`, `EmbeddedTurn` adds the STUN and TURN server of [Uniform.Stun.Hosting](xref:Uniform.Stun.Hosting.Article) and connects it to the homeserver's calls.
+
 How to run it, as a service too, is in the server's user guide.

@@ -1,9 +1,9 @@
-namespace Uniform.Matrix.WebRtc.Tests;
+namespace Uniform.Stun.Tests;
 
 using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
-using Uniform.Matrix.WebRtc.Stun;
+using Uniform.Stun.Protocol;
 
 /// <summary>A TURN server just big enough for tests, on loopback: one client, one allocation, long-term credentials with a 401 challenge, permissions, channels, and relaying through its own socket.</summary>
 /// <remarks>Its two loops share the client, permissions and channels under one lock.</remarks>

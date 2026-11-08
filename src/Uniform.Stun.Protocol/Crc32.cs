@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.WebRtc.Stun;
+namespace Uniform.Stun.Protocol;
 
 /// <summary>CRC-32 as ISO 3309 and ITU-T V.42 define it, the one zlib and Ethernet use, for STUN's FINGERPRINT.</summary>
 internal static class Crc32

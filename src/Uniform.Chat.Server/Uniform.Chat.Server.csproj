@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
+    <ProjectReference Include="..\Uniform.Stun.Hosting\Uniform.Stun.Hosting.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Gui.Terminal\Uniform.Matrix.Gui.Terminal.csproj" />
   </ItemGroup>
 

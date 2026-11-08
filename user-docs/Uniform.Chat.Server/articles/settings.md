@@ -55,6 +55,23 @@ Settings come from these places; later ones override earlier ones:
 | `Calls:TurnUserLifetime` | `1.00:00:00` | How long TURN credentials hold. |
 | `Calls:MaxEventDelay` | `1.00:00:00` | Longest delay of a delayed event, which calls use to end the membership of a client that disappears. |
 | `Calls:OpenIdTokenLifetime` | `01:00:00` | How long an OpenID token holds; call services use these tokens to check who a user is. |
+| `Turn:Enabled` | `false` | Run the built-in STUN and TURN server, which relays calls between users whose networks would block them; calls then use it unless `Calls:TurnUris` names another. See [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article). ↻ |
+| `Turn:Realm` | not set | Realm of the TURN credentials; the server name when not set. ↻ |
+| `Turn:ListenAddress` | `0.0.0.0` | Address the TURN server listens on. ↻ |
+| `Turn:Port` | `3478` | Port of STUN and TURN over UDP and TCP. ↻ |
+| `Turn:Tcp` | `true` | Also listen over TCP on that port, for networks that block UDP. ↻ |
+| `Turn:TlsPort` | not set | Port of TURN over TLS, such as `5349`; none when not set. ↻ |
+| `Turn:CertificatePath` | not set | Certificate file of TURN over TLS; that of `Tls:CertificatePath` when not set. ↻ |
+| `Turn:KeyPath` | not set | Private key of that certificate; that of `Tls:KeyPath` when not set. ↻ |
+| `Turn:ExternalAddress` | not set | Public IPv4 address, or a host name with it, that relayed data is sent to: the router's public address when the server is behind NAT. The host of `Server:PublicBaseUrl`, or else the server name, when not set. ↻ |
+| `Turn:RelayAddress` | not set | Address the relay ports bind; the listen address when not set. ↻ |
+| `Turn:MinRelayPort` | `49152` | First UDP port of relayed addresses. ↻ |
+| `Turn:MaxRelayPort` | `65535` | Last UDP port of relayed addresses; behind NAT, forward the whole range. ↻ |
+| `Turn:MaxAllocations` | `1000` | Most relays at once; a call uses one or two. ↻ |
+| `Turn:MaxAllocationsPerUser` | `10` | Most relays at once per user. ↻ |
+| `Turn:AllowedPeers` | not set | Private addresses relayed to anyway, separated by commas, such as `192.168.1.0/24`; private, loopback and link-local addresses are refused otherwise, so outsiders cannot reach your network through the server. ↻ |
+| `Turn:SharedSecrets` | not set | Further shared secrets of time-limited credentials, for other services than this homeserver. ↻ |
+| `Turn:Users` | not set | Fixed users as `name:password`, separated by commas. Keep them out of command lines. ↻ |
 | `Tls:CertificatePath` | not set | Certificate file for `https://` addresses in `Urls`, with its intermediate certificates, such as [certbot](https://github.com/certbot/certbot)'s `fullchain.pem`. A path may start with `~/` for the home folder, also where the shell leaves it alone, as in `--Tls:CertificatePath=~/tls/fullchain.pem`. A renewed file is picked up within a minute, without a restart. ↻ |
 | `Tls:KeyPath` | not set | Private key of the certificate, such as [certbot](https://github.com/certbot/certbot)'s `privkey.pem`. Keep it readable only by the account that runs the server. ↻ |
 | `Storage:DataDirectory` | `~/.local/share/uniform-chat-server` | Folder for the database, signing key, media and logs. ↻ |

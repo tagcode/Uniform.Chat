@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Protocol.Server\Uniform.Matrix.Protocol.Server.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />
+    <ProjectReference Include="..\Uniform.Stun.Protocol\Uniform.Stun.Protocol.csproj" />
   </ItemGroup>
 
   <ItemGroup>

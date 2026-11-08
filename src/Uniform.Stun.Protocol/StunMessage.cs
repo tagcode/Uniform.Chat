@@ -1,4 +1,4 @@
-namespace Uniform.Matrix.WebRtc.Stun;
+namespace Uniform.Stun.Protocol;
 
 using System.Buffers.Binary;
 using System.Security.Cryptography;
@@ -40,49 +40,6 @@ public enum StunClass
 /// <param name="Type">Attribute type; see <see cref="StunAttributeTypes"/>.</param>
 /// <param name="Value">Value, without padding.</param>
 public sealed record StunAttribute(ushort Type, byte[] Value);
-
-/// <summary>Attribute types of STUN, TURN and ICE.</summary>
-public static class StunAttributeTypes
-{
-    /// <summary>Address the server saw, in the clear; older servers.</summary>
-    public const ushort MappedAddress = 0x0001;
-    /// <summary>User name, e.g. ICE's <c>remote:local</c> fragments.</summary>
-    public const ushort Username = 0x0006;
-    /// <summary>HMAC-SHA1 over the message.</summary>
-    public const ushort MessageIntegrity = 0x0008;
-    /// <summary>Error code and reason.</summary>
-    public const ushort ErrorCode = 0x0009;
-    /// <summary>TURN channel number.</summary>
-    public const ushort ChannelNumber = 0x000C;
-    /// <summary>TURN allocation lifetime in seconds.</summary>
-    public const ushort Lifetime = 0x000D;
-    /// <summary>TURN peer address, XOR'ed.</summary>
-    public const ushort XorPeerAddress = 0x0012;
-    /// <summary>TURN data.</summary>
-    public const ushort Data = 0x0013;
-    /// <summary>Realm of long-term credentials.</summary>
-    public const ushort Realm = 0x0014;
-    /// <summary>Nonce of long-term credentials.</summary>
-    public const ushort Nonce = 0x0015;
-    /// <summary>TURN relayed address, XOR'ed.</summary>
-    public const ushort XorRelayedAddress = 0x0016;
-    /// <summary>TURN requested transport, 17 for UDP.</summary>
-    public const ushort RequestedTransport = 0x0019;
-    /// <summary>Address the server saw, XOR'ed with the magic cookie and transaction.</summary>
-    public const ushort XorMappedAddress = 0x0020;
-    /// <summary>ICE candidate priority.</summary>
-    public const ushort Priority = 0x0024;
-    /// <summary>ICE nomination by the controlling side.</summary>
-    public const ushort UseCandidate = 0x0025;
-    /// <summary>Software name.</summary>
-    public const ushort Software = 0x8022;
-    /// <summary>CRC-32 over the message.</summary>
-    public const ushort Fingerprint = 0x8028;
-    /// <summary>ICE: the sender is controlled, with its tie breaker.</summary>
-    public const ushort IceControlled = 0x8029;
-    /// <summary>ICE: the sender is controlling, with its tie breaker.</summary>
-    public const ushort IceControlling = 0x802A;
-}
 
 /// <summary>A <see href="https://www.rfc-editor.org/rfc/rfc8489">STUN</see> message: method, class, transaction ID and attributes, parsed from or encoded to the wire with optional MESSAGE-INTEGRITY and FINGERPRINT.</summary>
 public sealed class StunMessage
@@ -217,6 +174,22 @@ public sealed class StunMessage
 
     /// <summary>Add a UTF-8 text attribute.</summary>
     public StunMessage Add(ushort type, string value) => Add(type, Encoding.UTF8.GetBytes(value));
+
+    /// <summary>Add a 32-bit number attribute, e.g. a LIFETIME.</summary>
+    public StunMessage Add(ushort type, uint value)
+    {
+        // Big-endian
+        byte[] bytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
+        // Return this, to chain
+        return Add(type, bytes);
+    }
+
+    /// <summary>Add an ERROR-CODE with <paramref name="code"/> and its reason phrase; see <see cref="StunErrorCodes"/>.</summary>
+    public StunMessage AddError(int code, string? reason = null) => Add(StunAttributeTypes.ErrorCode, StunErrorCodes.Encode(code, reason));
+
+    /// <summary>Return the first value of an attribute type as a 32-bit number, or null when missing or of another length.</summary>
+    public uint? GetUInt32(ushort type) => Get(type) is { Length: 4 } value ? BinaryPrimitives.ReadUInt32BigEndian(value) : null;
 
     /// <summary>Return the attribute's offset in a raw message, or null.</summary>
     private static int? FindAttribute(ReadOnlySpan<byte> datagram, ushort type)

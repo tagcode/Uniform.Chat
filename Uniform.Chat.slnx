@@ -16,6 +16,11 @@
     <Project Path="src/Uniform.Matrix.Server/Uniform.Matrix.Server.csproj" />
     <Project Path="src/Uniform.Chat.Server/Uniform.Chat.Server.csproj" />
     <Project Path="src/Uniform.Matrix.WebRtc/Uniform.Matrix.WebRtc.csproj" />
+    <Project Path="src/Uniform.Stun.Hosting/Uniform.Stun.Hosting.csproj" />
+    <Project Path="src/Uniform.Stun.Protocol/Uniform.Stun.Protocol.csproj" />
+    <Project Path="src/Uniform.Stun.Server/Uniform.Stun.Server.csproj" />
+    <Project Path="src/Uniform.Stun/Uniform.Stun.csproj" />
+    <Project Path="src/Uniform.Turn/Uniform.Turn.csproj" />
     <Project Path="src/Uniform/Uniform.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -31,5 +36,7 @@
     <Project Path="tests/Uniform.Chat.Avalonia.Tests/Uniform.Chat.Avalonia.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Server.Tests/Uniform.Matrix.Server.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.WebRtc.Tests/Uniform.Matrix.WebRtc.Tests.csproj" />
+    <Project Path="tests/Uniform.Stun.Tests/Uniform.Stun.Tests.csproj" />
+    <Project Path="tests/Uniform.Turn.Tests/Uniform.Turn.Tests.csproj" />
   </Folder>
 </Solution>

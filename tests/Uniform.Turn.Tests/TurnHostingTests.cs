@@ -1,0 +1,61 @@
+namespace Uniform.Turn.Tests;
+
+using System.Net;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Uniform.Stun.Hosting;
+
+/// <summary>Tests of <see cref="TurnServerHost"/> in a .NET host.</summary>
+public class TurnHostingTests
+{
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
+    /// <summary>Return a started host with <paramref name="settings"/> as command-line settings.</summary>
+    private static async Task<IHost> StartAsync(params string[] settings)
+    {
+        // A plain host with the TURN server
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { Args = settings, DisableDefaults = true });
+        builder.AddTurnServer();
+        IHost host = builder.Build();
+        await host.StartAsync(Ct);
+        // Return host
+        return host;
+    }
+
+    /// <summary>The server runs with the settings: fixed users relay to allowed loopback peers.</summary>
+    [Fact]
+    public async Task StartFromSettings()
+    {
+        // Arrange
+        using IHost host = await StartAsync("--Turn:Enabled=true", "--Turn:ListenAddress=127.0.0.1", "--Turn:Port=0", "--Turn:MinRelayPort=41000", "--Turn:MaxRelayPort=41999", "--Turn:Users=carol:secret", "--Turn:AllowedPeers=127.0.0.0/8");
+        TurnServerHost turn = host.Services.GetRequiredService<TurnServerHost>();
+
+        // Act
+        await using TurnClientEndpoint client = await TurnClientEndpoint.ConnectAsync(turn.Server!.UdpEndPoint!, "carol", "secret", cancellationToken: Ct);
+        bool allocated = await client.Turn.AllocateAsync(Ct);
+        bool permitted = await client.Turn.PermitAsync(IPAddress.Loopback, Ct);
+        await host.StopAsync(Ct);
+
+        // Assert
+        Assert.Null(turn.Error);
+        Assert.True(allocated);
+        Assert.True(permitted);
+        Assert.Null(turn.Server);
+    }
+
+    /// <summary>Settings that cannot work leave the server stopped with the reason, and the host running.</summary>
+    [Fact]
+    public async Task KeepHostOnBadSettings()
+    {
+        // Arrange and act
+        using IHost noCredentials = await StartAsync("--Turn:Enabled=true", "--Turn:ListenAddress=127.0.0.1", "--Turn:Port=0");
+        using IHost noExternal = await StartAsync("--Turn:Enabled=true", "--Turn:Port=0", "--Turn:Users=a:b");
+        using IHost disabled = await StartAsync("--Turn:Users=a:b");
+
+        // Assert
+        Assert.Contains("credentials", noCredentials.Services.GetRequiredService<TurnServerHost>().Error);
+        Assert.Contains("external address", noExternal.Services.GetRequiredService<TurnServerHost>().Error);
+        Assert.Null(disabled.Services.GetRequiredService<TurnServerHost>().Server);
+        Assert.Null(disabled.Services.GetRequiredService<TurnServerHost>().Error);
+    }
+}

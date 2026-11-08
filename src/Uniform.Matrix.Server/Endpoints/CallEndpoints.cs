@@ -1,8 +1,6 @@
 namespace Uniform.Matrix.Server.Endpoints;
 
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +12,7 @@ using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Federation;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Rooms;
+using Uniform.Stun.Protocol;
 
 /// <summary>What calls need from the homeserver: OpenID tokens for the MatrixRTC authorization service, the call service's address, delayed events, and TURN credentials for older 1:1 calls.</summary>
 public static class CallEndpoints
@@ -42,8 +41,7 @@ public static class CallEndpoints
         {
             CallOptions calls = options.CurrentValue;
             if (calls.TurnSharedSecret is not string secret || calls.GetTurnUris() is not { Count: > 0 } uris) return MatrixHttp.Json(new JsonObject());
-            string username = $"{(time.GetUtcNow() + calls.TurnUserLifetime).ToUnixTimeSeconds()}:{http.GetRequester().UserId}";
-            string password = Convert.ToBase64String(HMACSHA1.HashData(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(username)));
+            (string username, string password) = TurnCredentials.Create(secret, http.GetRequester().UserId, time.GetUtcNow() + calls.TurnUserLifetime);
             return MatrixHttp.Json(new JsonObject { ["username"] = username, ["password"] = password, ["uris"] = new JsonArray([.. uris.Select(u => (JsonNode)u)]), ["ttl"] = (long)calls.TurnUserLifetime.TotalSeconds });
         });
 

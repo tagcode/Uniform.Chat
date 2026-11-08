@@ -19,6 +19,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationO
 // Settings file and applied changes, then the server and this process's options
 builder.AddSettings();
 builder.AddMatrixServer();
+builder.AddEmbeddedTurn();
 builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 bool dashboard = (builder.Configuration.GetSection(ServerHostOptions.Section).Get<ServerHostOptions>() ?? new ServerHostOptions()).UseDashboard(out string uiReason);
 

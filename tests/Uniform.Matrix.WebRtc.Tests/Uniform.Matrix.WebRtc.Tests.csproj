@@ -29,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
     <ProjectReference Include="..\..\src\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Turn\Uniform.Turn.csproj" />
   </ItemGroup>
 
 </Project>
