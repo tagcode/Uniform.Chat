@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Client.Services;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Client.Storage;
@@ -58,6 +59,7 @@ public sealed class CryptoService : IDisposable
             if (await store.ResetForDeviceAsync(client.DeviceId!, cancellationToken)) logger.LogInformation("Encryption state of a previous device was cleared");
             machine = await OlmMachine.CreateAsync(new MatrixKeyTransport(client), store, client.UserId!, client.DeviceId!, LoadOrCreatePickleKey(), cancellationToken: cancellationToken);
             machine.RoomKeyReceived += (roomId, sessionId) => receivedKeys.Enqueue((roomId, sessionId));
+            machine.RoomEventSender = (roomId, type, content, token) => (RoomEventSender ?? throw new InvalidOperationException("No outbox for room events."))(roomId, type, content, token);
             machine.VerificationChanged += v =>
             {
                 string sentTo = v.WeRequested && v.State == VerificationState.Requested ? $", sent to {(v.RequestedDeviceIds.Count == 0 ? "no device" : string.Join(", ", v.RequestedDeviceIds))}" : "";
@@ -101,11 +103,37 @@ public sealed class CryptoService : IDisposable
 
         // Replace decryptable timeline events
         Dictionary<string, JoinedRoom> joined = [];
-        foreach ((string roomId, JoinedRoom room) in sync.Rooms.Join) joined[roomId] = room with { Timeline = room.Timeline with { Events = await DecryptAllAsync(roomId, room.Timeline.Events, cancellationToken) } };
+        foreach ((string roomId, JoinedRoom room) in sync.Rooms.Join)
+        {
+            IReadOnlyList<ClientEvent> events = await DecryptAllAsync(roomId, room.Timeline.Events, cancellationToken);
+            joined[roomId] = room with { Timeline = room.Timeline with { Events = events } };
+            await ReceiveVerificationEventsAsync(roomId, events, cancellationToken);
+        }
         Dictionary<string, LeftRoom> left = [];
         foreach ((string roomId, LeftRoom room) in sync.Rooms.Leave) left[roomId] = room with { Timeline = room.Timeline with { Events = await DecryptAllAsync(roomId, room.Timeline.Events, cancellationToken) } };
         // Return decrypted sync
         return sync with { Rooms = sync.Rooms with { Join = joined, Leave = left } };
+    }
+
+    /// <summary>Send a room event, encrypted in encrypted rooms: the room, event type and content; set by the outbox, which in-room verification answers through.</summary>
+    public Func<string, string, JsonObject, CancellationToken, Task>? RoomEventSender { get; set; }
+
+    /// <summary>Pass the in-room verification events among <paramref name="events"/> to the machine; a failure is logged, as the sync goes on.</summary>
+    private async Task ReceiveVerificationEventsAsync(string roomId, IReadOnlyList<ClientEvent> events, CancellationToken cancellationToken)
+    {
+        // Each, in order
+        if (machine is null) return;
+        foreach (ClientEvent ev in events)
+        {
+            try
+            {
+                await machine.ReceiveRoomEventAsync(roomId, ev, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                logger.LogWarning("Verification event {EventId} in {RoomId} failed: {Error}", ev.EventId, roomId, ex.Message);
+            }
+        }
     }
 
     /// <summary>Return room keys received since the last call, to decrypt stored events that were waiting for them.</summary>
@@ -179,6 +207,9 @@ public sealed class CryptoService : IDisposable
 
     /// <summary>Start verifying a device of <paramref name="userId"/>, or all of them.</summary>
     public Task<Verification> RequestVerificationAsync(string userId, string? deviceId, CancellationToken cancellationToken = default) => Machine.RequestVerificationAsync(userId, deviceId, cancellationToken);
+
+    /// <summary>Ask another user to verify in a room, their direct chat, with a request message that <paramref name="sendRequest"/> sends and returns the event ID of.</summary>
+    public Task<Verification> RequestVerificationInRoomAsync(string roomId, string userId, Func<JsonObject, CancellationToken, Task<string>> sendRequest, CancellationToken cancellationToken = default) => Machine.RequestVerificationInRoomAsync(roomId, userId, sendRequest, cancellationToken);
 
     /// <summary>Accept an incoming verification request.</summary>
     public Task AcceptVerificationAsync(Verification verification, CancellationToken cancellationToken = default) => Machine.AcceptVerificationAsync(verification, cancellationToken);

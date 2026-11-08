@@ -20,8 +20,8 @@ public sealed class TurnClient : IAsyncDisposable
     private static readonly TimeSpan PermissionLifetime = TimeSpan.FromMinutes(5);
     /// <summary>How long a channel binding lasts on the server.</summary>
     private static readonly TimeSpan ChannelLifetime = TimeSpan.FromMinutes(10);
-    /// <summary>How often refreshes are due-checked.</summary>
-    private static readonly TimeSpan MaintenanceInterval = TimeSpan.FromSeconds(30);
+    /// <summary>How often refreshes are due-checked, unless <see cref="MaintenanceInterval"/> says otherwise.</summary>
+    private static readonly TimeSpan DefaultMaintenanceInterval = TimeSpan.FromSeconds(30);
     private readonly StunClient stun;
     private readonly DatagramSender send;
     private readonly string username;
@@ -52,6 +52,12 @@ public sealed class TurnClient : IAsyncDisposable
         this.username = username;
         this.password = password;
     }
+
+    /// <summary>How often the allocation, permissions and channels are checked for refreshing; shorter in tests.</summary>
+    internal TimeSpan MaintenanceInterval { get; init; } = DefaultMaintenanceInterval;
+
+    /// <summary>How long before expiry, beyond two intervals, things are refreshed; shorter in tests.</summary>
+    internal TimeSpan MaintenanceMargin { get; init; } = TimeSpan.FromMinutes(1);
 
     /// <summary>The TURN server's address.</summary>
     public IPEndPoint Server { get; }
@@ -189,7 +195,7 @@ public sealed class TurnClient : IAsyncDisposable
         RelayedAddress = null;
     }
 
-    /// <summary>Refresh the allocation, permissions and channels before they expire, until <paramref name="cancellationToken"/> cancels.</summary>
+    /// <summary>Refresh the allocation, permissions and channels before they expire, until <paramref name="cancellationToken"/> cancels or the allocation has expired unrefreshed.</summary>
     private async Task MaintainAsync(CancellationToken cancellationToken)
     {
         // Every interval, what expires within two intervals and a minute
@@ -198,8 +204,11 @@ public sealed class TurnClient : IAsyncDisposable
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(MaintenanceInterval, cancellationToken);
-                DateTime soon = DateTime.UtcNow + 2 * MaintenanceInterval + TimeSpan.FromMinutes(1);
+                DateTime soon = DateTime.UtcNow + 2 * MaintenanceInterval + MaintenanceMargin;
                 if (expires < soon) await RefreshAllocationAsync(cancellationToken);
+
+                // Expired, e.g. as the time-limited credentials did: the server has dropped it, so asking again only fails
+                if (expires < DateTime.UtcNow) return;
                 foreach ((IPEndPoint peer, (ushort _, DateTime bound)) in channelsByPeer)
                 {
                     if (bound + ChannelLifetime < soon) await BindChannelAsync(peer, cancellationToken);

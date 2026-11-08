@@ -45,13 +45,14 @@ public partial class ChatView : UserControl
         if (model is not null) model.Messages.Items.CollectionChanged += OnMessagesChanged;
     }
 
-    /// <summary>Hook scrolling and the back gesture once shown.</summary>
+    /// <summary>Hook scrolling and the back gesture once shown, and show the newest messages, as a room opened before may wait.</summary>
     protected override void OnLoaded(RoutedEventArgs e)
     {
         // Scrolling of the message list, and Android's back button
         base.OnLoaded(e);
         scroller = MessageList.FindDescendantOfType<ScrollViewer>();
         if (scroller is not null) scroller.ScrollChanged += OnScrollChanged;
+        if (followNewest) ScrollToNewest();
         if (TopLevel.GetTopLevel(this) is TopLevel top) top.BackRequested += OnBackRequested;
     }
 
@@ -151,16 +152,23 @@ public partial class ChatView : UserControl
     {
         // Reset is a new room
         if (e.Action == NotifyCollectionChangedAction.Reset) followNewest = true;
-        if (!followNewest) return;
-        Dispatcher.UIThread.Post(() => scroller?.ScrollToEnd(), DispatcherPriority.Background);
+        if (followNewest) ScrollToNewest();
     }
 
-    /// <summary>Remember whether the user is at the bottom, and load older messages at the top.</summary>
+    /// <summary>Scroll to the newest message once layout is done, unless the user has scrolled up by then.</summary>
+    private void ScrollToNewest() => Dispatcher.UIThread.Post(() => { if (followNewest) scroller?.ScrollToEnd(); }, DispatcherPriority.Background);
+
+    /// <summary>Remember whether the user is at the bottom, keep following there when the messages or the view change size, and load older messages at the top.</summary>
     private void OnScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
-        // Bottom within a few pixels follows new messages
+        // Only a moved position says whether to follow: the bottom within a few pixels does
         if (scroller is null || model is null) return;
-        followNewest = scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 24;
+        if (e.OffsetDelta.Y != 0) followNewest = scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 24;
+
+        // New or taller messages, e.g. a loaded picture, or a smaller view, e.g. with the keyboard: back to the bottom
+        else if (followNewest && (e.ExtentDelta.Y != 0 || e.ViewportDelta.Y != 0)) ScrollToNewest();
+
+        // Older messages at the top
         if (scroller.Offset.Y > 0 || e.OffsetDelta.Y >= 0 || !model.HasOpenRoom) return;
         if (model.LoadOlderCommand.CanExecute(null)) model.LoadOlderCommand.Execute(null);
     }

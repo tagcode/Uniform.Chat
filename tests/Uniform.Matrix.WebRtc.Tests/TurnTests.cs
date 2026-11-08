@@ -60,6 +60,26 @@ public class TurnTests
         Assert.Equal("early"u8.ToArray(), data);
     }
 
+    /// <summary>Once refreshes are refused, as with expired credentials, the client stops asking when the allocation has expired, instead of asking for good.</summary>
+    [Fact]
+    public async Task StopRefreshingWhenExpired()
+    {
+        // An allocation of three seconds, checked every 200 ms, whose refreshes the server refuses
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        await using FakeTurnServer server = new(Username, Password) { AllocationLifetime = 3, RefuseRefresh = true };
+        await using Endpoint endpoint = new(server.Address, Username, Password, TimeSpan.FromMilliseconds(200));
+        Assert.True(await endpoint.Turn.AllocateAsync(cancellationToken));
+
+        // Act: past its expiry
+        await Task.Delay(TimeSpan.FromSeconds(4), cancellationToken);
+        int refreshes = server.Refreshes;
+        await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+
+        // Assert: it tried, then stopped
+        Assert.True(refreshes > 0);
+        Assert.Equal(refreshes, server.Refreshes);
+    }
+
     /// <summary>Relay between two allocations on the TURN server that <c>UNIFORM_MATRIX_TURN</c> names, as <c>host:port</c>, with the shared secret in <c>UNIFORM_MATRIX_TURN_SECRET</c>; skipped without them.</summary>
     [Fact]
     public async Task RelayThroughRealServer()
@@ -121,12 +141,14 @@ public class TurnTests
         private readonly Task reading;
         private bool disposed;
 
-        /// <summary>Open a socket and a client of <paramref name="server"/>.</summary>
-        public Endpoint(IPEndPoint server, string username, string password)
+        /// <summary>Open a socket and a client of <paramref name="server"/>, which checks for refreshing every <paramref name="maintenanceInterval"/> when given.</summary>
+        public Endpoint(IPEndPoint server, string username, string password, TimeSpan? maintenanceInterval = null)
         {
             // Client, then the read loop
             stun = new StunClient(SendAsync) { InitialTimeout = TimeSpan.FromMilliseconds(200) };
-            Turn = new TurnClient(stun, SendAsync, server, username, password);
+            Turn = maintenanceInterval is TimeSpan interval
+                ? new TurnClient(stun, SendAsync, server, username, password) { MaintenanceInterval = interval, MaintenanceMargin = TimeSpan.Zero }
+                : new TurnClient(stun, SendAsync, server, username, password);
             reading = ReadAsync(stopping.Token);
         }
 

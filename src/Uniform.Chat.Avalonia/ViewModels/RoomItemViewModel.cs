@@ -103,11 +103,17 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         string letters = Name.TrimStart('#', '!', '@', ' ');
         Initial = letters.Length > 0 ? char.ToUpperInvariant(letters[0]).ToString() : "#";
 
-        // Latest message: text, or a note for one that cannot be read yet
+        // Latest message: text, a note for one that cannot be read yet, or a call
         for (int i = room.Timeline.Count - 1; i >= 0; i--)
         {
             ClientEvent latest = room.Timeline[i];
-            string? text = latest.Type == EventTypes.RoomEncrypted ? "Encrypted message" : latest.Type == EventTypes.RoomMessage ? EventText.GetText(latest, room.GetMemberDisplayName) : null;
+            string? text = latest.Type switch
+            {
+                EventTypes.RoomEncrypted => "Encrypted message",
+                EventTypes.RoomMessage => EventText.GetText(latest, room.GetMemberDisplayName),
+                EventTypes.CallInvite => "Voice call",
+                _ => null,
+            };
             if (text is null) continue;
             string sender = latest.Sender == ownUserId ? "You" : room.GetMemberDisplayName(latest.Sender);
             string line = text.ReplaceLineEndings(" ");

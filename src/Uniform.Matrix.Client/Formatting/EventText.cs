@@ -15,6 +15,13 @@ public static class EventText
         // Assert message
         if (clientEvent.Unsigned?.RedactedBecause is not null || !clientEvent.TryGetContent(out MessageContent? message) || message.Body is null) return null;
 
+        // A verification request says so, instead of its fallback for clients without in-room verification
+        if (message.MessageType == EventTypes.KeyVerificationRequest)
+        {
+            string? to = clientEvent.TryGetContent(out VerificationRequestContent? request) ? request.To : null;
+            return to is null ? "Asked to verify by comparing emoji" : $"Asked {userName?.Invoke(to) ?? to} to verify by comparing emoji";
+        }
+
         // Edits show their new content
         MessageContent shown = message.RelatesTo?.RelType == RelationTypes.Replace && message.NewContent?.Body is not null ? message.NewContent : message;
         if (shown.Format == MessageFormats.Html && shown.FormattedBody is { Length: > 0 } html) return HtmlText.ToText(html, userName);

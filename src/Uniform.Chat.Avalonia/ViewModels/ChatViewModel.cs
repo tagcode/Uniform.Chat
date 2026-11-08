@@ -626,10 +626,17 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Ask <paramref name="member"/> to verify each other by comparing emoji; the request shows in the verification panel.</summary>
     public async Task VerifyMemberAsync(MemberItem member)
     {
-        // Their keys first, then the request to all their devices
+        // Their keys first, then the request: in their direct chat as a room message, as Element and the spec do it, else to all their devices
         try
         {
             await connection.Crypto.TrackUserAsync(member.UserId);
+            string? direct = connection.Processor.Read(store => SelectedRoom is { IsInvite: false } open && store?.TryGetRoom(open.RoomId, out Room? room) == true && room.IsDirect && room.DirectUserId == member.UserId ? open.RoomId : null);
+            if (direct is not null && connection.Session.WhenReady.IsCompletedSuccessfully)
+            {
+                MatrixClient client = await connection.Session.WhenReady;
+                await connection.Crypto.RequestVerificationInRoomAsync(direct, member.UserId, (content, token) => connection.Outbox.SendNowAsync(client, direct, EventTypes.RoomMessage, content, token));
+                return;
+            }
             await connection.Crypto.RequestVerificationAsync(member.UserId, deviceId: null);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
@@ -846,7 +853,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     internal void ApplyChanges(SyncChanges changes)
     {
         // Notifications compare with the rooms known before
-        if (notifier is not null && Settings?.Notifications != false) Notify(changes);
+        if (notifier is not null) Notify(changes);
 
         // Rooms, then the open one, whose member count may decide calls
         RefreshRooms();
@@ -869,7 +876,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         if (changes.Joined.Any(r => r.RoomId == open.RoomId) && batch is null) _ = OpenRoomAsync(open.RoomId);
     }
 
-    /// <summary>Notify of new messages in direct chats, mentions and new invites, unless the window has the focus and shows that room.</summary>
+    /// <summary>Notify of new messages in direct chats, mentions and new invites, as the settings choose, unless the window has the focus and shows that room.</summary>
     private void Notify(SyncChanges changes)
     {
         // Collect under the lock, at most a few per sync; history and the first sync's invites are old news
@@ -883,13 +890,13 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                 {
                     if (store?.IgnoredUsers.Contains(clientEvent.Sender) == true || !clientEvent.TryGetContent(out MessageContent? content) || content.RelatesTo?.RelType == RelationTypes.Replace) continue;
                     bool mentioned = content.Mentions?.UserIds?.Contains(connection.UserId) == true || content.Mentions?.Room == true;
-                    if (!batch.Room.IsDirect && !mentioned) continue;
+                    if (!(batch.Room.IsDirect && Settings?.NotifyDirectMessages != false || mentioned && Settings?.NotifyMentions != false)) continue;
                     string sender = batch.Room.GetMemberDisplayName(clientEvent.Sender);
                     string text = EventText.GetText(clientEvent, batch.Room.GetMemberDisplayName) ?? "";
                     found.Add((batch.Room.IsDirect ? sender : $"{sender} in {batch.Room.DisplayName}", content.MessageType == MessageTypes.Emote ? $"* {sender} {text}" : text));
                 }
             }
-            foreach (Room invited in changes.Invited.Where(r => notifiedChanges && !roomsById.ContainsKey(r.RoomId) && store?.IgnoredUsers.Contains(r.InviterUserId ?? "") != true))
+            foreach (Room invited in changes.Invited.Where(r => Settings?.NotifyInvites != false && notifiedChanges && !roomsById.ContainsKey(r.RoomId) && store?.IgnoredUsers.Contains(r.InviterUserId ?? "") != true))
                 found.Add(("Invitation", $"{(invited.InviterUserId is string inviter ? invited.GetMemberDisplayName(inviter) : "Someone")} invited you to {invited.DisplayName}"));
             return found.Take(3).ToList();
         });
@@ -979,14 +986,23 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         });
     }
 
-    /// <summary>Send a read marker for the newest message of the open room, once per new message.</summary>
+    /// <summary>Send a read marker for the newest event of the open room, once per new event; a failed one is sent again with the next.</summary>
     private void MarkRead(string roomId)
     {
-        // Assert a new newest event
-        if (Messages.NewestEventId is not string newest) return;
+        // The room's newest event, also one not shown, such as a call, which the server counts as unread too
+        string? newest = connection.Processor.Read(store => store?.TryGetRoom(roomId, out Room? room) == true ? room.Timeline.LastOrDefault(e => e.EventId is not null)?.EventId : null) ?? Messages.NewestEventId;
+        if (newest is null) return;
         if (readMarkers.TryGetValue(roomId, out string? marked) && marked == newest) return;
         readMarkers[roomId] = newest;
-        _ = RunAsync("Read marker", client => client.SetReadMarkersAsync(roomId, newest, newest), report: false);
+        _ = SendReadMarkerAsync(roomId, newest);
+    }
+
+    /// <summary>Send the read marker, forgetting it when it failed, so that the next refresh sends it again.</summary>
+    private async Task SendReadMarkerAsync(string roomId, string eventId)
+    {
+        // Forget on failure, on the UI thread that owns the markers
+        if (await RunAsync("Read marker", client => client.SetReadMarkersAsync(roomId, eventId, eventId), report: false)) return;
+        ui.Post(() => { if (readMarkers.TryGetValue(roomId, out string? marked) && marked == eventId) readMarkers.Remove(roomId); });
     }
 
     /// <summary>Load thumbnails of shown images that have none yet.</summary>
@@ -1000,22 +1016,54 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
     }
 
-    /// <summary>Download a thumbnail through the media cache and show it.</summary>
+    /// <summary>Width that images are decoded to for the message list, in pixels.</summary>
+    private const int ThumbnailWidth = 800;
+
+    /// <summary>Download a thumbnail through the media cache and show it: the server's thumbnail, or for encrypted images, which the server cannot read, and images it cannot make thumbnails of, the whole file decoded small.</summary>
     private async Task LoadThumbnailAsync(MessageViewModel message)
     {
         // Cached file, decoded off the UI thread
         try
         {
             MatrixClient client = await connection.Session.WhenReady;
-            StoredMedia media = await connection.Media.GetThumbnailAsync(client, MxcUri.Parse(message.ImageUri!), 800, 600);
+            StoredMedia media;
+            if (message.Content is { File: not null } encrypted) media = await connection.Media.GetAsync(client, encrypted);
+            else
+            {
+                try
+                {
+                    media = await connection.Media.GetThumbnailAsync(client, MxcUri.Parse(message.ImageUri!), ThumbnailWidth, 600);
+                }
+                catch (MatrixException) when (message.Content is MessageContent content)
+                {
+                    media = await connection.Media.GetAsync(client, content);
+                }
+            }
             string path = connection.Media.GetFullPath(media);
-            Bitmap bitmap = await Task.Run(() => new Bitmap(path));
+            int? width = message.Content?.Info?.Width;
+            Bitmap bitmap = await Task.Run(() => DecodeSmall(path, width));
             ui.Post(() => message.Thumbnail = bitmap);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             connection.Logger.LogInformation("Thumbnail of {Uri} failed: {Error}", message.ImageUri, exception.Message);
         }
+    }
+
+    /// <summary>Decode the image at <paramref name="path"/> at most <see cref="ThumbnailWidth"/> pixels wide, so large photos take little memory; <paramref name="width"/> is its width when the message tells.</summary>
+    private static Bitmap DecodeSmall(string path, int? width)
+    {
+        // Scaled while decoding when known to be wide
+        using FileStream file = File.OpenRead(path);
+        if (width > ThumbnailWidth) return Bitmap.DecodeToWidth(file, ThumbnailWidth);
+        Bitmap bitmap = new(file);
+        if (bitmap.PixelSize.Width <= ThumbnailWidth) return bitmap;
+
+        // Wider than the message said: decode again, scaled
+        bitmap.Dispose();
+        file.Position = 0;
+        // Return scaled
+        return Bitmap.DecodeToWidth(file, ThumbnailWidth);
     }
 
     /// <summary>Download a room's avatar as a small thumbnail and show it in the list.</summary>

@@ -35,6 +35,7 @@ public sealed class ClientConnection : IAsyncDisposable
         Crypto = host.Services.GetRequiredService<CryptoService>();
         Calls = host.Services.GetRequiredService<CallService>();
         Logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Chat.Avalonia");
+        LogPath = host.Services.GetService<FileLoggerProvider>()?.FilePath;
     }
 
     /// <summary>Signed-in user.</summary>
@@ -57,6 +58,8 @@ public sealed class ClientConnection : IAsyncDisposable
     public CallService Calls { get; }
     /// <summary>Log of the user interface, written to the session log.</summary>
     public ILogger Logger { get; }
+    /// <summary>This session's log file, in the folder of the earlier sessions' logs; null when there is none.</summary>
+    public string? LogPath { get; }
 
     /// <summary>Start the engine for <paramref name="signIn"/>; the login itself runs in the background, see <see cref="WaitForLoginAsync"/>.</summary>
     public static async Task<ClientConnection> StartAsync(GuiPlatform platform, SignIn signIn, CancellationToken cancellationToken = default)
@@ -138,14 +141,15 @@ public sealed class ClientConnection : IAsyncDisposable
     /// <summary>Stop the engine.</summary>
     public async ValueTask DisposeAsync()
     {
-        // Stop services, then free them
+        // Stop services, then free them without blocking the UI thread, which their asynchronous disposal, e.g. hanging up a call, may need
         try
         {
             await host.StopAsync(TimeSpan.FromSeconds(5));
         }
         finally
         {
-            host.Dispose();
+            if (host is IAsyncDisposable asynchronous) await asynchronous.DisposeAsync();
+            else host.Dispose();
         }
     }
 }

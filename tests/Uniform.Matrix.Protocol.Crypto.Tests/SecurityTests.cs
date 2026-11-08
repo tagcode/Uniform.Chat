@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Protocol.Crypto.Tests;
 
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Uniform.Matrix.Protocol.Core;
 
 /// <summary>Protocol tests of cross-signing, secret storage, key backup, key requests and SAS verification through <see cref="FakeKeyServer"/>.</summary>
@@ -176,6 +177,60 @@ public class SecurityTests
         Assert.Equal(VerificationState.Done, incoming.State);
         Assert.Equal(DeviceTrust.Verified, alice.GetDeviceTrust(alice.GetDevices(Bob).Single()));
         Assert.Equal(DeviceTrust.Verified, bob.GetDeviceTrust(bob.GetDevices(Alice).Single()));
+    }
+
+    /// <summary>Two users verify each other in their room, as Element does for other users: the request is a room message, and the rest are room events that refer to it, also an answer to the start whose commitment covers the room form.</summary>
+    [Fact]
+    public async Task CanVerifyOtherUserInRoom()
+    {
+        // Arrange: both send room events into one shared timeline
+        using OlmMachine alice = await CreateDeviceAsync(Alice, "A1");
+        using OlmMachine bob = await CreateDeviceAsync(Bob, "B1");
+        List<ClientEvent> timeline = [];
+        string Post(string sender, string type, JsonObject content)
+        {
+            string eventId = $"${timeline.Count + 1}";
+            timeline.Add(new ClientEvent { Type = type, Sender = sender, EventId = eventId, OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), Content = JsonSerializer.SerializeToElement(content) });
+            return eventId;
+        }
+        alice.RoomEventSender = (_, type, content, _) => { Post(Alice, type, content); return Task.CompletedTask; };
+        bob.RoomEventSender = (_, type, content, _) => { Post(Bob, type, content); return Task.CompletedTask; };
+        Dictionary<OlmMachine, int> seen = new() { [alice] = 0, [bob] = 0 };
+        async Task DeliverAsync()
+        {
+            // Each machine reads what it has not seen, until nothing new comes
+            for (int round = 0; round < 10; round++)
+            {
+                foreach (OlmMachine machine in new[] { alice, bob })
+                {
+                    while (seen[machine] < timeline.Count) await machine.ReceiveRoomEventAsync(RoomId, timeline[seen[machine]++], Ct);
+                }
+            }
+        }
+        Verification? incoming = null;
+        bob.VerificationChanged += v => incoming ??= v;
+
+        // Act: request in the room, accept, exchange keys
+        Verification outgoing = await alice.RequestVerificationInRoomAsync(RoomId, Bob, (content, _) => Task.FromResult(Post(Alice, EventTypes.RoomMessage, content)), Ct);
+        await DeliverAsync();
+        Assert.NotNull(incoming);
+        Assert.Equal(RoomId, incoming.RoomId);
+        Assert.Equal(outgoing.TransactionId, incoming.TransactionId);
+        await bob.AcceptVerificationAsync(incoming, Ct);
+        await DeliverAsync();
+
+        // Assert: same emoji, then both confirm and verify, over room events only
+        Assert.Equal(VerificationState.ShowingSas, outgoing.State);
+        Assert.Equal(outgoing.Emoji, incoming.Emoji);
+        await alice.ConfirmVerificationAsync(outgoing, Ct);
+        await bob.ConfirmVerificationAsync(incoming, Ct);
+        await DeliverAsync();
+        Assert.Equal(VerificationState.Done, outgoing.State);
+        Assert.Equal(VerificationState.Done, incoming.State);
+        Assert.Equal(DeviceTrust.Verified, alice.GetDeviceTrust(alice.GetDevices(Bob).Single()));
+        Assert.Equal(DeviceTrust.Verified, bob.GetDeviceTrust(bob.GetDevices(Alice).Single()));
+        Assert.All(timeline.Skip(1), e => Assert.Equal(outgoing.TransactionId, JsonNode.Parse(e.Content.GetRawText())!["m.relates_to"]!["event_id"]!.GetValue<string>()));
+        Assert.DoesNotContain(timeline.Skip(1), e => e.Content.TryGetProperty("transaction_id", out _));
     }
 
     /// <summary>Verifying a new own device with emoji gives it the cross-signing and backup keys, so it needs no recovery key.</summary>

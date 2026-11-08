@@ -5,6 +5,15 @@ using System.Text.Json.Serialization;
 
 // Content records are lenient (no required members) because other clients may send incomplete content.
 
+/// <summary>Content of an <see href="https://spec.matrix.org/latest/client-server-api/#mkeyverificationrequest">in-room verification request</see>: an <c>m.room.message</c> of msgtype <c>m.key.verification.request</c>.</summary>
+public sealed record VerificationRequestContent
+{
+    /// <summary>User asked to verify.</summary>
+    public string? To { get; init; }
+    /// <summary>Device of the requester.</summary>
+    public string? FromDevice { get; init; }
+}
+
 /// <summary>Content of <see href="https://spec.matrix.org/latest/client-server-api/#mroommessage">m.room.message</see>.</summary>
 public sealed record MessageContent
 {

@@ -84,13 +84,23 @@ public sealed class CallService : IAsyncDisposable
         return call;
     }
 
-    /// <summary>Hang up all calls, and stop following the timelines.</summary>
+    /// <summary>Hang up all calls, and stop following the timelines; a server that does not answer holds each hangup for a few seconds at most.</summary>
     public async ValueTask DisposeAsync()
     {
         // Each active call
         processor.Applied -= OnApplied;
         network.Changed -= OnNetworkChanged;
-        foreach (VoiceCall call in ActiveCalls) await call.HangupAsync();
+        foreach (VoiceCall call in ActiveCalls)
+        {
+            try
+            {
+                await call.HangupAsync().WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            catch (Exception ex) when (ex is TimeoutException or MatrixException or HttpRequestException or OperationCanceledException)
+            {
+                logger.LogInformation("Hanging up call {CallId} on stopping failed: {Error}", call.CallId, ex.Message);
+            }
+        }
     }
 
     /// <summary>Restart ICE of the connected calls on the new network, as their path on the old one is gone.</summary>

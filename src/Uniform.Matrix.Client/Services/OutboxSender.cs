@@ -32,13 +32,24 @@ public sealed class OutboxSender
     /// <param name="processor">Room state, to know which rooms are encrypted and who is in them.</param>
     public OutboxSender(ClientStore store, IOptions<MatrixOptions> options, ILogger<OutboxSender> logger, CryptoService? crypto = null, SyncProcessor? processor = null)
     {
-        // Encryption dependencies
+        // Encryption dependencies; in-room verification answers through the outbox, which encrypts
         this.crypto = crypto;
         this.processor = processor;
+        if (crypto is not null) crypto.RoomEventSender = async (roomId, type, content, token) => await EnqueueAsync(roomId, type, content, token);
         // Store dependencies
         this.store = store;
         this.options = options.Value;
         this.logger = logger;
+    }
+
+    /// <summary>Send an event now, not through the queue, encrypted where the room is, and return its event ID; for events whose ID is needed at once, such as a verification request. Failures are thrown, not retried.</summary>
+    public async Task<string> SendNowAsync(MatrixClient client, string roomId, string eventType, object content, CancellationToken cancellationToken = default)
+    {
+        // Encrypt where needed, then send
+        JsonElement json = JsonSerializer.SerializeToElement(content, content.GetType(), MatrixJson.Options);
+        (string type, object body) = await EncryptIfNeededAsync(client, roomId, eventType, json, cancellationToken);
+        // Return event ID
+        return await client.SendEventAsync(roomId, type, body, cancellationToken: cancellationToken);
     }
 
     /// <summary>Queue a text message to <paramref name="roomId"/> and wakes the sender.</summary>
@@ -95,7 +106,7 @@ public sealed class OutboxSender
         try
         {
             JsonElement content = JsonDocument.Parse(message.ContentJson).RootElement;
-            (string eventType, object body) = await EncryptIfNeededAsync(client, message, content, cancellationToken);
+            (string eventType, object body) = await EncryptIfNeededAsync(client, message.RoomId, message.EventType, content, cancellationToken);
             string eventId = await client.SendEventAsync(message.RoomId, eventType, body, message.TransactionId, cancellationToken);
             await store.MarkSentAsync(message.Id, eventId, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
@@ -126,22 +137,22 @@ public sealed class OutboxSender
 
     /// <summary>Return the event to send: encrypted for encrypted rooms, after loading the full member list so every device gets the key; unchanged otherwise.</summary>
     /// <remarks>Throws when the room is encrypted but encryption is unavailable, which fails the message instead of sending it in the clear.</remarks>
-    private async Task<(string EventType, object Content)> EncryptIfNeededAsync(MatrixClient client, OutboxMessage message, JsonElement content, CancellationToken cancellationToken)
+    private async Task<(string EventType, object Content)> EncryptIfNeededAsync(MatrixClient client, string roomId, string eventType, JsonElement content, CancellationToken cancellationToken)
     {
         // Plain rooms send as is
-        bool encrypted = processor?.Read(r => r?.TryGetRoom(message.RoomId, out Room? room) == true && room.IsEncrypted) == true;
-        if (!encrypted) return (message.EventType, content);
+        bool encrypted = processor?.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.IsEncrypted) == true;
+        if (!encrypted) return (eventType, content);
         if (crypto is null || !crypto.Available) throw new EncryptionUnavailableException(crypto?.UnavailableReason ?? "Encryption is not configured.");
 
         // All members must be known, lazy loading omits some
-        bool partial = processor!.Read(r => r?.TryGetRoom(message.RoomId, out Room? room) == true && room.Members.Values.Count(m => m.IsActive) < room.JoinedMemberCount + room.InvitedMemberCount);
-        if (partial) await processor.LoadMembersAsync(client, message.RoomId, cancellationToken);
-        (List<string> members, EncryptionContent? settings) = processor.Read(r => r?.TryGetRoom(message.RoomId, out Room? room) == true
+        bool partial = processor!.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.Members.Values.Count(m => m.IsActive) < room.JoinedMemberCount + room.InvitedMemberCount);
+        if (partial) await processor.LoadMembersAsync(client, roomId, cancellationToken);
+        (List<string> members, EncryptionContent? settings) = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true
             ? ([.. room.Members.Values.Where(m => m.IsActive).Select(m => m.UserId)], room.GetStateContent<EncryptionContent>(EventTypes.RoomEncryption))
             : (new List<string>(), (EncryptionContent?)null));
 
         // Encrypt
-        EncryptedContent encryptedContent = await crypto.EncryptAsync(message.RoomId, message.EventType, content, members, settings, cancellationToken);
+        EncryptedContent encryptedContent = await crypto.EncryptAsync(roomId, eventType, content, members, settings, cancellationToken);
         // Return encrypted event
         return (EventTypes.RoomEncrypted, encryptedContent);
     }

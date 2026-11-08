@@ -20,6 +20,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     private readonly Timer clock;
     private IDisposable? keptAlive;
     private IDisposable? ringing;
+    private readonly Func<bool> mayRing;
     private IDisposable? nearEar;
 
     /// <summary>Follow the calls of <paramref name="calls"/>.</summary>
@@ -27,7 +28,8 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <param name="ui">Dispatcher of the user interface thread.</param>
     /// <param name="platform">The platform's audio, permissions, notifications, ringing and keeping calls alive.</param>
     /// <param name="nameOf">Returns a user's display name.</param>
-    public CallViewModel(CallService calls, IUiDispatcher ui, GuiPlatform platform, Func<string, string> nameOf)
+    /// <param name="mayRing">Returns whether incoming calls ring and notify, as the settings choose; null always rings.</param>
+    public CallViewModel(CallService calls, IUiDispatcher ui, GuiPlatform platform, Func<string, string> nameOf, Func<bool>? mayRing = null)
     {
         // Devices as chosen when voice starts, and the call events
         this.calls = calls;
@@ -36,6 +38,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         audio = platform.Audio;
         HasEarpiece = platform.HasEarpiece;
         this.nameOf = nameOf;
+        this.mayRing = mayRing ?? (() => true);
         calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
         calls.IncomingCall += OnIncoming;
         calls.CallChanged += OnChanged;
@@ -161,7 +164,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Each started once and stopped once
         Hold(ref keptAlive, active, platform.KeepCallAlive is { } keep ? () => keep(PeerName) : null);
-        Hold(ref ringing, ringingNow, platform.Ring is { } ring ? () => ring(PeerName) : null);
+        Hold(ref ringing, ringingNow && mayRing(), platform.Ring is { } ring ? () => ring(PeerName) : null);
         Hold(ref nearEar, active && !(HasEarpiece && Loudspeaker), platform.ScreenOffNearEar);
     }
 
@@ -181,7 +184,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Bar, then the notification
         ui.Post(() => Show(call));
-        if (platform.Ring is null && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+        if (platform.Ring is null && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
     }
 
     /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>

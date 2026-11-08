@@ -16,6 +16,6 @@ When another device asks to verify this one, the app shows the request; choose *
 
 Below that, *Devices* lists where you are signed in. *Verify* asks a device that is not verified yet to compare emoji, and *Sign out…* signs a lost or old device out after you enter your password.
 
-To verify another person, open the room's *⋮* menu and choose *Verify* next to their name. They accept on their device, and you both compare the emoji.
+To verify another person, open the room's *⋮* menu and choose *Verify* next to their name. They accept on their device, and you both compare the emoji. In your direct chat with them, the request is a message in the chat, as Element sends it, and Element shows it there too; elsewhere it goes to their devices. When someone asks to verify you from their app, the request shows in your direct chat and the app asks you to accept it.
 
 At the end, *Blocked users* lists the people you have blocked, with *Unblock*, and *Delete account…* deletes your account, as Getting started tells.

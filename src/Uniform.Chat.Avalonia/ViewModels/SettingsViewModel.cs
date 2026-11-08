@@ -38,7 +38,10 @@ public sealed partial class SettingsViewModel : ViewModelBase
         loading = true;
         if (ui[nameof(Theme)] is JsonValue themeValue && themeValue.TryGetValue(out string? themeName) && Enum.TryParse(themeName, out AppTheme theme)) Theme = theme;
         if (ui[nameof(TextSize)] is JsonValue sizeValue && sizeValue.TryGetValue(out double size) && size is >= 10 and <= 24) TextSize = size;
-        if (ui[nameof(Notifications)] is JsonValue notifyValue && notifyValue.TryGetValue(out bool notifications)) Notifications = notifications;
+        NotifyDirectMessages = ReadBool(ui, nameof(NotifyDirectMessages), NotifyDirectMessages);
+        NotifyMentions = ReadBool(ui, nameof(NotifyMentions), NotifyMentions);
+        NotifyInvites = ReadBool(ui, nameof(NotifyInvites), NotifyInvites);
+        NotifyCalls = ReadBool(ui, nameof(NotifyCalls), NotifyCalls);
         loading = false;
     }
 
@@ -58,8 +61,29 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Whether the platform has audio to test.</summary>
     public bool CanTestAudio => platform?.Audio is not null;
 
-    /// <summary>Whether the settings are shown rather than the licenses or the audio test.</summary>
-    public bool ShowsSettings => Licenses is null && AudioTest is null;
+    /// <summary>The logs shown in place of the settings, or null.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsSettings))]
+    public partial LogsViewModel? Logs { get; set; }
+
+    /// <summary>This session's log file, set once signed in; null hides the logs.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanShowLogs))]
+    public partial string? LogPath { get; set; }
+
+    /// <summary>Whether there are logs to show.</summary>
+    public bool CanShowLogs => LogPath is not null;
+
+    /// <summary>Whether the settings are shown rather than the licenses, the logs or the audio test.</summary>
+    public bool ShowsSettings => Licenses is null && AudioTest is null && Logs is null;
+
+    /// <summary>Show the session logs, this session's first.</summary>
+    [RelayCommand]
+    private void ShowLogs() => Logs = LogPath is string path && Path.GetDirectoryName(path) is string directory ? new LogsViewModel(directory, path) : null;
+
+    /// <summary>Go back from the logs to the settings.</summary>
+    [RelayCommand]
+    private void CloseLogs() => Logs = null;
 
     /// <summary>Show the audio test.</summary>
     [RelayCommand]
@@ -112,9 +136,24 @@ public sealed partial class SettingsViewModel : ViewModelBase
         set => TextSize = TextSizes[Math.Clamp(value, 0, TextSizes.Count - 1)];
     }
 
-    /// <summary>Whether to notify of direct messages, mentions and invites while the window is in the background.</summary>
+    /// <summary>Whether the platform rings for incoming calls, so that ringing is a choice.</summary>
+    public bool CanRing => platform?.Ring is not null;
+
+    /// <summary>Whether to notify of messages in direct chats while the window is in the background; off by default, as most people do not want to be told of every message.</summary>
     [ObservableProperty]
-    public partial bool Notifications { get; set; } = true;
+    public partial bool NotifyDirectMessages { get; set; }
+
+    /// <summary>Whether to notify of messages that mention the user, in any room, while the window is in the background.</summary>
+    [ObservableProperty]
+    public partial bool NotifyMentions { get; set; }
+
+    /// <summary>Whether to notify of new invites to rooms and chats.</summary>
+    [ObservableProperty]
+    public partial bool NotifyInvites { get; set; } = true;
+
+    /// <summary>Whether incoming calls ring and notify; off, they show only in the open app.</summary>
+    [ObservableProperty]
+    public partial bool NotifyCalls { get; set; } = true;
 
     /// <summary>Save after each change made by the user.</summary>
     partial void OnThemeChanged(AppTheme value) => Save();
@@ -123,7 +162,19 @@ public sealed partial class SettingsViewModel : ViewModelBase
     partial void OnTextSizeChanged(double value) => Save();
 
     /// <summary>Save after each change made by the user.</summary>
-    partial void OnNotificationsChanged(bool value) => Save();
+    partial void OnNotifyDirectMessagesChanged(bool value) => Save();
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnNotifyMentionsChanged(bool value) => Save();
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnNotifyInvitesChanged(bool value) => Save();
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnNotifyCallsChanged(bool value) => Save();
+
+    /// <summary>Return the boolean <paramref name="name"/> of <paramref name="section"/>, or <paramref name="fallback"/> when it is missing or not a boolean.</summary>
+    private static bool ReadBool(JsonObject section, string name, bool fallback) => section[name] is JsonValue value && value.TryGetValue(out bool flag) ? flag : fallback;
 
     /// <summary>Merge the values into the settings file; failures keep the values for this run.</summary>
     private void Save()
@@ -136,7 +187,11 @@ public sealed partial class SettingsViewModel : ViewModelBase
             JsonObject ui = SettingsFile.Section(root, Section);
             ui[nameof(Theme)] = Theme.ToString();
             ui[nameof(TextSize)] = TextSize;
-            ui[nameof(Notifications)] = Notifications;
+            ui.Remove("Notifications");
+            ui[nameof(NotifyDirectMessages)] = NotifyDirectMessages;
+            ui[nameof(NotifyMentions)] = NotifyMentions;
+            ui[nameof(NotifyInvites)] = NotifyInvites;
+            ui[nameof(NotifyCalls)] = NotifyCalls;
             SettingsFile.Write(path, root);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

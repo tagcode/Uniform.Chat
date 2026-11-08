@@ -29,7 +29,7 @@ public enum VerificationState
 /// <param name="Name">English name from the spec.</param>
 public sealed record SasEmoji(string Symbol, string Name);
 
-/// <summary>A <see href="https://spec.matrix.org/latest/client-server-api/#short-authentication-string-sas-verification">SAS verification</see> with another device, over to-device messages.</summary>
+/// <summary>A <see href="https://spec.matrix.org/latest/client-server-api/#short-authentication-string-sas-verification">SAS verification</see> with another device, over to-device messages, or over events of a room when another user asked there.</summary>
 public sealed class Verification
 {
     /// <summary>Create a verification; see <see cref="OlmMachine.RequestVerificationAsync"/>.</summary>
@@ -42,8 +42,10 @@ public sealed class Verification
         WeRequested = weRequested;
     }
 
-    /// <summary>ID shared by all messages of this verification.</summary>
+    /// <summary>ID shared by all messages of this verification; in a room, the event ID of the request.</summary>
     public string TransactionId { get; }
+    /// <summary>Room of an <see href="https://spec.matrix.org/latest/client-server-api/#key-verification-framework">in-room verification</see>, whose messages are room events; null for one over to-device messages.</summary>
+    public string? RoomId { get; internal set; }
     /// <summary>User being verified; ourselves when verifying our own device.</summary>
     public string OtherUserId { get; }
     /// <summary>Device being verified; unknown until it accepts our request.</summary>
@@ -126,6 +128,43 @@ public sealed partial class OlmMachine
     /// <summary>Raised when a verification message is dropped, with its sender, the sending device if known, and why; for logs, as the other side gets no answer.</summary>
     public event Action<string, string?, string>? VerificationIgnored;
 
+    /// <summary>Send a room event, encrypted in encrypted rooms: the room, the event type and content; set by the client, which owns the room's encryption. Without it, in-room verification requests are not answered.</summary>
+    public Func<string, string, JsonObject, CancellationToken, Task>? RoomEventSender { get; set; }
+
+    /// <summary>Handle an event of a room's timeline that belongs to an in-room verification: a request message to this user, or a later <c>m.key.verification.*</c> event that refers to one; other events, and this user's own, are skipped.</summary>
+    /// <param name="roomId">Room of the event.</param>
+    /// <param name="clientEvent">The event, decrypted.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task ReceiveRoomEventAsync(string roomId, ClientEvent clientEvent, CancellationToken cancellationToken = default)
+    {
+        // Verification events of others with content
+        bool request = clientEvent.Type == EventTypes.RoomMessage && clientEvent.TryGetContent(out MessageContent? message) && message.MessageType == EventTypes.KeyVerificationRequest;
+        if (!request && !clientEvent.Type.StartsWith("m.key.verification.", StringComparison.Ordinal)) return;
+        if (clientEvent.Sender == UserId || clientEvent.EventId is not string eventId || JsonSerializer.Deserialize<JsonObject>(clientEvent.Content) is not JsonObject content) return;
+
+        // One operation at a time
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            // A request to us, quietly skipped when old, as history brings many
+            if (request)
+            {
+                if (content["to"]?.GetValue<string>() != UserId || time.GetUtcNow() - clientEvent.Timestamp > RequestLifetime) return;
+                content["timestamp"] = clientEvent.OriginServerTs;
+                await ReceiveRequestAsync(clientEvent.Sender, eventId, content, cancellationToken, roomId);
+                return;
+            }
+
+            // A later message, referring to the request
+            if (content["m.relates_to"]?["event_id"]?.GetValue<string>() is not string transactionId || !verifications.TryGetValue(transactionId, out Verification? verification) || verification.RoomId != roomId) return;
+            await HandleVerificationEventAsync(clientEvent.Type, clientEvent.Sender, content, cancellationToken, transactionId);
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
     /// <summary>Verifications in progress, ours and incoming; safe to read from <see cref="VerificationChanged"/>.</summary>
     public IReadOnlyList<Verification> Verifications => [.. verifications.Values.Where(v => v.State is not (VerificationState.Done or VerificationState.Cancelled))];
 
@@ -149,6 +188,47 @@ public sealed partial class OlmMachine
             await transport.SendToDeviceAsync(EventTypes.KeyVerificationRequest, ToDevices(userId, devices, content), cancellationToken);
             // Return verification
             Changed(verification);
+            return verification;
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
+    /// <summary>Ask <paramref name="userId"/> to verify in <paramref name="roomId"/>, their direct chat, as other users are verified: <paramref name="sendRequest"/> sends the request message, encrypted where the room is, and returns its event ID, which identifies the verification.</summary>
+    public async Task<Verification> RequestVerificationInRoomAsync(string roomId, string userId, Func<JsonObject, CancellationToken, Task<string>> sendRequest, CancellationToken cancellationToken = default)
+    {
+        // Their devices, whose keys the MAC is checked against
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            await RefreshDeviceListAsync(userId, cancellationToken);
+        }
+        finally
+        {
+            gate.Release();
+        }
+
+        // The request message, with a fallback for clients without in-room verification; sent without the lock, as sending encrypts with this machine
+        JsonObject content = new()
+        {
+            ["msgtype"] = EventTypes.KeyVerificationRequest,
+            ["body"] = $"{UserId} is requesting to verify your key, but your client does not support in-chat key verification.",
+            ["from_device"] = DeviceId,
+            ["methods"] = new JsonArray(SasMethod),
+            ["to"] = userId,
+        };
+        string eventId = await sendRequest(content, cancellationToken);
+
+        // Identified by the event
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            Verification verification = new(eventId, userId, null, weRequested: true) { RoomId = roomId };
+            verifications[eventId] = verification;
+            Changed(verification);
+            // Return verification
             return verification;
         }
         finally
@@ -228,12 +308,12 @@ public sealed partial class OlmMachine
         }
     }
 
-    /// <summary>Dispatch a received <c>m.key.verification.*</c> event.</summary>
-    private async Task HandleVerificationEventAsync(string type, string sender, JsonObject content, CancellationToken cancellationToken)
+    /// <summary>Dispatch a received <c>m.key.verification.*</c> event; <paramref name="roomTransactionId"/> is the request's event ID of an in-room one, whose content has no transaction ID.</summary>
+    private async Task HandleVerificationEventAsync(string type, string sender, JsonObject content, CancellationToken cancellationToken, string? roomTransactionId = null)
     {
         // New requests
         string? fromDevice = content["from_device"]?.GetValue<string>();
-        if (content["transaction_id"]?.GetValue<string>() is not string transactionId)
+        if ((roomTransactionId ?? content["transaction_id"]?.GetValue<string>()) is not string transactionId)
         {
             Ignored(sender, fromDevice, $"{type} has no transaction ID");
             return;
@@ -279,8 +359,8 @@ public sealed partial class OlmMachine
     /// <summary>Raise <see cref="VerificationIgnored"/>.</summary>
     private void Ignored(string sender, string? fromDevice, string reason) => VerificationIgnored?.Invoke(sender, fromDevice, reason);
 
-    /// <summary>Record an incoming request from a known device, when recent and for SAS.</summary>
-    private async Task ReceiveRequestAsync(string sender, string transactionId, JsonObject content, CancellationToken cancellationToken)
+    /// <summary>Record an incoming request from a known device, when recent and for SAS; <paramref name="roomId"/> is the room of an in-room request.</summary>
+    private async Task ReceiveRequestAsync(string sender, string transactionId, JsonObject content, CancellationToken cancellationToken, string? roomId = null)
     {
         // Not our own request, not stale, SAS supported
         string? fromDevice = content["from_device"]?.GetValue<string>();
@@ -308,7 +388,12 @@ public sealed partial class OlmMachine
             Ignored(sender, fromDevice, "the device is not in the user's device list, or its keys are not validly signed");
             return;
         }
-        Verification verification = new(transactionId, sender, fromDevice, weRequested: false);
+        if (roomId is not null && RoomEventSender is null)
+        {
+            Ignored(sender, fromDevice, "in-room verification needs a way to send room events");
+            return;
+        }
+        Verification verification = new(transactionId, sender, fromDevice, weRequested: false) { RoomId = roomId };
         verifications[transactionId] = verification;
         Changed(verification);
     }
@@ -316,12 +401,13 @@ public sealed partial class OlmMachine
     /// <summary>Our request was accepted: tell the other devices, then starts SAS.</summary>
     private async Task ReceiveReadyAsync(Verification verification, string? fromDevice, CancellationToken cancellationToken)
     {
-        // Assert our pending request
-        if (!verification.WeRequested || verification.State != VerificationState.Requested || fromDevice is null || !verification.RequestedDevices.Contains(fromDevice)) return;
+        // Assert our pending request; in a room, any device of the user may take it
+        if (!verification.WeRequested || verification.State != VerificationState.Requested || fromDevice is null) return;
+        if (verification.RoomId is null && !verification.RequestedDevices.Contains(fromDevice)) return;
         verification.OtherDeviceId = fromDevice;
         verification.State = VerificationState.Ready;
 
-        // Others need not answer any more
+        // Others need not answer any more; in a room they see the answer
         List<string> others = [.. verification.RequestedDevices.Where(d => d != fromDevice)];
         JsonObject cancel = new() { ["transaction_id"] = verification.TransactionId, ["code"] = "m.accepted", ["reason"] = "Verified on another device." };
         if (others.Count > 0) await transport.SendToDeviceAsync(EventTypes.KeyVerificationCancel, ToDevices(verification.OtherUserId, others, cancel), cancellationToken);
@@ -337,9 +423,9 @@ public sealed partial class OlmMachine
             ["short_authentication_string"] = new JsonArray("decimal", "emoji"),
             ["transaction_id"] = verification.TransactionId,
         };
-        verification.StartContent = start;
+        verification.StartContent = ForTransport(verification, start);
         verification.WeStarted = true;
-        await SendVerificationAsync(verification, EventTypes.KeyVerificationStart, start, cancellationToken);
+        await SendVerificationAsync(verification, EventTypes.KeyVerificationStart, verification.StartContent, cancellationToken);
         Changed(verification);
     }
 
@@ -537,10 +623,11 @@ public sealed partial class OlmMachine
         verification.State = VerificationState.Cancelled;
         verification.Release();
 
-        // Tell the chosen device, or every requested one
+        // Tell the room, or the chosen device, or every requested one
         JsonObject content = new() { ["transaction_id"] = verification.TransactionId, ["code"] = code, ["reason"] = reason };
         IEnumerable<string> devices = verification.OtherDeviceId is string device ? [device] : verification.RequestedDevices;
-        await transport.SendToDeviceAsync(EventTypes.KeyVerificationCancel, ToDevices(verification.OtherUserId, devices, content), cancellationToken);
+        if (verification.RoomId is not null) await SendVerificationAsync(verification, EventTypes.KeyVerificationCancel, content, cancellationToken);
+        else await transport.SendToDeviceAsync(EventTypes.KeyVerificationCancel, ToDevices(verification.OtherUserId, devices, content), cancellationToken);
         Changed(verification);
     }
 
@@ -553,9 +640,26 @@ public sealed partial class OlmMachine
         Changed(verification);
     }
 
-    /// <summary>Send a verification message to the other device.</summary>
-    private Task SendVerificationAsync(Verification verification, string type, JsonObject content, CancellationToken cancellationToken) =>
-        transport.SendToDeviceAsync(type, ToDevices(verification.OtherUserId, [verification.OtherDeviceId!], content), cancellationToken);
+    /// <summary>Send a verification message to the other device, or to the room of an in-room verification.</summary>
+    private Task SendVerificationAsync(Verification verification, string type, JsonObject content, CancellationToken cancellationToken)
+    {
+        // Room events through the client, else to-device
+        if (verification.RoomId is string roomId) return (RoomEventSender ?? throw new InvalidOperationException("No room event sender for in-room verification."))(roomId, type, ForTransport(verification, content), cancellationToken);
+        // Return send
+        return transport.SendToDeviceAsync(type, ToDevices(verification.OtherUserId, [verification.OtherDeviceId!], content), cancellationToken);
+    }
+
+    /// <summary>Return <paramref name="content"/> as it is sent: unchanged over to-device, and in a room without the transaction ID but referring to the request, as the start's commitment covers what is sent.</summary>
+    private static JsonObject ForTransport(Verification verification, JsonObject content)
+    {
+        // To-device as is
+        if (verification.RoomId is null) return content;
+        JsonObject shaped = (JsonObject)content.DeepClone();
+        shaped.Remove("transaction_id");
+        shaped["m.relates_to"] = new JsonObject { ["rel_type"] = "m.reference", ["event_id"] = verification.TransactionId };
+        // Return room content
+        return shaped;
+    }
 
     /// <summary>Return the accept commitment: SHA-256 of the public key followed by the canonical start content, unpadded base64.</summary>
     private static string CreateCommitment(string publicKey, JsonObject startContent)

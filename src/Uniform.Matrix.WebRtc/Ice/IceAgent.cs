@@ -86,6 +86,7 @@ public sealed class IceAgent : IAsyncDisposable
     private CandidatePair? selected;
     private DateTime firstSuccess;
     private bool nominating;
+    private bool closing;
     private Task? consent;
 
     /// <summary>A base of local candidates: the socket itself, or a TURN allocation on it.</summary>
@@ -267,11 +268,14 @@ public sealed class IceAgent : IAsyncDisposable
     /// <summary>Stop, release the allocations, and close the socket.</summary>
     public async ValueTask DisposeAsync()
     {
-        // Loops first, then the allocations, then the socket
+        // Loops first, then the allocations, taken under the lock after which no more are added, then the socket
         if (State == IceState.Closed) return;
+        lock (gate) closing = true;
         await stopping.CancelAsync();
         if (consent is not null) await consent.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-        foreach (LocalBase relay in relays) await relay.Turn!.DisposeAsync();
+        LocalBase[] allocated;
+        lock (gate) allocated = [.. relays];
+        foreach (LocalBase relay in allocated) await relay.Turn!.DisposeAsync();
         socket.Dispose();
         socket6?.Dispose();
         await reading.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
@@ -311,7 +315,12 @@ public sealed class IceAgent : IAsyncDisposable
             if (turn.MappedAddress is not null) AddReflexive(turn.MappedAddress, index);
             IceCandidate relayed = new() { Foundation = $"r{index}", Priority = IceCandidate.ComputePriority(IceCandidateType.Relayed, (ushort)(65535 - index)), Address = turn.RelayedAddress, Type = IceCandidateType.Relayed, RelatedAddress = turn.MappedAddress };
             LocalBase relay = new(new StunClient((datagram, to, token) => turn.SendAsync(datagram, to, token)), turn) { Candidate = relayed };
-            AddRelay(relay);
+            if (!AddRelay(relay))
+            {
+                // Closed while allocating: release it, or it would refresh on its own for good
+                await turn.DisposeAsync();
+                return;
+            }
             AddLocal(relayed);
         }
         catch (Exception e) when (e is OperationCanceledException or SocketException && !cancellationToken.IsCancellationRequested)
@@ -320,19 +329,21 @@ public sealed class IceAgent : IAsyncDisposable
         }
     }
 
-    /// <summary>Add a relayed base, paired with the remote candidates there are.</summary>
-    private void AddRelay(LocalBase relay)
+    /// <summary>Add a relayed base, paired with the remote candidates there are; return false when the agent is closing, so the caller releases it.</summary>
+    private bool AddRelay(LocalBase relay)
     {
-        // Pairs with the remotes known, which it must permit
+        // Pairs with the remotes known, which it must permit; none once closing, as the closing has released the relays
         IceCandidate[] remotes;
         lock (gate)
         {
+            if (closing) return false;
             relays.Add(relay);
             remotes = [.. remoteCandidates.Where(c => c.Address.AddressFamily == AddressFamily.InterNetwork)];
             foreach (IceCandidate remote in remotes) pairs.Add(new CandidatePair(relay, remote));
         }
         // Done
         foreach (IceCandidate remote in remotes) _ = relay.Turn!.PermitAsync(remote.Address.Address, stopping.Token);
+        return true;
     }
 
     /// <summary>Add a server-reflexive candidate, unless it is a host address already, or only relayed ones are offered.</summary>

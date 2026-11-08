@@ -42,6 +42,15 @@ internal sealed class FakeTurnServer : IAsyncDisposable
     /// <summary>Data to relay on a channel right after its ChannelBind response, as from a peer whose packet arrives at that moment; null for none.</summary>
     public byte[]? SendAfterBind { get; set; }
 
+    /// <summary>Lifetime of the allocation it grants, in seconds.</summary>
+    public uint AllocationLifetime { get; set; } = 600;
+
+    /// <summary>Whether to refuse refreshes of the allocation with 401, as a server does once time-limited credentials have expired.</summary>
+    public bool RefuseRefresh { get; set; }
+
+    /// <summary>Number of Refresh requests that are not deletes, including refused ones.</summary>
+    public int Refreshes { get; private set; }
+
     /// <summary>Number of Refresh requests with a zero lifetime, which delete the allocation.</summary>
     public int Deletes { get; private set; }
 
@@ -87,9 +96,16 @@ internal sealed class FakeTurnServer : IAsyncDisposable
                 continue;
             }
 
-            // Requests: challenged without integrity
+            // Requests: challenged without integrity, and refreshes refused when asked
             StunMessage response;
-            lock (gate) response = StunMessage.CheckIntegrity(datagram, key) ? Answer(message, peer) : Error(message, 401);
+            bool refused;
+            lock (gate)
+            {
+                bool refresh = message.Method == StunMethod.Refresh && message.Get(StunAttributeTypes.Lifetime) is not [0, 0, 0, 0];
+                if (refresh) Refreshes++;
+                refused = refresh && RefuseRefresh;
+            }
+            lock (gate) response = StunMessage.CheckIntegrity(datagram, key) && !refused ? Answer(message, peer) : Error(message, 401);
             await server.SendAsync(response.Encode(response.Class == StunClass.Success ? key : null), sender, cancellationToken);
 
             // Channel data at once after a bind, when asked
@@ -115,7 +131,7 @@ internal sealed class FakeTurnServer : IAsyncDisposable
             case StunMethod.Allocate:
                 response.Add(StunAttributeTypes.XorRelayedAddress, StunAddress.EncodeXor(RelayAddress, request.TransactionId));
                 response.Add(StunAttributeTypes.XorMappedAddress, StunAddress.EncodeXor(client!, request.TransactionId));
-                response.Add(StunAttributeTypes.Lifetime, [0, 0, 0x02, 0x58]);
+                response.Add(StunAttributeTypes.Lifetime, [(byte)(AllocationLifetime >> 24), (byte)(AllocationLifetime >> 16), (byte)(AllocationLifetime >> 8), (byte)AllocationLifetime]);
                 break;
             case StunMethod.Refresh:
                 if (request.Get(StunAttributeTypes.Lifetime) is [0, 0, 0, 0]) Deletes++;

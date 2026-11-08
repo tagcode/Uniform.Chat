@@ -8,7 +8,7 @@
   <StackPanel Spacing="12" IsVisible="{Binding ShowsSettings}">
     <TextBlock Classes="title" Text="Settings" />
 
-    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="10">
       <TextBlock Grid.Row="0" Grid.Column="0" Text="Theme" VerticalAlignment="Center" />
       <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Themes}" SelectedIndex="{Binding ThemeIndex}" HorizontalAlignment="Stretch" />
 
@@ -19,13 +19,20 @@
         <ComboBoxItem Content="Large" />
       </ComboBox>
 
-      <TextBlock Grid.Row="2" Grid.Column="0" Text="Notifications" VerticalAlignment="Center" IsVisible="{Binding CanNotify}" />
-      <ToggleSwitch Grid.Row="2" Grid.Column="1" IsChecked="{Binding Notifications}" IsVisible="{Binding CanNotify}" OnContent="Direct messages, mentions, invites" OffContent="Off" />
     </Grid>
+
+    <StackPanel Spacing="2" IsVisible="{Binding CanNotify}">
+      <TextBlock Classes="subtitle" Text="Notifications" />
+      <CheckBox IsChecked="{Binding NotifyCalls}" Content="Incoming calls" IsVisible="{Binding CanRing}" />
+      <CheckBox IsChecked="{Binding NotifyDirectMessages}" Content="Messages in direct chats" />
+      <CheckBox IsChecked="{Binding NotifyMentions}" Content="Messages that mention you" />
+      <CheckBox IsChecked="{Binding NotifyInvites}" Content="Invites" />
+    </StackPanel>
 
     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Changes are saved right away." />
     <StackPanel Orientation="Horizontal" Spacing="8">
       <Button Content="Test audio…" Command="{Binding ShowAudioTestCommand}" IsVisible="{Binding CanTestAudio}" />
+      <Button Content="Logs…" Command="{Binding ShowLogsCommand}" IsVisible="{Binding CanShowLogs}" />
       <Button Content="Licences…" Command="{Binding ShowLicensesCommand}" />
     </StackPanel>
   </StackPanel>
@@ -42,6 +49,30 @@
       <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
     </StackPanel>
   </StackPanel>
+
+  <!-- Logs in place of the settings -->
+  <DockPanel IsVisible="{Binding Logs, Converter={x:Static ObjectConverters.IsNotNull}}">
+    <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,Auto" Margin="0,0,0,8">
+      <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Settings" Command="{Binding CloseLogsCommand}" />
+      <TextBlock Grid.Column="1" Classes="title" Text="Logs" VerticalAlignment="Center" Margin="6,0,0,0" />
+      <Button Grid.Column="2" Content="Copy" Click="OnCopyLogClick" Margin="6,0,0,0" />
+      <Button Grid.Column="3" Content="Refresh" Command="{Binding Logs.RefreshCommand, FallbackValue={x:Null}}" Margin="6,0,0,0" />
+    </Grid>
+    <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8" DataContext="{Binding Logs}" x:DataType="vm:LogsViewModel">
+      <ComboBox ItemsSource="{Binding Files}" SelectedItem="{Binding Selected}" HorizontalAlignment="Stretch">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="vm:LogFileItem">
+            <TextBlock Text="{Binding Title}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+        <ComboBox Grid.Column="0" ItemsSource="{Binding Levels}" SelectedIndex="{Binding LevelIndex}" />
+        <TextBox Grid.Column="1" Text="{Binding Filter}" PlaceholderText="Filter" />
+      </Grid>
+    </StackPanel>
+    <SelectableTextBlock DataContext="{Binding Logs}" x:DataType="vm:LogsViewModel" Text="{Binding Text}" TextWrapping="Wrap" FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" FontSize="12" />
+  </DockPanel>
 
   <!-- Licences in place of the settings -->
   <StackPanel Spacing="10" IsVisible="{Binding Licenses, Converter={x:Static ObjectConverters.IsNotNull}}">

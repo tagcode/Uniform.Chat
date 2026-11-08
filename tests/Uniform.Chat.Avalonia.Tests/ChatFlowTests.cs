@@ -434,6 +434,157 @@ public class ChatFlowTests
         }
     }
 
+    /// <summary>At the bottom, the room stays at the bottom as messages arrive, also several in a row; scrolled up, it stays where the user is.</summary>
+    [AvaloniaFact]
+    public async Task FollowNewestMessages()
+    {
+        // Arrange: a room with more history than fits, open in a small window
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient bob = await server.RegisterAsync("bob");
+        MatrixClient alice = await server.RegisterAsync("alice");
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Busy", Preset = RoomPresets.PublicChat });
+        await alice.JoinRoomAsync(roomId);
+        for (int i = 0; i < 30; i++) await bob.SendTextAsync(roomId, $"old {i}");
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+        Window window = new() { Width = 800, Height = 500, Content = new MainView { DataContext = model } };
+
+        try
+        {
+            ChatViewModel chat = await SignInAsync(model, alice.UserId!);
+            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text == "old 29"), "the room's history");
+            window.Show();
+            ScrollViewer scroller = window.GetVisualDescendants().OfType<ListBox>().Single(l => l.Name == "MessageList").FindDescendantOfType<ScrollViewer>()!;
+            bool AtBottom() => scroller.Extent.Height > scroller.Viewport.Height && scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 2;
+            await WaitUntilAsync(AtBottom, "the room to open at the bottom");
+
+            // Act and assert: new messages, one and then several at once, keep it at the bottom
+            await bob.SendTextAsync(roomId, "new 1");
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "new 1") && AtBottom(), "the bottom after one message");
+            for (int i = 2; i <= 4; i++) await bob.SendTextAsync(roomId, $"new {i}\nwith a second line");
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text.StartsWith("new 4")) && AtBottom(), "the bottom after several messages");
+
+            // Act and assert: scrolled up, a new message leaves the view where it is
+            scroller.Offset = new Vector(0, 40);
+            await Task.Delay(300);
+            Assert.False(AtBottom());
+            double offset = scroller.Offset.Y;
+            await bob.SendTextAsync(roomId, "new 5");
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "new 5"), "the message while scrolled up");
+            await Task.Delay(300);
+            Assert.False(AtBottom());
+            Assert.Equal(offset, scroller.Offset.Y, 1);
+        }
+        finally
+        {
+            window.Close();
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>Unread messages, and calls, count in the room list and the window title until the room is opened; after that they stay read, also once another room is opened.</summary>
+    [AvaloniaFact]
+    public async Task ClearUnreadWhenRead()
+    {
+        // Arrange: Alice in two rooms of Bob's
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient bob = await server.RegisterAsync("bob");
+        MatrixClient alice = await server.RegisterAsync("alice");
+        string first = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "First", Preset = RoomPresets.PublicChat });
+        string second = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Second", Preset = RoomPresets.PublicChat });
+        await alice.JoinRoomAsync(first);
+        await alice.JoinRoomAsync(second);
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel chat = await SignInAsync(model, alice.UserId!);
+            await WaitUntilAsync(() => chat.Rooms.Count(r => r.RoomId == first || r.RoomId == second) == 2, "both rooms");
+            chat.SelectedRoom = chat.Rooms.First(r => r.RoomId == first);
+
+            // Act: messages in the other room, the last one a call, which is not shown as a message but counts as unread
+            await bob.SendTextAsync(second, "one");
+            await bob.SendTextAsync(second, "two");
+            await bob.SendEventAsync(second, EventTypes.CallInvite, new { call_id = "c1", party_id = "p1", version = "1", lifetime = 60000, offer = new { type = "offer", sdp = "v=0" } });
+            await WaitUntilAsync(() => chat.Rooms.First(r => r.RoomId == second).Unread == 3 && chat.UnreadRooms == 1, "three unread");
+            Assert.Equal("bob: Voice call", chat.Rooms.First(r => r.RoomId == second).LastMessage);
+
+            // Act: read them, then go back to the first room
+            chat.SelectedRoom = chat.Rooms.First(r => r.RoomId == second);
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "two"), "the messages");
+            await Task.Delay(500);
+            chat.SelectedRoom = chat.Rooms.First(r => r.RoomId == first);
+
+            // Assert: read, also after a later sync
+            await bob.SendTextAsync(first, "here");
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "here"), "a later sync");
+            await Task.Delay(500);
+            Assert.Equal(0, chat.Rooms.First(r => r.RoomId == second).Unread);
+            Assert.Equal(0, chat.UnreadRooms);
+
+            // Assert: the settings, with the notification choices, and the logs of this session render
+            chat.ToggleSettingsCommand.Execute(null);
+            await CaptureAsync(model, "settings.png", 400, 760);
+            model.Settings.ShowLogsCommand.Execute(null);
+            Assert.True(model.Settings.Logs!.Selected!.IsCurrent);
+            Assert.Contains("[Information]", model.Settings.Logs.Text);
+            await CaptureAsync(model, "logs.png", 400, 760);
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>In their encrypted direct chat, two people verify each other through the chat itself, as Element asks: the request shows as a message, and the steps after it are encrypted room events.</summary>
+    [AvaloniaFact]
+    public async Task VerifyInDirectChat()
+    {
+        // Arrange: Heidi starts an encrypted direct chat with Ivan, who joins it
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient heidi = await server.RegisterAsync("heidi");
+        MatrixClient ivan = await server.RegisterAsync("ivan");
+        MainViewModel first = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+        MainViewModel second = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel heidiChat = await SignInAsync(first, heidi.UserId!);
+            ChatViewModel ivanChat = await SignInAsync(second, ivan.UserId!);
+            heidiChat.JoinTarget = ivan.UserId!;
+            await heidiChat.OpenTargetCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => heidiChat.SelectedRoom is { IsDirect: true, IsInvite: false }, "the direct chat at Heidi");
+            string roomId = heidiChat.SelectedRoom!.RoomId;
+            await WaitUntilAsync(() => ivanChat.Rooms.Any(r => r.RoomId == roomId && r.IsInvite), "the invite at Ivan");
+            ivanChat.SelectedRoom = ivanChat.Rooms.First(r => r.RoomId == roomId);
+            await ivanChat.AcceptInviteCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => ivanChat.SelectedRoom is { IsInvite: false, IsEncrypted: true }, "the joined encrypted chat at Ivan");
+
+            // Act: Heidi asks from the member list of the direct chat; Ivan accepts, both compare
+            await WaitUntilAsync(() => { heidiChat.LoadMembersCommand.Execute(null); return heidiChat.Members.Any(m => m.UserId == ivan.UserId && m.CanVerify && !m.IsInvited); }, "Ivan in the member list");
+            await heidiChat.VerifyMemberAsync(heidiChat.Members.First(m => m.UserId == ivan.UserId));
+            await WaitUntilAsync(() => ivanChat.Verification is { IsIncoming: true }, "the request at Ivan");
+            await WaitUntilAsync(() => ivanChat.Messages.Items.Any(m => m.Text.StartsWith("Asked") && m.Text.EndsWith("to verify by comparing emoji")), "the request as a message");
+            await ivanChat.Verification!.AcceptCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => heidiChat.Verification is { IsComparing: true } && ivanChat.Verification is { IsComparing: true }, "the emoji on both");
+            Assert.Equal(heidiChat.Verification!.Emoji.Select(e => e.Symbol), ivanChat.Verification!.Emoji.Select(e => e.Symbol));
+            await heidiChat.Verification.MatchCommand.ExecuteAsync(null);
+            await ivanChat.Verification.MatchCommand.ExecuteAsync(null);
+
+            // Assert: both verified, and the steps went through the chat, encrypted
+            await WaitUntilAsync(() => heidiChat.Verification is { IsFinished: true } && ivanChat.Verification is { IsFinished: true }, "the verification to finish");
+            Assert.EndsWith("is verified.", heidiChat.Verification.Message);
+            Assert.EndsWith("is verified.", ivanChat.Verification.Message);
+            MessagesResponse history = await ivan.GetMessagesAsync(roomId, limit: 50);
+            Assert.True(history.Chunk.Count(e => e.Type == EventTypes.RoomEncrypted) >= 6);
+            Assert.DoesNotContain(history.Chunk, e => e.Type.StartsWith("m.key.verification.", StringComparison.Ordinal));
+        }
+        finally
+        {
+            await first.StopAsync();
+            await second.StopAsync();
+        }
+    }
+
     /// <summary>Records notifications instead of showing them.</summary>
     private sealed class RecordingNotifier : INotifier
     {
@@ -449,7 +600,7 @@ public class ChatFlowTests
         }
     }
 
-    /// <summary>In the background, direct messages, mentions and invites notify; other messages in groups do not, and nothing does while the window has the focus on that room.</summary>
+    /// <summary>In the background, direct messages, mentions and invites notify when the settings ask for them; other messages in groups do not, and nothing does while the window has the focus on that room.</summary>
     [AvaloniaFact]
     public async Task NotifyInBackground()
     {
@@ -464,6 +615,9 @@ public class ChatFlowTests
 
         try
         {
+            model.Settings.NotifyDirectMessages = true;
+            model.Settings.NotifyMentions = true;
+            model.Settings.NotifyInvites = true;
             ChatViewModel chat = await SignInAsync(model, alice.UserId!);
             await WaitUntilAsync(() => chat.Rooms.Any(r => r.RoomId == group), "the group");
             chat.IsActive = false;
@@ -488,6 +642,13 @@ public class ChatFlowTests
                 Assert.Equal("bob", notifier.Shown.Single(n => n.Body == "psst").Title);
             }
             await WaitUntilAsync(() => chat.UnreadRooms > 0 && chat.Rooms.Any(r => r.RoomId == direct && r.HasUnread), "the unread badge of the direct chat");
+
+            // Act and assert: with direct messages turned off, the next one does not notify
+            model.Settings.NotifyDirectMessages = false;
+            await bob.SendTextAsync(direct, "quietly");
+            await WaitUntilAsync(() => chat.Rooms.Any(r => r.RoomId == direct && r.LastMessage == "quietly"), "the quiet message");
+            await Task.Delay(300);
+            lock (notifier.Shown) Assert.DoesNotContain(notifier.Shown, n => n.Body == "quietly");
         }
         finally
         {
