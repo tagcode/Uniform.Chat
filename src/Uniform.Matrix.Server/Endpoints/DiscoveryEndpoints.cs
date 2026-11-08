@@ -17,8 +17,8 @@ public static class DiscoveryEndpoints
     /// <summary>Map <c>/_matrix/client/versions</c>, <c>/.well-known/matrix/client</c> and <c>/.well-known/matrix/server</c>.</summary>
     public static IEndpointRouteBuilder MapDiscovery(this IEndpointRouteBuilder routes)
     {
-        // Versions, no auth needed; delayed events for calls, and sliding sync
-        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool> { ["org.matrix.msc4140"] = true, ["org.matrix.simplified_msc3575"] = true } }));
+        // Versions, no auth needed; delayed events for calls, sliding sync, and suspending and locking accounts
+        routes.MapGet("/_matrix/client/versions", () => MatrixHttp.Json(new VersionsResponse { Versions = SupportedVersions, UnstableFeatures = new Dictionary<string, bool> { ["org.matrix.msc4140"] = true, ["org.matrix.simplified_msc3575"] = true, ["uk.timedout.msc4323"] = true } }));
 
         // Well-known only with a configured public address, with the call service when there is one
         routes.MapGet("/.well-known/matrix/client", (IOptionsMonitor<ServerOptions> options, IOptionsMonitor<CallOptions> calls) =>

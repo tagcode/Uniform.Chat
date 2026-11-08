@@ -42,4 +42,10 @@ uid: Uniform.Chat.Terminal.Commands.Article
 | `/ignore [@user:server]` | Block a user: their messages and invites no longer show; without a user, list whom you block |
 | `/unignore @user:server` | Unblock a user |
 | `/report [@user:server]` | Report a user, or without one this room, to your server's admins |
+| `/whois [@user:server]` | A user's devices and the addresses they last connected from; yours without admin rights |
+| `/accounts [text]`, `/rooms [text]` | Server admins: list and manage the server's accounts or rooms; see [Server administration](xref:Uniform.Chat.Terminal.ServerAdmin.Article) |
+| `/suspend @user:server`, `/unsuspend @user:server` | Server admins: let the user read but not send, join or invite; or end it |
+| `/lock @user:server`, `/unlock @user:server` | Server admins: refuse the account's sessions until unlocked |
+| `/notice @user:server text` | Server admins: send a server notice |
+| `/tokens`, `/reports` | Server admins: registration tokens, and users' reports |
 | `/quit` | Exit |

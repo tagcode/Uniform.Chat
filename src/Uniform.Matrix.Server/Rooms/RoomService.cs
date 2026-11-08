@@ -138,6 +138,7 @@ public sealed class RoomService
 
         // Resolve, then join unless joined
         string roomId = await ResolveAsync(roomIdOrAlias, cancellationToken);
+        await AssertNotBlockedAsync(roomId, cancellationToken);
         if (await GetMembershipAsync(roomId, userId, cancellationToken) == Memberships.Join) return roomId;
         await SendStateAsync(roomId, userId, EventTypes.RoomMember, userId, await MemberContentAsync(userId, Memberships.Join, reason, cancellationToken), cancellationToken);
         await remoteInvites.EndAsync(userId, roomId, joined: true, cancellationToken);
@@ -166,6 +167,7 @@ public sealed class RoomService
         }
 
         // Invite with the target's profile
+        await AssertNotBlockedAsync(roomId, cancellationToken);
         JsonObject content = await MemberContentAsync(target, Memberships.Invite, reason, cancellationToken);
         if (isDirect) content["is_direct"] = true;
         await SendStateAsync(roomId, userId, EventTypes.RoomMember, target, content, cancellationToken);
@@ -204,6 +206,14 @@ public sealed class RoomService
         if (membership is null or Memberships.Leave or Memberships.Ban) return;
         await SetMembershipAsync(userId, roomId, userId, Memberships.Leave, reason, cancellationToken);
         await remoteInvites.EndAsync(userId, roomId, joined: true, cancellationToken);
+    }
+
+    /// <summary>Throw <c>M_FORBIDDEN</c> when an admin blocked the room.</summary>
+    private async Task AssertNotBlockedAsync(string roomId, CancellationToken cancellationToken)
+    {
+        // Flag of the room
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        if (await db.Rooms.AnyAsync(r => r.RoomId == roomId && r.Blocked, cancellationToken)) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "This room is blocked on this server.");
     }
 
     /// <summary>Forget a room the user has left, so it disappears from their sync.</summary>

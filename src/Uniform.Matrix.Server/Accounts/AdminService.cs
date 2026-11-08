@@ -5,6 +5,8 @@ using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Media;
+using Uniform.Matrix.Server.Rooms;
 using Uniform.Matrix.Server.Storage;
 
 /// <summary>A local account as the admin screens list it.</summary>
@@ -18,6 +20,12 @@ public sealed record AdminUser
     public bool Admin { get; init; }
     /// <summary>Whether the account is deactivated.</summary>
     public bool Deactivated { get; init; }
+    /// <summary>Whether the account is suspended: it can read but not send.</summary>
+    public bool Suspended { get; init; }
+    /// <summary>Whether the account is locked: its sessions are refused.</summary>
+    public bool Locked { get; init; }
+    /// <summary>Avatar content URI.</summary>
+    public string? AvatarUrl { get; init; }
     /// <summary>Logged-in devices.</summary>
     public int Devices { get; init; }
     /// <summary>Joined rooms.</summary>
@@ -47,20 +55,32 @@ public sealed record AdminRoom
     public required string Creator { get; init; }
 }
 
-/// <summary>Server administration for the operator: accounts, passwords, admin rights and the room directory, without an access token.</summary>
-/// <remarks>Each change is logged at Information level, so the session log shows what the operator did; passwords are never logged.</remarks>
-public sealed class AdminService
+/// <summary>Server administration: accounts, passwords, admin rights and the room directory for the dashboard, and the same with suspension, locks, rooms and media for the remote admin API.</summary>
+/// <remarks>
+/// Each change is logged at Information level, so the session log shows what the admin did; passwords are never logged.
+/// <list type="bullet">
+/// <item><description>AdminService.cs: accounts, admin rights and the room directory.</description></item>
+/// <item><description>AdminService.Remote.cs: whois, suspension, locks, account details, room shutdown and media, for the remote admin API.</description></item>
+/// </list>
+/// </remarks>
+public sealed partial class AdminService
 {
     private readonly IDbContextFactory<ServerDbContext> contexts;
     private readonly AccountService accounts;
+    private readonly AccountDeactivation deactivation;
+    private readonly RoomService rooms;
+    private readonly MediaService media;
     private readonly ILogger<AdminService> logger;
 
     /// <summary>Create the service.</summary>
-    public AdminService(IDbContextFactory<ServerDbContext> contexts, AccountService accounts, ILogger<AdminService> logger)
+    public AdminService(IDbContextFactory<ServerDbContext> contexts, AccountService accounts, AccountDeactivation deactivation, RoomService rooms, MediaService media, ILogger<AdminService> logger)
     {
         // Store dependencies
         this.contexts = contexts;
         this.accounts = accounts;
+        this.deactivation = deactivation;
+        this.rooms = rooms;
+        this.media = media;
         this.logger = logger;
     }
 
@@ -70,16 +90,19 @@ public sealed class AdminService
         // Users with profile, device and room counts
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         List<UserRow> users = await db.Users.AsNoTracking().OrderBy(u => u.UserId).ToListAsync(cancellationToken);
-        Dictionary<string, string?> names = await db.Profiles.AsNoTracking().ToDictionaryAsync(p => p.UserId, p => p.DisplayName, cancellationToken);
+        Dictionary<string, ProfileRow> profiles = await db.Profiles.AsNoTracking().ToDictionaryAsync(p => p.UserId, cancellationToken);
         Dictionary<string, int> devices = await db.Devices.AsNoTracking().GroupBy(d => d.UserId).ToDictionaryAsync(g => g.Key, g => g.Count(), cancellationToken);
         Dictionary<string, int> rooms = await db.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.Membership == Memberships.Join).GroupBy(s => s.StateKey).ToDictionaryAsync(g => g.Key, g => g.Count(), cancellationToken);
         // Return summaries
         return [.. users.Select(u => new AdminUser
         {
             UserId = u.UserId,
-            DisplayName = names.GetValueOrDefault(u.UserId),
+            DisplayName = profiles.GetValueOrDefault(u.UserId)?.DisplayName,
+            AvatarUrl = profiles.GetValueOrDefault(u.UserId)?.AvatarUrl,
             Admin = u.Admin,
             Deactivated = u.Deactivated,
+            Suspended = u.Suspended,
+            Locked = u.Locked,
             Devices = devices.GetValueOrDefault(u.UserId),
             Rooms = rooms.GetValueOrDefault(u.UserId),
             Created = DateTimeOffset.FromUnixTimeMilliseconds(u.CreatedTs),

@@ -66,6 +66,32 @@ public static class Dialogs
         return dialog.Result == 1 && list.SelectedItem is int chosen && chosen < options.Count ? options[chosen] : null;
     }
 
+    /// <summary>Let the user pick a row of <paramref name="rows"/>, below <paramref name="message"/>; return its index, or null when cancelled or empty.</summary>
+    public static int? PickIndex(IApplication app, string title, string message, IReadOnlyList<string> rows)
+    {
+        // Assert rows
+        if (rows.Count == 0) return null;
+
+        // Width fits the rows within the screen; the height follows the content
+        int listHeight = Math.Min(rows.Count, 15);
+        int width = Math.Min(Math.Max(Math.Max(40, title.Length + 8), Math.Max(message.Length, rows.Max(r => r.Length)) + 6), 120);
+        using Dialog dialog = new() { Title = title, Width = width };
+        Label label = new() { Text = message, X = 1, Y = 0, Width = Dim.Fill(1) };
+        ListView list = new() { X = 1, Y = 2, Width = Dim.Fill(1), Height = listHeight };
+        list.SetSource(new ObservableCollection<string>(rows));
+        list.SelectedItem = 0;
+        list.Accepting += (_, e) => { e.Handled = true; dialog.Result = 1; app.RequestStop(dialog); };
+        dialog.Add(label, list);
+        dialog.AddButton(new Button { Text = "_Cancel" });
+        dialog.AddButton(new Button { Text = "_OK", IsDefault = true });
+
+        // Run
+        list.SetFocus();
+        app.Run(dialog);
+        // Return the chosen row
+        return dialog.Result == 1 && list.SelectedItem is int chosen && chosen < rows.Count ? chosen : null;
+    }
+
     /// <summary>Show long read-only text, e.g. a log entry with its stack trace.</summary>
     public static void ShowText(IApplication app, string title, string text)
     {

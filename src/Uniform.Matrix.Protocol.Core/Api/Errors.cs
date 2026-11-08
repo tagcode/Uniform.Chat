@@ -44,6 +44,10 @@ public static class ErrorCodes
     public const string InvalidUsername = "M_INVALID_USERNAME";
     /// <summary>The user is deactivated.</summary>
     public const string UserDeactivated = "M_USER_DEACTIVATED";
+    /// <summary>The account is <see href="https://spec.matrix.org/latest/client-server-api/#account-locking">locked</see> by an admin; the client keeps its session and waits.</summary>
+    public const string UserLocked = "M_USER_LOCKED";
+    /// <summary>The account is <see href="https://spec.matrix.org/latest/client-server-api/#account-suspension">suspended</see> by an admin and cannot do this.</summary>
+    public const string UserSuspended = "M_USER_SUSPENDED";
     /// <summary>The server does not support the requested room version.</summary>
     public const string UnsupportedRoomVersion = "M_UNSUPPORTED_ROOM_VERSION";
     /// <summary>The room's version is not one the joining server supports.</summary>

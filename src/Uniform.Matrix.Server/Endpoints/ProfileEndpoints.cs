@@ -26,7 +26,7 @@ public static class ProfileEndpoints
         {
             await profiles.SetFieldAsync(http.GetOwnRequester(userId).UserId, field, Text(body, field), cancellationToken);
             return MatrixHttp.Json(new JsonObject());
-        });
+        }).RejectSuspended();
 
         // Presence
         client.MapGet("/presence/{userId}/status", (string userId, PresenceService presence) => MatrixHttp.Json(presence.Get(userId)));

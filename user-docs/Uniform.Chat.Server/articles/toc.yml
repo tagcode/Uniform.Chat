@@ -8,6 +8,8 @@
   uid: Uniform.Chat.Server.Settings.Article
 - name: User Management
   uid: Uniform.Chat.Server.UserManagement.Article
+- name: Remote administration
+  uid: Uniform.Chat.Server.RemoteAdmin.Article
 - name: Connecting clients
   uid: Uniform.Chat.Server.Clients.Article
 - name: Files

@@ -15,6 +15,10 @@ public sealed class UserRow
     public bool Deactivated { get; set; }
     /// <summary>Whether the user administers the server.</summary>
     public bool Admin { get; set; }
+    /// <summary>Whether the account is <see href="https://spec.matrix.org/latest/client-server-api/#account-suspension">suspended</see>: it can read and leave, but not send, join or invite.</summary>
+    public bool Suspended { get; set; }
+    /// <summary>Whether the account is <see href="https://spec.matrix.org/latest/client-server-api/#account-locking">locked</see>: its sessions are refused until it is unlocked.</summary>
+    public bool Locked { get; set; }
 }
 
 /// <summary>A device of a local user.</summary>
@@ -71,6 +75,8 @@ public sealed class RoomRow
     public long CurrentStateGroup { get; set; }
     /// <summary>Whether the room is listed in the public room directory.</summary>
     public bool Published { get; set; }
+    /// <summary>Whether an admin blocked the room: local users cannot join it.</summary>
+    public bool Blocked { get; set; }
 }
 
 /// <summary>An event of the room graph, stored as its PDU JSON without the event ID.</summary>
@@ -556,4 +562,17 @@ public sealed class ReportRow
     public long ReceivedTs { get; set; }
     /// <summary>Whether the admin has dealt with it.</summary>
     public bool Resolved { get; set; }
+}
+
+/// <summary>A registration token an admin created, as <see href="https://element-hq.github.io/synapse/latest/usage/administration/admin_api/registration_tokens.html">Synapse's admin API</see> manages them.</summary>
+public sealed class RegistrationTokenRow
+{
+    /// <summary>The token; primary key.</summary>
+    public required string Token { get; set; }
+    /// <summary>How many registrations may use it; null for any number.</summary>
+    public int? UsesAllowed { get; set; }
+    /// <summary>Registrations that completed with it.</summary>
+    public int Completed { get; set; }
+    /// <summary>Expiry in milliseconds since the Unix epoch; null for never.</summary>
+    public long? ExpiryTs { get; set; }
 }

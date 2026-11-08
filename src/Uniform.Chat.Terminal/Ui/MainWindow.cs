@@ -35,6 +35,7 @@ using global::Terminal.Gui.Views;
 /// <item><description>MainWindow.Tools.cs: settings and log windows.</description></item>
 /// <item><description>MainWindow.Calls.cs: voice calls.</description></item>
 /// <item><description>MainWindow.Moderation.cs: reporting, blocking users and deleting the account.</description></item>
+/// <item><description>MainWindow.Server.cs: server administration for server admins: accounts, registration tokens, reports, rooms and notices.</description></item>
 /// </list>
 /// </remarks>
 public sealed partial class MainWindow : Window
@@ -184,6 +185,14 @@ public sealed partial class MainWindow : Window
             new Line(),
             new MenuItem { Title = "_Next room", Key = Key.N.WithCtrl, Action = () => SelectRelativeRoom(+1) },
             new MenuItem { Title = "_Previous room", Key = Key.P.WithCtrl, Action = () => SelectRelativeRoom(-1) },
+        ]),
+        new MenuBarItem("_Server", [
+            new MenuItem { Title = "_Accounts…", HelpText = "Server admins: list and manage accounts", Action = () => ManageAccounts("") },
+            new MenuItem { Title = "_Registration tokens…", HelpText = "Tokens new accounts register with", Action = ManageRegistrationTokens },
+            new MenuItem { Title = "Re_ports…", HelpText = "What users reported", Action = ManageReports },
+            new MenuItem { Title = "R_ooms…", HelpText = "Every room of the server", Action = () => ManageServerRooms("") },
+            new MenuItem { Title = "Server _notice…", HelpText = "Message a user from the server", Action = () => SendServerNotice("") },
+            new MenuItem { Title = "_Who is…", HelpText = "A user's devices and addresses", Action = () => ShowWhois("") },
         ]),
         new MenuBarItem("_Help", [
             new MenuItem { Title = "_Commands and keys", Key = Key.F1, Action = ShowHelp },
@@ -687,6 +696,16 @@ public sealed partial class MainWindow : Window
             case "ignore" or "block": SetIgnored(argument, ignored: true); break;
             case "unignore" or "unblock": SetIgnored(argument, ignored: false); break;
             case "report": Report(argument); break;
+            case "whois": ShowWhois(argument); break;
+            case "accounts" or "users": ManageAccounts(argument); break;
+            case "suspend": SetSuspended(argument, suspended: true); break;
+            case "unsuspend": SetSuspended(argument, suspended: false); break;
+            case "lock": SetLocked(argument, locked: true); break;
+            case "unlock": SetLocked(argument, locked: false); break;
+            case "notice": SendServerNotice(argument); break;
+            case "tokens": ManageRegistrationTokens(); break;
+            case "reports": ManageReports(); break;
+            case "rooms": ManageServerRooms(argument); break;
             case "quit" or "exit": app.RequestStop(); break;
             case "help": ShowHelp(); break;
             default: Dialogs.Error(app, "Unknown command", $"/{parts[0]} is not a command. See Help → Commands and keys."); break;
@@ -948,6 +967,14 @@ public sealed partial class MainWindow : Window
         "/unignore @user unblock a user",
         "/report [@user] report this room, or a user, to your server's admins; messages from their actions (Enter)",
         "/quit           exit",
+        "",
+        "Server admins, also in the Server menu:",
+        "/whois @user    a user's devices and addresses; anyone may look up themselves",
+        "/accounts [text], /rooms [text]   list and manage the server's accounts or rooms",
+        "/suspend @user, /unsuspend @user  they may read but not send, join or invite",
+        "/lock @user, /unlock @user        the server refuses their sessions",
+        "/notice @user text   send a server notice",
+        "/tokens, /reports    registration tokens, users' reports",
         "",
         "Alt+1…9         go to room 1…9",
         "Ctrl+N, Ctrl+P  next, previous room",

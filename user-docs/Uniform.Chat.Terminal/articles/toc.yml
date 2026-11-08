@@ -12,6 +12,8 @@
   uid: Uniform.Chat.Terminal.Encryption.Article
 - name: Room administration
   uid: Uniform.Chat.Terminal.Rooms.Article
+- name: Server administration
+  uid: Uniform.Chat.Terminal.ServerAdmin.Article
 - name: Commands
   uid: Uniform.Chat.Terminal.Commands.Article
 - name: Settings

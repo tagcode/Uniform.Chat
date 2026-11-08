@@ -108,6 +108,33 @@ public sealed class MediaService
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    /// <summary>Return the local media uploaded by <paramref name="userId"/>, newest first.</summary>
+    public async Task<IReadOnlyList<MediaRow>> GetUploadsAsync(string userId, CancellationToken cancellationToken)
+    {
+        // Rows of the uploader
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        // Return rows
+        return await db.Media.AsNoTracking().Where(m => m.UserId == userId).OrderByDescending(m => m.CreatedTs).ToListAsync(cancellationToken);
+    }
+
+    /// <summary>Delete local media: its file, thumbnails and row; return false when there is no such media.</summary>
+    public async Task<bool> DeleteLocalAsync(string mediaId, CancellationToken cancellationToken)
+    {
+        // Rows first, so nothing serves it while the files go
+        await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        int deleted = await db.Media.Where(m => m.MediaId == mediaId).ExecuteDeleteAsync(cancellationToken);
+        await db.Thumbnails.Where(t => t.MediaId == mediaId).ExecuteDeleteAsync(cancellationToken);
+        if (deleted == 0) return false;
+
+        // Files, which may be missing for media never uploaded
+        if (mediaId.Length >= 4) File.Delete(FilePath(mediaId));
+        string thumbnails = Path.Combine(directory, "thumbnails", mediaId);
+        if (Directory.Exists(thumbnails)) Directory.Delete(thumbnails, recursive: true);
+        logger.LogInformation("Admin deleted media {MediaId}", mediaId);
+        // Done
+        return true;
+    }
+
     /// <summary>Copy <paramref name="content"/> to the file of <paramref name="mediaId"/> through a temporary file; return its size. Throws <c>M_TOO_LARGE</c> past <see cref="MaxUploadSize"/>.</summary>
     private async Task<long> StoreFileAsync(string mediaId, Stream content, CancellationToken cancellationToken)
     {

@@ -2,6 +2,7 @@ namespace Uniform.Matrix.Server.Accounts;
 
 using System.Collections.Concurrent;
 using System.Net;
+using System.Text.Json.Nodes;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Encryption;
+using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Storage;
 
 /// <summary>Local accounts, devices and access tokens.</summary>
@@ -92,6 +94,10 @@ public sealed class AccountService
             throw WrongCredentials();
         }
         if (!await CheckPasswordAsync(userId, password, cancellationToken)) throw WrongCredentials();
+        await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
+        {
+            if (await db.Users.AnyAsync(u => u.UserId == userId && u.Locked, cancellationToken)) throw LockedError();
+        }
 
         // New or reused device
         (string device, string token) = await CreateSessionAsync(userId, deviceId, deviceName, cancellationToken);
@@ -118,6 +124,7 @@ public sealed class AccountService
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         AccessTokenRow? row = await db.AccessTokens.AsNoTracking().SingleOrDefaultAsync(t => t.TokenHash == hash, cancellationToken);
         if (row is null) return null;
+        UserRow? user = await db.Users.AsNoTracking().SingleOrDefaultAsync(u => u.UserId == row.UserId, cancellationToken);
 
         // Last seen, written at most once a minute per device
         DateTimeOffset now = time.GetUtcNow();
@@ -126,8 +133,8 @@ public sealed class AccountService
             lastSeenWritten[(row.UserId, row.DeviceId)] = now;
             await db.Devices.Where(d => d.UserId == row.UserId && d.DeviceId == row.DeviceId).ExecuteUpdateAsync(d => d.SetProperty(x => x.LastSeenTs, now.ToUnixTimeMilliseconds()).SetProperty(x => x.LastSeenIp, address), cancellationToken);
         }
-        // Return requester
-        return new Requester(row.UserId, row.DeviceId);
+        // Return requester with the account's admin flags
+        return new Requester(row.UserId, row.DeviceId, user?.Admin == true, user?.Suspended == true, user?.Locked == true);
     }
 
     /// <summary>End the session of <paramref name="requester"/>: its token and device.</summary>
@@ -232,6 +239,9 @@ public sealed class AccountService
     private long Now() => time.GetUtcNow().ToUnixTimeMilliseconds();
 
     /// <summary>Error of a failed login.</summary>
+    /// <summary>Return the <c>M_USER_LOCKED</c> error, with <c>soft_logout</c> so clients keep their session for when the account is unlocked.</summary>
+    public static MatrixErrorException LockedError() => new(HttpStatusCode.Unauthorized, ErrorCodes.UserLocked, "The account is locked by an admin.", new JsonObject { ["soft_logout"] = true });
+
     private static MatrixException WrongCredentials() => new(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Invalid username or password.");
 
     /// <summary>Error of an unknown device.</summary>

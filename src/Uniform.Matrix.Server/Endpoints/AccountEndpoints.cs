@@ -32,8 +32,8 @@ public static class AccountEndpoints
         // Whether a registration token is valid, at the spec's v1 address and v3 for older clients; rate-limited, as it can be guessed at
         foreach (RouteGroupBuilder version in new[] { routes.MapGroup("/_matrix/client/v1"), client })
         {
-            version.MapGet("/register/m.login.registration_token/validity", (string token, IOptionsMonitor<ServerOptions> options) =>
-                MatrixHttp.Json(new JsonObject { ["valid"] = options.CurrentValue.Registration == RegistrationMode.Token && IsRegistrationToken(options.CurrentValue, token) })).RequireRateLimiting(RateLimits.Logins);
+            version.MapGet("/register/m.login.registration_token/validity", async (string token, IOptionsMonitor<ServerOptions> options, RegistrationTokens tokens, CancellationToken cancellationToken) =>
+                MatrixHttp.Json(new JsonObject { ["valid"] = options.CurrentValue.Registration == RegistrationMode.Token && await tokens.IsValidAsync(token, cancellationToken) })).RequireRateLimiting(RateLimits.Logins);
         }
 
         // Session
@@ -74,7 +74,7 @@ public static class AccountEndpoints
     }
 
     /// <summary>Register a user account after the configured auth stage; guests are not supported.</summary>
-    private static async Task<IResult> RegisterAsync(RegisterRequest body, string? kind, AccountService accounts, UserInteractiveAuth auth, IOptionsMonitor<ServerOptions> options, CancellationToken cancellationToken)
+    private static async Task<IResult> RegisterAsync(RegisterRequest body, string? kind, AccountService accounts, UserInteractiveAuth auth, RegistrationTokens tokens, IOptionsMonitor<ServerOptions> options, CancellationToken cancellationToken)
     {
         // Assert allowed
         ServerOptions server = options.CurrentValue;
@@ -87,7 +87,7 @@ public static class AccountEndpoints
         JsonObject? terms = TermsParameters(server);
         IReadOnlyList<string> flow = terms is null ? [stage] : [AuthTypes.Terms, stage];
         IReadOnlyDictionary<string, JsonObject>? parameters = terms is null ? null : new Dictionary<string, JsonObject> { [AuthTypes.Terms] = terms };
-        await auth.AuthenticateAsync(body.Auth, [flow], (type, data, _) => Task.FromResult(type is AuthTypes.Dummy or AuthTypes.Terms || IsRegistrationToken(server, data["token"]?.GetValue<string>())), parameters, cancellationToken);
+        await auth.AuthenticateAsync(body.Auth, [flow], async (type, data, token) => type is AuthTypes.Dummy or AuthTypes.Terms || await tokens.UseAsync(data["token"]?.GetValue<string>(), token), parameters, cancellationToken);
         if (body.Password is null) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.MissingParam, "Missing password.");
 
         // Create
@@ -145,14 +145,4 @@ public static class AccountEndpoints
             // Return verification
             return self && await accounts.CheckPasswordAsync(requester.UserId, password, token);
         }, null, cancellationToken);
-
-    /// <summary>Return whether <paramref name="token"/> is a configured registration token, compared in constant time.</summary>
-    private static bool IsRegistrationToken(ServerOptions server, string? token)
-    {
-        // Compare against each configured token
-        if (token is null) return false;
-        byte[] given = Encoding.UTF8.GetBytes(token);
-        // Return match
-        return server.GetRegistrationTokens().Any(t => CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(t), given));
-    }
 }

@@ -148,10 +148,6 @@ long-press menus instead of right-click.
   - Listing title like "Uniform — Matrix chat", before you publish.
 - Registering calls with Android's telephony system (ConnectionService).
 
-# Terminal remote admin
-
-For terminal client, server remote admin features. 
-
 # User management
 
 Admin user manages other users through matrix protocol.

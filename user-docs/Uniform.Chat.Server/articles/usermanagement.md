@@ -27,6 +27,10 @@ Users can delete their own account from their client, confirming with their pass
 
 The admin can deactivate and reactivate accounts in the dashboard's Users window.
 
+## From a client
+
+Accounts with server admin rights can also manage accounts, registration tokens, reports and rooms from a client, e.g. the Server menu of the Uniform Chat terminal client. They can suspend or lock accounts, and send server notices. See [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article).
+
 Registration also works from the command line:
 
 ```bash

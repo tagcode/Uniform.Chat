@@ -4,7 +4,7 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Server.Accounts;
 using global::Terminal.Gui.App;
 
-/// <summary>Accounts of the server: create users, reset passwords, give admin rights, deactivate.</summary>
+/// <summary>Accounts of the server: create users, reset passwords, give admin rights, suspend, lock, deactivate.</summary>
 public sealed class UsersWindow : AdminWindow<AdminUser>
 {
     private readonly AdminService admin;
@@ -18,6 +18,8 @@ public sealed class UsersWindow : AdminWindow<AdminUser>
         AddAction("_New…", Create);
         AddAction("_Password…", ResetPassword);
         AddAction("_Admin", ToggleAdmin);
+        AddAction("_Suspend", ToggleSuspended);
+        AddAction("_Lock", ToggleLocked);
         AddAction("_Deactivate", ToggleDeactivated);
         Reload();
     }
@@ -68,6 +70,28 @@ public sealed class UsersWindow : AdminWindow<AdminUser>
         Reload();
     }
 
+    /// <summary>Suspend the selected user, or end the suspension.</summary>
+    private void ToggleSuspended()
+    {
+        // Confirm the change
+        if (Selected is not AdminUser user) return;
+        string question = user.Suspended ? $"End the suspension of {user.UserId}?" : $"Suspend {user.UserId}? They can read and leave rooms, but not send, join, invite or upload.";
+        if (!Dialogs.Confirm(Tui, "Suspend", question)) return;
+        Run("Suspend", () => admin.SetSuspendedAsync(user.UserId, !user.Suspended, CancellationToken.None));
+        Reload();
+    }
+
+    /// <summary>Lock the selected user, or unlock them.</summary>
+    private void ToggleLocked()
+    {
+        // Confirm the change
+        if (Selected is not AdminUser user) return;
+        string question = user.Locked ? $"Unlock {user.UserId}? Their devices continue." : $"Lock {user.UserId}? The server refuses their devices until unlocked; they stay signed in.";
+        if (!Dialogs.Confirm(Tui, "Lock", question)) return;
+        Run("Lock", () => admin.SetLockedAsync(user.UserId, !user.Locked, CancellationToken.None));
+        Reload();
+    }
+
     /// <summary>Deactivate or reactivates the selected user.</summary>
     private void ToggleDeactivated()
     {
@@ -93,5 +117,5 @@ public sealed class UsersWindow : AdminWindow<AdminUser>
     }
 
     /// <summary>Status words of an account.</summary>
-    private static string Status(AdminUser user) => user.Deactivated ? "deactivated" : user.Admin ? "admin" : "";
+    private static string Status(AdminUser user) => user.Deactivated ? "deactivated" : string.Join(", ", new[] { user.Admin ? "admin" : null, user.Suspended ? "suspended" : null, user.Locked ? "locked" : null }.OfType<string>());
 }

@@ -85,12 +85,15 @@ public sealed class ServerDbContext : DbContext
     public DbSet<RemoteInviteRow> RemoteInvites => Set<RemoteInviteRow>();
     /// <summary>Reports of content, rooms and users.</summary>
     public DbSet<ReportRow> Reports => Set<ReportRow>();
+    /// <summary>Registration tokens created by admins.</summary>
+    public DbSet<RegistrationTokenRow> RegistrationTokens => Set<RegistrationTokenRow>();
 
     /// <summary>Keys and indexes.</summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Accounts
         modelBuilder.Entity<UserRow>().HasKey(u => u.UserId);
+        modelBuilder.Entity<RegistrationTokenRow>().HasKey(t => t.Token);
         modelBuilder.Entity<DeviceRow>().HasKey(d => new { d.UserId, d.DeviceId });
         modelBuilder.Entity<AccessTokenRow>().HasKey(t => t.TokenHash);
         modelBuilder.Entity<AccessTokenRow>().HasIndex(t => new { t.UserId, t.DeviceId });

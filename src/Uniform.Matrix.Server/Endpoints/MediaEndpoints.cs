@@ -27,11 +27,11 @@ public static class MediaEndpoints
     {
         // Upload, upload of created media, and limits
         RouteGroupBuilder upload = routes.MapGroup("/_matrix/media/v3").RequireAccessToken();
-        upload.MapPost("/upload", UploadAsync).RequireRateLimiting(RateLimits.Writes);
-        upload.MapPut("/upload/{serverName}/{mediaId}", UploadPendingAsync).RequireRateLimiting(RateLimits.Writes);
+        upload.MapPost("/upload", UploadAsync).RequireRateLimiting(RateLimits.Writes).RejectSuspended();
+        upload.MapPut("/upload/{serverName}/{mediaId}", UploadPendingAsync).RequireRateLimiting(RateLimits.Writes).RejectSuspended();
         upload.MapGet("/config", (MediaService media) => Config(media));
         upload.MapGet("/preview_url", PreviewAsync);
-        routes.MapGroup("/_matrix/media/v1").RequireAccessToken().MapPost("/create", CreateAsync).RequireRateLimiting(RateLimits.Writes);
+        routes.MapGroup("/_matrix/media/v1").RequireAccessToken().MapPost("/create", CreateAsync).RequireRateLimiting(RateLimits.Writes).RejectSuspended();
 
         // Authenticated reads
         RouteGroupBuilder client = routes.MapGroup("/_matrix/client/v1/media").RequireAccessToken();

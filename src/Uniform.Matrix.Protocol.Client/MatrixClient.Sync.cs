@@ -45,7 +45,7 @@ public sealed partial class MatrixClient
         return SendAsync<SyncResponse>(HttpMethod.Get, path, body: null, authenticated: true, cancellationToken);
     }
 
-    /// <summary>Sync repeatedly, yielding each response; retry transient failures with backoff and throw on others such as <see cref="ErrorCodes.UnknownToken"/>.</summary>
+    /// <summary>Sync repeatedly, yielding each response; retry transient failures and a locked account (<see cref="ErrorCodes.UserLocked"/>) with backoff, and throw on others such as <see cref="ErrorCodes.UnknownToken"/>.</summary>
     /// <param name="since">Token to resume from; null for an initial sync.</param>
     /// <param name="filter">Filter ID or inline JSON, see <see cref="SyncAsync"/>.</param>
     /// <param name="timeout">Long-poll time per request; 30 seconds when null.</param>
@@ -132,7 +132,8 @@ public sealed partial class MatrixClient
     /// <summary>Whether <paramref name="exception"/> is worth retrying: network errors, 5xx, rate limiting and HTTP timeouts.</summary>
     private static bool IsTransient(Exception exception, CancellationToken cancellationToken) => exception switch
     {
-        MatrixException m => m.StatusCode >= HttpStatusCode.InternalServerError || m.Errcode == ErrorCodes.LimitExceeded,
+        // A locked account keeps its session and waits to be unlocked
+        MatrixException m => m.StatusCode >= HttpStatusCode.InternalServerError || m.Errcode is ErrorCodes.LimitExceeded or ErrorCodes.UserLocked,
         HttpRequestException h => h.StatusCode is null || h.StatusCode >= HttpStatusCode.InternalServerError,
         // HttpClient timeout, not caller cancellation
         TaskCanceledException => !cancellationToken.IsCancellationRequested,

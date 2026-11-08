@@ -67,6 +67,11 @@ public sealed class ClientSession
             await store.ClearAccessTokenAsync(cancellationToken);
             return null;
         }
+        catch (MatrixException ex) when (ex.Errcode == ErrorCodes.UserLocked)
+        {
+            // Locked by an admin: keep the session, as syncing retries until it is unlocked
+            logger.LogWarning("The account {UserId} is locked by an admin; waiting for it to be unlocked", account.UserId);
+        }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
             // The server cannot be reached, e.g. offline: keep the session, as syncing retries until it can

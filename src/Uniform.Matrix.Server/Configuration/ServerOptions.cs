@@ -35,6 +35,8 @@ public sealed record ServerOptions
     public string? PrivacyPolicyUrl { get; set; }
     /// <summary>Version of <see cref="TermsUrl"/> and <see cref="PrivacyPolicyUrl"/>; change it when they change.</summary>
     public string PoliciesVersion { get; set; } = "1.0";
+    /// <summary>Localpart of the account that sends <see href="https://spec.matrix.org/latest/client-server-api/#server-notices">server notices</see>, created without a password when the first notice is sent.</summary>
+    public string ServerNoticesLocalpart { get; set; } = "notices";
 
     /// <summary>Addresses of reverse proxies whose <c>X-Forwarded-For</c> and <c>X-Forwarded-Proto</c> headers are believed, separated by commas, e.g. <c>192.168.1.2</c>; without them, the proxy's own address counts for rate limits and logs.</summary>
     [RestartRequired]

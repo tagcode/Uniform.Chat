@@ -101,6 +101,8 @@ public static class ServerServiceExtensions
         builder.Services.AddSingleton<ServerStatus>();
         builder.Services.AddSingleton<AccountService>();
         builder.Services.AddSingleton<AdminService>();
+        builder.Services.AddSingleton<RegistrationTokens>();
+        builder.Services.AddSingleton<ServerNotices>();
         builder.Services.AddSingleton<AccountDeactivation>();
         builder.Services.AddSingleton<UserInteractiveAuth>();
         builder.Services.AddSingleton<ServerKeys>();
@@ -207,6 +209,7 @@ public static class ServerServiceExtensions
         app.MapKeyBackup();
         app.MapFederation();
         app.MapCalls();
+        app.MapAdmin();
 
         // Addresses in the log once listening
         app.Lifetime.ApplicationStarted.Register(() => logger.LogInformation("Serving {ServerName} at {Addresses}", app.Services.GetRequiredService<IOptions<ServerOptions>>().Value.ServerName, string.Join(", ", app.Urls)));

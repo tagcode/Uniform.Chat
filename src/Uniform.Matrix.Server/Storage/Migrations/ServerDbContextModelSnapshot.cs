@@ -574,6 +574,25 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("Receipts");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.RegistrationTokenRow", b =>
+                {
+                    b.Property<string>("Token")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Completed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("ExpiryTs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("UsesAllowed")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Token");
+
+                    b.ToTable("RegistrationTokens");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.RemoteInviteRow", b =>
                 {
                     b.Property<string>("UserId")
@@ -736,6 +755,9 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                 {
                     b.Property<string>("RoomId")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("INTEGER");
 
                     b.Property<long>("CreatedTs")
                         .HasColumnType("INTEGER");
@@ -912,8 +934,14 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.Property<bool>("Deactivated")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Suspended")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId");
 

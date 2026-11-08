@@ -60,11 +60,13 @@ To open registration for a while, for example: select `Server:Registration`, cho
 
 ## Users window
 
-Server → Users lists every account with its display name, logged-in devices, joined rooms, and whether it is an admin or deactivated.
+Server → Users lists every account with its display name, logged-in devices, joined rooms, and whether it is an admin, suspended, locked or deactivated.
 
 - **New** asks for the user name, such as `alice` for `@alice:localhost`, the password twice, and whether the user is a server admin. Registration does not need to be open for this.
 - **Password** sets a new password for the selected user and logs out all their devices, for example when they forgot it.
-- **Admin** gives or takes server admin rights. Admins may delete any room alias and change any room's directory listing.
+- **Admin** gives or takes server admin rights. Admins may delete any room alias and change any room's directory listing, and manage the server from a client; see [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article).
+- **Suspend** lets the user read and leave rooms, but not send, join, invite or upload; pressed again, it ends the suspension.
+- **Lock** makes the server refuse the user's devices until it is pressed again; the devices stay signed in.
 - **Deactivate** logs out every device of the user and stops them logging in; pressed again, it reactivates the account. Their rooms and messages stay.
 
 ## Rooms window
