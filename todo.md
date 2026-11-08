@@ -65,11 +65,6 @@ Next:
 
 Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
 
-# Voice calls
-
-- Voice and video calls in the Avalonia client, and in the server:
-  - 1:1 calls: `m.call.*` events, `/voip/turnServer` on the server, and a TURN server such as coturn.
-  - Group calls: MatrixRTC with a LiveKit SFU, announced in `.well-known`.
 
 # UserManagement 
 
@@ -119,10 +114,6 @@ long-press menus instead of right-click.
   Uniform.Sturn.Hosting
   Uniform.Sturn.Host
 
-# Embedded help
-
-For desktop clients, F1 could open in system browser the user documentations that are already included in the release.
-
 # README.md
 
 - Clean up package README.md.
@@ -131,18 +122,10 @@ For desktop clients, F1 could open in system browser the user documentations tha
 
 - Prototype flutter GUI with Avalonia.
 
-# User management
-
-Admin user manages other users through matrix protocol.
-
 # Desktop Client
 
 - The Text Size setting doesn't affect the text size in the chat window, nor the room title, nor the "Uniform.Matrix" application name.
 - The range of sizes should be wider, add: very small, very large
-
-# Voice calls
-
-- Schildichat interoperability
 
 # F-Droid
 
@@ -169,15 +152,9 @@ Admin user manages other users through matrix protocol.
 
 For terminal client, server remote admin features. 
 
-# Android client
+# User management
 
-- tiny ui glitch: When phone goes online, a message from outbox gets sent, it disappears from gui and appears once it is received. Instead "Not sent" should change to "sending" and then status disappears.
-
-# Logging
-
-- For desktop and android client
-  - A settings for log level.
-  - A window for perusing log files.
+Admin user manages other users through matrix protocol.
 
 # Encryption
 

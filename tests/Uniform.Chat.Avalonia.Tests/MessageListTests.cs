@@ -144,4 +144,31 @@ public class MessageListTests
         list.SetPending(room, []);
         Assert.DoesNotContain(list.Items, i => i.IsPending);
     }
+
+    /// <summary>A sent message keeps its place, without a state, until its event comes back and takes it.</summary>
+    [Fact]
+    public void KeepSentUntilEcho()
+    {
+        // Arrange
+        Room room = CreateRoom();
+        MessageList list = new(Me);
+        list.Reset(room, [Text(Bob, "first", 10)]);
+        OutboxMessage message = new() { Id = 1, RoomId = RoomId, EventType = EventTypes.RoomMessage, ContentJson = """{"msgtype":"m.text","body":"on my way"}""", TransactionId = "t1", CreatedAt = DateTimeOffset.UtcNow, State = OutboxState.Failed, LastError = "offline" };
+        list.SetPending(room, [message]);
+        MessageViewModel item = list.Items[^1];
+
+        // Act: retried, sent, then synced back
+        message.State = OutboxState.Pending;
+        list.SetPending(room, [message]);
+        Assert.Same(item, list.Items[^1]);
+        Assert.Equal("Sending…", item.SendState);
+        list.SetPending(room, []);
+        Assert.Same(item, list.Items[^1]);
+        Assert.Equal("", item.SendState);
+        list.Append(room, [Text(Me, "on my way", 11) with { Unsigned = new UnsignedData { TransactionId = "t1" } }]);
+
+        // Assert
+        Assert.Equal(["first", "on my way"], list.Items.Select(i => i.Text));
+        Assert.DoesNotContain(list.Items, i => i.OutboxId is not null);
+    }
 }

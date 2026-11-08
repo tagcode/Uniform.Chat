@@ -47,10 +47,11 @@ public sealed class MessageList
     public void Append(Room room, IEnumerable<ClientEvent> events)
     {
         // Each event becomes an item or changes one
-        int insertAt = Items.TakeWhile(m => !m.IsPending).Count();
+        int insertAt = Items.TakeWhile(m => !m.IsOutbox).Count();
         foreach (ClientEvent clientEvent in events)
         {
             if (clientEvent.EventId is not null && byEventId.ContainsKey(clientEvent.EventId)) continue;
+            RemoveEcho(clientEvent);
             if (ApplyToExisting(room, clientEvent)) continue;
             if (Create(room, clientEvent) is not MessageViewModel message) continue;
             Items.Insert(insertAt++, message);
@@ -78,23 +79,42 @@ public sealed class MessageList
     /// <summary>Show the room's unsent messages after the timeline, replacing the previous ones.</summary>
     public void SetPending(Room room, IEnumerable<OutboxMessage> unsent)
     {
-        // Drop the old unsent items
-        for (int i = Items.Count - 1; i >= 0; i--)
+        // Items no longer in the outbox were sent: keep them, without a state, until their event comes
+        Dictionary<long, OutboxMessage> byId = unsent.ToDictionary(m => m.Id);
+        foreach (MessageViewModel item in Items.Where(i => i.IsOutbox))
         {
-            if (Items[i].IsPending) Items.RemoveAt(i);
+            if (byId.TryGetValue(item.OutboxId!.Value, out OutboxMessage? message)) item.SendState = DescribeState(message);
+            else item.SendState = "";
         }
 
-        // One item per outbox message, by its content; reactions and edits show once sent
+        // New outbox messages, by their content; reactions and edits show once sent
+        HashSet<long> shown = [.. Items.Where(i => i.IsOutbox).Select(i => i.OutboxId!.Value)];
         string ownName = room.GetMemberDisplayName(ownUserId);
         foreach (OutboxMessage message in unsent)
         {
-            if (message.EventType != EventTypes.RoomMessage) continue;
+            if (message.EventType != EventTypes.RoomMessage || shown.Contains(message.Id)) continue;
             MessageContent? content = JsonSerializer.Deserialize<MessageContent>(message.ContentJson, MatrixJson.Options);
             if (content?.RelatesTo?.RelType == RelationTypes.Replace) continue;
-            string state = message.State == OutboxState.Failed ? $"Not sent: {message.LastError}" : "Sending…";
-            Items.Add(new MessageViewModel { SenderId = ownUserId, SenderName = ownName, Timestamp = message.CreatedAt, Kind = content?.MessageType == MessageTypes.Emote ? MessageKind.Emote : MessageKind.Message, IsOwn = true, OutboxId = message.Id, Text = content?.Body ?? "", SendState = state });
+            Items.Add(new MessageViewModel { SenderId = ownUserId, SenderName = ownName, Timestamp = message.CreatedAt, Kind = content?.MessageType == MessageTypes.Emote ? MessageKind.Emote : MessageKind.Message, IsOwn = true, OutboxId = message.Id, TransactionId = message.TransactionId, Text = content?.Body ?? "", SendState = DescribeState(message) });
         }
         UpdateHeaders();
+    }
+
+    /// <summary>Return the shown state of an outbox message: why it was not sent, or that it is being sent.</summary>
+    private static string DescribeState(OutboxMessage message) => message.State == OutboxState.Failed ? $"Not sent: {message.LastError}" : "Sending…";
+
+    /// <summary>Remove the outbox item that <paramref name="clientEvent"/> is the sent copy of, by transaction ID, or else by text for a sent item.</summary>
+    private void RemoveEcho(ClientEvent clientEvent)
+    {
+        // Own messages only
+        if (clientEvent.Sender != ownUserId || clientEvent.Type != EventTypes.RoomMessage) return;
+        string? transactionId = clientEvent.Unsigned?.TransactionId;
+        string? body = clientEvent.TryGetContent(out MessageContent? content) ? content?.Body : null;
+        MessageViewModel? echo = Items.FirstOrDefault(i => i.IsOutbox && transactionId is not null && i.TransactionId == transactionId)
+            ?? Items.FirstOrDefault(i => i.IsOutbox && !i.IsPending && i.Text == body);
+        if (echo is null) return;
+        // Done
+        Items.Remove(echo);
     }
 
     /// <summary>Return the item of <paramref name="eventId"/>, or null.</summary>

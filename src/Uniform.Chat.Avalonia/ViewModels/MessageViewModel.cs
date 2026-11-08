@@ -55,6 +55,10 @@ public sealed partial class MessageViewModel : ViewModelBase
     public string? ImageUri { get; init; }
     /// <summary>Outbox row of a message not sent yet.</summary>
     public long? OutboxId { get; init; }
+    /// <summary>Transaction ID of an outbox message, which its event carries when it comes back from the server.</summary>
+    internal string? TransactionId { get; init; }
+    /// <summary>Whether it is an outbox item: unsent, or sent and waiting for its event.</summary>
+    internal bool IsOutbox => OutboxId is not null;
     /// <summary>File name to save an attachment as.</summary>
     public string? FileName { get; init; }
     /// <summary>Whether it is an image, file, audio or video that can be saved.</summary>
