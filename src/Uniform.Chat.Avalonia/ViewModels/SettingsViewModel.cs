@@ -27,8 +27,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
     private readonly GuiPlatform? platform;
     private bool loading;
 
-    /// <summary>Load the settings of <paramref name="applicationName"/>; <paramref name="canNotify"/> tells whether the platform shows notifications, and <paramref name="platform"/>, when given, offers its audio for the audio test.</summary>
-    public SettingsViewModel(string applicationName, bool canNotify, GuiPlatform? platform = null)
+    /// <summary>Load the settings of <paramref name="applicationName"/>; <paramref name="canNotify"/> tells whether the platform shows notifications, <paramref name="platform"/>, when given, offers its audio for the audio test and its push distributors, and <paramref name="dispatcher"/> brings the distributors' answers to the user interface thread.</summary>
+    public SettingsViewModel(string applicationName, bool canNotify, GuiPlatform? platform = null, IUiDispatcher? dispatcher = null)
     {
         // Missing values keep their defaults
         path = SettingsStore.DefaultPath(applicationName);
@@ -43,6 +43,72 @@ public sealed partial class SettingsViewModel : ViewModelBase
         NotifyInvites = ReadBool(ui, nameof(NotifyInvites), NotifyInvites);
         NotifyCalls = ReadBool(ui, nameof(NotifyCalls), NotifyCalls);
         loading = false;
+
+        // Push choices follow the distributor's answers
+        this.dispatcher = dispatcher;
+        if (platform?.Push is IPushService push) push.Changed += () => Post(RefreshPush);
+        RefreshPush();
+    }
+
+    private readonly IUiDispatcher? dispatcher;
+
+    /// <summary>Whether the platform can receive push messages, so their choice is offered.</summary>
+    public bool CanPush => platform?.Push is not null;
+
+    /// <summary>How the app hears of new messages in the background: the app's own connection first, then each UnifiedPush distributor installed.</summary>
+    [ObservableProperty]
+    public partial IReadOnlyList<string> PushChoices { get; set; } = [];
+
+    /// <summary>The chosen entry of <see cref="PushChoices"/>; choosing a distributor registers with it, choosing the first unregisters.</summary>
+    [ObservableProperty]
+    public partial int PushChoiceIndex { get; set; }
+
+    /// <summary>Where push stands, e.g. <c>Waiting for ntfy…</c>.</summary>
+    [ObservableProperty]
+    public partial string PushStatus { get; set; } = "";
+
+    /// <summary>Distributors behind <see cref="PushChoices"/> after the first.</summary>
+    private IReadOnlyList<PushDistributor> distributors = [];
+
+    /// <summary>Register with the chosen distributor, or unregister.</summary>
+    partial void OnPushChoiceIndexChanged(int value)
+    {
+        // Not while showing what is chosen already
+        if (loading || platform?.Push is not IPushService push) return;
+        if (value <= 0)
+        {
+            if (push.Distributor is not null) push.Unregister();
+        }
+        else if (value - 1 < distributors.Count && distributors[value - 1].Id != push.Distributor) push.Register(distributors[value - 1].Id);
+        RefreshPush();
+    }
+
+    /// <summary>Show the distributors installed now, the chosen one, and where push stands.</summary>
+    [RelayCommand]
+    private void RefreshPush()
+    {
+        // Choices
+        if (platform?.Push is not IPushService push) return;
+        distributors = push.GetDistributors();
+        loading = true;
+        PushChoices = ["Own background connection", .. distributors.Select(d => $"UnifiedPush: {d.Name}")];
+        int chosen = distributors.ToList().FindIndex(d => d.Id == push.Distributor);
+        PushChoiceIndex = chosen + 1;
+        loading = false;
+
+        // Status
+        string? name = distributors.FirstOrDefault(d => d.Id == push.Distributor)?.Name ?? push.Distributor;
+        PushStatus = push.Distributor is null
+            ? distributors.Count == 0 ? "The app keeps its own connection, with a notification that shows it. Install a UnifiedPush distributor such as ntfy to receive messages without it." : "The app keeps its own connection, with a notification that shows it."
+            : push.Endpoint is null ? $"Waiting for {name}…" : $"Messages arrive through {name}; the app needs no connection of its own.";
+    }
+
+    /// <summary>Run <paramref name="action"/> on the user interface thread, or at once without a dispatcher.</summary>
+    private void Post(Action action)
+    {
+        // Through the dispatcher when there is one
+        if (dispatcher is null) action();
+        else dispatcher.Post(action);
     }
 
     /// <summary>Themes to choose from, in <see cref="AppTheme"/> order.</summary>

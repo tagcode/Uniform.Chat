@@ -42,6 +42,10 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
     [ObservableProperty]
     public partial bool IsEncrypted { get; set; }
 
+    /// <summary>Whether it is the server's notices room, where only the server writes.</summary>
+    [ObservableProperty]
+    public partial bool IsServerNotice { get; set; }
+
     /// <summary>Topic, or null.</summary>
     [ObservableProperty]
     public partial string? Topic { get; set; }
@@ -96,6 +100,7 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         IsDirect = room.IsDirect;
         IsOneToOne = room.JoinedMemberCount + room.InvitedMemberCount == 2;
         IsEncrypted = room.IsEncrypted;
+        IsServerNotice = room.Tags.ContainsKey(RoomTags.ServerNotice);
         Unread = isOpen ? 0 : room.NotificationCount;
         IsHighlighted = !isOpen && room.HighlightCount > 0;
         if (room.AvatarUrl != AvatarUri) Avatar = null;

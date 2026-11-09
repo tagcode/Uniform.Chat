@@ -4,7 +4,7 @@ uid: Uniform.Chat.Android.PrivacyPolicy.Article
 ---
 # Privacy policy
 
-*Last updated: 30 October 2026*
+*Last updated: 9 November 2026*
 
 This policy covers the Uniform Chat apps: the Android app, the desktop app and the terminal client. They are free, open-source [Matrix](https://matrix.org) chat clients, developed in the open at [github.com/tagcode/Uniform.Chat](https://github.com/tagcode/Uniform.Chat).
 
@@ -19,6 +19,7 @@ The apps talk only to:
 - **Your Matrix server**, the homeserver of your user ID, which you choose when you sign in or create an account. It receives what any Matrix app sends: your user ID and password when you sign in, your messages, files, reactions and profile, the rooms you join, read receipts and typing notices, the names of your devices, and your encryption keys' public parts. Your server keeps them and passes them on to the members of your rooms, who may be on other servers.
 - **Call relays** (TURN servers) that your server names, during voice calls, when the two phones cannot reach each other directly. Call audio is encrypted between the two ends; the relay cannot listen to it.
 - **Media**: pictures and files in your rooms are downloaded through your server.
+- **A push distributor's server**, only if you choose UnifiedPush in the settings: your server sends it a notice that a room has a new event, with the event's and room's IDs and your unread count, never the message, its sender or your user name; the distributor app on your phone then wakes this app. The notice goes through the distributor server's own Matrix gateway, which ntfy has, or else through the public gateway of the UnifiedPush project, matrix.gateway.unifiedpush.org. Without UnifiedPush, the app keeps its own connection to your server instead.
 
 In encrypted rooms, which are the default for new private rooms and direct chats, messages and files are end-to-end encrypted: only the members' devices can read them, not the servers. The servers still see who talks with whom, and when.
 

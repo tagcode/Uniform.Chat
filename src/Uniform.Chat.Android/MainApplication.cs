@@ -34,6 +34,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             Notifier = new AndroidNotifier(this),
             KeepCallAlive = peer => CallForegroundService.Start(this, peer),
             KeepConnected = () => SyncForegroundService.Start(this),
+            Push = new AndroidPushService(this),
             Ring = peer => new Ringer(this, peer),
             ScreenOffNearEar = () => new NearEarScreenOff(this),
         };

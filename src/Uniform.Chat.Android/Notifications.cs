@@ -134,7 +134,7 @@ public sealed class CallForegroundService : Service
     }
 }
 
-/// <summary>Keeps the engine syncing while the app is off screen or the screen is off: a foreground service, without which Android's restricted networking cuts the app off, so that no message or call arrives. Push notifications would replace it.</summary>
+/// <summary>Keeps the engine syncing while the app is off screen or the screen is off: a foreground service, without which Android's restricted networking cuts the app off, so that no message or call arrives. A UnifiedPush distributor replaces it, see <see cref="AndroidPushService"/>.</summary>
 /// <remarks>Of the special use type, as no other fits a connection to the user's own server; the subtype tells Google Play's review why.</remarks>
 [Service(Exported = false, ForegroundServiceType = ForegroundService.TypeSpecialUse)]
 [Property("android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE", Value = "Keeps the connection to the Matrix homeserver the user chose open, to receive messages and incoming voice calls in real time without Google push services; Matrix servers of other organisations cannot send through Firebase Cloud Messaging.")]

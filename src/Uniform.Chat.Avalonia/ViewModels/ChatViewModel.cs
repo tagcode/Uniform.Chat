@@ -171,6 +171,37 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     [ObservableProperty]
     public partial SecurityViewModel? Security { get; set; }
 
+    /// <summary>Open server administration panel, or null.</summary>
+    [ObservableProperty]
+    public partial AdminViewModel? Admin { get; set; }
+
+    /// <summary>Whether the user administers the server, so the administration panel is offered.</summary>
+    [ObservableProperty]
+    public partial bool IsServerAdmin { get; set; }
+
+    /// <summary>Open the server administration panel at the reports.</summary>
+    [RelayCommand]
+    private async Task OpenAdminAsync()
+    {
+        // Shown, then loaded
+        AdminViewModel admin = new(connection);
+        Admin = admin;
+        await admin.RefreshAsync();
+    }
+
+    /// <summary>Close the server administration panel.</summary>
+    [RelayCommand]
+    private void CloseAdmin() => Admin = null;
+
+    /// <summary>Ask the server whether the user administers it.</summary>
+    private async Task CheckServerAdminAsync()
+    {
+        // Quietly; most users are not
+        bool admin = false;
+        await RunAsync("Checking admin rights", async client => admin = await client.IsServerAdminAsync(), report: false);
+        ui.Post(() => IsServerAdmin = admin);
+    }
+
     /// <summary>Verification in progress or just ended, or null.</summary>
     [ObservableProperty]
     public partial VerificationViewModel? Verification { get; set; }
@@ -178,6 +209,15 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Last error or result to show, e.g. why joining failed; empty for none.</summary>
     [ObservableProperty]
     public partial string Notice { get; set; } = "";
+
+    /// <summary>Whether the server refused something because the account is suspended; the message box is off until the banner is dismissed.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanCompose))]
+    [NotifyCanExecuteChangedFor(nameof(SendCommand))]
+    public partial bool IsSuspended { get; set; }
+
+    /// <summary>Whether the open room takes messages: not while suspended, nor in the server's notices room.</summary>
+    public bool CanCompose => !IsSuspended && SelectedRoom is not { IsServerNotice: true } && SelectedRoom is not { IsInvite: true };
 
     /// <summary>Whether the window is too narrow for two panes; always true on phones.</summary>
     [ObservableProperty]
@@ -209,6 +249,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         // Rooms known already, e.g. after a quick resume, and security when connected already
         ui.Post(RefreshRooms);
         if (connection.Status.State == ConnectionState.Connected) OnConnectionChanged(ConnectionState.Connected, connection.Status.Message);
+        _ = CheckServerAdminAsync();
     }
 
     /// <summary>Stop following the engine.</summary>
@@ -228,7 +269,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Show the selected room.</summary>
     partial void OnSelectedRoomChanged(RoomItemViewModel? value)
     {
-        // Opening clears the composer state of the previous room
+        // Opening clears the composer state of the previous room; whether it takes messages depends on the room
+        OnPropertyChanged(nameof(CanCompose));
+        SendCommand.NotifyCanExecuteChanged();
         TypingText = "";
         ReplyingTo = null;
         Editing = null;
@@ -380,7 +423,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     }
 
     /// <summary>Return whether there is something to send.</summary>
-    private bool CanSend() => Composer.Trim().Length > 0;
+    private bool CanSend() => Composer.Trim().Length > 0 && CanCompose;
 
     /// <summary>Send a file to the open room as an image, video, audio or file message by its type; files to encrypted rooms are encrypted first.</summary>
     /// <param name="content">File contents.</param>
@@ -802,6 +845,20 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     [RelayCommand]
     private void DismissNotice() => Notice = "";
 
+    /// <summary>Hide the suspension banner and allow trying again; the next refusal shows it again.</summary>
+    [RelayCommand]
+    private void DismissSuspension() => IsSuspended = false;
+
+    /// <summary>Return whether <paramref name="error"/> is the server refusing a suspended account, and show the banner if so.</summary>
+    private bool NoteSuspension(string? error)
+    {
+        // The error code anywhere in the message
+        if (error?.Contains(ErrorCodes.UserSuspended, StringComparison.Ordinal) != true) return false;
+        ui.Post(() => IsSuspended = true);
+        // Done
+        return true;
+    }
+
     /// <summary>Show a room's stored history and unsent messages; fetch more when little is stored.</summary>
     private async Task OpenRoomAsync(string roomId)
     {
@@ -934,7 +991,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                 item.Update(room, room.RoomId == openId, connection.UserId, now);
                 return (Room: room, Item: item);
             })
-            .OrderBy(entry => entry.Room.Membership == Memberships.Invite ? 0 : entry.Room.Tags.ContainsKey(RoomTags.Favourite) ? 1 : entry.Room.Tags.ContainsKey(RoomTags.LowPriority) ? 3 : 2)
+            .OrderBy(entry => entry.Room.Membership == Memberships.Invite ? 0 : entry.Room.Tags.ContainsKey(RoomTags.ServerNotice) ? 1 : entry.Room.Tags.ContainsKey(RoomTags.Favourite) ? 2 : entry.Room.Tags.ContainsKey(RoomTags.LowPriority) ? 4 : 3)
             .ThenByDescending(entry => entry.Item.LastActivity)
             .ThenBy(entry => entry.Room.DisplayName, StringComparer.CurrentCultureIgnoreCase)
             .Select(entry => entry.Item)
@@ -979,6 +1036,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         // Load, then show if still open and still the newest load
         int version = Interlocked.Increment(ref pendingVersion);
         IReadOnlyList<OutboxMessage> unsent = await connection.Store.GetUnsentAsync(roomId);
+        foreach (OutboxMessage message in unsent.Where(m => m.State == OutboxState.Failed)) NoteSuspension(message.LastError);
         ui.Post(() =>
         {
             if (SelectedRoom?.RoomId != roomId || version != Volatile.Read(ref pendingVersion)) return;
@@ -1163,6 +1221,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
         {
             connection.Logger.LogInformation("{What} failed: {Error}", what, exception.Message);
+            if (NoteSuspension(exception.Message)) return false;
             if (report) ui.Post(() => Notice = $"{what} failed: {exception.Message}");
             return false;
         }

@@ -1,71 +1,3 @@
-# Client
-
-The protocol library (`Uniform.Matrix.Protocol.Client`), the engine (`Uniform.Matrix.Client`) and the terminal app.
-
-## Login and account
-- SSO and OAuth 2.0/OIDC login. Matrix is moving towards OIDC; matrix.org already uses it, so password login does not work everywhere. The biggest gap for everyday use.
-- Refresh tokens, and handling a soft logout when a token expires.
-- Use the homeserver URL a server may return at login; it is ignored now.
-- Registration in the terminal app; the library has `RegisterAsync`.
-- Account deactivation, and email and phone identifiers (3PIDs).
-
-## Rooms and messages
-- Threads, related events (`/relations`) and message search.
-- Spaces: the room hierarchy.
-- Knocking, room upgrades and server capabilities.
-- Typed content for join rules and history visibility.
-- Reporting content.
-
-## Notifications and sync
-- Push rules, pushers and the notifications list; notifications outside the open window.
-- Simplified sliding sync (MSC4186), the faster sync that newer clients use.
-
-## Encryption
-- QR code verification, verification requests inside a room, key export files, dehydrated devices.
-
-## Desktop and Android app
-- Renaming devices, and choosing your own reaction emoji.
-- Showing logs in the app, and more settings: Markdown on or off, image previews, the download folder.
-- Notifications on Windows (toast notifications) and Android (UnifiedPush or Firebase, which need a push gateway); clicking a notification to open its room.
-- A full-size image viewer inside the app; avatars of people in the member list (the timeline has them).
-- Spaces, and forgetting old rooms.
-- Show the stored rooms and messages when the app starts without network; only timeline events are stored now, not room state, so the room list fills in once connected.
-- Android: release signing and a Play Store listing; Android builds in the release workflow.
-
-## Library quality
-- Typed RoomId, EventId and RoomAlias; today these are plain strings (`UserId` and `MxcUri` are typed).
-- Retrying network errors on ordinary requests; today only sync and rate-limited requests retry.
-- JSON source generation, for trimming.
-
-# Server
-
-How it works is in `docs/Uniform.Matrix/Uniform.Matrix.Server/`. Tests run our own `MatrixClient` against the server in memory; run the live tests against Synapse now and then as the reference.
-
-## Milestone 1: standalone homeserver (done, except compatibility)
-- Element Web smoke test against the server.
-- Complement client-server tests. Needs Go, and Docker access for the user (the docker group, or rootless Docker).
-- Email pushers: they are stored, but no email is sent.
-
-## Later
-PostgreSQL in production, admin API, a push gateway of our own (for the Android app, with UnifiedPush or Firebase), OpenTelemetry.
-
-URL previews (the server side is done: `UrlPreviews:Enabled`, off by default):
-- Server: allow and deny lists of hosts.
-- Clients: show `[title — description]` and the `og:image` under messages with links, with `MatrixClient.GetUrlPreviewAsync`; a `Ui:UrlPreviews` setting, off by default in encrypted rooms.
-
-## Milestone 2: federation
-A public test name, ports and a certificate are available (kept out of the repo). Done: HTTPS from certbot files (`Tls:*`), signing and checking `X-Matrix` requests, server name resolution (IP, port, well-known), the key server, remote key fetching, `query/profile` and remote profiles, joining remote rooms by room ID (`make_join`/`send_join` both ways), messages both ways (`/send` and a background sender), joining version 12 rooms through `via` servers, inviting other servers' users and receiving their invites (`invite` v2, signed by both servers), encryption across servers (keys, one-time keys, to-device, device list updates), typing and read receipts, retrying transactions with backoff, the `r0` and unstable key backup paths of older clients, all behind `Federation:Enabled`. Voice and video calls work between users of this server in SchildiChat Legacy, through TURN. Tested against a real Synapse: joins of version 11 and 12 rooms, and messages both ways.
-
-Also done: sliding sync (MSC4186) for Element X and SchildiChat Next, history for other servers (`get_missing_events`, `backfill`, `event`, `state`, `state_ids`), rejecting invites through the inviting server (`make_leave`/`send_leave` both ways), joining by remote alias (`query/directory` both ways), creating version 12 rooms, presence between servers, `Server:TrustedProxies` for `X-Forwarded-For` behind a reverse proxy, the outgoing federation queue and the sender's position kept across restarts, media of other servers (fetched through the federation media API and kept) and serving ours to them, remote signing keys kept in the database with key servers (`Federation:TrustedKeyServers`, and `/_matrix/key/v2/query` served), room summaries, space hierarchies (also over federation), relations, `timestamp_to_event`, reports (logged), filling gaps with `get_missing_events`, public room directories of other servers (`publicRooms` both ways), received events checked against their auth events, the state before them and the current state (soft failure), state resolution v2 and v2.1 for forks, auth chains of joined rooms checked, gaps of any size filled through `state_ids`, keys of many servers fetched at once (key server batches, `Federation:KeyRequestTimeout`), version 12 as the default room version, room ACLs, SRV lookup, previews of rooms and spaces on other servers, threads (`/threads` and thread summaries), and a review list for reports in the dashboard. Element X calls work between servers through Element Call and LiveKit.
-
-Next:
-- Partial-state joins ([MSC3706](https://github.com/matrix-org/matrix-spec-proposals/pull/3706)) for very large rooms, whose joins now wait for every event's signature check.
-- Sliding sync: per-list timeline limits, left rooms, more list filters, keeping connections across restarts.
-- Room upgrades (`/upgrade`, tombstones), search.
-
-Keep the test server's registration closed and rate limits on, since unfinished software will be reachable from the internet.
-
-
 # UserManagement 
 
 - Separate user management out into Uniform.UserManagement that is agnostic of Uniform.Matrix.*
@@ -104,15 +36,6 @@ edge-to-edge layout with the right system bar colours;
 the back gesture;
 the keyboard pushing the composer up;
 long-press menus instead of right-click.
-
-# Stun/Turn
-
-- Uniform.Stun.Protocol
-  Uniform.Turn.Protocol
-  Uniform.Stun
-  Uniform.Turn
-  Uniform.Sturn.Hosting
-  Uniform.Sturn.Host
 
 # README.md
 
@@ -167,3 +90,21 @@ Rename to Uniform.Gui.Terminal.
 
 # Room VOIP
 - MSC3401
+
+# F-Droid
+  - ntfy support for UnifiedPush https://f-droid.org/en/packages/io.heckel.ntfy/
+    Clients can install ntfy on their phones, which the android client supports.
+  - screen shots
+  - a) hosted on official f-droid repository. Weeks of review.
+       - Ask F-Droid in a "Request For Packaging" -issue whether "a .NET app can build there?".
+    b) hosted on github pages. No review.
+
+# IzzyOnDroid
+  - github releases should include signed .apk:s.
+  - IzzyOnDroid limits APK size to around 30 MB, unless they grant an exception. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. One APK per processor type,   mainly arm64-v8a for modern phones, would roughly halve it. Check their current limit when you ask.
+
+# Adroidn client 
+- UnifiedPush support. It's optional: without a distributor, the app keeps today's background connection. With one (e.g. ntfy), the app registers a pusher and stops its own connection, so there's no permanent notification and battery use drops. It fits F-Droid, needs no Google, and the UnifiedPush protocol is just Android broadcasts between apps, which I can write in C# without a new library.
+- Suspended-account banner and server notices, from my earlier list. They're small and visible to every user.
+- F-Droid / IzzyOnDroid store screenshots, still missing. I'd take them with the @note test accounts once Edict is reachable again.
+- Admin pages (reports, accounts, tokens), if you want to administer the server from the phone.

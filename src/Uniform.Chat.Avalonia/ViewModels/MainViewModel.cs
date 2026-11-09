@@ -1,6 +1,7 @@
 namespace Uniform.Chat.Avalonia.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Logging;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Core;
 
@@ -13,6 +14,7 @@ public sealed partial class MainViewModel : ViewModelBase
     private ClientConnection? connection;
     private ChatViewModel? chat;
     private IDisposable? keptConnected;
+    private PushRegistration? pushRegistration;
 
     /// <summary>Create the app state for <paramref name="platform"/>.</summary>
     public MainViewModel(GuiPlatform platform, IUiDispatcher ui)
@@ -21,7 +23,7 @@ public sealed partial class MainViewModel : ViewModelBase
         this.platform = platform;
         this.ui = ui;
         memory = new AccountMemory(platform.ApplicationName);
-        Settings = new SettingsViewModel(platform.ApplicationName, canNotify: platform.Notifier is not null, platform);
+        Settings = new SettingsViewModel(platform.ApplicationName, canNotify: platform.Notifier is not null, platform, ui);
         Login = new LoginViewModel(SignInAsync, new AccountCreator(platform.HttpHandler?.Invoke()));
         Page = Login;
     }
@@ -58,6 +60,8 @@ public sealed partial class MainViewModel : ViewModelBase
         // Chat first, then the engine it follows
         keptConnected?.Dispose();
         keptConnected = null;
+        pushRegistration?.Dispose();
+        pushRegistration = null;
         if (chat is not null) await chat.DisposeAsync();
         if (connection is not null) await connection.DisposeAsync();
         chat = null;
@@ -110,9 +114,38 @@ public sealed partial class MainViewModel : ViewModelBase
         CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf, () => Settings.NotifyCalls);
         chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call);
         chat.Start();
-        keptConnected ??= platform.KeepConnected?.Invoke();
+        if (platform.Push is IPushService push)
+        {
+            pushRegistration = new PushRegistration(started, push, platform.DeviceName, platform.HttpHandler?.Invoke());
+            pushRegistration.ActiveChanged += () => ui.Post(UpdateKeepConnected);
+            _ = pushRegistration.UpdateAsync();
+        }
+        UpdateKeepConnected();
         Page = chat;
         return null;
+    }
+
+    /// <summary>Keep the app's own background connection while push messages do not wake it, and stop it while they do.</summary>
+    private void UpdateKeepConnected()
+    {
+        // Needed without push
+        if (connection is null) return;
+        if (pushRegistration?.IsActive == true)
+        {
+            keptConnected?.Dispose();
+            keptConnected = null;
+            return;
+        }
+
+        // Started where the platform can, e.g. not from the background on Android
+        try
+        {
+            keptConnected ??= platform.KeepConnected?.Invoke();
+        }
+        catch (Exception exception)
+        {
+            connection.Logger.LogWarning("Keeping the connection in the background failed: {Error}", exception.Message);
+        }
     }
 
     /// <summary>Log out this device, forget the account and show the sign-in form.</summary>

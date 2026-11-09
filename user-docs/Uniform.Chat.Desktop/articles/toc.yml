@@ -12,5 +12,7 @@
   uid: Uniform.Chat.Desktop.Notifications.Article
 - name: Settings
   uid: Uniform.Chat.Desktop.Settings.Article
+- name: Server administration
+  uid: Uniform.Chat.Desktop.Administration.Article
 - name: Phones and narrow windows
   uid: Uniform.Chat.Desktop.Phones.Article

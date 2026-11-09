@@ -14,5 +14,7 @@
   uid: Uniform.Chat.Android.Notifications.Article
 - name: Settings
   uid: Uniform.Chat.Android.Settings.Article
+- name: Server administration
+  uid: Uniform.Chat.Android.Administration.Article
 - name: Phones and narrow windows
   uid: Uniform.Chat.Android.Phones.Article

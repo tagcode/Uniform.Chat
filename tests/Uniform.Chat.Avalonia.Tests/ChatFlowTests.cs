@@ -25,7 +25,7 @@ public class ChatFlowTests
     private static readonly TimeSpan Patience = TimeSpan.FromSeconds(45);
 
     /// <summary>Wait on the UI thread until <paramref name="condition"/> holds; fail with <paramref name="what"/> after a while.</summary>
-    private static async Task WaitUntilAsync(Func<bool> condition, string what)
+    internal static async Task WaitUntilAsync(Func<bool> condition, string what)
     {
         // Poll, letting the dispatcher run in between
         DateTime end = DateTime.UtcNow + Patience;
@@ -51,7 +51,7 @@ public class ChatFlowTests
     }
 
     /// <summary>Sign in through the form and return the chat page.</summary>
-    private static async Task<ChatViewModel> SignInAsync(MainViewModel model, string userId, string password = "password")
+    internal static async Task<ChatViewModel> SignInAsync(MainViewModel model, string userId, string password = "password")
     {
         // Fill the form and send it
         model.Login.UserId = userId;
@@ -427,6 +427,47 @@ public class ChatFlowTests
             await chat.Security.UnblockAsync(mallory.UserId!);
             Assert.Empty(chat.Security.BlockedUsers);
             await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "buy cheap pills"), "Mallory's message back");
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>A server notice arrives in a room listed first and read-only; a suspended account gets the banner and a closed message box when sending fails.</summary>
+    [AvaloniaFact]
+    public async Task ShowSuspensionAndServerNotices()
+    {
+        // Arrange: Kim in a room of her own
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient kim = await server.RegisterAsync("kim");
+        string roomId = await kim.CreateRoomAsync(new CreateRoomRequest { Name = "Garden", Preset = RoomPresets.PrivateChat });
+        await kim.SendTextAsync(roomId, "hello");
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel chat = await SignInAsync(model, kim.UserId!);
+            await WaitUntilAsync(() => chat.Rooms.Any(r => r.RoomId == roomId), "Kim's room");
+
+            // Act and assert: a notice, accepted, is first and takes no messages
+            await server.Services.GetRequiredService<Uniform.Matrix.Server.Accounts.ServerNotices>().SendAsync(kim.UserId!, new System.Text.Json.Nodes.JsonObject { ["body"] = "Maintenance tonight" }, CancellationToken.None);
+            await WaitUntilAsync(() => chat.Rooms.Any(r => r.IsInvite), "the notices invite");
+            await kim.JoinRoomAsync(chat.Rooms.First(r => r.IsInvite).RoomId);
+            await WaitUntilAsync(() => chat.Rooms.FirstOrDefault()?.IsServerNotice == true, "the notices room first");
+            chat.SelectedRoom = chat.Rooms[0];
+            Assert.False(chat.CanCompose);
+
+            // Act and assert: suspended, a message fails and the banner shows
+            await server.Services.GetRequiredService<Uniform.Matrix.Server.Accounts.AdminService>().SetSuspendedAsync(kim.UserId!, true, CancellationToken.None);
+            chat.SelectedRoom = chat.Rooms.Single(r => r.RoomId == roomId);
+            Assert.True(chat.CanCompose);
+            chat.Composer = "still here?";
+            await chat.SendCommand.ExecuteAsync(null);
+            await WaitUntilAsync(() => chat.IsSuspended, "the suspension banner");
+            Assert.False(chat.CanCompose);
+            chat.DismissSuspensionCommand.Execute(null);
+            Assert.True(chat.CanCompose);
         }
         finally
         {

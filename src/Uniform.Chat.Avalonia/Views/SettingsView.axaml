@@ -29,6 +29,13 @@
       <CheckBox IsChecked="{Binding NotifyInvites}" Content="Invites" />
     </StackPanel>
 
+    <StackPanel Spacing="4" IsVisible="{Binding CanPush}">
+      <TextBlock Classes="subtitle" Text="In the background" />
+      <ComboBox ItemsSource="{Binding PushChoices}" SelectedIndex="{Binding PushChoiceIndex}" HorizontalAlignment="Stretch" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{Binding PushStatus}" />
+      <Button Content="Look for distributors again" Command="{Binding RefreshPushCommand}" />
+    </StackPanel>
+
     <TextBlock Classes="hint" TextWrapping="Wrap" Text="Changes are saved right away." />
     <StackPanel Orientation="Horizontal" Spacing="8">
       <Button Content="Test audio…" Command="{Binding ShowAudioTestCommand}" IsVisible="{Binding CanTestAudio}" />

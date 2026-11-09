@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
+             x:Class="Uniform.Chat.Avalonia.Views.AdminView"
+             x:DataType="vm:AdminViewModel">
+  <StackPanel Spacing="10">
+    <TextBlock Classes="title" Text="Server administration" />
+
+    <!-- Sections -->
+    <WrapPanel>
+      <ToggleButton Margin="0,0,6,6" Content="Reports" IsChecked="{Binding ShowsReports, Mode=OneWay}" Command="{Binding ShowSectionCommand}" CommandParameter="{x:Static vm:AdminSection.Reports}" />
+      <ToggleButton Margin="0,0,6,6" Content="Accounts" IsChecked="{Binding ShowsAccounts, Mode=OneWay}" Command="{Binding ShowSectionCommand}" CommandParameter="{x:Static vm:AdminSection.Accounts}" />
+      <ToggleButton Margin="0,0,6,6" Content="Registration tokens" IsChecked="{Binding ShowsTokens, Mode=OneWay}" Command="{Binding ShowSectionCommand}" CommandParameter="{x:Static vm:AdminSection.Tokens}" />
+    </WrapPanel>
+    <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+    <TextBlock TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+    <!-- A change to confirm -->
+    <Border Classes="notice" IsVisible="{Binding IsConfirming}">
+      <StackPanel Spacing="6">
+        <TextBlock TextWrapping="Wrap" Text="{Binding Confirmation}" />
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+          <Button Content="Cancel" Command="{Binding CancelConfirmationCommand}" />
+          <Button Classes="danger" Content="Yes, do it" Command="{Binding ConfirmCommand}" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- Reports -->
+    <StackPanel Spacing="8" IsVisible="{Binding ShowsReports}">
+      <ItemsControl ItemsSource="{Binding Reports}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:AdminReportItem">
+            <Border Classes="banner" Margin="0,0,0,8">
+              <StackPanel Spacing="4">
+                <TextBlock Classes="subtitle" TextWrapping="Wrap" Text="{Binding Title}" />
+                <SelectableTextBlock TextWrapping="Wrap" Text="{Binding Details}" />
+                <WrapPanel>
+                  <Button Margin="0,0,6,0" Content="Delete report" Click="OnDeleteReportClick" />
+                  <Button Margin="0,0,6,0" Content="Suspend user" Click="OnSuspendReportedClick" IsVisible="{Binding HasReportedUser}" />
+                  <Button Classes="danger" Content="Shut room down…" Click="OnShutDownRoomClick" IsVisible="{Binding HasRoom}" />
+                </WrapPanel>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Accounts -->
+    <StackPanel Spacing="8" IsVisible="{Binding ShowsAccounts}">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBox Grid.Column="0" Text="{Binding Search}" PlaceholderText="Part of a user ID or name" />
+        <Button Grid.Column="1" Margin="6,0,0,0" Content="Find" Command="{Binding SearchAccountsCommand}" />
+      </Grid>
+
+      <!-- The chosen account -->
+      <Border Classes="banner" IsVisible="{Binding HasSelectedAccount}">
+        <StackPanel Spacing="6">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0">
+              <TextBlock Classes="subtitle" TextWrapping="Wrap" Text="{Binding SelectedAccount.Name, FallbackValue=''}" />
+              <TextBlock Classes="hint" TextWrapping="Wrap" Text="{Binding SelectedAccount.Details, FallbackValue=''}" />
+            </StackPanel>
+            <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseAccountCommand}" />
+          </Grid>
+          <SelectableTextBlock Classes="hint" TextWrapping="Wrap" Text="{Binding Devices}" />
+          <WrapPanel>
+            <Button Margin="0,0,6,6" Content="{Binding SuspendText}" Command="{Binding ToggleSuspendedCommand}" />
+            <Button Margin="0,0,6,6" Content="{Binding LockText}" Command="{Binding ToggleLockedCommand}" />
+            <Button Margin="0,0,6,6" Content="{Binding AdminText}" Command="{Binding ToggleAdminCommand}" />
+            <Button Margin="0,0,6,6" Classes="danger" Content="Deactivate…" Command="{Binding DeactivateCommand}" />
+          </WrapPanel>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Grid.Column="0" Classes="revealPasswordButton" Text="{Binding NewPassword}" PasswordChar="•" PlaceholderText="New password; their devices are logged out" />
+            <Button Grid.Column="1" Margin="6,0,0,0" Content="Set" Command="{Binding ResetPasswordCommand}" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Grid.Column="0" Text="{Binding NoticeText}" PlaceholderText="Server notice to them" TextWrapping="Wrap" />
+            <Button Grid.Column="1" Margin="6,0,0,0" Content="Send" Command="{Binding SendNoticeCommand}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <ItemsControl ItemsSource="{Binding Accounts}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:AdminAccountItem">
+            <Button Classes="link" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,0,0,4" Click="OnAccountClick">
+              <StackPanel>
+                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
+              </StackPanel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Registration tokens -->
+    <StackPanel Spacing="8" IsVisible="{Binding ShowsTokens}">
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="New accounts need one of these when the server's registration asks for a token." />
+      <Grid ColumnDefinitions="*,*,Auto">
+        <TextBox Grid.Column="0" Margin="0,0,6,0" Text="{Binding NewTokenUses}" PlaceholderText="Uses; empty for any" />
+        <TextBox Grid.Column="1" Margin="0,0,6,0" Text="{Binding NewTokenDays}" PlaceholderText="Days; empty for no expiry" />
+        <Button Grid.Column="2" Classes="accent" Content="New token" Command="{Binding CreateTokenCommand}" />
+      </Grid>
+      <Border Classes="notice" IsVisible="{Binding HasCreatedToken}">
+        <Grid ColumnDefinitions="*,Auto">
+          <SelectableTextBlock Grid.Column="0" Text="{Binding CreatedToken}" FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" VerticalAlignment="Center" TextWrapping="Wrap" />
+          <Button Grid.Column="1" Content="Copy" Click="OnCopyTokenClick" />
+        </Grid>
+      </Border>
+      <ItemsControl ItemsSource="{Binding Tokens}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:AdminTokenItem">
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+              <StackPanel Grid.Column="0">
+                <SelectableTextBlock Text="{Binding Token}" FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" />
+                <TextBlock Classes="hint" Text="{Binding Details}" TextWrapping="Wrap" />
+              </StackPanel>
+              <Button Grid.Column="1" Content="Delete" Click="OnDeleteTokenClick" VerticalAlignment="Center" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </StackPanel>
+</UserControl>
