@@ -45,7 +45,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    /// <summary>Apply the theme and text size; Fluent controls size their text by <c>ControlContentThemeFontSize</c>.</summary>
+    /// <summary>Apply the theme and text size for the whole app, e.g. its dialogs; <see cref="MainView"/> applies the size for its own model too.</summary>
     private void ApplySettings(SettingsViewModel settings)
     {
         // Theme variant, and text size for controls and plain text
@@ -55,6 +55,6 @@ public partial class App : Application
             AppTheme.Dark => ThemeVariant.Dark,
             _ => ThemeVariant.Default,
         };
-        Resources["ControlContentThemeFontSize"] = settings.TextSize;
+        TextScale.Apply(Resources, settings.TextSize);
     }
 }

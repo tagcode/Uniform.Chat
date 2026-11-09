@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Avalonia.Views;
 
+using System.ComponentModel;
 using global::Avalonia;
 using global::Avalonia.Controls;
 using global::Avalonia.Controls.ApplicationLifetimes;
@@ -8,6 +9,7 @@ using global::Avalonia.Controls.Platform;
 using global::Avalonia.Interactivity;
 using global::Avalonia.Threading;
 using global::Avalonia.VisualTree;
+using Uniform.Chat.Avalonia.ViewModels;
 
 /// <summary>Shows the current page of <see cref="ViewModels.MainViewModel"/>; on phones it makes room for the on-screen keyboard.</summary>
 public partial class MainView : UserControl
@@ -18,9 +20,31 @@ public partial class MainView : UserControl
     private static readonly TimeSpan SettleTime = TimeSpan.FromMilliseconds(300);
     private IInputPane? inputPane;
     private IActivatableLifetime? activatable;
+    private SettingsViewModel? settings;
 
     /// <summary>Create the view.</summary>
     public MainView() => InitializeComponent();
+
+    /// <summary>Follow the text size of the model's settings, which scales the titles and small texts of the whole view.</summary>
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        // From the old settings to the new
+        base.OnDataContextChanged(e);
+        if (settings is not null) settings.PropertyChanged -= OnSettingsChanged;
+        settings = (DataContext as MainViewModel)?.Settings;
+        if (settings is null) return;
+        settings.PropertyChanged += OnSettingsChanged;
+        // Done
+        TextScale.Apply(Resources, settings.TextSize);
+    }
+
+    /// <summary>Scale the texts when the text size changes.</summary>
+    private void OnSettingsChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        // Only the size
+        if (e.PropertyName != nameof(SettingsViewModel.TextSize) || settings is null) return;
+        TextScale.Apply(Resources, settings.TextSize);
+    }
 
     /// <summary>Follow the on-screen keyboard.</summary>
     protected override void OnLoaded(RoutedEventArgs e)

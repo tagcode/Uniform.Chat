@@ -19,7 +19,7 @@ public class SettingsTests
 
         // Act
         settings.ThemeIndex = 2;
-        settings.TextSizeIndex = 2;
+        settings.TextSizeIndex = 3;
         settings.NotifyCalls = false;
         settings.NotifyDirectMessages = true;
         SettingsViewModel loaded = new(application, canNotify: true);

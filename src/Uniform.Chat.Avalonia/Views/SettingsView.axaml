@@ -14,10 +14,12 @@
 
       <TextBlock Grid.Row="1" Grid.Column="0" Text="Text size" VerticalAlignment="Center" />
       <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding TextSizeIndex}" HorizontalAlignment="Stretch">
+        <ComboBoxItem Content="Very small" />
         <ComboBoxItem Content="Small" />
         <ComboBoxItem Content="Normal" />
         <ComboBoxItem Content="Large" />
-      </ComboBox>
+        <ComboBoxItem Content="Very large" />
+</ComboBox>
 
     </Grid>
 

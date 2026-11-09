@@ -45,11 +45,6 @@ long-press menus instead of right-click.
 
 - Prototype flutter GUI with Avalonia.
 
-# Desktop Client
-
-- The Text Size setting doesn't affect the text size in the chat window, nor the room title, nor the "Uniform.Matrix" application name.
-- The range of sizes should be wider, add: very small, very large
-
 # F-Droid
 
 - build.gradle file
@@ -91,20 +86,11 @@ Rename to Uniform.Gui.Terminal.
 # Room VOIP
 - MSC3401
 
-# F-Droid
-  - ntfy support for UnifiedPush https://f-droid.org/en/packages/io.heckel.ntfy/
-    Clients can install ntfy on their phones, which the android client supports.
-  - screen shots
-  - a) hosted on official f-droid repository. Weeks of review.
-       - Ask F-Droid in a "Request For Packaging" -issue whether "a .NET app can build there?".
-    b) hosted on github pages. No review.
-
 # IzzyOnDroid
   - github releases should include signed .apk:s.
   - IzzyOnDroid limits APK size to around 30 MB, unless they grant an exception. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. One APK per processor type,   mainly arm64-v8a for modern phones, would roughly halve it. Check their current limit when you ask.
 
 # Adroidn client 
-- UnifiedPush support. It's optional: without a distributor, the app keeps today's background connection. With one (e.g. ntfy), the app registers a pusher and stops its own connection, so there's no permanent notification and battery use drops. It fits F-Droid, needs no Google, and the UnifiedPush protocol is just Android broadcasts between apps, which I can write in C# without a new library.
 - Suspended-account banner and server notices, from my earlier list. They're small and visible to every user.
 - F-Droid / IzzyOnDroid store screenshots, still missing. I'd take them with the @note test accounts once Edict is reachable again.
 - Admin pages (reports, accounts, tokens), if you want to administer the server from the phone.

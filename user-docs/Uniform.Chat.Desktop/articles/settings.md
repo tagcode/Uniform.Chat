@@ -4,7 +4,7 @@ uid: Uniform.Chat.Desktop.Settings.Article
 ---
 # Settings
 
-*⋮ → Settings* at the top of the room list sets the theme (follow the system, light or dark), the text size, and which notifications to show; see Notifications. Changes are saved right away.
+*⋮ → Settings* at the top of the room list sets the theme (follow the system, light or dark), the text size (very small to very large, for the whole window: titles, messages and the message field), and which notifications to show; see Notifications. Changes are saved right away.
 
 ## Audio test
 

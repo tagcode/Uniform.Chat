@@ -172,8 +172,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private void CloseLicenses() => Licenses = null;
 
-    /// <summary>Text sizes to choose from: small, normal and large.</summary>
-    public IReadOnlyList<double> TextSizes { get; } = [13, 14, 16];
+    /// <summary>Text sizes to choose from: very small, small, normal, large and very large.</summary>
+    public IReadOnlyList<double> TextSizes { get; } = [12, 13, 14, 16, 19];
 
     /// <summary>Whether the platform shows notifications, so the switch is offered.</summary>
     public bool CanNotify { get; }
@@ -198,7 +198,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Get or set <see cref="TextSize"/> as an index of <see cref="TextSizes"/>, for the picker.</summary>
     public int TextSizeIndex
     {
-        get => TextSizes.ToList().IndexOf(TextSize) is int index and >= 0 ? index : 1;
+        get => TextSizes.ToList().IndexOf(TextSize) is int index and >= 0 ? index : TextSizes.ToList().IndexOf(14);
         set => TextSize = TextSizes[Math.Clamp(value, 0, TextSizes.Count - 1)];
     }
 

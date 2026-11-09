@@ -53,16 +53,17 @@ public sealed partial class RichText : SelectableTextBlock
     /// <summary>Use the style of selectable text blocks.</summary>
     protected override Type StyleKeyOverride => typeof(SelectableTextBlock);
 
-    /// <summary>Rebuild the text when the body or HTML changes.</summary>
+    /// <summary>Rebuild the text when the body or HTML changes, and formatted text when the text size does, for its headings.</summary>
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        // Only our two inputs
+        // Only our inputs
         base.OnPropertyChanged(change);
-        if (change.Property != BodyProperty && change.Property != HtmlProperty) return;
+        if (change.Property != BodyProperty && change.Property != HtmlProperty && change.Property != FontSizeProperty) return;
+        if (change.Property == FontSizeProperty && string.IsNullOrWhiteSpace(Html)) return;
 
         // Formatted when there is HTML; plain text gets links only when it has addresses
         Text = null;
-        Builder builder = new();
+        Builder builder = new(FontSize);
         if (!string.IsNullOrWhiteSpace(Html)) builder.AddChildren(Parser.ParseDocument($"<!DOCTYPE html><html><body>{Html}</body></html>").Body!, new Style());
         else if (Body is string body && WebAddress().IsMatch(body)) builder.AddPlain(body);
         else
@@ -148,14 +149,15 @@ public sealed partial class RichText : SelectableTextBlock
         public bool Preformatted { get; init; }
         /// <summary>Text colour of links and mentions, or null.</summary>
         public IBrush? Foreground { get; init; }
-        /// <summary>Text size of headings, or null.</summary>
-        public double? Size { get; init; }
+        /// <summary>Text size of headings relative to the base size, or null.</summary>
+        public double? Scale { get; init; }
         /// <summary>Prefix of each new line, for quotes and list items.</summary>
         public string LinePrefix { get; init; } = "";
     }
 
     /// <summary>Collects inlines, starting block elements on new lines, and where links are in the text.</summary>
-    private sealed class Builder
+    /// <param name="baseSize">Text size of the block, which headings are scaled from.</param>
+    private sealed class Builder(double baseSize = TextScale.Normal)
     {
         private readonly InlineCollection inlines = [];
         private readonly List<LinkSpan> links = [];
@@ -223,7 +225,7 @@ public sealed partial class RichText : SelectableTextBlock
                     Block(element, style);
                     return;
                 case "h1" or "h2" or "h3" or "h4" or "h5" or "h6":
-                    Block(element, style with { Bold = true, Size = element.LocalName[1] switch { '1' => 22, '2' => 19, '3' => 17, _ => 15 } });
+                    Block(element, style with { Bold = true, Scale = element.LocalName[1] switch { '1' => 22 / 14.0, '2' => 19 / 14.0, '3' => 17 / 14.0, _ => 15 / 14.0 } });
                     return;
                 case "blockquote":
                     Block(element, style with { LinePrefix = style.LinePrefix + "▎ ", Foreground = QuoteBrush });
@@ -327,14 +329,14 @@ public sealed partial class RichText : SelectableTextBlock
                     inlines.Add(new Run(style.LinePrefix) { Foreground = QuoteBrush });
                     position += style.LinePrefix.Length;
                 }
-                inlines.Add(CreateRun(line, style));
+                inlines.Add(CreateRun(line, style, baseSize));
                 position += line.Length;
                 atLineStart = false;
             }
         }
 
         /// <summary>Return a run in <paramref name="style"/>.</summary>
-        private static Run CreateRun(string text, Style style)
+        private static Run CreateRun(string text, Style style, double baseSize)
         {
             // Only the properties the style sets, so theme defaults apply otherwise
             Run run = new(text);
@@ -346,7 +348,7 @@ public sealed partial class RichText : SelectableTextBlock
                 run.Background = CodeBackground;
             }
             if (style.Foreground is IBrush foreground) run.Foreground = foreground;
-            if (style.Size is double size) run.FontSize = size;
+            if (style.Scale is double scale) run.FontSize = Math.Round(baseSize * scale);
             if (style.Strike || style.Underline) run.TextDecorations = style.Strike ? global::Avalonia.Media.TextDecorations.Strikethrough : global::Avalonia.Media.TextDecorations.Underline;
             // Return run
             return run;
