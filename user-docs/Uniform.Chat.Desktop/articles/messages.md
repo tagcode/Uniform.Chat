@@ -14,19 +14,20 @@ Scroll to the top to load older messages.
 
 Click a link to open it in your browser. Links to Matrix rooms and people (`matrix.to`) stay in the app: a room you are in opens, and other rooms and people go into the box above the room list, ready for *Join* or *Chat*.
 
-Right-click a message, or press and hold it on a phone, for its actions:
+Right-click a message for a menu of its actions. On a phone, press and hold it: a sheet rises from the bottom with who sent it and when, a row of reactions, and the actions. *Details…* at the end of the menu shows the same sheet on the desktop. Back or a tap above the sheet closes it.
 
 - *Reply* answers it; the reply shows a quote of the message. Esc or ✕ above the message box stops replying.
 - *React* adds 👍, ❤️, 😂, 🎉, 😮 or 😢.
 - *Edit* puts your own message back in the message box; Enter sends the new text.
 - *Copy text* copies it.
+- *Copy link* copies a `matrix.to` link to the message, for sharing with people in the room.
 - *Delete* removes your own message for everyone.
 - *Report message* and *Report sender* send a report, with the reason you pick, to the admins of your server; see below.
 - *Block sender* hides the person's messages and invites.
 
 ## Reporting and blocking
 
-Report messages, people and rooms that break the rules: spam, harassment, sexual or violent content, or anything illegal. Reports go to the admins of **your** server, who can act on them; the person reported is not told. Report a message or its sender from the message's menu, and a room from the room's *⋮* menu with *Report room…*.
+Report messages, people and rooms that break the rules: spam, harassment, sexual or violent content, or anything illegal. Reports go to the admins of **your** server, who can act on them; the person reported is not told. Report a message or its sender from the message's menu, and a room from the room's *⋮* menu with *Report room…*, or from its menu in the room list.
 
 Blocking someone hides their messages and invites from you, on all your devices; they are not told. Block from a message's menu with *Block sender*, or from the room's *⋮* menu with *Block* next to their name. *Unblock* there, or in *⋮ → Security and recovery…* under *Blocked users*, shows their new messages again.
 

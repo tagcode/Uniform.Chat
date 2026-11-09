@@ -16,7 +16,6 @@ using Uniform.Chat.Avalonia.ViewModels;
 public partial class ChatView : UserControl
 {
     private const double NarrowWidth = 720;
-    private static readonly string[] QuickReactions = ["👍", "❤️", "😂", "🎉", "😮", "😢"];
     private ChatViewModel? model;
     private ScrollViewer? scroller;
     private bool followNewest = true;
@@ -38,11 +37,28 @@ public partial class ChatView : UserControl
     /// <summary>Follow the new view model's messages.</summary>
     protected override void OnDataContextChanged(EventArgs e)
     {
-        // Rewire the message collection
+        // Rewire the message collection, and give the clipboard and the message box to the actions
         base.OnDataContextChanged(e);
-        if (model is not null) model.Messages.Items.CollectionChanged -= OnMessagesChanged;
+        if (model is not null)
+        {
+            model.Messages.Items.CollectionChanged -= OnMessagesChanged;
+            model.ComposerFocusRequested -= FocusComposer;
+            model.CopyToClipboard = null;
+        }
         model = DataContext as ChatViewModel;
-        if (model is not null) model.Messages.Items.CollectionChanged += OnMessagesChanged;
+        if (model is null) return;
+        model.Messages.Items.CollectionChanged += OnMessagesChanged;
+        model.ComposerFocusRequested += FocusComposer;
+        // Done
+        model.CopyToClipboard = text => TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask;
+    }
+
+    /// <summary>Focus the message box with the caret at the end, e.g. for a reply or an edit.</summary>
+    private void FocusComposer()
+    {
+        // At the end, so an edited text can be continued
+        ComposerBox.Focus();
+        ComposerBox.CaretIndex = ComposerBox.Text?.Length ?? 0;
     }
 
     /// <summary>Hook scrolling and the back gesture once shown, and show the newest messages, as a room opened before may wait.</summary>
@@ -173,52 +189,78 @@ public partial class ChatView : UserControl
         if (model.LoadOlderCommand.CanExecute(null)) model.LoadOlderCommand.Execute(null);
     }
 
-    /// <summary>Show the actions of the message under the pointer: reply, react, edit, delete and copy; right-click or long-press.</summary>
+    /// <summary>Show the details and actions of the message under the pointer, on a right-click or a long press.</summary>
     private void OnMessageContextRequested(object? sender, ContextRequestedEventArgs e)
     {
         // Assert a message
         if (model is null || (e.Source as Control)?.FindAncestorOfType<ListBoxItem>(includeSelf: true) is not { DataContext: MessageViewModel message } item) return;
         e.Handled = true;
-        ChatViewModel chat = model;
-        MenuFlyout menu = new();
-
-        // What applies to this message
-        if (message.CanAnswer)
-        {
-            menu.Items.Add(CreateMenuItem("Reply", () => { chat.StartReply(message); ComposerBox.Focus(); }));
-            MenuItem react = new() { Header = "React" };
-            foreach (string key in QuickReactions) react.Items.Add(CreateMenuItem(key, () => _ = chat.ReactAsync(message, key)));
-            menu.Items.Add(react);
-        }
-        if (message.CanEdit) menu.Items.Add(CreateMenuItem("Edit", () => { chat.StartEdit(message); ComposerBox.Focus(); ComposerBox.CaretIndex = ComposerBox.Text?.Length ?? 0; }));
-        menu.Items.Add(CreateMenuItem("Copy text", () => _ = TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAsync(message.Text)));
-        if (message.CanDelete)
-        {
-            menu.Items.Add(new Separator());
-            menu.Items.Add(CreateMenuItem("Delete", () => _ = chat.DeleteAsync(message)));
-        }
-
-        // Others' messages can be reported, and their sender reported or blocked
-        if (!message.IsOwn && !message.IsInfo && message.EventId is not null && message.SenderId is string senderId)
-        {
-            menu.Items.Add(new Separator());
-            menu.Items.Add(CreateReportMenu("Report message", reason => _ = chat.ReportMessageAsync(message, reason)));
-            menu.Items.Add(CreateReportMenu("Report sender", reason => _ = chat.ReportUserAsync(senderId, reason)));
-            menu.Items.Add(CreateMenuItem("Block sender", () => _ = chat.SetBlockedAsync(senderId, blocked: true)));
-        }
         // Done
-        MessageMenu = menu;
-        menu.ShowAt(item, showAtPointer: true);
+        ShowActions(model.CreateMessageActions(message), item);
     }
 
-    /// <summary>Return a menu item whose items are the report reasons; choosing one runs <paramref name="report"/> with it.</summary>
-    private static MenuItem CreateReportMenu(string header, Action<string> report)
+    /// <summary>Show the details and actions of the room under the pointer, on a right-click or a long press.</summary>
+    private void OnRoomContextRequested(object? sender, ContextRequestedEventArgs e)
     {
-        // One item per reason
-        MenuItem item = new() { Header = header };
-        foreach (string reason in ChatViewModel.ReportReasons) item.Items.Add(CreateMenuItem(reason, () => report(reason)));
-        // Return menu
-        return item;
+        // Assert a room
+        if (model is null || (e.Source as Control)?.FindAncestorOfType<ListBoxItem>(includeSelf: true) is not { DataContext: RoomItemViewModel room } item) return;
+        e.Handled = true;
+        // Done
+        ShowActions(model.CreateRoomActions(room), item);
+    }
+
+    /// <summary>Show <paramref name="sheet"/>: as a sheet from the bottom on narrow screens, as phones are; else as a menu at the pointer, whose last item shows the sheet with the details.</summary>
+    private void ShowActions(ActionSheetViewModel sheet, Control anchor)
+    {
+        // Phones
+        if (model is null) return;
+        ChatViewModel chat = model;
+        if (chat.IsNarrow)
+        {
+            chat.ActionSheet = sheet;
+            return;
+        }
+
+        // Desktops: the actions, reactions after the first when there are any, then the details
+        MenuFlyout menu = new();
+        foreach (SheetAction action in sheet.Actions)
+        {
+            if ((action.IsDanger || action.HasChoices) && menu.Items.Count > 0 && menu.Items[^1] is MenuItem { Tag: not "danger" }) menu.Items.Add(new Separator());
+            menu.Items.Add(CreateMenuItem(action));
+            if (menu.Items.Count != 1 || !sheet.HasReactions) continue;
+            MenuItem react = new() { Header = "React" };
+            foreach (string key in sheet.Reactions) react.Items.Add(CreateMenuItem(key, () => sheet.ReactCommand.Execute(key)));
+            menu.Items.Add(react);
+        }
+        menu.Items.Add(new Separator());
+        menu.Items.Add(CreateMenuItem("Details…", () => chat.ActionSheet = sheet));
+        ContextMenuShown = menu;
+        // Done
+        menu.ShowAt(anchor, showAtPointer: true);
+    }
+
+    /// <summary>Return a menu item for <paramref name="action"/>, with its choices as items under it.</summary>
+    private static MenuItem CreateMenuItem(SheetAction action)
+    {
+        // Choices as a submenu; danger and report groups are marked, so a separator goes before the first of them only
+        if (action.Choices is not { Count: > 0 } choices)
+        {
+            MenuItem item = CreateMenuItem(action.Label, () => action.Run?.Invoke());
+            if (action.IsDanger) item.Tag = "danger";
+            return item;
+        }
+        MenuItem parent = new() { Header = action.Label, Tag = "danger" };
+        foreach (SheetAction choice in choices) parent.Items.Add(CreateMenuItem(choice));
+        // Return parent
+        return parent;
+    }
+
+    /// <summary>Close the action sheet on a tap beside it.</summary>
+    private void OnSheetOverlayPressed(object? sender, PointerPressedEventArgs e)
+    {
+        // Only the dimmed background, not the sheet
+        if (model is null || e.Source != SheetOverlay) return;
+        model.ActionSheet = null;
     }
 
     /// <summary>Ask why the open room is reported, then report it.</summary>
@@ -239,8 +281,8 @@ public partial class ChatView : UserControl
         if (model is not null && (sender as Control)?.DataContext is MemberItem member) _ = model.SetBlockedAsync(member.UserId, !member.IsBlocked);
     }
 
-    /// <summary>The message menu shown last, for tests.</summary>
-    internal MenuFlyout? MessageMenu { get; private set; }
+    /// <summary>The context menu of a message or room shown last, for tests.</summary>
+    internal MenuFlyout? ContextMenuShown { get; private set; }
 
     /// <summary>Return a menu item that runs <paramref name="action"/>.</summary>
     private static MenuItem CreateMenuItem(string header, Action action)

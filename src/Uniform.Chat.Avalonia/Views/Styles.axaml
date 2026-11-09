@@ -67,6 +67,15 @@
     <Setter Property="VerticalAlignment" Value="Center" />
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
   </Style>
+  <!-- Action sheets rise from the bottom, as wide as a phone; their actions scroll when they do not fit -->
+  <Style Selector="Border.sheet">
+    <Setter Property="MaxWidth" Value="560" />
+    <Setter Property="VerticalAlignment" Value="Bottom" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0,8,0,12" />
+    <Setter Property="CornerRadius" Value="12,12,0,0" />
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+  </Style>
   <!-- Cards with lists use the whole height, e.g. on phones -->
   <Style Selector="Border.card.tall">
     <Setter Property="VerticalAlignment" Value="Stretch" />

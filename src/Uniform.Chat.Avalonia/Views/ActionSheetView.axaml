@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
+             x:Class="Uniform.Chat.Avalonia.Views.ActionSheetView"
+             x:DataType="vm:ActionSheetViewModel">
+  <UserControl.Styles>
+    <!-- Rows as wide as the sheet and tall enough to touch -->
+    <Style Selector="Button.item">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Padding" Value="20,0" />
+      <Setter Property="MinHeight" Value="48" />
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="Button.item.warn"><Setter Property="Foreground" Value="#E5484D" /></Style>
+    <Style Selector="Button.reaction">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="FontSize" Value="24" />
+      <Setter Property="MinWidth" Value="48" />
+      <Setter Property="MinHeight" Value="48" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Border.grip">
+      <Setter Property="Width" Value="36" />
+      <Setter Property="Height" Value="4" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Center" />
+      <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+    </Style>
+  </UserControl.Styles>
+
+  <DockPanel>
+    <!-- What it is about, its details and quick reactions; choices show what they are for -->
+    <StackPanel DockPanel.Dock="Top" Margin="20,0,20,8" Spacing="8">
+      <Border Classes="grip" />
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Back" Command="{Binding BackCommand}" IsVisible="{Binding IsChoosing}" Margin="-12,0,0,0" />
+        <TextBlock Grid.Column="1" Classes="title" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsVisible="{Binding !IsChoosing}" />
+        <TextBlock Grid.Column="1" Classes="title" Text="{Binding Choosing}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsVisible="{Binding IsChoosing}" />
+        <Button Grid.Column="2" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseCommand}" Margin="0,0,-12,0" />
+      </Grid>
+      <ItemsControl ItemsSource="{Binding Details}" IsVisible="{Binding !IsChoosing}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:SheetDetail">
+            <Grid ColumnDefinitions="96,*" Margin="0,1">
+              <TextBlock Grid.Column="0" Classes="hint" Text="{Binding Label}" VerticalAlignment="Top" />
+              <SelectableTextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ItemsControl ItemsSource="{Binding Reactions}">
+        <ItemsControl.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="HasReactions" />
+            <Binding Path="!IsChoosing" />
+          </MultiBinding>
+        </ItemsControl.IsVisible>
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <Button Classes="reaction" Content="{Binding}" Click="OnReactionClick" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Actions, or the choices of one -->
+    <ScrollViewer>
+      <ItemsControl x:Name="ActionList" ItemsSource="{Binding Shown}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:SheetAction">
+            <Button Classes="item" Classes.warn="{Binding IsDanger}" Click="OnActionClick">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding Label}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="›" VerticalAlignment="Center" IsVisible="{Binding HasChoices}" />
+              </Grid>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

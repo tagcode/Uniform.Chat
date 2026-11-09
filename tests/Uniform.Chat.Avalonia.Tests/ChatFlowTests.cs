@@ -917,9 +917,9 @@ public class ChatFlowTests
             window.MouseDown(center, MouseButton.Right);
             window.MouseUp(center, MouseButton.Right);
             ChatView view = window.GetVisualDescendants().OfType<ChatView>().Single();
-            Assert.NotNull(view.MessageMenu);
-            Assert.Equal(["Reply", "React", "Edit", "Copy text", "Delete"], view.MessageMenu.Items.OfType<MenuItem>().Select(i => i.Header as string));
-            view.MessageMenu.Hide();
+            Assert.NotNull(view.ContextMenuShown);
+            Assert.Equal(["Reply", "React", "Edit", "Copy text", "Copy link", "Delete", "Details…"], view.ContextMenuShown.Items.OfType<MenuItem>().Select(i => i.Header as string));
+            view.ContextMenuShown.Hide();
 
             // Act and assert: pasting text types it; pasting an image sends it
             await window.Clipboard!.SetTextAsync("pasted");

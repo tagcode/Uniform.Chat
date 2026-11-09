@@ -16,7 +16,7 @@ using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 
 /// <summary>The signed-in screen: the room list, the open room's messages and the message box.</summary>
-/// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>.</remarks>
+/// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>. Partial files: ChatViewModel.cs, and ChatViewModel.Actions.cs for the action sheets of messages and rooms.</remarks>
 public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 {
     private const int PageSize = 50;
@@ -399,10 +399,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     }
 
     /// <summary>Report the open room to the admins of the user's server.</summary>
-    public async Task ReportRoomAsync(string reason)
+    public Task ReportRoomAsync(string reason) => SelectedRoom is RoomItemViewModel room ? ReportRoomAsync(room, reason) : Task.CompletedTask;
+
+    /// <summary>Report <paramref name="room"/> to the admins of the user's server.</summary>
+    public async Task ReportRoomAsync(RoomItemViewModel room, string reason)
     {
-        // A room that is open
-        if (SelectedRoom is not RoomItemViewModel room) return;
+        // Any room in the list
         if (await RunAsync("Reporting the room", client => client.ReportRoomAsync(room.RoomId, reason))) ui.Post(() => Notice = $"Reported {room.Name} to the admins of your server.");
     }
 
@@ -530,7 +532,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Go back one step, as Android's back button does: close the panel on top, else leave the open room on narrow screens; return false when there is nothing to go back from, so the app may close.</summary>
     public bool GoBack()
     {
-        // Panels over the screen first; a verification in progress stays until it ends or is cancelled
+        // An action sheet, from its choices to its top level and then closed; then the panels over the screen; a verification in progress stays until it ends or is cancelled
+        if (ActionSheet is not null)
+        {
+            if (!ActionSheet.GoBack()) ActionSheet = null;
+            return true;
+        }
         if (Verification is { IsFinished: true })
         {
             Verification = null;
@@ -569,10 +576,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Accept the open invite.</summary>
     [RelayCommand]
-    private async Task AcceptInviteAsync()
+    private Task AcceptInviteAsync() => SelectedRoom is RoomItemViewModel room ? AcceptAsync(room) : Task.CompletedTask;
+
+    /// <summary>Accept the invite to <paramref name="room"/>.</summary>
+    public async Task AcceptAsync(RoomItemViewModel room)
     {
         // Direct chats are recorded as such, as the inviter did
-        if (SelectedRoom is not RoomItemViewModel room) return;
         string? directWith = connection.Processor.Read(store => store?.TryGetRoom(room.RoomId, out Room? invited) == true && invited.IsDirect ? invited.InviterUserId : null);
         await RunAsync($"Joining {room.Name}", async client =>
         {
@@ -583,12 +592,14 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Decline the open invite.</summary>
     [RelayCommand]
-    private async Task DeclineInviteAsync()
+    private Task DeclineInviteAsync() => SelectedRoom is RoomItemViewModel room ? DeclineAsync(room) : Task.CompletedTask;
+
+    /// <summary>Decline the invite to <paramref name="room"/>, and close it when it is open.</summary>
+    public async Task DeclineAsync(RoomItemViewModel room)
     {
         // Leave, then close the room
-        if (SelectedRoom is not RoomItemViewModel room) return;
         await RunAsync($"Declining {room.Name}", client => client.LeaveRoomAsync(room.RoomId));
-        SelectedRoom = null;
+        if (SelectedRoom == room) SelectedRoom = null;
     }
 
     /// <summary>Join the room in <see cref="JoinTarget"/>, given by alias, ID or link and optionally followed by servers to join through; start a direct chat with the user in it, or create a private room by that name; open the room when it arrives.</summary>
@@ -710,12 +721,14 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Leave the open room and close it.</summary>
     [RelayCommand]
-    private async Task LeaveRoomAsync()
+    private Task LeaveRoomAsync() => SelectedRoom is RoomItemViewModel room ? LeaveAsync(room) : Task.CompletedTask;
+
+    /// <summary>Leave <paramref name="room"/>, and close it when it is open.</summary>
+    public async Task LeaveAsync(RoomItemViewModel room)
     {
         // Leave, then back to the list
-        if (SelectedRoom is not RoomItemViewModel room) return;
         if (!await RunAsync($"Leaving {room.Name}", client => client.LeaveRoomAsync(room.RoomId))) return;
-        SelectedRoom = null;
+        if (SelectedRoom == room) SelectedRoom = null;
     }
 
     /// <summary>Show the security panel with the account's current state.</summary>
@@ -988,7 +1001,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             .Select(room =>
             {
                 if (!roomsById.TryGetValue(room.RoomId, out RoomItemViewModel? item)) roomsById[room.RoomId] = item = new RoomItemViewModel(room.RoomId);
-                item.Update(room, room.RoomId == openId, connection.UserId, now);
+                item.Update(room, room.RoomId == openId || IsMarkedRead(room), connection.UserId, now);
                 return (Room: room, Item: item);
             })
             .OrderBy(entry => entry.Room.Membership == Memberships.Invite ? 0 : entry.Room.Tags.ContainsKey(RoomTags.ServerNotice) ? 1 : entry.Room.Tags.ContainsKey(RoomTags.Favourite) ? 2 : entry.Room.Tags.ContainsKey(RoomTags.LowPriority) ? 4 : 3)
@@ -1043,6 +1056,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             connection.Processor.Read(store => { if (store?.TryGetRoom(roomId, out Room? room) == true) Messages.SetPending(room, unsent); return 0; });
         });
     }
+
+    /// <summary>Return whether the read marker sent for <paramref name="room"/> is at its newest event, so it has nothing unread even before the server's count says so; call under the room store's lock.</summary>
+    private bool IsMarkedRead(Room room) => readMarkers.TryGetValue(room.RoomId, out string? marked) && marked == room.Timeline.LastOrDefault(e => e.EventId is not null)?.EventId;
 
     /// <summary>Send a read marker for the newest event of the open room, once per new event; a failed one is sent again with the next.</summary>
     private void MarkRead(string roomId)

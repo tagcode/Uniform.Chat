@@ -35,7 +35,7 @@ Android conventions:
 edge-to-edge layout with the right system bar colours;
 the back gesture;
 the keyboard pushing the composer up;
-long-press menus instead of right-click.
+
 
 # README.md
 

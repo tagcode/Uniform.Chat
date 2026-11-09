@@ -6,6 +6,15 @@ uid: Uniform.Chat.Desktop.Rooms.Article
 
 The room list shows invites first, then favourites, other rooms and low-priority rooms. A number shows unread messages; it is highlighted when someone mentions you.
 
+Right-click a room in the list, or press and hold it on a phone, for its menu, without opening it. On a phone, a sheet shows the room's address, topic, members, encryption and ID above the actions; on the desktop, *Details…* at the end of the menu shows it.
+
+- *Mark as read* clears the unread count.
+- *Favourite* lists the room first, *Low priority* last; a room is one or the other, and *Remove from favourites* or *Remove low priority* puts it back among the others. Your other devices and Matrix apps sort it the same way.
+- *Copy link* copies a `matrix.to` link to the room, for inviting people.
+- *Report room* reports it to the admins of your server.
+- *Leave room* leaves it.
+- For an invite: *Join* or *Decline*.
+
 The box above the list does three things, and its button tells which:
 
 | Type | Button | Does |

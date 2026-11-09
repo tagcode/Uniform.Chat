@@ -46,6 +46,14 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
     [ObservableProperty]
     public partial bool IsServerNotice { get; set; }
 
+    /// <summary>Whether the user marked it a favourite, which lists it first.</summary>
+    [ObservableProperty]
+    public partial bool IsFavourite { get; set; }
+
+    /// <summary>Whether the user marked it low priority, which lists it last.</summary>
+    [ObservableProperty]
+    public partial bool IsLowPriority { get; set; }
+
     /// <summary>Topic, or null.</summary>
     [ObservableProperty]
     public partial string? Topic { get; set; }
@@ -88,12 +96,12 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 
     /// <summary>Copy the room's current state; call under the room store's lock.</summary>
     /// <param name="room">The room.</param>
-    /// <param name="isOpen">Whether it is the open room, which has nothing unread.</param>
+    /// <param name="isRead">Whether it has nothing unread: the open room, or one marked read up to its newest event.</param>
     /// <param name="ownUserId">The user, whose messages show as from <c>You</c>.</param>
     /// <param name="now">Current time, for <see cref="LastTime"/>.</param>
-    public void Update(Room room, bool isOpen, string ownUserId, DateTimeOffset now)
+    public void Update(Room room, bool isRead, string ownUserId, DateTimeOffset now)
     {
-        // State shown in the list; the open room has nothing unread
+        // State shown in the list; a read room has nothing unread
         Name = room.DisplayName;
         Topic = room.Topic;
         IsInvite = room.Membership == Memberships.Invite;
@@ -101,8 +109,10 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         IsOneToOne = room.JoinedMemberCount + room.InvitedMemberCount == 2;
         IsEncrypted = room.IsEncrypted;
         IsServerNotice = room.Tags.ContainsKey(RoomTags.ServerNotice);
-        Unread = isOpen ? 0 : room.NotificationCount;
-        IsHighlighted = !isOpen && room.HighlightCount > 0;
+        IsFavourite = room.Tags.ContainsKey(RoomTags.Favourite);
+        IsLowPriority = room.Tags.ContainsKey(RoomTags.LowPriority);
+        Unread = isRead ? 0 : room.NotificationCount;
+        IsHighlighted = !isRead && room.HighlightCount > 0;
         if (room.AvatarUrl != AvatarUri) Avatar = null;
         AvatarUri = room.AvatarUrl;
         string letters = Name.TrimStart('#', '!', '@', ' ');

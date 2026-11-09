@@ -102,7 +102,7 @@
 
         <TextBlock DockPanel.Dock="Bottom" Classes="status" Text="{Binding StatusText}" IsVisible="{Binding StatusText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" TextWrapping="Wrap" />
 
-        <ListBox x:Name="RoomList" ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}" Classes="rooms">
+        <ListBox x:Name="RoomList" ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}" Classes="rooms" ContextRequested="OnRoomContextRequested">
           <ListBox.ItemTemplate>
             <DataTemplate x:DataType="vm:RoomItemViewModel">
               <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2">
@@ -340,6 +340,13 @@
             <views:AdminView DataContext="{Binding Admin}" />
           </ScrollViewer>
         </Grid>
+      </Border>
+    </Border>
+
+    <!-- Details and actions of a message or room, from the bottom; a tap beside the sheet closes it -->
+    <Border x:Name="SheetOverlay" Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding ActionSheet, Converter={x:Static ObjectConverters.IsNotNull}}" PointerPressed="OnSheetOverlayPressed">
+      <Border Classes="sheet">
+        <views:ActionSheetView DataContext="{Binding ActionSheet}" />
       </Border>
     </Border>
 
