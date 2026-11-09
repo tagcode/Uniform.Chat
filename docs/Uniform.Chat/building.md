@@ -58,3 +58,24 @@ The version code follows the version: major × 10000 + minor × 100 + patch, so 
 
 `fastlane/metadata/android/en-US/` holds the title, the short and full description, the icon, screenshots and a changelog per version code, e.g. `changelogs/201.txt`, in the layout F-Droid and IzzyOnDroid read. Add the changelog of a version before tagging it.
 
+### F-Droid repository
+
+After each release, but not a prerelease, the workflow adds the APK to the app's own F-Droid repository, which GitHub Pages serves from the [tagcode.github.io](https://github.com/tagcode/tagcode.github.io) repository at `https://tagcode.github.io/fdroid/repo`. [fdroidserver](https://f-droid.org/docs/Setup_an_F-Droid_App_Repo/) reads the APKs, the store listing from `fastlane/metadata/android/` and the app's entry from `fdroid/metadata/rip.uniform.chat.yml`, and signs the index with the repository key. The repository keeps the newest three versions. Prereleases are left out because they share the version code of their release.
+
+The repository key is separate from the app's release key. F-Droid users trust the repository by its fingerprint, so a lost key means they have to add the repository again. Create it once, outside the repository:
+
+```bash
+keytool -genkeypair -keystore ~/uniform-chat-fdroid.keystore -alias fdroid-repo -keyalg RSA -keysize 4096 -sigalg SHA256withRSA -validity 10000 -dname "CN=Uniform Chat F-Droid repository"
+```
+
+Then add these repository secrets. Without them, the release is not added to the F-Droid repository.
+
+| Secret | Value |
+|---|---|
+| `FDROID_KEYSTORE_BASE64` | The keystore, from `base64 -w0 ~/uniform-chat-fdroid.keystore` |
+| `FDROID_KEY_ALIAS` | The alias, e.g. `fdroid-repo` |
+| `FDROID_KEYSTORE_PASSWORD` | The keystore password, which the key shares |
+| `PAGES_TOKEN` | A fine-grained token for `tagcode/tagcode.github.io` only, with *Contents: Read and write* |
+
+Each update replaces the Pages repository's history with one commit, so the APKs of dropped versions don't make it grow. The site's other files stay as they are. To be offered the repository, users open `https://tagcode.github.io/fdroid/repo` and scan or tap its link, which carries the key's fingerprint.
+

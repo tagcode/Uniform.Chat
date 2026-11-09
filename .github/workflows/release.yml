@@ -1,6 +1,7 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
 # build the apps (desktop, terminal client, server, STUN and TURN server) with their user guides for Windows and Linux, and the signed Android APK,
-# push the packages to NuGet.org with trusted publishing, and create a GitHub release with the app archives and the APK.
+# push the packages to NuGet.org with trusted publishing, create a GitHub release with the app archives and the APK,
+# and, for a release but not a prerelease, add the APK to the F-Droid repository on https://tagcode.github.io/fdroid/repo.
 name: Release
 
 on:
@@ -233,3 +234,97 @@ jobs:
           flags=()
           if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
           gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --title "Uniform Chat $VERSION" --generate-notes "${flags[@]}"
+
+  fdroid:
+    name: F-Droid repository
+    # Prereleases share the version code of their release, e.g. 0.2.1-rc1 and 0.2.1 are both 201, so only releases go to F-Droid
+    needs: [version, release]
+    if: needs.version.outputs.prerelease == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      # Without the repository key or the token for the Pages repository, the release is left out of F-Droid
+      - id: check
+        env:
+          FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
+          PAGES_TOKEN: ${{ secrets.PAGES_TOKEN }}
+        run: |
+          if [[ -z "$FDROID_KEYSTORE_BASE64" || -z "$PAGES_TOKEN" ]]; then
+            echo "::warning::No FDROID_KEYSTORE_BASE64 or PAGES_TOKEN secret; the F-Droid repository is not updated"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.check.outputs.ok == 'true'
+        uses: actions/checkout@v5
+        with:
+          path: source
+      # The site that serves the repository at https://tagcode.github.io/fdroid/repo
+      - if: steps.check.outputs.ok == 'true'
+        uses: actions/checkout@v5
+        with:
+          repository: tagcode/tagcode.github.io
+          token: ${{ secrets.PAGES_TOKEN }}
+          path: pages
+      - if: steps.check.outputs.ok == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: apps-android
+          path: apk
+      - if: steps.check.outputs.ok == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # fdroidserver reads the APKs, signs the index with the repository key and makes the web page; apksigner comes from the runner's Android SDK
+      - if: steps.check.outputs.ok == 'true'
+        run: pip install fdroidserver==2.4.5
+      # The newest three versions are kept; the keystore is written outside the checkouts and deleted after; the passwords stay in the environment
+      - name: Update repository
+        if: steps.check.outputs.ok == 'true'
+        env:
+          FDROID_KEYSTORE_BASE64: ${{ secrets.FDROID_KEYSTORE_BASE64 }}
+          FDROID_KEY_ALIAS: ${{ secrets.FDROID_KEY_ALIAS }}
+          FDROID_KEYSTORE_PASSWORD: ${{ secrets.FDROID_KEYSTORE_PASSWORD }}
+        run: |
+          work="$RUNNER_TEMP/fdroid"
+          mkdir -p "$work/repo"
+          trap 'rm -f "$work/keystore.p12"' EXIT
+          base64 -d <<< "$FDROID_KEYSTORE_BASE64" > "$work/keystore.p12"
+          cat > "$work/config.yml" <<EOF
+          repo_url: https://tagcode.github.io/fdroid/repo
+          repo_name: Uniform Chat
+          repo_description: Releases of Uniform Chat, built and signed by its developer. https://github.com/tagcode/Uniform.Chat
+          repo_icon: icon.png
+          archive_older: 0
+          keystore: keystore.p12
+          repo_keyalias: $FDROID_KEY_ALIAS
+          keystorepass: {env: FDROID_KEYSTORE_PASSWORD}
+          keypass: {env: FDROID_KEYSTORE_PASSWORD}
+          EOF
+          chmod 600 "$work/config.yml"
+          cp -r source/fdroid/metadata "$work/metadata"
+          cp -r source/fastlane/metadata/android "$work/metadata/rip.uniform.chat"
+          cp source/fastlane/metadata/android/en-US/images/icon.png "$work/icon.png"
+          # The earlier versions from the site, the new one, then all but the newest three dropped
+          if [[ -d pages/fdroid/repo ]]; then find pages/fdroid/repo -maxdepth 1 -name '*.apk' -exec cp {} "$work/repo/" \;; fi
+          cp apk/*.apk "$work/repo/"
+          find "$work/repo" -maxdepth 1 -name '*.apk' | sort -V | head -n -3 | xargs -r rm --
+          (cd "$work" && fdroid update)
+          # The run's status tells of the build machine, not of the repository
+          rm -rf "$work/repo/status"
+          rm -rf pages/fdroid/repo
+          mkdir -p pages/fdroid
+          cp -r "$work/repo" pages/fdroid/repo
+      # One commit replaces the site's history, so APKs of dropped versions don't pile up in it; the site's other files stay as they are
+      - name: Publish
+        if: steps.check.outputs.ok == 'true'
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          cd pages
+          branch="$(git branch --show-current)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan published
+          git add -A
+          git commit -q -m "F-Droid repository: Uniform Chat $VERSION"
+          git push --force origin "published:$branch"

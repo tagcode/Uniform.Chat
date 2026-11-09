@@ -1,0 +1,9 @@
+# The app's entry in the F-Droid repository at https://tagcode.github.io/fdroid/repo, which the release workflow updates.
+# Names, descriptions, the icon and screenshots come from fastlane/metadata/android; the version from the APK.
+Categories:
+  - Internet
+License: MIT
+SourceCode: https://github.com/tagcode/Uniform.Chat
+IssueTracker: https://github.com/tagcode/Uniform.Chat/issues
+Changelog: https://github.com/tagcode/Uniform.Chat/releases
+AutoName: Uniform Chat
