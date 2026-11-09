@@ -49,27 +49,39 @@
   }
 }
 
-/* Wider table of contents and its filter, and the article beside them */
-.sidetoc {
-  width: 340px;
+/* Wider table of contents and its filter, and the article beside them; only where docfx.css puts them side by side,
+   as below 769px it stacks the table of contents over a full-width article */
+@media (min-width: 769px) {
+  .sidetoc {
+    width: 340px;
+  }
+
+  .sidefilter {
+    width: 320px;
+  }
+
+  .article.grid-right {
+    margin-left: 340px;
+  }
 }
 
-.sidefilter {
-  width: 320px;
-}
+/* Phones and narrow windows: the table of contents as a plain list, as its rows are blocks here, without docfx.css's commas
+   between inline rows; tables wrap their text instead of scrolling one long line per row */
+@media only screen and (max-width: 768px) {
+  .toc li:after {
+    display: none;
+  }
 
-.article.grid-right {
-  margin-left: 340px;
-}
-
-/* For toc iframe; at the wider toc's breakpoint */
-@media (max-width: 320px) {
-  .toc .level2 > li {
+  .toc .nav > li {
     display: block;
   }
 
-  .toc .level2 > li:after {
-    display: none;
+  .table {
+    white-space: normal;
+  }
+
+  .article {
+    overflow-wrap: break-word;
   }
 }
 
