@@ -9,7 +9,8 @@ A chat app for [Matrix](https://matrix.org), the open chat protocol, for Android
 > [!NOTE]
 > The app is in early development.
 
-- [Getting started](xref:Uniform.Chat.Android.GettingStarted.Article): install, sign in, and where your data is kept.
+- [Installing](xref:Uniform.Chat.Android.Install.Article): with F-Droid, and ntfy for notifications.
+- [Getting started](xref:Uniform.Chat.Android.GettingStarted.Article): sign in, and where your data is kept.
 - [Rooms](xref:Uniform.Chat.Android.Rooms.Article): the room list, joining and creating rooms.
 - [Messages and files](xref:Uniform.Chat.Android.Messages.Article): writing, replies, reactions and files.
 - [Security](xref:Uniform.Chat.Android.Security.Article): encryption, recovery key and verification.

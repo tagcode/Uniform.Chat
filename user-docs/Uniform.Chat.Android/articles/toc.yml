@@ -1,5 +1,7 @@
 - name: Introduction
   uid: Uniform.Chat.Android.Article
+- name: Installing
+  uid: Uniform.Chat.Android.Install.Article
 - name: Getting started
   uid: Uniform.Chat.Android.GettingStarted.Article
 - name: Rooms

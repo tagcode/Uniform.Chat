@@ -58,6 +58,50 @@ The version code follows the version: major × 10000 + minor × 100 + patch, so 
 
 `fastlane/metadata/android/en-US/` holds the title, the short and full description, the icon, screenshots and a changelog per version code, e.g. `changelogs/201.txt`, in the layout F-Droid and IzzyOnDroid read. Add the changelog of a version before tagging it.
 
+### Debian packages and the apt repository
+
+The workflow also packages the four Linux apps for Debian and Ubuntu, for `amd64` and `arm64`, with `packaging/linux/build-deb.sh`. The packages are self-contained like the archives, and need only the system's usual libraries:
+
+| Package | Installs |
+|---|---|
+| `uniform-chat` | The desktop app in `/opt/uniform-chat/desktop`, the command `uniform-chat`, a menu entry and an icon |
+| `uniform-chat-terminal` | The terminal client in `/opt/uniform-chat/terminal`, the command `uniform-chat-terminal` |
+| `uniform-chat-server` | The server in `/opt/uniform-chat/server`, the command `uniform-chat-server`, and the system service `uniform-chat-server` run by the user `uniform-chat`, off until enabled; settings in `/etc/uniform-chat-server`, data in `/var/lib/uniform-chat-server` |
+| `uniform-stun-server` | The STUN and TURN server in `/opt/uniform-chat/stun`, the command `uniform-stun-server` |
+
+A prerelease's version gets a tilde, so that it sorts before its release: `0.2.0-rc.1` is `0.2.0~rc.1`.
+
+The releases themselves are the apt repository, with no other hosting. Each release, but not a prerelease, gets an index as its assets, made by `packaging/linux/build-apt-index.sh`: `Packages` lists its own packages and, from the previous release's index, those of all earlier releases; `Release` has the hashes, `InRelease` and `Release.gpg` sign it, and `uniform-chat-archive-keyring.gpg` is the public key. apt reads it from `https://github.com/tagcode/Uniform.Chat/releases/` with the suite `latest/download/`, which GitHub serves from the newest release, and fetches each package from `download/<tag>/` there. So users can also install an earlier version, as long as its release exists. Prereleases have packages but are not in the index.
+
+Users add the repository once:
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://github.com/tagcode/Uniform.Chat/releases/latest/download/uniform-chat-archive-keyring.gpg | sudo tee /etc/apt/keyrings/uniform-chat.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/uniform-chat.gpg] https://github.com/tagcode/Uniform.Chat/releases/ latest/download/" | sudo tee /etc/apt/sources.list.d/uniform-chat.list
+sudo apt update
+```
+
+The index is signed with a GPG key of its own. apt trusts packages by it, so keep it safe and backed up: with a new key, every user has to add the repository again. Create it once; gpg asks for a passphrase:
+
+```bash
+gpg --quick-generate-key "Uniform Chat packages <tagcode@users.noreply.github.com>" rsa4096 sign never
+gpg --armor --export-secret-keys "Uniform Chat packages" > uniform-chat-apt-key.asc
+```
+
+Then add these repository secrets, and keep `uniform-chat-apt-key.asc` with the other keys, not in the repository. Without `APT_GPG_PRIVATE_KEY`, releases have packages but no index.
+
+| Secret | Value |
+|---|---|
+| `APT_GPG_PRIVATE_KEY` | The contents of `uniform-chat-apt-key.asc` |
+| `APT_GPG_PASSPHRASE` | Its passphrase |
+
+To build a package locally, publish the app as the workflow does, then:
+
+```bash
+packaging/linux/build-deb.sh server publish/uniform-chat-server-0.2.0-linux-x64 0.2.0 linux-x64 out
+```
+
 ### Documentation on GitHub Pages
 
 After each release, but not a prerelease, the workflow publishes the documentation of that release on GitHub Pages, from the [tagcode.github.io](https://github.com/tagcode/tagcode.github.io) repository, in the same folders as here:

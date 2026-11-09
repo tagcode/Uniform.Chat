@@ -14,9 +14,24 @@ The server must be reachable from the internet on these ports. Behind a home rou
 | 49152–65535 | UDP | Relayed calls, `Turn:MinRelayPort` to `Turn:MaxRelayPort`; each call uses one or two |
 | 5349, if set | TCP | TURN over TLS, `Turn:TlsPort` |
 
+## Install
+
+Unpack the release anywhere. On Debian and Ubuntu, the releases are also an apt repository, for x64 and arm64: add it once, with its signing key, then install the server, which `sudo apt upgrade` keeps up to date. The command is then `uniform-stun-server` in place of `./uniform-stun-server` below.
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://github.com/tagcode/Uniform.Chat/releases/latest/download/uniform-chat-archive-keyring.gpg | sudo tee /etc/apt/keyrings/uniform-chat.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/uniform-chat.gpg] https://github.com/tagcode/Uniform.Chat/releases/ latest/download/" | sudo tee /etc/apt/sources.list.d/uniform-chat.list
+sudo apt update
+```
+
+```bash
+sudo apt install uniform-stun-server
+```
+
 ## First start
 
-Unpack the release and give the server its public address and a shared secret. Put the secret in the settings file or an environment variable, not on the command line, where other users of the computer can see it:
+Give the server its public address and a shared secret. Put the secret in the settings file or an environment variable, not on the command line, where other users of the computer can see it:
 
 ```bash
 export Turn__SharedSecrets='a-long-random-secret'

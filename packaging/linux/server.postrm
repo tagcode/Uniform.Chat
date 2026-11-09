@@ -1,0 +1,10 @@
+#!/bin/sh
+# After removing uniform-chat-server: systemd forgets the service. The settings, the data and the user uniform-chat stay,
+# also on purge, as the data holds the server's accounts, messages and signing key; remove them by hand when no longer needed.
+set -e
+
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload || true
+fi
+
+exit 0

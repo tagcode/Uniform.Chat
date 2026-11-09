@@ -104,3 +104,5 @@ github:
     git tag v0.1.0-alpha.1
     git push origin v0.1.0-alpha.1
 
+    # On lost history
+    git pull --allow-unrelated-histories

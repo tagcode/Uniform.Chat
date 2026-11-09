@@ -11,9 +11,7 @@ uid: Uniform.Chat.Terminal.GettingStarted.Article
 
 ## Install
 
-Download `uniform-chat-terminal-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
-
-To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download) and run `dotnet build` in the repository root; then use `dotnet run --project src/Uniform.Chat.Terminal --` in place of the program below.
+See [Installing](xref:Uniform.Chat.Terminal.Install.Article): with apt on Debian and Ubuntu, from the release archives on Windows and other Linux systems, or from source.
 
 ## Run
 

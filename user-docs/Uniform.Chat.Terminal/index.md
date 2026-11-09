@@ -9,7 +9,8 @@ A chat client for [Matrix](https://matrix.org), the open chat protocol, that run
 > [!NOTE]
 > The client is in early development.
 
-- [Getting started](xref:Uniform.Chat.Terminal.GettingStarted.Article): install, run and log in.
+- [Installing](xref:Uniform.Chat.Terminal.Install.Article): with apt on Debian and Ubuntu, or from the release archives.
+- [Getting started](xref:Uniform.Chat.Terminal.GettingStarted.Article): run and log in.
 - [Interface](xref:Uniform.Chat.Terminal.Interface.Article): the window, menus and keys.
 - [Messages](xref:Uniform.Chat.Terminal.Messages.Article): formatting, replies, edits, reactions and more.
 - [Files and images](xref:Uniform.Chat.Terminal.Files.Article): sending, saving and image previews.

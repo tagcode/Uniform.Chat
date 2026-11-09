@@ -1,3 +1,5 @@
+- name: Installing
+  uid: Uniform.Chat.Terminal.Install.Article
 - name: Getting started
   uid: Uniform.Chat.Terminal.GettingStarted.Article
 - name: Interface

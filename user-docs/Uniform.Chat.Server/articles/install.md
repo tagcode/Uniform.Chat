@@ -13,11 +13,46 @@ The server is a Matrix homeserver: it keeps accounts, rooms and messages, and cl
 
 - Linux or Windows; for the dashboard, a terminal that supports UTF-8 and colors
 
-## Install
+## Apt install
 
-Download `uniform-chat-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The program is `uniform-chat-server`, or `uniform-chat-server.exe` on Windows. The `docs` folder in it has this guide; open `docs/index.html` in a browser.
+On Debian and Ubuntu, x64 and arm64, install from the apt repository of Uniform Chat, which is kept in its releases on GitHub. Add the repository once, with the key its packages are signed with:
 
-To build from source instead, install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Chat.Server --` from the repository root in place of the program in the examples below.
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://github.com/tagcode/Uniform.Chat/releases/latest/download/uniform-chat-archive-keyring.gpg | sudo tee /etc/apt/keyrings/uniform-chat.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/uniform-chat.gpg] https://github.com/tagcode/Uniform.Chat/releases/ latest/download/" | sudo tee /etc/apt/sources.list.d/uniform-chat.list
+sudo apt update
+```
+
+Then install the server:
+
+```bash
+sudo apt install uniform-chat-server
+```
+
+The package sets the server up as a system service, `uniform-chat-server`, run by the system user `uniform-chat`, which it creates:
+
+| What | Where |
+|---|---|
+| Program | `/opt/uniform-chat/server`, also as the command `uniform-chat-server` |
+| Settings | `/etc/uniform-chat-server/settings.json` |
+| Database, signing key, files and logs | `/var/lib/uniform-chat-server` |
+
+The service is off until you write the settings, see the [example setup](#example-setup) below, and enable it:
+
+```bash
+sudo systemctl enable --now uniform-chat-server
+```
+
+[Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package) tells more about the service. `sudo apt upgrade` updates the server with the rest of the system and restarts a running service; back up `/var/lib/uniform-chat-server` first, see [Updating](xref:Uniform.Chat.Server.Updating.Article).
+
+## From the release archives
+
+Download `uniform-chat-server-<version>-linux-x64.tar.gz` (or `linux-arm64`, or `win-x64.zip` and `win-arm64.zip` for Windows) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere. It needs nothing else installed. The program is `uniform-chat-server`, or `uniform-chat-server.exe` on Windows. The `docs` folder in it has this guide; open `docs/index.html` in a browser. To run it as a service, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article).
+
+## From source
+
+Install the [.NET 10 SDK](https://dotnet.microsoft.com/download); then use `dotnet run --project src/Uniform.Chat.Server --` from the repository root in place of the program in the examples below.
 
 ## Example setup
 

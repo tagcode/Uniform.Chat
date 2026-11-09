@@ -1,7 +1,7 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
-# build the apps (desktop, terminal client, server, STUN and TURN server) with their user guides for Windows and Linux, and the signed Android APK,
+# build the apps (desktop, terminal client, server, STUN and TURN server) with their user guides for Windows and Linux, as Debian packages, and the signed Android APK,
 # push the packages to NuGet.org with trusted publishing, create a GitHub release with the app archives and the APK,
-# and, for a release but not a prerelease, publish the documentation on https://tagcode.github.io/Uniform.Chat/ and add the APK to the F-Droid repository on https://tagcode.github.io/fdroid/repo.
+# and, for a release but not a prerelease, make the release an apt repository, publish the documentation on https://tagcode.github.io/Uniform.Chat/ and add the APK to the F-Droid repository on https://tagcode.github.io/fdroid/repo.
 name: Release
 
 on:
@@ -154,6 +154,8 @@ jobs:
               (cd publish && zip -qr "../release/$name.zip" "$name")
             else
               tar -czf "release/$name.tar.gz" -C publish "$name"
+              # The same app as a Debian package, e.g. uniform-chat-server_0.2.0_amd64.deb, for the apt repository of the release
+              packaging/linux/build-deb.sh "$kind" "publish/$name" "$VERSION" "$RID" release
             fi
           done
       - uses: actions/upload-artifact@v5
@@ -232,11 +234,31 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with:
           pattern: apps-*
           path: release
           merge-multiple: true
+      # A release, but not a prerelease, is the apt repository at https://github.com/<repository>/releases/ latest/download/:
+      # its index lists this release's packages and those of the earlier releases, each in its own release; signed with the APT key
+      - name: Apt repository
+        if: needs.version.outputs.prerelease == 'false'
+        env:
+          APT_GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          APT_GPG_PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE }}
+        run: |
+          if [[ -z "$APT_GPG_PRIVATE_KEY" ]]; then
+            echo "::warning::No APT_GPG_PRIVATE_KEY secret; the release has packages but no apt repository index"
+            exit 0
+          fi
+          command -v apt-ftparchive >/dev/null || sudo apt-get install -y apt-utils
+          export GNUPGHOME="$RUNNER_TEMP/gnupg"
+          mkdir -m 700 "$GNUPGHOME"
+          trap 'rm -rf "$GNUPGHOME"' EXIT
+          gpg --batch --import <<< "$APT_GPG_PRIVATE_KEY"
+          # Until this release is created, latest is the previous release
+          packaging/linux/build-apt-index.sh release "$GITHUB_REF_NAME" "https://github.com/$GITHUB_REPOSITORY/releases/latest/download/Packages" release
       - name: Checksums
         run: cd release && sha256sum * > SHA256SUMS.txt
       - name: Create release

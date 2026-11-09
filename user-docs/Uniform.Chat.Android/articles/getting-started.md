@@ -7,7 +7,7 @@ uid: Uniform.Chat.Android.GettingStarted.Article
 The Uniform Chat app for Android: rooms, messages, files and end-to-end encryption. It shows the room list and a room one at a time.
 
 > [!NOTE]
-> The app is in early development. It covers everyday chatting and encryption; notifications are still to come.
+> The app is in early development. It covers everyday chatting, encryption, voice calls and notifications.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ The Uniform Chat app for Android: rooms, messages, files and end-to-end encrypti
 
 ## Install
 
-There is no store release yet. To try it, build and install it on a phone connected with USB debugging; see the [developer notes of the Android app](https://github.com/tagcode/Uniform.Chat/blob/main/docs/Uniform.Chat/Uniform.Chat.Android/index.md).
+Install the app with F-Droid from its own repository, and optionally ntfy for notifications; see [Installing](xref:Uniform.Chat.Android.Install.Article).
 
 ## Sign in
 

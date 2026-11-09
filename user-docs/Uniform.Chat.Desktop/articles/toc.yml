@@ -1,3 +1,5 @@
+- name: Installing
+  uid: Uniform.Chat.Desktop.Install.Article
 - name: Getting started
   uid: Uniform.Chat.Desktop.GettingStarted.Article
 - name: Rooms

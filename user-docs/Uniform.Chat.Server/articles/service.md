@@ -59,7 +59,50 @@ journalctl --user -u uniform-chat-server -f
 
 systemd connects the server's input to `/dev/null` and its output to the journal, so `Auto` runs without the dashboard there and the log goes to the journal. A user service stops when you log out, unless lingering is on: `sudo loginctl enable-linger $USER`.
 
+## From the apt package
+
+The `uniform-chat-server` package, see [Installing](xref:Uniform.Chat.Server.Install.Article), sets up the system service for you:
+
+| What | Where |
+|---|---|
+| Program | `/opt/uniform-chat/server/uniform-chat-server`, also as the command `uniform-chat-server` |
+| Service | `uniform-chat-server`, run by the system user `uniform-chat`, which the package creates |
+| Settings | `/etc/uniform-chat-server/settings.json` |
+| Data: database, signing key, files and logs | `/var/lib/uniform-chat-server` |
+
+The service is off after installing, as the server needs its name and address first. Write the settings, readable only by the service, as they may hold secrets, then start it and have it start at boot:
+
+```bash
+sudo nano /etc/uniform-chat-server/settings.json
+sudo chown uniform-chat:uniform-chat /etc/uniform-chat-server/settings.json
+sudo chmod 600 /etc/uniform-chat-server/settings.json
+sudo systemctl enable --now uniform-chat-server
+```
+
+Step 3 below has a short example of the settings, and [Installing](xref:Uniform.Chat.Server.Install.Article) a complete one. The service may listen on ports below 1024, such as 443. It cannot see the home folders, so keep certificates elsewhere; the note at the end of this page tells how to give it certbot's certificates. Control it and read its log as in the table below. `sudo apt upgrade` restarts a running service with the new version.
+
+To change the service, e.g. to add environment variables, use `sudo systemctl edit uniform-chat-server`, which keeps your changes over updates. `sudo apt remove uniform-chat-server` stops and removes the service and the program, but keeps the settings, the data and the user.
+
+To manage users from the dashboard, stop the service and run the dashboard as its user, with its folders:
+
+```bash
+sudo systemctl stop uniform-chat-server
+sudo -u uniform-chat XDG_CONFIG_HOME=/etc XDG_DATA_HOME=/var/lib uniform-chat-server --Host:Ui=Dashboard
+sudo systemctl start uniform-chat-server
+```
+
+If you set up the service by hand before, with the steps below, remove your unit file `/etc/systemd/system/uniform-chat-server.service`, which would otherwise be used in place of the package's, and give the settings to the new user; the service hands the data folder over itself at its next start:
+
+```bash
+sudo rm /etc/systemd/system/uniform-chat-server.service
+sudo chown -R uniform-chat:uniform-chat /etc/uniform-chat-server
+sudo systemctl daemon-reload
+sudo systemctl restart uniform-chat-server
+```
+
 ## As a system service (Ubuntu)
+
+Without the package, set the service up by hand.
 
 On a server, run it as a system service named `uniform-chat-server`: it starts at boot, runs as a user of its own, and is controlled with `sudo systemctl`. The steps below put the program in `/opt/uniform-chat-server`, the settings in `/etc/uniform-chat-server`, and the data in `/var/lib/uniform-chat-server`.
 
@@ -162,8 +205,8 @@ The server also keeps its own log files in `/var/lib/uniform-chat-server/logs`, 
 
 > [!NOTE]
 > To serve HTTPS itself, without a proxy, the server needs to read the certificate and to listen on port 443:
-> - Ports below 1024 need `AmbientCapabilities=CAP_NET_BIND_SERVICE` in the `[Service]` section; or listen on 8448 instead.
-> - certbot keeps its files readable only by root. Copy them where the server can read them in a deploy hook, e.g. `/etc/letsencrypt/renewal-hooks/deploy/uniform-chat-server.sh`:
+> - Ports below 1024 need `AmbientCapabilities=CAP_NET_BIND_SERVICE` in the `[Service]` section, which the package's service has; or listen on 8448 instead.
+> - certbot keeps its files readable only by root. Copy them where the server can read them in a deploy hook, e.g. `/etc/letsencrypt/renewal-hooks/deploy/uniform-chat-server.sh`; with the package, the user is `uniform-chat`:
 >
 >   ```bash
 >   #!/bin/sh

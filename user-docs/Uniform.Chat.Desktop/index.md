@@ -11,7 +11,8 @@ A chat app for [Matrix](https://matrix.org), the open chat protocol, for Windows
 > [!NOTE]
 > The app is in early development.
 
-- [Getting started](xref:Uniform.Chat.Desktop.GettingStarted.Article): install, sign in, and where your data is kept.
+- [Installing](xref:Uniform.Chat.Desktop.Install.Article): with apt on Debian and Ubuntu, on Windows and on other Linux systems.
+- [Getting started](xref:Uniform.Chat.Desktop.GettingStarted.Article): sign in, and where your data is kept.
 - [Rooms](xref:Uniform.Chat.Desktop.Rooms.Article): the room list, joining and creating rooms.
 - [Messages and files](xref:Uniform.Chat.Desktop.Messages.Article): writing, replies, reactions and files.
 - [Security](xref:Uniform.Chat.Desktop.Security.Article): encryption, recovery key and verification.

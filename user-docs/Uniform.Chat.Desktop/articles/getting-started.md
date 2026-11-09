@@ -18,31 +18,7 @@ The Uniform Chat app for Windows and Linux: rooms, messages, files and end-to-en
 
 ## Install
 
-### Windows
-
-Download `uniform-chat-desktop-<version>-win-x64.zip` (or `win-arm64`) from the [releases](https://github.com/tagcode/Uniform.Chat/releases) and unpack it anywhere; the `docs` folder in it has this guide (open `docs/index.html`). Then run `Uniform.Chat.exe`. Windows may warn that the app is from an unknown publisher, because it is not signed yet; choose *More info → Run anyway*.
-
-### Linux
-
-Download `uniform-chat-desktop-<version>-linux-x64.tar.gz` (or `linux-arm64`), unpack it and run the app:
-
-```bash
-tar -xzf uniform-chat-desktop-*-linux-x64.tar.gz
-cd uniform-chat-desktop-*-linux-x64
-./Uniform.Matrix
-```
-
-You can also start it by double-clicking `Uniform.Chat` in the file manager.
-
-To add it to the application menu, run `./install-desktop-entry.sh` in the same folder. Run it again if you move the folder, and `./install-desktop-entry.sh --uninstall` removes the entry.
-
-### From source
-
-With the [.NET 10 SDK](https://dotnet.microsoft.com/download), from the repository root:
-
-```bash
-dotnet run --project src/Uniform.Chat.Desktop
-```
+See [Installing](xref:Uniform.Chat.Desktop.Install.Article): with apt on Debian and Ubuntu, from the release archives on Windows and other Linux systems, or from source.
 
 ## Sign in
 

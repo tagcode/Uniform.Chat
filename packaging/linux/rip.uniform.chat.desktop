@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Uniform Chat
+GenericName=Matrix chat
+Comment=Chat on Matrix
+Exec=uniform-chat
+Icon=rip.uniform.chat
+Terminal=false
+Categories=Network;InstantMessaging;Chat;
+Keywords=Matrix;chat;messaging;

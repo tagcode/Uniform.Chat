@@ -1,0 +1,36 @@
+# The Uniform Chat homeserver as a system service, from the uniform-chat-server package; off until enabled:
+#   sudo systemctl enable --now uniform-chat-server
+# Settings in /etc/uniform-chat-server/settings.json, data in /var/lib/uniform-chat-server, run by the system user uniform-chat.
+# Change it with "sudo systemctl edit uniform-chat-server", which keeps the changes over updates.
+[Unit]
+Description=Uniform Chat homeserver
+Documentation=https://tagcode.github.io/Uniform.Chat/user-docs/Uniform.Chat.Server/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=uniform-chat
+Group=uniform-chat
+ExecStart=/opt/uniform-chat/server/uniform-chat-server --Host:Ui=None
+WorkingDirectory=/var/lib/uniform-chat-server
+# The server adds its name to these: /etc/uniform-chat-server and /var/lib/uniform-chat-server
+Environment=XDG_CONFIG_HOME=/etc
+Environment=XDG_DATA_HOME=/var/lib
+# systemd creates the data folder and gives it to the user, also one of an earlier user
+StateDirectory=uniform-chat-server
+StateDirectoryMode=0700
+Restart=on-failure
+RestartSec=5
+# Stop gracefully: SIGTERM, then wait for the database to close
+TimeoutStopSec=30
+# Ports below 1024, such as 443 when serving HTTPS without a proxy
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+# Hardening: no new privileges, read-only system except the server's folders, private /tmp
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=-/etc/uniform-chat-server
+
+[Install]
+WantedBy=multi-user.target

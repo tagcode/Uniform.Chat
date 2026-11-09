@@ -1,0 +1,23 @@
+#!/bin/sh
+# After installing or updating uniform-chat-server: the system user uniform-chat and the settings and data folders, when missing;
+# systemd learns of the service, and a running one restarts with the new version. A new service stays off until enabled.
+set -e
+
+if [ "$1" = configure ]; then
+    # The user, without login
+    if ! getent passwd uniform-chat >/dev/null; then
+        useradd --system --user-group --home-dir /var/lib/uniform-chat-server --no-create-home --shell /usr/sbin/nologin --comment "Uniform Chat server" uniform-chat
+    fi
+
+    # Folders made only when missing, so that existing ones keep their owners; the service takes over the data folder itself
+    [ -d /var/lib/uniform-chat-server ] || install -d -o uniform-chat -g uniform-chat -m 0700 /var/lib/uniform-chat-server
+    [ -d /etc/uniform-chat-server ] || install -d -o uniform-chat -g uniform-chat -m 0750 /etc/uniform-chat-server
+
+    # The new unit, and the new program for a running service
+    if [ -d /run/systemd/system ]; then
+        systemctl daemon-reload || true
+        systemctl try-restart uniform-chat-server.service || true
+    fi
+fi
+
+exit 0

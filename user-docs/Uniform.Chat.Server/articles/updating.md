@@ -6,6 +6,18 @@ uid: Uniform.Chat.Server.Updating.Article
 
 The server updates its database to the new version's layout when it starts. Back up the data folder before updating: it holds the database and the signing key, which other servers know your server by.
 
+## From the apt package
+
+Back up the data, then update with the rest of the system; a running service restarts with the new version:
+
+```bash
+sudo tar -czf ~/uniform-chat-server-backup.tar.gz -C /var/lib uniform-chat-server
+sudo apt update
+sudo apt upgrade
+```
+
+To go back to an earlier version, give it, e.g. `sudo apt install uniform-chat-server=0.2.0`; `apt list -a uniform-chat-server` lists them. An earlier version may not work with a database that a later one updated, so restore the backup with it.
+
 ## As a system service
 
 Stop the server, back up its data, unpack the new release over the program, and start it:
