@@ -111,7 +111,7 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         IsServerNotice = room.Tags.ContainsKey(RoomTags.ServerNotice);
         IsFavourite = room.Tags.ContainsKey(RoomTags.Favourite);
         IsLowPriority = room.Tags.ContainsKey(RoomTags.LowPriority);
-        Unread = isRead ? 0 : room.NotificationCount;
+        Unread = isRead ? 0 : CountUnread(room.NotificationCount, room.IsEncrypted, room.Timeline, room.ReadReceipts.GetValueOrDefault(ownUserId), ownUserId);
         IsHighlighted = !isRead && room.HighlightCount > 0;
         if (room.AvatarUrl != AvatarUri) Avatar = null;
         AvatarUri = room.AvatarUrl;
@@ -140,6 +140,41 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
         // Done without messages
         LastMessage = "";
         LastTime = "";
+    }
+
+    /// <summary>Return the unread count to show: the server's, less the events it counted only because they were encrypted. In an encrypted room the server cannot tell a message from call signalling, a reaction, an edit or a verification step, so it counts them all; decrypted, they would not notify, as they do not in the clear.</summary>
+    /// <param name="serverCount">The server's notification count.</param>
+    /// <param name="encrypted">Whether the room is encrypted; only then does the server miscount.</param>
+    /// <param name="timeline">The room's latest events, decrypted where possible, oldest first.</param>
+    /// <param name="readUpTo">The user's read receipt, or null.</param>
+    /// <param name="ownUserId">The user, whose own events end the unread part, as for the server.</param>
+    internal static int CountUnread(int serverCount, bool encrypted, IReadOnlyList<ClientEvent> timeline, string? readUpTo, string ownUserId)
+    {
+        // Only an encrypted room's count is off
+        if (!encrypted || serverCount <= 0) return serverCount;
+
+        // Others' events after the read point that the server counted, but which would not notify in the clear
+        int quiet = 0;
+        for (int i = timeline.Count - 1; i >= 0; i--)
+        {
+            ClientEvent clientEvent = timeline[i];
+            if (clientEvent.EventId == readUpTo || clientEvent.Sender == ownUserId) break;
+            if (!clientEvent.IsState && IsQuiet(clientEvent)) quiet++;
+        }
+        // Return what is left
+        return Math.Max(0, serverCount - quiet);
+    }
+
+    /// <summary>Return whether a decrypted event would not notify in the clear: call signalling other than the invite, a reaction, an edit or a verification step.</summary>
+    private static bool IsQuiet(ClientEvent clientEvent)
+    {
+        // By type; edits are messages that replace another
+        if (clientEvent.Type == EventTypes.Reaction || clientEvent.Type.StartsWith("m.key.verification.", StringComparison.Ordinal)) return true;
+        if (clientEvent.Type.StartsWith("m.call.", StringComparison.Ordinal) && clientEvent.Type != EventTypes.CallInvite) return true;
+        // Return whether an edit
+        return clientEvent.Type == EventTypes.RoomMessage && clientEvent.Content.ValueKind == System.Text.Json.JsonValueKind.Object
+            && clientEvent.Content.TryGetProperty("m.relates_to", out System.Text.Json.JsonElement relation) && relation.ValueKind == System.Text.Json.JsonValueKind.Object
+            && relation.TryGetProperty("rel_type", out System.Text.Json.JsonElement type) && type.ValueKind == System.Text.Json.JsonValueKind.String && type.GetString() == "m.replace";
     }
 
     /// <summary>Return a message time as a room list shows it: the time today, in 24 hours as messages show it, the weekday within a week, else the date.</summary>

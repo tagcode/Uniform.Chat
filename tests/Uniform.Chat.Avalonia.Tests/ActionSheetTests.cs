@@ -166,6 +166,41 @@ public class ActionSheetTests
         }
     }
 
+    /// <summary>A long press on a message's text itself, not only beside it, shows the message's sheet, not the text's own Copy menu, which the text would otherwise show for its selected word.</summary>
+    [AvaloniaFact]
+    public async Task ShowMessageSheetFromText()
+    {
+        // Arrange: Bob's message on a phone
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient bob = await server.RegisterAsync("bob");
+        MatrixClient alice = await server.RegisterAsync("alice");
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Kitchen", Preset = RoomPresets.PublicChat });
+        await alice.JoinRoomAsync(roomId);
+        await bob.SendTextAsync(roomId, "hello there");
+        (MainViewModel model, Window window, ChatViewModel chat) = await OpenAsync(server, alice, narrow: true);
+
+        try
+        {
+            await ChatFlowTests.WaitUntilAsync(() => chat.Rooms.Any(r => r.RoomId == roomId), "the room");
+            chat.SelectedRoom = chat.Rooms.First(r => r.RoomId == roomId);
+            await ChatFlowTests.WaitUntilAsync(() => window.GetVisualDescendants().OfType<RichText>().Any(t => t.Body == "hello there"), "the message");
+
+            // Act: a long press on the text, which selects a word first, as on a phone
+            RichText text = window.GetVisualDescendants().OfType<RichText>().First(t => t.Body == "hello there");
+            text.SelectionStart = 0;
+            text.SelectionEnd = 5;
+            text.RaiseEvent(new ContextRequestedEventArgs { RoutedEvent = Control.ContextRequestedEvent, Source = text });
+
+            // Assert: the message's sheet
+            Assert.Equal("bob", chat.ActionSheet?.Title);
+        }
+        finally
+        {
+            window.Close();
+            await model.StopAsync();
+        }
+    }
+
     /// <summary>Sign <paramref name="user"/> in, in a shown window on a narrow or wide screen, and return the model, the window and the chat page.</summary>
     private static async Task<(MainViewModel Model, Window Window, ChatViewModel Chat)> OpenAsync(LocalServer server, MatrixClient user, bool narrow)
     {
