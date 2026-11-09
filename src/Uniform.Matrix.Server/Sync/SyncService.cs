@@ -376,7 +376,7 @@ public sealed class SyncService
         };
         if (!joined) return section;
         section["ephemeral"] = new JsonObject { ["events"] = new JsonArray([.. ephemeral]) };
-        (int notifications, int highlights) = await PushRuleService.CountUnreadAsync(dbContext, ruleset, requester.UserId, roomId, cancellationToken);
+        (int notifications, int highlights) = await PushRuleService.CountUnreadAsync(dbContext, ruleset, requester.UserId, roomId, until, cancellationToken);
         section["unread_notifications"] = new JsonObject { ["notification_count"] = notifications, ["highlight_count"] = highlights };
         section["summary"] = new JsonObject
         {

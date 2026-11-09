@@ -119,18 +119,19 @@ public sealed class PushRuleService
     /// <param name="ruleset">The user's rules, from <see cref="GetRulesetAsync"/>.</param>
     /// <param name="userId">The user.</param>
     /// <param name="roomId">A room the user is joined to.</param>
+    /// <param name="until">Last stream position counted, e.g. a sync's, so the counts match the events it sends; <see cref="long.MaxValue"/> for all.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    public static async Task<(int Notifications, int Highlights)> CountUnreadAsync(ServerDbContext dbContext, JsonObject ruleset, string userId, string roomId, CancellationToken cancellationToken)
+    public static async Task<(int Notifications, int Highlights)> CountUnreadAsync(ServerDbContext dbContext, JsonObject ruleset, string userId, string roomId, long until, CancellationToken cancellationToken)
     {
         // Read up to: the receipt, the user's own latest event, or the join
         List<string> receiptIds = await dbContext.Receipts.AsNoTracking().Where(r => r.RoomId == roomId && r.UserId == userId && (r.Type == ReceiptService.Read || r.Type == ReceiptService.ReadPrivate)).Select(r => r.EventId).ToListAsync(cancellationToken);
         long receipt = await dbContext.Events.AsNoTracking().Where(e => receiptIds.Contains(e.EventId)).MaxAsync(e => (long?)e.Stream, cancellationToken) ?? 0;
-        long own = await dbContext.Events.AsNoTracking().Where(e => e.RoomId == roomId && e.Sender == userId).MaxAsync(e => (long?)e.Stream, cancellationToken) ?? 0;
+        long own = await dbContext.Events.AsNoTracking().Where(e => e.RoomId == roomId && e.Sender == userId && e.Stream <= until).MaxAsync(e => (long?)e.Stream, cancellationToken) ?? 0;
         long since = Math.Max(receipt, own);
 
-        // Newest unread events by others, not deleted
+        // Newest unread events by others up to the position, not deleted
         List<string> unread = await dbContext.Events.AsNoTracking()
-            .Where(e => e.RoomId == roomId && e.Stream > since && e.Sender != userId && e.RedactedBy == null)
+            .Where(e => e.RoomId == roomId && e.Stream > since && e.Stream <= until && e.Sender != userId && e.RedactedBy == null)
             .OrderByDescending(e => e.Stream).Take(MaxCounted).Select(e => e.Json).ToListAsync(cancellationToken);
         if (unread.Count == 0) return (0, 0);
 
@@ -177,7 +178,7 @@ public sealed class PushRuleService
         // Room by room
         List<string> rooms = await dbContext.CurrentState.AsNoTracking().Where(s => s.Type == EventTypes.RoomMember && s.StateKey == userId && s.Membership == Memberships.Join).Select(s => s.RoomId).ToListAsync(cancellationToken);
         int total = 0;
-        foreach (string roomId in rooms) total += (await CountUnreadAsync(dbContext, ruleset, userId, roomId, cancellationToken)).Notifications;
+        foreach (string roomId in rooms) total += (await CountUnreadAsync(dbContext, ruleset, userId, roomId, long.MaxValue, cancellationToken)).Notifications;
         // Return total
         return total;
     }
