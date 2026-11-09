@@ -32,7 +32,7 @@ internal sealed partial class Chromium : IAsyncDisposable
         if (executable is null) return null;
         string profile = Path.Combine(Path.GetTempPath(), "uniform-matrix-chromium-" + Guid.NewGuid().ToString("N"));
         ProcessStartInfo start = new(executable) { RedirectStandardError = true, RedirectStandardOutput = true };
-        foreach (string argument in new[] { "--headless=new", "--no-sandbox", "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0", "--autoplay-policy=no-user-gesture-required", $"--user-data-dir={profile}", "about:blank" }) start.ArgumentList.Add(argument);
+        foreach (string argument in new[] { "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0", "--autoplay-policy=no-user-gesture-required", $"--user-data-dir={profile}", "about:blank" }) start.ArgumentList.Add(argument);
         Process process = Process.Start(start)!;
         Chromium chromium = new(process, profile);
 
@@ -41,10 +41,18 @@ internal sealed partial class Chromium : IAsyncDisposable
         limit.CancelAfter(TimeSpan.FromSeconds(30));
         int port = 0;
         List<string> output = [];
-        while (port == 0 && await process.StandardError.ReadLineAsync(limit.Token) is string line)
+        try
         {
-            output.Add(line);
-            if (DevToolsLine().Match(line) is { Success: true } match) port = int.Parse(match.Groups[1].Value);
+            while (port == 0 && await process.StandardError.ReadLineAsync(limit.Token) is string line)
+            {
+                output.Add(line);
+                if (DevToolsLine().Match(line) is { Success: true } match) port = int.Parse(match.Groups[1].Value);
+            }
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            // Silent for the whole limit, as a browser may be on a CI runner
+            output.Add("Chromium did not start within 30 seconds.");
         }
         if (port == 0)
         {
