@@ -27,6 +27,12 @@ public sealed record GuiPlatform
     public bool HasEarpiece { get; init; }
     /// <summary>Ask for permission to record, where the platform needs it; return whether it is granted. Null where none is needed.</summary>
     public Func<Task<bool>>? RequestMicrophoneAsync { get; init; }
+    /// <summary>Ask for permission to show notifications, where the platform needs it, as Android 13 and later do; return whether they may be shown. Null where none is needed.</summary>
+    public Func<Task<bool>>? RequestNotificationsAsync { get; init; }
+    /// <summary>Return whether the app may show notifications now; null where it always may.</summary>
+    public Func<bool>? NotificationsAllowed { get; init; }
+    /// <summary>Open the system's notification settings of the app, where a refused permission is given; null where there are none.</summary>
+    public Action? OpenNotificationSettings { get; init; }
     /// <summary>Keep a call with the named peer going while the app is in the background, e.g. a foreground service on Android; dispose the result when the call ends. Null where nothing is needed.</summary>
     public Func<string, IDisposable>? KeepCallAlive { get; init; }
     /// <summary>Keep the engine syncing while the app is in the background or the screen is off, e.g. a foreground service on Android, which otherwise cuts the app's network; dispose the result when signed out. Null where nothing is needed.</summary>

@@ -122,7 +122,18 @@ public sealed partial class MainViewModel : ViewModelBase
         }
         UpdateKeepConnected();
         Page = chat;
+        _ = AskForNotificationsAsync();
         return null;
+    }
+
+    /// <summary>Ask once signed in for permission to notify, as Android 13 and later need it: without it, an incoming call rings with no call on screen to tell who calls; the settings then tell how to allow it.</summary>
+    private async Task AskForNotificationsAsync()
+    {
+        // Only where asked; the answer shows in the settings
+        if (platform.RequestNotificationsAsync is not Func<Task<bool>> ask) return;
+        await ask();
+        // Done
+        ui.Post(Settings.RefreshNotificationsAllowed);
     }
 
     /// <summary>Keep the app's own background connection while push messages do not wake it, and stop it while they do.</summary>

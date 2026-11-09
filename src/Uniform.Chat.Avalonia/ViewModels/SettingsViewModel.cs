@@ -178,6 +178,20 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Whether the platform shows notifications, so the switch is offered.</summary>
     public bool CanNotify { get; }
 
+    /// <summary>Whether the system does not let the app notify, as when the permission was refused on Android: calls then ring without showing who calls, and messages do not notify.</summary>
+    [ObservableProperty]
+    public partial bool NotificationsBlocked { get; set; }
+
+    /// <summary>Whether the system's notification settings of the app can be opened from here.</summary>
+    public bool CanOpenNotificationSettings => platform?.OpenNotificationSettings is not null;
+
+    /// <summary>Read again whether the app may notify, e.g. after asking or when the settings open, as it may have been changed in the system's settings.</summary>
+    public void RefreshNotificationsAllowed() => NotificationsBlocked = CanNotify && platform?.NotificationsAllowed?.Invoke() == false;
+
+    /// <summary>Open the system's notification settings of the app.</summary>
+    [RelayCommand]
+    private void OpenNotificationSettings() => platform?.OpenNotificationSettings?.Invoke();
+
     /// <summary>Colour theme.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ThemeIndex))]

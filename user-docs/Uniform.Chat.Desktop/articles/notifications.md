@@ -15,6 +15,8 @@ On Android and Linux, the app notifies you while it is in the background. *⋮ �
 
 A newer message in the same chat replaces the previous notification. Windows does not show notifications yet.
 
+On Android 13 and later, the app asks for permission to notify once you have signed in. Allow it: without it, an incoming call rings, but nothing on screen tells which app rings or who calls, and messages don't notify. If you refused, *⋮ → Settings…* says so under *Notifications*, and *Allow notifications…* opens the phone's settings for the app.
+
 The room list shows how many messages, and calls, you have not read in each room, and the window title counts the rooms with unread ones, such as *Uniform Chat (2)*. Opening a room marks them read.
 
 ## In the background on Android

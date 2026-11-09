@@ -78,8 +78,13 @@ public partial class MainView : UserControl
         RelayoutLater();
     }
 
-    /// <summary>Lay out again when the app returns, e.g. from another app or the file picker.</summary>
-    private void OnActivated(object? sender, ActivatedEventArgs e) => RelayoutLater();
+    /// <summary>Lay out again when the app returns, e.g. from another app or the file picker, and read again whether it may notify.</summary>
+    private void OnActivated(object? sender, ActivatedEventArgs e)
+    {
+        // Notifications may have been allowed meanwhile in the system's settings, which the settings' notice offers
+        settings?.RefreshNotificationsAllowed();
+        RelayoutLater();
+    }
 
     /// <summary>Measure and arrange the whole view again once Android has settled: after returning from another activity with the keyboard opening or closing, Android may leave parts arranged for a size it had only in between, until something moves.</summary>
     private void RelayoutLater() => DispatcherTimer.RunOnce(() =>

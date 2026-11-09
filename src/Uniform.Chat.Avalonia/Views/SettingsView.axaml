@@ -25,6 +25,13 @@
 
     <StackPanel Spacing="2" IsVisible="{Binding CanNotify}">
       <TextBlock Classes="subtitle" Text="Notifications" />
+      <!-- The system's permission comes first: without it, calls ring with nothing on screen to tell who calls -->
+      <Border Classes="notice" IsVisible="{Binding NotificationsBlocked}" Margin="0,0,0,6">
+        <StackPanel Spacing="6">
+          <TextBlock TextWrapping="Wrap" Text="Notifications are turned off for Uniform Chat in the system's settings. Incoming calls ring without showing who calls, and messages don't notify." />
+          <Button Content="Allow notifications…" Command="{Binding OpenNotificationSettingsCommand}" IsVisible="{Binding CanOpenNotificationSettings}" />
+        </StackPanel>
+      </Border>
       <CheckBox IsChecked="{Binding NotifyCalls}" Content="Incoming calls" IsVisible="{Binding CanRing}" />
       <CheckBox IsChecked="{Binding NotifyDirectMessages}" Content="Messages in direct chats" />
       <CheckBox IsChecked="{Binding NotifyMentions}" Content="Messages that mention you" />

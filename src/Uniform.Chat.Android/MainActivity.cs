@@ -18,9 +18,11 @@ using global::Android.Views;
 public sealed class MainActivity : AvaloniaMainActivity
 {
     private const int MicrophoneRequest = 1;
+    private const int NotificationsRequest = 2;
     private static MainActivity? current;
     private static bool shownWhenLocked;
     private TaskCompletionSource<bool>? microphoneAnswer;
+    private TaskCompletionSource<bool>? notificationsAnswer;
 
     /// <summary>Whether the app is on screen, so that a ringing call needs no notification.</summary>
     public static bool IsInForeground { get; private set; }
@@ -91,11 +93,33 @@ public sealed class MainActivity : AvaloniaMainActivity
         return activity.microphoneAnswer.Task;
     }
 
+    /// <summary>Ask on Android 13 and later for the permission to notify, which an incoming call's screen needs, unless granted already; return whether notifications may be shown.</summary>
+    public static Task<bool> RequestNotificationsAsync()
+    {
+        // Granted already, not needed, or no activity to ask from
+        if (current is not MainActivity activity) return Task.FromResult(false);
+        if (Notifications.Allowed(activity) || !OperatingSystem.IsAndroidVersionAtLeast(33)) return Task.FromResult(true);
+
+        // Ask; Android answers at once, without asking, when the user has refused for good
+        activity.notificationsAnswer = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        activity.RequestPermissions([Manifest.Permission.PostNotifications], NotificationsRequest);
+        // Return the answer to come
+        return activity.notificationsAnswer.Task;
+    }
+
     /// <summary>Pass on the answer to a permission request.</summary>
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
     {
-        // The microphone's answer
+        // The notifications' answer
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NotificationsRequest)
+        {
+            notificationsAnswer?.TrySetResult(grantResults.Length > 0 && grantResults[0] == Permission.Granted);
+            notificationsAnswer = null;
+            return;
+        }
+
+        // The microphone's answer
         if (requestCode != MicrophoneRequest) return;
         int microphone = Array.IndexOf(permissions, Manifest.Permission.RecordAudio);
         microphoneAnswer?.TrySetResult(microphone >= 0 && microphone < grantResults.Length && grantResults[microphone] == Permission.Granted);

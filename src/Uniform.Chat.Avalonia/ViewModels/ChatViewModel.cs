@@ -750,7 +750,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Show or hide the settings panel.</summary>
     [RelayCommand]
-    private void ToggleSettings() => IsSettingsOpen = Settings is not null && !IsSettingsOpen;
+    private void ToggleSettings()
+    {
+        // Opened with what the system allows now
+        IsSettingsOpen = Settings is not null && !IsSettingsOpen;
+        if (IsSettingsOpen) Settings?.RefreshNotificationsAllowed();
+    }
 
     /// <summary>Show the public room directory, of the server shown last.</summary>
     [RelayCommand]

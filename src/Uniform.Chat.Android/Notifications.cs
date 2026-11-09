@@ -63,6 +63,17 @@ internal static class Notifications
 
     /// <summary>Return whether notifications may be shown: Android 13 asks for a permission.</summary>
     public static bool Allowed(Context context) => !OperatingSystem.IsAndroidVersionAtLeast(33) || context.CheckSelfPermission(global::Android.Manifest.Permission.PostNotifications) == Permission.Granted;
+
+    /// <summary>Open the system's notification settings of the app, where a refused permission is given.</summary>
+    public static void OpenSettings(Context context)
+    {
+        // A new task, as the application starts it
+        Intent settings = new(global::Android.Provider.Settings.ActionAppNotificationSettings);
+        settings.PutExtra(global::Android.Provider.Settings.ExtraAppPackage, context.PackageName);
+        settings.AddFlags(ActivityFlags.NewTask);
+        // Done
+        context.StartActivity(settings);
+    }
 }
 
 /// <summary>Notifications of new messages and incoming calls, in the messages channel.</summary>
