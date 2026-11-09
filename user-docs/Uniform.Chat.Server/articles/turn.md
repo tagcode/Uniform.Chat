@@ -36,6 +36,14 @@ TURN server listening on udp 0.0.0.0:3478, tcp 0.0.0.0:3478, relaying from 203.0
 
 When a setting is wrong, the log says so and the homeserver runs on without the TURN server.
 
+## Changing addresses
+
+Home connections often get a new public address now and then, e.g. when the router renews its DHCP lease or restarts. The server checks every minute, and whenever the computer's own addresses change. A host name in `Turn:ExternalAddress`, as of a dynamic DNS service, is resolved again then, and relays made after a change get the new address. Calls going on at the change break anyway, as the old address no longer reaches your router; the apps connect them again.
+
+A dynamic DNS name can lag behind a change. To ask a STUN server instead, which sees the new address at once, set `Turn:ExternalAddress=stun:stun.example.org:3478`, naming a STUN server you trust.
+
+The server also follows its own addresses: listening on `0.0.0.0`, the default, it starts listening on a new address of the computer and stops on one that is gone.
+
 ## Over TLS
 
 Some networks only let web traffic through. TURN over TLS gets through more of them, especially on port 443 when nothing else uses that port on the address:

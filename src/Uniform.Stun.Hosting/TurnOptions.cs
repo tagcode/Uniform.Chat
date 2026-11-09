@@ -40,9 +40,13 @@ public sealed class TurnOptions
     [RestartRequired]
     public string? KeyPath { get; set; }
 
-    /// <summary>Public IPv4 address, or a host name that resolves to it, that peers send relayed data to: the router's public address when the server is behind NAT.</summary>
+    /// <summary>Public IPv4 address that peers send relayed data to, the router's public address when the server is behind NAT: a fixed address; a host name, e.g. of a dynamic DNS service, resolved again every check; or stun:host:port, asking that STUN server every check. A changed address, e.g. after the router's DHCP lease, goes to new allocations.</summary>
     [RestartRequired]
     public string? ExternalAddress { get; set; }
+
+    /// <summary>How often the server checks its local and public addresses for changes, besides when the system reports one.</summary>
+    [RestartRequired]
+    public TimeSpan AddressCheckInterval { get; set; } = TimeSpan.FromMinutes(1);
 
     /// <summary>Address the relay sockets bind; the listen address when not set.</summary>
     [RestartRequired]

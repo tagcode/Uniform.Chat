@@ -26,8 +26,17 @@ public sealed class TurnServerOptions
     /// <summary>Address relay sockets bind; when null, <see cref="ListenAddress"/>, or the address each client reached when that is <c>0.0.0.0</c>.</summary>
     public IPAddress? RelayAddress { get; set; }
 
-    /// <summary>Public address peers send to, which clients learn as their relayed address: the router's public address when the server is behind NAT. When null, the relay sockets' address, which must then not be <c>0.0.0.0</c>.</summary>
+    /// <summary>Fixed public address peers send to, which clients learn as their relayed address: the router's public address when the server is behind NAT. When null, that of <see cref="ExternalAddressSource"/>, else the relay sockets' address, which must then not be <c>0.0.0.0</c>.</summary>
     public IPAddress? ExternalAddress { get; set; }
+
+    /// <summary>Returns the current public address, e.g. by resolving a dynamic DNS name or asking a STUN server, when <see cref="ExternalAddress"/> is not set; asked at start, every <see cref="AddressCheckInterval"/>, and when the computer's addresses change, so a new address of a DHCP lease is followed. Null keeps the current address.</summary>
+    public Func<CancellationToken, Task<IPAddress?>>? ExternalAddressSource { get; set; }
+
+    /// <summary>How often the local addresses and <see cref="ExternalAddressSource"/> are checked for changes, besides when the system reports one.</summary>
+    public TimeSpan AddressCheckInterval { get; set; } = TimeSpan.FromMinutes(1);
+
+    /// <summary>Returns the local addresses instead of the network interfaces, when listening on <c>0.0.0.0</c>; for tests.</summary>
+    internal Func<IEnumerable<IPAddress>>? LocalAddresses { get; set; }
 
     /// <summary>First port of relayed addresses; behind NAT, forward the range from <see cref="MinRelayPort"/> to <see cref="MaxRelayPort"/> over UDP.</summary>
     public int MinRelayPort { get; set; } = 49152;

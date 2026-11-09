@@ -23,7 +23,7 @@ export Turn__SharedSecrets='a-long-random-secret'
 ./uniform-stun-server --Turn:ExternalAddress=203.0.113.5 --Turn:Realm=example.org
 ```
 
-`Turn:ExternalAddress` is the public address peers send relayed calls to: the router's public address when the server is behind NAT. A host name that resolves to it works too.
+`Turn:ExternalAddress` is the public address peers send relayed calls to: the router's public address when the server is behind NAT. When it changes now and then, e.g. on a home connection, give a dynamic DNS name instead, which is resolved again every minute, or `stun:host:port` of a STUN server, which is asked every minute. Relays made after a change get the new address.
 
 The log tells where it listens:
 

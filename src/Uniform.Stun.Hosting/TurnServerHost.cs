@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Uniform.Stun;
 using Uniform.Turn;
 
 /// <summary>Runs a <see cref="TurnServer"/> in a .NET host when <see cref="TurnOptions.Enabled"/> is set, with the credentials of the settings and of every <see cref="ITurnAuthenticator"/> registered in the host, e.g. a homeserver's own secret.</summary>
@@ -75,7 +76,7 @@ public sealed class TurnServerHost : IHostedService, IAsyncDisposable
         // Addresses
         IPAddress listen = ParseAddress(settings.ListenAddress, "Turn:ListenAddress");
         IPAddress? relay = settings.RelayAddress is { Length: > 0 } relayText ? ParseAddress(relayText, "Turn:RelayAddress") : null;
-        IPAddress? external = settings.ExternalAddress is { Length: > 0 } externalText ? await ResolveAsync(externalText, cancellationToken) : null;
+        (IPAddress? external, Func<CancellationToken, Task<IPAddress?>>? source) = ExternalAddress(settings.ExternalAddress, relay ?? listen);
 
         // TLS certificate, read again when renewed
         if (settings.TlsPort is not null && (string.IsNullOrEmpty(settings.CertificatePath) || string.IsNullOrEmpty(settings.KeyPath))) throw new InvalidOperationException("TURN over TLS (Turn:TlsPort) needs Turn:CertificatePath and Turn:KeyPath.");
@@ -93,6 +94,8 @@ public sealed class TurnServerHost : IHostedService, IAsyncDisposable
             Certificate = certificate is null ? null : certificate.Get,
             RelayAddress = relay,
             ExternalAddress = external,
+            ExternalAddressSource = source,
+            AddressCheckInterval = settings.AddressCheckInterval,
             MinRelayPort = settings.MinRelayPort,
             MaxRelayPort = settings.MaxRelayPort,
             MaxAllocations = settings.MaxAllocations,
@@ -125,21 +128,44 @@ public sealed class TurnServerHost : IHostedService, IAsyncDisposable
     /// <summary>Return an IP address of a setting; throw <see cref="FormatException"/> naming the setting.</summary>
     private static IPAddress ParseAddress(string text, string setting) => IPAddress.TryParse(text, out IPAddress? address) ? address : throw new FormatException($"{setting} \"{text}\" is not an IP address.");
 
-    /// <summary>Return the IPv4 address of an address or host name.</summary>
-    private static async Task<IPAddress> ResolveAsync(string text, CancellationToken cancellationToken)
+    /// <summary>Return a fixed external address, or a source that finds it again at each check: DNS for a host name, a STUN server for <c>stun:host:port</c>; neither when not set.</summary>
+    /// <param name="text">The setting.</param>
+    /// <param name="local">Address STUN requests are sent from, as the route depends on it; any when 0.0.0.0.</param>
+    private (IPAddress? Address, Func<CancellationToken, Task<IPAddress?>>? Source) ExternalAddress(string? text, IPAddress local)
     {
-        // An address as is, a name through DNS
-        if (IPAddress.TryParse(text, out IPAddress? address)) return address;
+        // None, a fixed address, a STUN server, or a host name
+        if (string.IsNullOrWhiteSpace(text)) return (null, null);
+        text = text.Trim();
+        if (IPAddress.TryParse(text, out IPAddress? address)) return (address, null);
+        if (text.StartsWith("stun:", StringComparison.OrdinalIgnoreCase))
+        {
+            string server = text[5..];
+            IPAddress? from = local.Equals(IPAddress.Any) ? null : local;
+            return (null, async cancellationToken => await StunDiscovery.GetPublicAddressAsync(await ResolveAsync(server, 3478, cancellationToken), from, cancellationToken)
+                ?? throw new InvalidOperationException($"The STUN server {server} of Turn:ExternalAddress did not answer."));
+        }
+        // Return a source resolving the name each time
+        return (null, async cancellationToken => (await ResolveAsync(text, 0, cancellationToken)).Address);
+    }
+
+    /// <summary>Return the IPv4 address of <c>host</c> or <c>host:port</c>, with <paramref name="defaultPort"/> when no port is given; throw <see cref="InvalidOperationException"/> when it cannot be resolved.</summary>
+    private static async Task<IPEndPoint> ResolveAsync(string text, int defaultPort, CancellationToken cancellationToken)
+    {
+        // Host and port, then DNS
+        int colon = text.LastIndexOf(':');
+        string host = colon > 0 ? text[..colon] : text;
+        int port = colon > 0 && int.TryParse(text[(colon + 1)..], out int given) ? given : defaultPort;
+        if (IPAddress.TryParse(host, out IPAddress? address)) return new IPEndPoint(address, port);
         IPAddress[] found;
         try
         {
-            found = await Dns.GetHostAddressesAsync(text, AddressFamily.InterNetwork, cancellationToken);
+            found = await Dns.GetHostAddressesAsync(host, AddressFamily.InterNetwork, cancellationToken);
         }
         catch (SocketException ex)
         {
             throw new InvalidOperationException($"Turn:ExternalAddress \"{text}\" cannot be resolved: {ex.Message}");
         }
         // Return the first IPv4 address
-        return found.FirstOrDefault() ?? throw new InvalidOperationException($"Turn:ExternalAddress \"{text}\" has no IPv4 address.");
+        return new IPEndPoint(found.FirstOrDefault() ?? throw new InvalidOperationException($"Turn:ExternalAddress \"{text}\" has no IPv4 address."), port);
     }
 }

@@ -43,6 +43,23 @@ public class TurnHostingTests
         Assert.Null(turn.Server);
     }
 
+    /// <summary>A host name or a STUN server as the external address is asked for the public address, here loopback.</summary>
+    [Fact]
+    public async Task FindExternalAddress()
+    {
+        // Arrange: a STUN server on loopback to ask
+        using IHost stunHost = await StartAsync("--Turn:Enabled=true", "--Turn:ListenAddress=127.0.0.1", "--Turn:Port=0", "--Turn:Tcp=false", "--Turn:Users=a:b");
+        int stunPort = stunHost.Services.GetRequiredService<TurnServerHost>().Server!.UdpEndPoint!.Port;
+
+        // Act
+        using IHost byName = await StartAsync("--Turn:Enabled=true", "--Turn:Port=0", "--Turn:Tcp=false", "--Turn:Users=a:b", "--Turn:MinRelayPort=42000", "--Turn:MaxRelayPort=42999", "--Turn:ExternalAddress=localhost");
+        using IHost byStun = await StartAsync("--Turn:Enabled=true", "--Turn:Port=0", "--Turn:Tcp=false", "--Turn:Users=a:b", "--Turn:MinRelayPort=43000", "--Turn:MaxRelayPort=43999", $"--Turn:ExternalAddress=stun:127.0.0.1:{stunPort}");
+
+        // Assert
+        Assert.Equal(IPAddress.Loopback, byName.Services.GetRequiredService<TurnServerHost>().Server?.ExternalAddress);
+        Assert.Equal(IPAddress.Loopback, byStun.Services.GetRequiredService<TurnServerHost>().Server?.ExternalAddress);
+    }
+
     /// <summary>Settings that cannot work leave the server stopped with the reason, and the host running.</summary>
     [Fact]
     public async Task KeepHostOnBadSettings()

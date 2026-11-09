@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Turn\Uniform.Turn.csproj" />
+    <ProjectReference Include="..\Uniform.Stun\Uniform.Stun.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />
   </ItemGroup>
 

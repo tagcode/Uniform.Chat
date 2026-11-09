@@ -124,6 +124,56 @@ public class TurnServerTests
         await AssertBothWaysAsync(client, peer, peerAddress, client.Turn.RelayedAddress!, "every address");
     }
 
+    /// <summary>When the public address changes, e.g. with the router's DHCP lease, new allocations get the new one and old ones live on.</summary>
+    [Fact]
+    public async Task FollowPublicAddressChanges()
+    {
+        // Arrange: a source that answers what the test says
+        IPAddress current = IPAddress.Loopback;
+        await using TurnServer server = await StartAsync(o => o.ExternalAddressSource = _ => Task.FromResult<IPAddress?>(current));
+        (string username, string password) = Credentials();
+        await using TurnClientEndpoint first = await TurnClientEndpoint.ConnectAsync(server.UdpEndPoint!, username, password, cancellationToken: Ct);
+        await using TurnClientEndpoint second = await TurnClientEndpoint.ConnectAsync(server.UdpEndPoint!, username, password, cancellationToken: Ct);
+        Assert.True(await first.Turn.AllocateAsync(Ct));
+
+        // Act
+        current = IPAddress.Parse("127.0.0.2");
+        await server.CheckAddressesAsync(Ct);
+        Assert.True(await second.Turn.AllocateAsync(Ct));
+
+        // Assert
+        Assert.Equal(IPAddress.Loopback, first.Turn.RelayedAddress!.Address);
+        Assert.Equal(current, second.Turn.RelayedAddress!.Address);
+        Assert.Equal(current, server.ExternalAddress);
+        Assert.Equal(2, server.Status.Allocations);
+    }
+
+    /// <summary>Listening on 0.0.0.0, a new local address gets a listener, and a vanished one loses its listener and its allocations.</summary>
+    [Fact]
+    public async Task FollowLocalAddressChanges()
+    {
+        // Arrange: the local addresses are what the test says
+        IPAddress second = IPAddress.Parse("127.0.0.2");
+        List<IPAddress> local = [IPAddress.Loopback];
+        await using TurnServer server = await StartAsync(o => { o.ListenAddress = IPAddress.Any; o.Tcp = false; o.ExternalAddress = IPAddress.Loopback; o.LocalAddresses = () => [.. local]; });
+        int port = server.UdpEndPoint!.Port;
+        (string username, string password) = Credentials();
+
+        // Act and assert: a new address
+        local.Add(second);
+        await server.CheckAddressesAsync(Ct);
+        Assert.Contains($"udp {second}:{port}", server.Status.Listening);
+        await using TurnClientEndpoint client = await TurnClientEndpoint.ConnectAsync(new IPEndPoint(second, port), username, password, cancellationToken: Ct);
+        Assert.True(await client.Turn.AllocateAsync(Ct));
+        Assert.Equal(1, server.Status.Allocations);
+
+        // Act and assert: the address gone
+        local.Remove(second);
+        await server.CheckAddressesAsync(Ct);
+        Assert.DoesNotContain($"udp {second}:{port}", server.Status.Listening);
+        Assert.Equal(0, server.Status.Allocations);
+    }
+
     /// <summary>Wrong passwords, expired credentials and other secrets get no allocation.</summary>
     [Fact]
     public async Task RefuseBadCredentials()

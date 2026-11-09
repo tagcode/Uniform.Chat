@@ -63,7 +63,8 @@ Settings come from these places; later ones override earlier ones:
 | `Turn:TlsPort` | not set | Port of TURN over TLS, such as `5349`; none when not set. ↻ |
 | `Turn:CertificatePath` | not set | Certificate file of TURN over TLS; that of `Tls:CertificatePath` when not set. ↻ |
 | `Turn:KeyPath` | not set | Private key of that certificate; that of `Tls:KeyPath` when not set. ↻ |
-| `Turn:ExternalAddress` | not set | Public IPv4 address, or a host name with it, that relayed data is sent to: the router's public address when the server is behind NAT. The host of `Server:PublicBaseUrl`, or else the server name, when not set. ↻ |
+| `Turn:ExternalAddress` | not set | Public IPv4 address that relayed data is sent to, the router's public address when the server is behind NAT: a fixed address, a host name that is resolved again at every check, or `stun:host:port` to ask that STUN server. The host of `Server:PublicBaseUrl`, or else the server name, when not set. A changed address, e.g. after the router's DHCP lease, goes to new relays. ↻ |
+| `Turn:AddressCheckInterval` | `00:01:00` | How often the TURN server checks its local and public addresses for changes, besides when the system reports one. ↻ |
 | `Turn:RelayAddress` | not set | Address the relay ports bind; the listen address when not set. ↻ |
 | `Turn:MinRelayPort` | `49152` | First UDP port of relayed addresses. ↻ |
 | `Turn:MaxRelayPort` | `65535` | Last UDP port of relayed addresses; behind NAT, forward the whole range. ↻ |

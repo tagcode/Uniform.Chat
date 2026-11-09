@@ -33,7 +33,11 @@ Nonces are stateless: the time they were made and an HMAC of it with the client'
 
 ## Several networks
 
-UDP replies must leave from the address their request came to, or the client drops them. A socket on 0.0.0.0 leaves the choice to routing, which on a computer with several networks may pick another, e.g. the default route of a wired network while forwarded traffic arrives over WiFi. With [`ListenAddress`](xref:Uniform.Turn.TurnServerOptions.ListenAddress) 0.0.0.0, the server therefore binds a UDP socket on each IPv4 address of the interfaces that are up at start, and each relay socket on the address its client reached. TCP connections keep their addresses, so TCP listens on 0.0.0.0. Addresses that appear after start need a restart.
+UDP replies must leave from the address their request came to, or the client drops them. A socket on 0.0.0.0 leaves the choice to routing, which on a computer with several networks may pick another, e.g. the default route of a wired network while forwarded traffic arrives over WiFi. With [`ListenAddress`](xref:Uniform.Turn.TurnServerOptions.ListenAddress) 0.0.0.0, the server therefore binds a UDP socket on each IPv4 address of the interfaces that are up at start, and each relay socket on the address its client reached. TCP connections keep their addresses, so TCP listens on 0.0.0.0. The server checks its addresses every [`AddressCheckInterval`](xref:Uniform.Turn.TurnServerOptions.AddressCheckInterval) and when [`NetworkChange.NetworkAddressChanged`](xref:System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged) fires: it binds UDP on addresses that appeared, closes it on those that went, and ends the allocations on them, whose clients allocate again.
+
+## Changing public address
+
+[`ExternalAddressSource`](xref:Uniform.Turn.TurnServerOptions.ExternalAddressSource) is asked at start and at each check; [Uniform.Stun.Hosting](xref:Uniform.Stun.Hosting.Article) makes one that resolves a host name, or asks a STUN server with [`StunDiscovery`](xref:Uniform.Stun.StunDiscovery). When the answer differs, new allocations get it. Existing ones keep their relayed address, and data to them is still delivered inside the server; their clients reach the server at the old address, which no longer leads there, so they end unrefreshed.
 
 ## Relaying inside the server
 

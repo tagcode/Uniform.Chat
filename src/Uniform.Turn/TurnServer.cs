@@ -21,6 +21,7 @@ public sealed record TurnServerStatus(int Allocations, long AllocationsMade, lon
 /// <list type="bullet">
 /// <item><description>TurnServer.cs: listeners, relaying, expiry and status.</description></item>
 /// <item><description>TurnServer.Requests.cs: STUN and TURN requests, indications and channel data.</description></item>
+/// <item><description>TurnServer.Addresses.cs: UDP listeners per address, and following changes of the local and public addresses.</description></item>
 /// </list>
 /// </remarks>
 public sealed partial class TurnServer : IAsyncDisposable
@@ -40,10 +41,11 @@ public sealed partial class TurnServer : IAsyncDisposable
     private readonly List<Task> loops = [];
     private readonly List<string> listening = [];
     private readonly List<IDisposable> listeners = [];
+    private readonly ConcurrentDictionary<IPAddress, Socket> udpListeners = new();
     private long allocationsMade;
     private long bytesRelayed;
     private IPAddress relayAddress = IPAddress.Any;
-    private IPAddress externalAddress = IPAddress.Any;
+    private volatile IPAddress externalAddress = IPAddress.Any;
     private bool started;
     private bool listensOnAll;
 
@@ -72,16 +74,20 @@ public sealed partial class TurnServer : IAsyncDisposable
     public IPEndPoint? TlsEndPoint { get; private set; }
 
     /// <summary>Return what the server is doing.</summary>
-    public TurnServerStatus Status => new(allocations.Count, Interlocked.Read(ref allocationsMade), Interlocked.Read(ref bytesRelayed), [.. listening]);
+    public TurnServerStatus Status => new(allocations.Count, Interlocked.Read(ref allocationsMade), Interlocked.Read(ref bytesRelayed), [.. udpListeners.Values.Select(u => $"udp {u.LocalEndPoint}").Order(StringComparer.Ordinal), .. listening]);
+
+    /// <summary>The public address new allocations are given, once started; it follows <see cref="TurnServerOptions.ExternalAddressSource"/>.</summary>
+    public IPAddress ExternalAddress => externalAddress;
 
     /// <summary>Bind the listeners and start serving; throw <see cref="SocketException"/> when a port is taken, and <see cref="InvalidOperationException"/> for settings that cannot work.</summary>
-    public Task StartAsync(CancellationToken cancellationToken = default)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         // Assert settings, then the addresses relayed addresses use
         if (started) throw new InvalidOperationException("The TURN server is already started.");
         relayAddress = options.RelayAddress ?? options.ListenAddress;
-        externalAddress = options.ExternalAddress ?? relayAddress;
         listensOnAll = options.ListenAddress.Equals(IPAddress.Any);
+        IPAddress? found = options.ExternalAddress ?? (options.ExternalAddressSource is { } source ? await source(cancellationToken) : null);
+        externalAddress = found ?? relayAddress;
         if (externalAddress.Equals(IPAddress.Any) || externalAddress.Equals(IPAddress.IPv6Any)) throw new InvalidOperationException("Set the TURN server's external address: the public address peers send to, as it listens on every interface.");
         if (externalAddress.AddressFamily != AddressFamily.InterNetwork) throw new InvalidOperationException("The TURN server relays over IPv4; its external address must be an IPv4 address.");
         if (options.MinRelayPort < 1 || options.MaxRelayPort > 65535 || options.MinRelayPort > options.MaxRelayPort) throw new InvalidOperationException("The relay ports must be a range within 1 to 65535.");
@@ -89,21 +95,10 @@ public sealed partial class TurnServer : IAsyncDisposable
         started = true;
 
         // UDP on each address, so replies leave from the address requests came to, then TCP on the same port, then TLS
-        foreach (IPAddress address in UdpAddresses())
-        {
-            Socket udp = new(address.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-            if (address.AddressFamily == AddressFamily.InterNetworkV6) udp.DualMode = true;
-            udp.Bind(new IPEndPoint(address, UdpEndPoint?.Port ?? options.Port));
-            listeners.Add(udp);
-            UdpEndPoint ??= (IPEndPoint)udp.LocalEndPoint!;
-            listening.Add($"udp {udp.LocalEndPoint}");
-            loops.Add(ReceiveUdpAsync(udp, stopping.Token));
-        }
-        if (UdpEndPoint is null) throw new InvalidOperationException("The TURN server found no IPv4 address to listen on.");
-        if (listensOnAll) UdpEndPoint = new IPEndPoint(IPAddress.Any, UdpEndPoint.Port);
+        StartUdpListeners();
         if (options.Tcp)
         {
-            TcpListener tcp = new(options.ListenAddress, UdpEndPoint.Port);
+            TcpListener tcp = new(options.ListenAddress, UdpEndPoint!.Port);
             tcp.Start();
             listeners.Add(tcp.Server);
             TcpEndPoint = (IPEndPoint)tcp.LocalEndpoint;
@@ -120,11 +115,10 @@ public sealed partial class TurnServer : IAsyncDisposable
             loops.Add(AcceptAsync(tls, tls: true, stopping.Token));
         }
 
-        // Expiry, then the log
+        // Expiry and address changes, then the log
         loops.Add(SweepAsync(stopping.Token));
-        logger.LogInformation("TURN server listening on {Listening}, relaying from {External} ports {Min}-{Max}", string.Join(", ", listening), externalAddress, options.MinRelayPort, options.MaxRelayPort);
-        // Done
-        return Task.CompletedTask;
+        loops.Add(WatchAddressesAsync(stopping.Token));
+        logger.LogInformation("TURN server listening on {Listening}, relaying from {External} ports {Min}-{Max}", string.Join(", ", Status.Listening), externalAddress, options.MinRelayPort, options.MaxRelayPort);
     }
 
     /// <summary>Stop listening and end every allocation.</summary>
@@ -134,6 +128,7 @@ public sealed partial class TurnServer : IAsyncDisposable
         if (stopping.IsCancellationRequested) return;
         await stopping.CancelAsync();
         foreach (IDisposable listener in listeners) listener.Dispose();
+        foreach (Socket udp in udpListeners.Values) udp.Dispose();
         foreach (Allocation allocation in allocations.Values) Remove(allocation, "server stopping");
         await Task.WhenAll(loops).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         stopping.Dispose();
@@ -155,12 +150,14 @@ public sealed partial class TurnServer : IAsyncDisposable
             }
             catch (SocketException)
             {
-                // E.g. an ICMP unreachable of an earlier send; keep reading
+                // E.g. an ICMP unreachable of an earlier send, or the address going away: keep reading while listening on it
+                if (!udpListeners.Values.Contains(socket)) return;
+                await Task.Delay(10, CancellationToken.None);
                 continue;
             }
             catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException)
             {
-                // On stop
+                // On stop, or the address gone
                 return;
             }
 
@@ -315,7 +312,7 @@ public sealed partial class TurnServer : IAsyncDisposable
     {
         // Another allocation here: no round trip through the router
         Count(allocation, data.Length);
-        if (IsOwnRelay(peer) && allocationsByPort.TryGetValue(peer.Port, out Allocation? other))
+        if (allocationsByPort.TryGetValue(peer.Port, out Allocation? other) && other.RelayedAddress.Equals(peer))
         {
             await DeliverFromPeerAsync(other, allocation.RelayedAddress, data, cancellationToken);
             return;
@@ -335,14 +332,11 @@ public sealed partial class TurnServer : IAsyncDisposable
     /// <summary>Return the address relay sockets of <paramref name="client"/> bind: the configured relay address, else the address the client reached when listening on 0.0.0.0.</summary>
     private IPAddress RelayAddressFor(ClientConnection client) => options.RelayAddress is null && listensOnAll && client.Local.AddressFamily == AddressFamily.InterNetwork ? client.Local.Address : relayAddress;
 
-    /// <summary>Return whether <paramref name="peer"/> is a relayed address of this server.</summary>
-    private bool IsOwnRelay(IPEndPoint peer) => peer.Address.Equals(externalAddress) && peer.Port >= options.MinRelayPort && peer.Port <= options.MaxRelayPort;
-
     /// <summary>Return whether the server relays to <paramref name="peer"/>: its own relayed addresses, allowed ranges, and what denied ranges leave.</summary>
     private bool MayRelayTo(IPAddress peer)
     {
-        // Own relays, then the lists
-        if (peer.Equals(externalAddress)) return true;
+        // Own relays, also of an earlier public address, then the lists
+        if (peer.Equals(externalAddress) || allocations.Values.Any(a => a.RelayedAddress.Address.Equals(peer))) return true;
         if (options.AllowedPeers.Any(r => r.Contains(peer))) return true;
         // Return whether not denied
         return !options.DeniedPeers.Any(r => r.Contains(peer));
@@ -354,25 +348,6 @@ public sealed partial class TurnServer : IAsyncDisposable
         // Both counters
         Interlocked.Add(ref allocation.BytesRelayed, bytes);
         Interlocked.Add(ref bytesRelayed, bytes);
-    }
-
-    /// <summary>Return the addresses UDP listens on: the listen address, or each IPv4 address of the interfaces that are up when it is 0.0.0.0, as replies must leave from the address a request came to and a socket on 0.0.0.0 lets the routing choose another on computers with several networks.</summary>
-    private IEnumerable<IPAddress> UdpAddresses()
-    {
-        // One address as configured
-        if (!options.ListenAddress.Equals(IPAddress.Any))
-        {
-            yield return options.ListenAddress;
-            yield break;
-        }
-        // Each IPv4 address that is up
-        IEnumerable<IPAddress> addresses = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
-            .Where(i => i.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up || i.NetworkInterfaceType == System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
-            .SelectMany(i => i.GetIPProperties().UnicastAddresses)
-            .Select(a => a.Address)
-            .Where(a => a.AddressFamily == AddressFamily.InterNetwork)
-            .Distinct();
-        foreach (IPAddress address in addresses) yield return address;
     }
 
     /// <summary>Open a relay socket on a free port of the range, on <paramref name="local"/>: the relay address, or the address the client reached when the server listens on 0.0.0.0, so relayed data leaves the way the client's came; return null when no port is free after some tries.</summary>
