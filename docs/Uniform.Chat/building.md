@@ -58,9 +58,20 @@ The version code follows the version: major × 10000 + minor × 100 + patch, so 
 
 `fastlane/metadata/android/en-US/` holds the title, the short and full description, the icon, screenshots and a changelog per version code, e.g. `changelogs/201.txt`, in the layout F-Droid and IzzyOnDroid read. Add the changelog of a version before tagging it.
 
+### Documentation on GitHub Pages
+
+After each release, but not a prerelease, the workflow publishes the documentation of that release on GitHub Pages, from the [tagcode.github.io](https://github.com/tagcode/tagcode.github.io) repository, in the same folders as here:
+
+| Address | Site |
+|---|---|
+| `https://tagcode.github.io/Uniform.Chat/docs/` | This developer site, with the API reference |
+| `https://tagcode.github.io/Uniform.Chat/user-docs/Uniform.Chat.Desktop/` | The user guide of the desktop app; likewise `Uniform.Chat.Android`, `Uniform.Chat.Terminal`, `Uniform.Chat.Server` and `Uniform.Stun.Server` |
+
+Each release replaces the previous documentation. The same job updates the F-Droid repository below, so both go into one commit. It needs the `PAGES_TOKEN` secret, described below; without the F-Droid secrets only the documentation is published.
+
 ### F-Droid repository
 
-After each release, but not a prerelease, the workflow adds the APK to the app's own F-Droid repository, which GitHub Pages serves from the [tagcode.github.io](https://github.com/tagcode/tagcode.github.io) repository at `https://tagcode.github.io/fdroid/repo`. [fdroidserver](https://f-droid.org/docs/Setup_an_F-Droid_App_Repo/) reads the APKs, the store listing from `fastlane/metadata/android/` and the app's entry from `fdroid/metadata/rip.uniform.chat.yml`, and signs the index with the repository key. The repository keeps the newest three versions. Prereleases are left out because they share the version code of their release.
+After each release, but not a prerelease, the workflow adds the APK to the app's own F-Droid repository, which GitHub Pages serves from the [tagcode.github.io](https://github.com/tagcode/tagcode.github.io) repository at `https://tagcode.github.io/fdroid/repo`. [fdroidserver](https://f-droid.org/docs/Setup_an_F-Droid_App_Repo/) reads the APKs, the store listing from `fastlane/metadata/android/` and the app's entry from `fdroid/metadata/rip.uniform.chat.yml`, and signs the index with the repository key. The repository keeps only the newest version, as the site's space is limited; users can't go back to an older one through F-Droid. Prereleases are left out because they share the version code of their release.
 
 The repository key is separate from the app's release key. F-Droid users trust the repository by its fingerprint, so a lost key means they have to add the repository again. Create it once, outside the repository:
 
@@ -77,5 +88,5 @@ Then add these repository secrets. Without them, the release is not added to the
 | `FDROID_KEYSTORE_PASSWORD` | The keystore password, which the key shares |
 | `PAGES_TOKEN` | A fine-grained token for `tagcode/tagcode.github.io` only, with *Contents: Read and write* |
 
-Each update replaces the Pages repository's history with one commit, so the APKs of dropped versions don't make it grow. The site's other files stay as they are. To be offered the repository, users open `https://tagcode.github.io/fdroid/repo` and scan or tap its link, which carries the key's fingerprint.
+Each update replaces the Pages repository's history with one commit, so the APKs of dropped versions and old documentation don't make it grow. The site's other files stay as they are. To be offered the repository, users open `https://tagcode.github.io/fdroid/repo` and scan or tap its link, which carries the key's fingerprint.
 
