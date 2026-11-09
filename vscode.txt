@@ -106,3 +106,6 @@ github:
 
     # On lost history
     git pull --allow-unrelated-histories
+
+    # Assign token
+    git remote set-url origin https://username:token@github.com/username/repo.git
