@@ -16,11 +16,12 @@ Uniform Chat is installed with [F-Droid](https://f-droid.org), an app store for 
 
 F-Droid tells you of new versions and installs them when you allow it. The repository has only the newest version of the app.
 
-## ntfy for notifications, optionally
+### ntfy
 
-Out of the box, the app keeps its own connection to your server while it is in the background, to hear of new messages and calls, and shows a quiet notification for it. With a [UnifiedPush](https://unifiedpush.org) distributor app instead, one connection serves all your apps that use it, which saves battery, and the notification goes away.
+You may optionally also install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) to conserve battery life,
+if your phone runs multiple other apps that support [UnifiedPush](https://unifiedpush.org).
 
-1. Install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) from F-Droid; it is in F-Droid's own repository.
+1. Install [ntfy](https://f-droid.org/packages/io.heckel.ntfy/) from F-Droid.
 2. In Uniform Chat, open *⋮ → Settings… → In the background* and choose *ntfy*.
 
 ntfy uses its public server `ntfy.sh` unless you set another one in ntfy's settings. That server learns when you get messages, but never what they say or who sent them; [Notifications](xref:Uniform.Chat.Android.Notifications.Article) tells more.
