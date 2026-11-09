@@ -11,6 +11,8 @@ items:
   href: Uniform.Matrix.Gui.Terminal/toc.yml
 - name: Uniform.Matrix.Audio
   href: Uniform.Matrix.Audio/toc.yml
+- name: Uniform.Matrix.Video
+  href: Uniform.Matrix.Video/toc.yml
 - name: Uniform.Stun.Protocol
   href: Uniform.Stun.Protocol/toc.yml
 - name: Uniform.Stun

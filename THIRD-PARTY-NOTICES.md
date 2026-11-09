@@ -16,6 +16,18 @@ Changes: the code was translated from Rust to C#, and restructured to fit .NET. 
 
 The native wrapper in `native/vodozemac-ffi`, used only by those tests, links vodozemac unchanged.
 
+## VP8 reference decoder
+
+The VP8 decoder in `Uniform.Matrix.Video` is a C# port of the reference decoder in [RFC 6386](https://www.rfc-editor.org/rfc/rfc6386), Attachment One. Its tables in `Vp8Tables.cs` are generated from the reference decoder's sources. The tests use the VP8 test vectors of [libvpx](https://chromium.googlesource.com/webm/libvpx), in `tests/Uniform.Matrix.Video.Tests/TestVectors`.
+
+- Copyright (c) 2010, 2011, Google Inc.
+
+Licensed under the BSD 3-clause licence, with Google's additional grant of patent rights; see [LICENSES/VP8-reference-decoder.txt](LICENSES/VP8-reference-decoder.txt).
+
+Ported files: `Vp8Decoder.cs` and its partial files, `BoolDecoder.cs`, `Vp8Transform.cs`, `Vp8Modes.cs` and `Vp8Tables.cs`.
+
+Changes: the code was translated from C to C#, with arrays and indices in place of pointers. Where the reference decoder and libvpx differ, it follows libvpx, whose output the test vectors record: the skip flag without coefficient skipping, loop filter deltas that are not updated, and quantizers recomputed every frame. All 17 test vectors decode bit for bit.
+
 ## Bundled in the apps
 
 The release archives of the apps are self-contained: they include the .NET runtime and the packages below. Each keeps its own license. The full license text of each, with its copyright notice, is in [LICENSES/packages/](LICENSES/packages/) and [LICENSES/runtime/](LICENSES/runtime/); the desktop and Android clients also show them under Settings → Licences.
