@@ -92,7 +92,9 @@ public static class ServerServiceExtensions
         // Database in the data directory, migrated at start
         ServerStorageOptions storage = builder.Configuration.GetSection(ServerStorageOptions.Section).Get<ServerStorageOptions>() ?? new ServerStorageOptions();
         string dataDirectory = storage.ResolveDataDirectory(builder.Environment.ApplicationName);
-        Directory.CreateDirectory(dataDirectory);
+        // One process per data directory, before the database or a listener opens; the host releases it when disposed
+        DataDirectoryLock directoryLock = DataDirectoryLock.Acquire(dataDirectory);
+        builder.Services.AddSingleton(_ => directoryLock);
         builder.Services.AddDbContextFactory<ServerDbContext>(db => db.UseSqlite($"Data Source={Path.Combine(dataDirectory, storage.DatabaseFileName)}"));
         builder.Services.AddHostedService<DatabaseMigrator>();
 

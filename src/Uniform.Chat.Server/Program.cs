@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Terminal.Gui.App;
@@ -12,15 +13,27 @@ using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
+using Uniform.Matrix.Server.Storage;
 
 // Read appsettings.json next to the executable, not from the working directory; the application name names the folders
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = ApplicationName });
 
-// Settings file and applied changes, then the server and this process's options
+// Settings file and applied changes, then the server and this process's options; one process per data directory
 builder.AddSettings();
-builder.AddMatrixServer();
+try
+{
+    builder.AddMatrixServer();
+}
+catch (DataDirectoryInUseException inUse)
+{
+    Console.Error.WriteLine(inUse.Message);
+    Console.Error.WriteLine("As a system service, stop it with: sudo systemctl stop uniform-chat-server");
+    return 1;
+}
 builder.AddEmbeddedTurn();
 builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
+// Stopping, with its clean-up, ends well before a service manager kills the process, e.g. systemd after the unit's 30 seconds
+builder.Services.Configure<HostOptions>(host => host.ShutdownTimeout = TimeSpan.FromSeconds(20));
 bool dashboard = (builder.Configuration.GetSection(ServerHostOptions.Section).Get<ServerHostOptions>() ?? new ServerHostOptions()).UseDashboard(out string uiReason);
 
 // One log file per session; without the dashboard also to the console, which the dashboard owns otherwise
@@ -43,25 +56,24 @@ catch (Exception exception) when (FindTlsError(exception) is TlsCertificateExcep
     return 1;
 }
 
-// No dashboard: serve until stopped
+// No dashboard: serve until stopped; a slow stop shows between the two log lines
 app.MapMatrixServer();
+app.Lifetime.ApplicationStopping.Register(() => app.Logger.LogInformation("Stopping…"));
 if (!dashboard)
 {
     app.Logger.LogInformation("Running without dashboard: {Reason}; --Host:Ui=Dashboard forces it", uiReason);
-    if (!await StartAsync(app)) return 1;
+    if (!await StartAsync(app)) return await StopAsync(app, 1);
     await app.WaitForShutdownAsync();
-    await app.StopAsync();
-    return 0;
+    return await StopAsync(app, 0);
 }
 
 // Dashboard: start serving first, so start-up errors such as a failed migration print to a normal terminal
-if (!await StartAsync(app)) return 1;
+if (!await StartAsync(app)) return await StopAsync(app, 1);
 using IApplication ui = Application.Create();
 ui.Init();
 using (ServerWindow window = ActivatorUtilities.CreateInstance<ServerWindow>(app.Services, ui)) ui.Run(window);
-await app.StopAsync();
 // Done
-return 0;
+return await StopAsync(app, 0);
 
 // Start serving; when the listen address is taken, tell how to choose another instead of showing the exception, and return false
 static async Task<bool> StartAsync(WebApplication app)
@@ -88,6 +100,17 @@ static async Task<bool> StartAsync(WebApplication app)
         // On error stop
         return false;
     }
+}
+
+// Stop the server, log that it stopped, and release its data directory and log files; return the exit code
+static async Task<int> StopAsync(WebApplication app, int exitCode)
+{
+    // Stop within the host's shutdown timeout, then dispose, which flushes the log
+    await app.StopAsync();
+    app.Logger.LogInformation("Stopped");
+    await app.DisposeAsync();
+    // Return code
+    return exitCode;
 }
 
 // Tell what is wrong with the certificate, and how the paths look

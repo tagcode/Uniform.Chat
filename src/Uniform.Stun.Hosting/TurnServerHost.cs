@@ -51,9 +51,15 @@ public sealed class TurnServerHost : IHostedService, IAsyncDisposable
             await server.StartAsync(cancellationToken);
             Server = server;
         }
-        catch (Exception ex) when (ex is InvalidOperationException or FormatException or SocketException or IOException or System.Security.Cryptography.CryptographicException)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            Error = ex is SocketException socket ? $"Cannot listen: {socket.Message}. Is another TURN server running on the port?" : ex.Message;
+            // Any failure of this optional part, e.g. an unreadable certificate, leaves the host running without it
+            Error = ex switch
+            {
+                SocketException socket => $"Cannot listen: {socket.Message}. Is another TURN server running on the port?",
+                UnauthorizedAccessException => $"{ex.Message} The user running the server cannot read it.",
+                _ => ex.Message,
+            };
             logger.LogError("The TURN server did not start: {Error}", Error);
         }
     }

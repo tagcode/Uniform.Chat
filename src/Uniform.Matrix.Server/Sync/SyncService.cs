@@ -46,14 +46,14 @@ public sealed class SyncService
         long current = await stream.GetCurrentAsync(cancellationToken);
         if (from is null || fullState) return await BuildAsync(requester, from, current, filter, fullState, cancellationToken);
 
-        // Incremental: wait until something reaches this user, or time is up
+        // Incremental: wait until something reaches this user, time is up, or the server stops
         DateTimeOffset deadline = time.GetUtcNow() + timeout;
         while (true)
         {
             JsonObject response = await BuildAsync(requester, from, current, filter, fullState: false, cancellationToken);
             TimeSpan left = deadline - time.GetUtcNow();
-            if (HasContent(response) || left <= TimeSpan.Zero) return response;
-            current = await stream.WaitPastAsync(current, left, cancellationToken);
+            if (HasContent(response) || left <= TimeSpan.Zero || stream.Stopping.IsCancellationRequested) return response;
+            current = await stream.WaitPastAsync(current, left, cancellationToken, stream.Stopping);
         }
     }
 

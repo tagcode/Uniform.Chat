@@ -18,7 +18,7 @@ Without a terminal, for example as a service, the server runs without the dashbo
 | `Dashboard` | Dashboard for monitoring server status and for perusing logs. |
 | `None` | No dashboard. |
 
-Stop the server with Ctrl+C, or with `SIGTERM` from a service manager.
+Stop the server with Ctrl+C, or with `SIGTERM` from a service manager. It stops within a few seconds: clients waiting for new messages get their answer at once, and the database is written out before the program ends. The log shows *Stopping…* and *Stopped*.
 
 ## As a user service
 
@@ -83,7 +83,7 @@ Step 3 below has a short example of the settings, and [Installing](xref:Uniform.
 
 To change the service, e.g. to add environment variables, use `sudo systemctl edit uniform-chat-server`, which keeps your changes over updates. `sudo apt remove uniform-chat-server` stops and removes the service and the program, but keeps the settings, the data and the user.
 
-To manage users from the dashboard, stop the service and run the dashboard as its user, with its folders:
+To manage users from the dashboard, stop the service and run the dashboard as its user, with its folders. Only one server runs on a data folder at a time: while the service still runs or is stopping, the dashboard exits at once with *Another server (pid N) is using /var/lib/uniform-chat-server; stop it first.*
 
 ```bash
 sudo systemctl stop uniform-chat-server

@@ -75,4 +75,33 @@ public class TurnHostingTests
         Assert.Null(disabled.Services.GetRequiredService<TurnServerHost>().Server);
         Assert.Null(disabled.Services.GetRequiredService<TurnServerHost>().Error);
     }
+
+    /// <summary>A certificate the user cannot read keeps the TURN server stopped with an error, and the host running, as a homeserver keeps serving without it.</summary>
+    [Fact]
+    public async Task KeepHostOnUnreadableCertificate()
+    {
+        // Arrange: certificate files nobody may read; root reads them anyway
+        if (OperatingSystem.IsWindows() || Environment.UserName == "root") { Assert.Skip("Needs a non-root user on Unix."); return; }
+        string directory = Directory.CreateTempSubdirectory("turn-tls-").FullName;
+        string certificate = Path.Combine(directory, "fullchain.pem"), key = Path.Combine(directory, "privkey.pem");
+        File.WriteAllText(certificate, "unreadable");
+        File.WriteAllText(key, "unreadable");
+        File.SetUnixFileMode(certificate, UnixFileMode.None);
+        File.SetUnixFileMode(key, UnixFileMode.None);
+
+        try
+        {
+            // Act
+            using IHost host = await StartAsync("--Turn:Enabled=true", "--Turn:ListenAddress=127.0.0.1", "--Turn:Port=0", "--Turn:TlsPort=0", "--Turn:Users=a:b", $"--Turn:CertificatePath={certificate}", $"--Turn:KeyPath={key}");
+
+            // Assert
+            TurnServerHost turn = host.Services.GetRequiredService<TurnServerHost>();
+            Assert.Null(turn.Server);
+            Assert.Contains("cannot read", turn.Error);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
 }

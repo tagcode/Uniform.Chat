@@ -78,12 +78,12 @@ public sealed class SlidingSyncService
             {
                 (JsonObject response, bool news) = await BuildAsync(requester, connection, from, current, body, cancellationToken);
                 TimeSpan left = deadline - time.GetUtcNow();
-                if (news || from is null || left <= TimeSpan.Zero)
+                if (news || from is null || left <= TimeSpan.Zero || stream.Stopping.IsCancellationRequested)
                 {
                     connection.Position = current;
                     return response;
                 }
-                current = await stream.WaitPastAsync(current, left, cancellationToken);
+                current = await stream.WaitPastAsync(current, left, cancellationToken, stream.Stopping);
             }
         }
         finally

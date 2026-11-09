@@ -1,6 +1,7 @@
 namespace Uniform.Matrix.Server.Sync;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Uniform.Matrix.Server.Storage;
 
 /// <summary>The server's single stream of persistent changes: each write takes the next position, which sync tokens count.</summary>
@@ -14,11 +15,17 @@ public sealed class ServerStream
     private long current = -1;
 
     /// <summary>Create the stream over the database's stored positions.</summary>
-    public ServerStream(IDbContextFactory<ServerDbContext> contexts)
+    /// <param name="contexts">The database.</param>
+    /// <param name="lifetime">The host, whose stopping ends the waits of long-polling clients; null for none.</param>
+    public ServerStream(IDbContextFactory<ServerDbContext> contexts, IHostApplicationLifetime? lifetime = null)
     {
-        // Store dependency
+        // Store dependencies
         this.contexts = contexts;
+        Stopping = lifetime?.ApplicationStopping ?? CancellationToken.None;
     }
+
+    /// <summary>Cancelled when the server starts to stop: long-polling clients then get their answer at once, so that stopping need not wait for their timeouts.</summary>
+    public CancellationToken Stopping { get; }
 
     /// <summary>Return the latest committed position.</summary>
     public async Task<long> GetCurrentAsync(CancellationToken cancellationToken)
@@ -69,14 +76,19 @@ public sealed class ServerStream
         return result;
     }
 
-    /// <summary>Wait until the stream moves past <paramref name="since"/> or <paramref name="timeout"/> passes; return the current position.</summary>
-    public async Task<long> WaitPastAsync(long since, TimeSpan timeout, CancellationToken cancellationToken)
+    /// <summary>Wait until the stream moves past <paramref name="since"/>, <paramref name="timeout"/> passes or <paramref name="endEarly"/> is cancelled; return the current position.</summary>
+    /// <param name="since">Position the caller has.</param>
+    /// <param name="timeout">Longest wait.</param>
+    /// <param name="cancellationToken">Cancels the wait with an exception.</param>
+    /// <param name="endEarly">Ends the wait as the timeout does, without an exception, e.g. <see cref="Stopping"/>.</param>
+    public async Task<long> WaitPastAsync(long since, TimeSpan timeout, CancellationToken cancellationToken, CancellationToken endEarly = default)
     {
         // Already past, or wait for the next write
         Task next = Volatile.Read(ref changed).Task;
         long position = await GetCurrentAsync(cancellationToken);
-        if (position > since || timeout <= TimeSpan.Zero) return position;
-        await Task.WhenAny(next, Task.Delay(timeout, cancellationToken));
+        if (position > since || timeout <= TimeSpan.Zero || endEarly.IsCancellationRequested) return position;
+        using CancellationTokenSource wait = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, endEarly);
+        await Task.WhenAny(next, Task.Delay(timeout, wait.Token));
         cancellationToken.ThrowIfCancellationRequested();
         // Return position
         return await GetCurrentAsync(cancellationToken);
