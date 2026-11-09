@@ -8,7 +8,7 @@ public sealed class TurnServerOptions
     /// <summary>Realm of the long-term credentials, usually the server's domain.</summary>
     public string Realm { get; set; } = "turn";
 
-    /// <summary>Address the listeners bind, e.g. <c>0.0.0.0</c> for every IPv4 interface.</summary>
+    /// <summary>Address the listeners bind, e.g. <c>0.0.0.0</c> for every IPv4 interface; then UDP binds each address of the interfaces that are up at start, and relays the address the client reached, so traffic leaves the way it came on computers with several networks.</summary>
     public IPAddress ListenAddress { get; set; } = IPAddress.Any;
 
     /// <summary>Port of STUN and TURN over UDP and TCP; 3478 is the standard. 0 picks a free port, e.g. in tests.</summary>
@@ -23,7 +23,7 @@ public sealed class TurnServerOptions
     /// <summary>Returns the TLS certificate with its key for each new TLS connection, so renewed certificates are picked up; null without TLS.</summary>
     public Func<System.Security.Cryptography.X509Certificates.X509Certificate2>? Certificate { get; set; }
 
-    /// <summary>Address relay sockets bind; <see cref="ListenAddress"/> when null.</summary>
+    /// <summary>Address relay sockets bind; when null, <see cref="ListenAddress"/>, or the address each client reached when that is <c>0.0.0.0</c>.</summary>
     public IPAddress? RelayAddress { get; set; }
 
     /// <summary>Public address peers send to, which clients learn as their relayed address: the router's public address when the server is behind NAT. When null, the relay sockets' address, which must then not be <c>0.0.0.0</c>.</summary>

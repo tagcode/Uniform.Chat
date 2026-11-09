@@ -149,7 +149,7 @@ public sealed partial class TurnServer
             await ErrorAsync(client, request, StunErrorCodes.AllocationQuotaReached, key, fingerprint, cancellationToken);
             return;
         }
-        if (allocations.Count >= options.MaxAllocations || OpenRelay() is not Socket relay)
+        if (allocations.Count >= options.MaxAllocations || OpenRelay(RelayAddressFor(client)) is not Socket relay)
         {
             logger.LogWarning("Refused an allocation of {User}: the server has no room for more", username);
             await ErrorAsync(client, request, StunErrorCodes.InsufficientCapacity, key, fingerprint, cancellationToken);

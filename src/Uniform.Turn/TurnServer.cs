@@ -45,6 +45,7 @@ public sealed partial class TurnServer : IAsyncDisposable
     private IPAddress relayAddress = IPAddress.Any;
     private IPAddress externalAddress = IPAddress.Any;
     private bool started;
+    private bool listensOnAll;
 
     /// <summary>Create a server; <see cref="StartAsync"/> starts it.</summary>
     /// <param name="options">Where it listens and its limits.</param>
@@ -80,20 +81,26 @@ public sealed partial class TurnServer : IAsyncDisposable
         if (started) throw new InvalidOperationException("The TURN server is already started.");
         relayAddress = options.RelayAddress ?? options.ListenAddress;
         externalAddress = options.ExternalAddress ?? relayAddress;
+        listensOnAll = options.ListenAddress.Equals(IPAddress.Any);
         if (externalAddress.Equals(IPAddress.Any) || externalAddress.Equals(IPAddress.IPv6Any)) throw new InvalidOperationException("Set the TURN server's external address: the public address peers send to, as it listens on every interface.");
         if (externalAddress.AddressFamily != AddressFamily.InterNetwork) throw new InvalidOperationException("The TURN server relays over IPv4; its external address must be an IPv4 address.");
         if (options.MinRelayPort < 1 || options.MaxRelayPort > 65535 || options.MinRelayPort > options.MaxRelayPort) throw new InvalidOperationException("The relay ports must be a range within 1 to 65535.");
         if (options.TlsPort is not null && options.Certificate is null) throw new InvalidOperationException("TURN over TLS needs a certificate.");
         started = true;
 
-        // UDP, then TCP on the same port, then TLS
-        Socket udp = new(options.ListenAddress.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
-        if (options.ListenAddress.AddressFamily == AddressFamily.InterNetworkV6) udp.DualMode = true;
-        udp.Bind(new IPEndPoint(options.ListenAddress, options.Port));
-        listeners.Add(udp);
-        UdpEndPoint = (IPEndPoint)udp.LocalEndPoint!;
-        listening.Add($"udp {UdpEndPoint}");
-        loops.Add(ReceiveUdpAsync(udp, stopping.Token));
+        // UDP on each address, so replies leave from the address requests came to, then TCP on the same port, then TLS
+        foreach (IPAddress address in UdpAddresses())
+        {
+            Socket udp = new(address.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            if (address.AddressFamily == AddressFamily.InterNetworkV6) udp.DualMode = true;
+            udp.Bind(new IPEndPoint(address, UdpEndPoint?.Port ?? options.Port));
+            listeners.Add(udp);
+            UdpEndPoint ??= (IPEndPoint)udp.LocalEndPoint!;
+            listening.Add($"udp {udp.LocalEndPoint}");
+            loops.Add(ReceiveUdpAsync(udp, stopping.Token));
+        }
+        if (UdpEndPoint is null) throw new InvalidOperationException("The TURN server found no IPv4 address to listen on.");
+        if (listensOnAll) UdpEndPoint = new IPEndPoint(IPAddress.Any, UdpEndPoint.Port);
         if (options.Tcp)
         {
             TcpListener tcp = new(options.ListenAddress, UdpEndPoint.Port);
@@ -325,6 +332,9 @@ public sealed partial class TurnServer : IAsyncDisposable
         }
     }
 
+    /// <summary>Return the address relay sockets of <paramref name="client"/> bind: the configured relay address, else the address the client reached when listening on 0.0.0.0.</summary>
+    private IPAddress RelayAddressFor(ClientConnection client) => options.RelayAddress is null && listensOnAll && client.Local.AddressFamily == AddressFamily.InterNetwork ? client.Local.Address : relayAddress;
+
     /// <summary>Return whether <paramref name="peer"/> is a relayed address of this server.</summary>
     private bool IsOwnRelay(IPEndPoint peer) => peer.Address.Equals(externalAddress) && peer.Port >= options.MinRelayPort && peer.Port <= options.MaxRelayPort;
 
@@ -346,8 +356,27 @@ public sealed partial class TurnServer : IAsyncDisposable
         Interlocked.Add(ref bytesRelayed, bytes);
     }
 
-    /// <summary>Open a relay socket on a free port of the range; return null when none is free after some tries.</summary>
-    private Socket? OpenRelay()
+    /// <summary>Return the addresses UDP listens on: the listen address, or each IPv4 address of the interfaces that are up when it is 0.0.0.0, as replies must leave from the address a request came to and a socket on 0.0.0.0 lets the routing choose another on computers with several networks.</summary>
+    private IEnumerable<IPAddress> UdpAddresses()
+    {
+        // One address as configured
+        if (!options.ListenAddress.Equals(IPAddress.Any))
+        {
+            yield return options.ListenAddress;
+            yield break;
+        }
+        // Each IPv4 address that is up
+        IEnumerable<IPAddress> addresses = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces()
+            .Where(i => i.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up || i.NetworkInterfaceType == System.Net.NetworkInformation.NetworkInterfaceType.Loopback)
+            .SelectMany(i => i.GetIPProperties().UnicastAddresses)
+            .Select(a => a.Address)
+            .Where(a => a.AddressFamily == AddressFamily.InterNetwork)
+            .Distinct();
+        foreach (IPAddress address in addresses) yield return address;
+    }
+
+    /// <summary>Open a relay socket on a free port of the range, on <paramref name="local"/>: the relay address, or the address the client reached when the server listens on 0.0.0.0, so relayed data leaves the way the client's came; return null when no port is free after some tries.</summary>
+    private Socket? OpenRelay(IPAddress local)
     {
         // Random ports, so they are hard to guess
         for (int attempt = 0; attempt < 64; attempt++)
@@ -357,7 +386,7 @@ public sealed partial class TurnServer : IAsyncDisposable
             Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             try
             {
-                socket.Bind(new IPEndPoint(relayAddress, port));
+                socket.Bind(new IPEndPoint(local, port));
                 return socket;
             }
             catch (SocketException)

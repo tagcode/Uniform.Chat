@@ -31,6 +31,10 @@ Nonces are stateless: the time they were made and an HMAC of it with the client'
 - Quotas per user name and in total (486 and 508), and lifetimes; a sweep every five seconds removes what has expired.
 - Requests with comprehension-required attributes it does not know get 420, e.g. EVEN-PORT and RESERVATION-TOKEN, which it does not implement.
 
+## Several networks
+
+UDP replies must leave from the address their request came to, or the client drops them. A socket on 0.0.0.0 leaves the choice to routing, which on a computer with several networks may pick another, e.g. the default route of a wired network while forwarded traffic arrives over WiFi. With [`ListenAddress`](xref:Uniform.Turn.TurnServerOptions.ListenAddress) 0.0.0.0, the server therefore binds a UDP socket on each IPv4 address of the interfaces that are up at start, and each relay socket on the address its client reached. TCP connections keep their addresses, so TCP listens on 0.0.0.0. Addresses that appear after start need a restart.
+
 ## Relaying inside the server
 
 Data from one allocation to another relayed address of the same server goes from one to the other in memory, without leaving the server. Two clients behind the same router as the server, e.g. at home, then need no NAT hairpinning, which many routers lack.

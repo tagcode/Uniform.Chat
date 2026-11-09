@@ -103,6 +103,27 @@ public class TurnServerTests
         Assert.Equal("back"u8.ToArray(), back);
     }
 
+    /// <summary>Listening on 0.0.0.0, the server answers and relays on each address, here loopback, from the address the client reached.</summary>
+    [Fact]
+    public async Task ListenOnEveryAddress()
+    {
+        // Arrange
+        await using TurnServer server = await StartAsync(o => { o.ListenAddress = IPAddress.Any; o.ExternalAddress = IPAddress.Loopback; });
+        (string username, string password) = Credentials();
+        await using TurnClientEndpoint client = await TurnClientEndpoint.ConnectAsync(new IPEndPoint(IPAddress.Loopback, server.UdpEndPoint!.Port), username, password, cancellationToken: Ct);
+        using UdpClient peer = new(new IPEndPoint(IPAddress.Loopback, 0));
+        IPEndPoint peerAddress = (IPEndPoint)peer.Client.LocalEndPoint!;
+
+        // Act
+        Assert.True(await client.Turn.AllocateAsync(Ct));
+        Assert.True(await client.Turn.PermitAsync(peerAddress.Address, Ct));
+
+        // Assert
+        Assert.Equal(IPAddress.Any, server.UdpEndPoint.Address);
+        Assert.Contains(server.Status.Listening, l => l.StartsWith("udp 127.0.0.1:", StringComparison.Ordinal));
+        await AssertBothWaysAsync(client, peer, peerAddress, client.Turn.RelayedAddress!, "every address");
+    }
+
     /// <summary>Wrong passwords, expired credentials and other secrets get no allocation.</summary>
     [Fact]
     public async Task RefuseBadCredentials()
