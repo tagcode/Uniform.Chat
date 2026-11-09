@@ -17,6 +17,8 @@ public partial class ChatView : UserControl
 {
     private const double NarrowWidth = 720;
     private ChatViewModel? model;
+    private bool touchingRoom;
+    private bool roomHeld;
     private ScrollViewer? scroller;
     private bool followNewest = true;
 
@@ -32,6 +34,10 @@ public partial class ChatView : UserControl
         // Keys before the text boxes take them: a multi-line box handles Enter and paste itself
         ComposerBox.AddHandler(KeyDownEvent, OnComposerKeyDown, RoutingStrategies.Tunnel);
         RoomBox.AddHandler(KeyDownEvent, OnRoomBoxKeyDown, RoutingStrategies.Tunnel);
+
+        // A touch hold on a room shows its menu; lifting the finger then must not open the room as a tap would
+        RoomList.AddHandler(PointerPressedEvent, OnRoomListPointerPressed, RoutingStrategies.Tunnel, handledEventsToo: true);
+        RoomList.AddHandler(PointerReleasedEvent, OnRoomListPointerReleased, RoutingStrategies.Tunnel, handledEventsToo: true);
     }
 
     /// <summary>Follow the new view model's messages.</summary>
@@ -199,12 +205,32 @@ public partial class ChatView : UserControl
         ShowActions(model.CreateMessageActions(message), item);
     }
 
+    /// <summary>Note a finger on the room list, whose hold may show a room's menu.</summary>
+    private void OnRoomListPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        // Touch only; a mouse's right-click selects as usual
+        touchingRoom = e.Pointer.Type == PointerType.Touch;
+        roomHeld = false;
+    }
+
+    /// <summary>Keep the room list from opening the room when the finger is lifted after a hold that showed its menu.</summary>
+    private void OnRoomListPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        // Handled before the row sees it
+        touchingRoom = false;
+        if (!roomHeld) return;
+        roomHeld = false;
+        // Done
+        e.Handled = true;
+    }
+
     /// <summary>Show the details and actions of the room under the pointer, on a right-click or a long press.</summary>
     private void OnRoomContextRequested(object? sender, ContextRequestedEventArgs e)
     {
-        // Assert a room
+        // Assert a room; a finger still down is lifted later, without opening the room
         if (model is null || (e.Source as Control)?.FindAncestorOfType<ListBoxItem>(includeSelf: true) is not { DataContext: RoomItemViewModel room } item) return;
         e.Handled = true;
+        roomHeld = touchingRoom;
         // Done
         ShowActions(model.CreateRoomActions(room), item);
     }

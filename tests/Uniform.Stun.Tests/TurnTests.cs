@@ -80,18 +80,24 @@ public class TurnTests
         Assert.Equal(refreshes, server.Refreshes);
     }
 
-    /// <summary>Relay between two allocations on the TURN server that <c>UNIFORM_MATRIX_TURN</c> names, as <c>host:port</c>, with the shared secret in <c>UNIFORM_MATRIX_TURN_SECRET</c>; skipped without them.</summary>
+    /// <summary>Relay between two allocations on the TURN server that <c>UNIFORM_MATRIX_TURN</c> names, as <c>host:port</c>, with the shared secret in <c>UNIFORM_MATRIX_TURN_SECRET</c>, or with credentials a homeserver handed out in <c>UNIFORM_MATRIX_TURN_USERNAME</c> and <c>UNIFORM_MATRIX_TURN_PASSWORD</c>; skipped without them.</summary>
     [Fact]
     public async Task RelayThroughRealServer()
     {
-        // Server and time-limited credentials, as a homeserver would hand out
+        // Server and time-limited credentials: given, or made from the secret as a homeserver would
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
-        if (Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN") is not string turn || Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN_SECRET") is not string secret) { Assert.Skip("UNIFORM_MATRIX_TURN and UNIFORM_MATRIX_TURN_SECRET are not set."); return; }
+        if (Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN") is not string turn) { Assert.Skip("UNIFORM_MATRIX_TURN is not set."); return; }
+        string? username = Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN_USERNAME");
+        string? password = Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN_PASSWORD");
+        if (username is null || password is null)
+        {
+            if (Environment.GetEnvironmentVariable("UNIFORM_MATRIX_TURN_SECRET") is not string secret) { Assert.Skip("Neither UNIFORM_MATRIX_TURN_SECRET nor UNIFORM_MATRIX_TURN_USERNAME and UNIFORM_MATRIX_TURN_PASSWORD are set."); return; }
+            username = $"{DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds()}:test";
+            password = Convert.ToBase64String(HMACSHA1.HashData(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(username)));
+        }
         string[] parts = turn.Split(':');
         IPAddress address = (await Dns.GetHostAddressesAsync(parts[0], AddressFamily.InterNetwork, cancellationToken))[0];
         IPEndPoint serverAddress = new(address, int.Parse(parts[1]));
-        string username = $"{DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds()}:test";
-        string password = Convert.ToBase64String(HMACSHA1.HashData(Encoding.UTF8.GetBytes(secret), Encoding.UTF8.GetBytes(username)));
 
         // Two allocations, permitted to each other
         await using Endpoint first = new(serverAddress, username, password);

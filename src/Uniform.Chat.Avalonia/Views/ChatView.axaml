@@ -275,7 +275,8 @@
                     <Border Classes="quote" IsVisible="{Binding ReplyQuote, Converter={x:Static ObjectConverters.IsNotNull}}">
                       <TextBlock Text="{Binding ReplyQuote}" TextTrimming="CharacterEllipsis" />
                     </Border>
-                    <views:RichText Body="{Binding Text}" Html="{Binding Html}" TextWrapping="Wrap" Classes.highlight="{Binding IsHighlight}" Classes.pending="{Binding IsPending}" />
+                    <!-- No menu of its own, so that a long press or right-click reaches the message's actions, which copy the text too -->
+                    <views:RichText Body="{Binding Text}" Html="{Binding Html}" TextWrapping="Wrap" Classes.highlight="{Binding IsHighlight}" Classes.pending="{Binding IsPending}" ContextFlyout="{x:Null}" />
                     <Image Source="{Binding Thumbnail}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Stretch="Uniform" Cursor="Hand" ToolTip.Tip="Open" PointerReleased="OnImageReleased" IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
                       <Button Classes="link" Content="Open" Click="OnOpenClick" IsVisible="{Binding IsAttachment}" />
