@@ -227,6 +227,6 @@ public class ActionSheetTests
         await Task.Delay(200);
         if (Environment.GetEnvironmentVariable("UNIFORM_MATRIX_SCREENSHOTS") is not string folder) return;
         // Done
-        window.CaptureRenderedFrame()?.Save(Path.Combine(folder, fileName));
+        window.CaptureRenderedFrame()?.Save(Path.Combine(folder, fileName), new global::Avalonia.Media.Imaging.PngBitmapEncoderOptions());
     }
 }

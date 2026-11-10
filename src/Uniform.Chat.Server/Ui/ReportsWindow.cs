@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Server.Ui;
 
+using Uniform.Chat.Server.Management;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Server.Rooms;
 using global::Terminal.Gui.App;
@@ -7,11 +8,11 @@ using global::Terminal.Gui.App;
 /// <summary>Users' reports of events, rooms and users, newest first; reports can be resolved, opened again or deleted, and resolved ones shown or hidden.</summary>
 public sealed class ReportsWindow : AdminWindow<Report>
 {
-    private readonly ReportService reports;
+    private readonly IServerAdmin reports;
     private bool showResolved;
 
     /// <summary>Build the window and load the open reports.</summary>
-    public ReportsWindow(IApplication app, ReportService reports)
+    public ReportsWindow(IApplication app, IServerAdmin reports)
         : base(app, "Reports", $"{"Received",-16} {"Reporter",-28} {"About",-28} Reason")
     {
         // Actions, then the list
@@ -23,7 +24,7 @@ public sealed class ReportsWindow : AdminWindow<Report>
     }
 
     /// <summary>Load the reports, resolved ones when shown.</summary>
-    protected override Task<IReadOnlyList<Report>> LoadAsync() => reports.GetAsync(showResolved, CancellationToken.None);
+    protected override Task<IReadOnlyList<Report>> LoadAsync() => reports.GetReportsAsync(showResolved, CancellationToken.None);
 
     /// <summary>One report per row.</summary>
     protected override string FormatRow(Report report) => $"{report.Received.ToLocalTime():yyyy-MM-dd HH:mm} {Clip(report.Reporter, 28),-28} {Clip(Target(report), 28),-28} {(report.Resolved ? "[resolved] " : "")}{Clip(report.Reason, 60)}";
@@ -53,7 +54,7 @@ public sealed class ReportsWindow : AdminWindow<Report>
     {
         // Confirm, then delete
         if (Selected is not Report report || !Dialogs.Confirm(Tui, "Delete", $"Delete report {report.Id} by {report.Reporter}? Resolving keeps it for later.")) return;
-        Run("Delete", () => reports.DeleteAsync(report.Id, CancellationToken.None));
+        Run("Delete", () => reports.DeleteReportAsync(report.Id, CancellationToken.None));
         Reload();
     }
 

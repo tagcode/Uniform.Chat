@@ -36,19 +36,28 @@ using Uniform.Matrix.Server.Sync;
 /// ]]></code></example>
 public static class ServerServiceExtensions
 {
+    /// <summary>Bind the server's options and list them for the settings window, in this order; e.g. for a manager that edits a running server's settings file.</summary>
+    public static IServiceCollection AddServerOptionSections(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Sections in the settings window's order
+        services.AddOptionSection<ServerOptions>(configuration, ServerOptions.Section);
+        services.AddOptionSection<ServerStorageOptions>(configuration, ServerStorageOptions.Section);
+        services.AddOptionSection<MediaOptions>(configuration, MediaOptions.Section);
+        services.AddOptionSection<PushOptions>(configuration, PushOptions.Section);
+        services.AddOptionSection<UrlPreviewOptions>(configuration, UrlPreviewOptions.Section);
+        services.AddOptionSection<RateLimitOptions>(configuration, RateLimitOptions.Section);
+        services.AddOptionSection<TlsOptions>(configuration, TlsOptions.Section);
+        services.AddOptionSection<FederationOptions>(configuration, FederationOptions.Section);
+        services.AddOptionSection<CallOptions>(configuration, CallOptions.Section);
+        // Return services
+        return services;
+    }
+
     /// <summary>Add the server's options and services.</summary>
     public static IHostApplicationBuilder AddMatrixServer(this IHostApplicationBuilder builder)
     {
         // Options, listed in the settings window in this order
-        builder.Services.AddOptionSection<ServerOptions>(builder.Configuration, ServerOptions.Section);
-        builder.Services.AddOptionSection<ServerStorageOptions>(builder.Configuration, ServerStorageOptions.Section);
-        builder.Services.AddOptionSection<MediaOptions>(builder.Configuration, MediaOptions.Section);
-        builder.Services.AddOptionSection<PushOptions>(builder.Configuration, PushOptions.Section);
-        builder.Services.AddOptionSection<UrlPreviewOptions>(builder.Configuration, UrlPreviewOptions.Section);
-        builder.Services.AddOptionSection<RateLimitOptions>(builder.Configuration, RateLimitOptions.Section);
-        builder.Services.AddOptionSection<TlsOptions>(builder.Configuration, TlsOptions.Section);
-        builder.Services.AddOptionSection<FederationOptions>(builder.Configuration, FederationOptions.Section);
-        builder.Services.AddOptionSection<CallOptions>(builder.Configuration, CallOptions.Section);
+        builder.Services.AddServerOptionSections(builder.Configuration);
 
         // Rate limits, read once as the limiter is built at start
         builder.Services.AddMatrixRateLimits(builder.Configuration.GetSection(RateLimitOptions.Section).Get<RateLimitOptions>() ?? new RateLimitOptions());

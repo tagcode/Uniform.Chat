@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Server.Ui;
 
+using Uniform.Chat.Server.Management;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Server.Accounts;
 using global::Terminal.Gui.App;
@@ -7,10 +8,10 @@ using global::Terminal.Gui.App;
 /// <summary>Accounts of the server: create users, reset passwords, give admin rights, suspend, lock, deactivate.</summary>
 public sealed class UsersWindow : AdminWindow<AdminUser>
 {
-    private readonly AdminService admin;
+    private readonly IServerAdmin admin;
 
     /// <summary>Build the window and load the users.</summary>
-    public UsersWindow(IApplication app, AdminService admin)
+    public UsersWindow(IApplication app, IServerAdmin admin)
         : base(app, "Users", $"{"User",-36} {"Name",-24} {"Devices",7} {"Rooms",6}  Status")
     {
         // Actions, then the list

@@ -70,7 +70,7 @@ public abstract class AdminWindow<T> : Dialog
         list.SetFocus();
     }
 
-    /// <summary>Run a database action off the UI thread and wait for it; show Matrix errors and return false for them.</summary>
+    /// <summary>Run an action on the server off the UI thread and wait for it; show Matrix errors and lost connections, and return false for them.</summary>
     protected bool Run(string title, Func<Task> action)
     {
         // Thread pool, so continuations do not need the UI thread that waits
@@ -82,6 +82,12 @@ public abstract class AdminWindow<T> : Dialog
         catch (MatrixException ex)
         {
             Dialogs.Error(Tui, title, ex.Error ?? ex.Message);
+            return false;
+        }
+        catch (HttpRequestException ex)
+        {
+            // On a server that went away, for the manager
+            Dialogs.Error(Tui, title, $"The server did not answer: {ex.Message}");
             return false;
         }
     }

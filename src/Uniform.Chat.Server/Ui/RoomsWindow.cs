@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Server.Ui;
 
+using Uniform.Chat.Server.Management;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Server.Accounts;
 using global::Terminal.Gui.App;
@@ -7,10 +8,10 @@ using global::Terminal.Gui.App;
 /// <summary>Rooms of the server, with their members and directory listing; rooms can be listed or unlisted in the public room directory.</summary>
 public sealed class RoomsWindow : AdminWindow<AdminRoom>
 {
-    private readonly AdminService admin;
+    private readonly IServerAdmin admin;
 
     /// <summary>Build the window and load the rooms.</summary>
-    public RoomsWindow(IApplication app, AdminService admin)
+    public RoomsWindow(IApplication app, IServerAdmin admin)
         : base(app, "Rooms", $"{"Room",-30} {"Alias",-28} {"Members",7}  Flags")
     {
         // Actions, then the list

@@ -8,6 +8,18 @@ Besides the dashboard on the server's own machine, admins can manage the server 
 
 The Uniform Chat terminal client has these in its Server menu; see its guide. The server answers at the addresses of Synapse's admin API, with the same requests and answers, so tools made for Synapse can use what is listed below; they are not tested with it, and what is not listed is missing.
 
+## The dashboard over the network
+
+The server's own program opens its dashboard on a server elsewhere, with the users, rooms and reports windows. It asks for an admin's user and password, and logs that session out when it closes:
+
+```bash
+uniform-chat-server manage https://matrix.example.org --user=@admin:example.org
+```
+
+Settings and logs stay on the server's machine; manage them there with `sudo uniform-chat-server manage`, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package).
+
+The admin API is under `/_synapse/admin/`. A reverse proxy must forward that path too, which the example in [Installing](xref:Uniform.Chat.Server.Install.Article) does not; add it to its `location` line, e.g. `location ~ ^/(_matrix|_synapse/admin|\.well-known/matrix)/`. Leave it out to allow administration only on the server's machine.
+
 ## What admins can do
 
 | Area | What | Address |
@@ -23,6 +35,7 @@ The Uniform Chat terminal client has these in its Server menu; see its guide. Th
 | | Joined rooms, uploaded files | `GET /_synapse/admin/v1/users/{userId}/joined_rooms`, `…/media` |
 | Registration tokens | List, show, create, change, delete | `/_synapse/admin/v1/registration_tokens`, `…/new`, `…/{token}` |
 | Reports | List, show, delete | `/_synapse/admin/v1/event_reports`, `…/{id}` |
+| | Resolve, or open again; not in Synapse | `PUT /_synapse/admin/v1/event_reports/{id}` with `{"resolved": true}` |
 | Rooms | List, search, show, members | `GET /_synapse/admin/v1/rooms`, `…/{roomId}`, `…/{roomId}/members` |
 | | Block, so local users cannot join | `GET`/`PUT /_synapse/admin/v1/rooms/{roomId}/block` |
 | | Shut down | `DELETE /_synapse/admin/v1/rooms/{roomId}` |

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Rooms;
 
@@ -48,7 +49,8 @@ public static class DirectoryEndpoints
         client.MapGet("/rooms/{roomId}/aliases", async (string roomId, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) => MatrixHttp.Json(await directory.GetRoomAliasesAsync(http.GetRequester().UserId, roomId, cancellationToken)));
         client.MapPut("/directory/list/room/{roomId}", async (string roomId, JsonObject body, HttpContext http, DirectoryService directory, CancellationToken cancellationToken) =>
         {
-            await directory.SetVisibilityAsync(http.GetRequester().UserId, roomId, body["visibility"]?.GetValue<string>() ?? "public", cancellationToken);
+            Requester requester = http.GetRequester();
+            await directory.SetVisibilityAsync(requester.UserId, roomId, body["visibility"]?.GetValue<string>() ?? "public", cancellationToken, serverAdmin: requester.Admin);
             return MatrixHttp.Json(new JsonObject());
         });
 

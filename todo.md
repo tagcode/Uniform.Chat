@@ -4,53 +4,41 @@
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
-# Uniform.Chat.Desktop
+# Look and feel
 
-- The look and feel of avalonia based GUI is kinda off. Perhaps it can be worked on, or perhaps MAUI or WinUI has better touch?
-A theme that fits each platform.
+- Material.Avalonia 
+  - https://avaloniacommunity.github.io/Material.Avalonia/
+  - https://github.com/AvaloniaCommunity/material.avalonia
+  - 3 colors, shapes, ripples
+  - Desktop: keep Fluent, own accent colour and dark mode following the system.
+  - One shared set of style resources, with small differences per platform.
+  - Typography: the system font (Roboto on Android, Segoe UI on Windows, the desktop's own font on Linux), with clear sizes for room names, message text and timestamps.
 
-Android: Material.Avalonia, with Material 3 colours, shapes and ripples.
-Desktop: keep Fluent, but with our own accent colour and dark mode following the system.
-One shared set of style resources, with small differences per platform.
-Typography: the system font (Roboto on Android, Segoe UI on Windows, the desktop's own font on Linux), with clear sizes for room names, message text and timestamps.
+- Spacing and density:
+  - Phones: larger touch targets, at least 48 dp.
+  - Desktop: denser lists.
+  - Everywhere: consistent padding.
+  - Much of the "unpolished" impression comes from this.
 
-Spacing and density:
+- Chat-specific look:
+  - message bubbles
+  - grouping of consecutive messages from the same sender
+  - avatars with initials as fallback;
+  - unread badges;
+  - a proper composer bar.
+  - Motion: short transitions between room list and room on phones, smooth scrolling, and a typing indicator that animates.
 
-Phones: larger touch targets, at least 48 dp.
-Desktop: denser lists.
-Everywhere: consistent padding.
-Much of the "unpolished" impression comes from this.
+- Android conventions:
+  - edge-to-edge layout with the right system bar colours; the back gesture; the keyboard pushing the composer up;
 
-Chat-specific look:
+# Documentations
 
-message bubbles;
-grouping of consecutive messages from the same sender;
-avatars with initials as fallback;
-unread badges;
-a proper composer bar.
-Motion: short transitions between room list and room on phones, smooth scrolling, and a typing indicator that animates.
-
-Android conventions:
-
-edge-to-edge layout with the right system bar colours;
-the back gesture;
-the keyboard pushing the composer up;
-
-
-# README.md
-
-- Clean up package README.md.
+- Clean up package README.md:s.
+- Rewrite and reorganize documents.
 
 # Android/Flutter
 
-- Prototype flutter GUI with Avalonia.
-
-# F-Droid
-
-- build.gradle file
-- instructions to build the app
-- https://gitlab.com/fdroid/fdroiddata?utm_source=chatgpt.com
-
+- Prototype flutter GUI with Avalonia. Avalonia Flutter support isn't ready yet, perhaps in 2027.
 
 # Google Play
 
@@ -66,13 +54,9 @@ the keyboard pushing the composer up;
   - Listing title like "Uniform — Matrix chat", before you publish.
 - Registering calls with Android's telephony system (ConnectionService).
 
-# User management
-
-Admin user manages other users through matrix protocol.
-
 # Encryption
 
-- Settings for encryption strength. Key size
+- Settings for encryption strength. Key sizes
 
 # Local encryption
 
@@ -88,14 +72,12 @@ Rename to Uniform.Gui.Terminal.
 
 # IzzyOnDroid
   - github releases should include signed .apk:s.
-  - IzzyOnDroid limits APK size to around 30 MB, unless they grant an exception. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. One APK per processor type,   mainly arm64-v8a for modern phones, would roughly halve it. Check their current limit when you ask.
+  - IzzyOnDroid limits APK size to around 30 MB. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. 
+     - One APK per processor type, would halve it (40MB). Still not small enough. Cannot be published on IzzyOnDroid.
 
-# Adroidn client 
-- Suspended-account banner and server notices, from my earlier list. They're small and visible to every user.
-- F-Droid / IzzyOnDroid store screenshots, still missing. I'd take them with the @note test accounts once Edict is reachable again.
-- Admin pages (reports, accounts, tokens), if you want to administer the server from the phone.
+# Adroind client 
 
-# Server administration
-
-- a dashboard to running server services for managing users and server settings.
+- Suspended-account banner and server notices
+- F-Droid / IzzyOnDroid store screenshots
+- Admin pages (reports, accounts, tokens)
 

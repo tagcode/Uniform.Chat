@@ -45,11 +45,8 @@ The new user is `@alice:localhost`, or `@alice:` followed by the configured serv
 
 ## Configure from dashboard
 
-When the server runs as a [system service](xref:Uniform.Chat.Server.Service.Article), stop the service and open the dashboard as the service's user with the same folders, in a terminal:
+When the server runs as a [system service](xref:Uniform.Chat.Server.Service.Article) from the apt package, open the dashboard on the running service in a terminal; the service keeps serving meanwhile:
 
 ```bash
-sudo systemctl stop uniform-chat-server
-sudo -u uniform-chat-server env XDG_CONFIG_HOME=/etc XDG_DATA_HOME=/var/lib \
-  /opt/uniform-chat-server/uniform-chat-server --Host:Ui=Dashboard
-sudo systemctl start uniform-chat-server
+sudo uniform-chat-server manage
 ```

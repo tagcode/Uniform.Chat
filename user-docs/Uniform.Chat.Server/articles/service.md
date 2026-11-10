@@ -83,7 +83,15 @@ Step 3 below has a short example of the settings, and [Installing](xref:Uniform.
 
 To change the service, e.g. to add environment variables, use `sudo systemctl edit uniform-chat-server`, which keeps your changes over updates. `sudo apt remove uniform-chat-server` stops and removes the service and the program, but keeps the settings, the data and the user.
 
-To manage users from the dashboard, stop the service and run the dashboard as its user, with its folders. Only one server runs on a data folder at a time: while the service still runs or is stopping, the dashboard exits at once with *Another server (pid N) is using /var/lib/uniform-chat-server; stop it first.*
+To manage the running service, open the dashboard on it; the service keeps serving meanwhile:
+
+```bash
+sudo uniform-chat-server manage
+```
+
+The manager connects through the service's admin socket, `/run/uniform-chat-server/admin.sock`, which only root and the `uniform-chat` group may open, and needs no account. It has the users, rooms and reports windows, the service's logs, and its settings file. Saved settings take effect when the service starts again: `sudo systemctl restart uniform-chat-server`. Ctrl+Q closes the manager, not the server. See [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article) to manage a server on another machine.
+
+The dashboard of the server itself still runs when the service is stopped. Only one server runs on a data folder at a time: while the service still runs or is stopping, it exits at once with *Another server (pid N) is using /var/lib/uniform-chat-server; stop it first.*
 
 ```bash
 sudo systemctl stop uniform-chat-server

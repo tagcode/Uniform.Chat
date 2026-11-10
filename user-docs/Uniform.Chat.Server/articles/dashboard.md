@@ -85,6 +85,10 @@ Users can report a message, a room or another user from their client. Server →
 - **Show resolved** shows or hides the resolved reports.
 - **Delete** removes a report for good, after confirmation.
 
+## Managing a running server
+
+The dashboard also opens on a server that already runs, e.g. as a service, without stopping it: `sudo uniform-chat-server manage`. It shows the same windows, except that saved settings take effect when the server starts again, and Ctrl+Q closes only the manager. See [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package) and [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article).
+
 ## Logs window
 
 File → Logs shows the log of this session, and lets you open earlier sessions. Each start writes its own file in `logs` under the data folder. The newest 20 are kept. Changes made in the Users and Rooms windows are logged, such as `Admin created user @alice:localhost`, so the log also shows what was done; passwords never appear in it.

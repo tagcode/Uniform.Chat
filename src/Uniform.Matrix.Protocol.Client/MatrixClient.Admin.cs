@@ -68,6 +68,10 @@ public sealed partial class MatrixClient
     public Task DeactivateUserAsync(string userId, CancellationToken cancellationToken = default) =>
         SendAsync(HttpMethod.Post, $"_synapse/admin/v1/deactivate/{Escape(userId)}", new { erase = false }, authenticated: true, cancellationToken);
 
+    /// <summary>Reactivate a deactivated account, so it can log in again; for admins.</summary>
+    public Task ReactivateUserAsync(string userId, CancellationToken cancellationToken = default) =>
+        SendAsync(HttpMethod.Put, $"_synapse/admin/v2/users/{Escape(userId)}", new { deactivated = false }, authenticated: true, cancellationToken);
+
     /// <summary>Return the registration tokens; with <paramref name="valid"/>, only those that may or may not register now. For admins.</summary>
     public async Task<IReadOnlyList<AdminRegistrationToken>> GetRegistrationTokensAsync(bool? valid = null, CancellationToken cancellationToken = default) =>
         (await SendAsync<AdminRegistrationTokensResponse>(HttpMethod.Get, WithQuery("_synapse/admin/v1/registration_tokens", [("valid", valid?.ToString().ToLowerInvariant())]), null, authenticated: true, cancellationToken)).RegistrationTokens;
@@ -87,6 +91,10 @@ public sealed partial class MatrixClient
     /// <summary>Return a page of reports, newest first; for admins.</summary>
     public Task<AdminReportsResponse> GetReportsAsync(int from = 0, int limit = 100, CancellationToken cancellationToken = default) =>
         SendAsync<AdminReportsResponse>(HttpMethod.Get, WithQuery("_synapse/admin/v1/event_reports", [("from", from.ToString()), ("limit", limit.ToString())]), null, authenticated: true, cancellationToken);
+
+    /// <summary>Mark a report resolved, or open it again; for admins of Uniform servers, as Synapse has no such call.</summary>
+    public Task SetReportResolvedAsync(long reportId, bool resolved, CancellationToken cancellationToken = default) =>
+        SendAsync(HttpMethod.Put, $"_synapse/admin/v1/event_reports/{reportId}", new { resolved }, authenticated: true, cancellationToken);
 
     /// <summary>Delete a report; for admins.</summary>
     public Task DeleteReportAsync(long reportId, CancellationToken cancellationToken = default) =>

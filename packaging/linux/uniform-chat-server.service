@@ -11,7 +11,8 @@ Wants=network-online.target
 [Service]
 User=uniform-chat
 Group=uniform-chat
-ExecStart=/opt/uniform-chat/server/uniform-chat-server --Host:Ui=None
+# The admin socket lets root and the uniform-chat group manage the running server: sudo uniform-chat-server manage
+ExecStart=/opt/uniform-chat/server/uniform-chat-server --Host:Ui=None --Host:AdminSocket=/run/uniform-chat-server/admin.sock
 WorkingDirectory=/var/lib/uniform-chat-server
 # The server adds its name to these: /etc/uniform-chat-server and /var/lib/uniform-chat-server
 Environment=XDG_CONFIG_HOME=/etc
@@ -19,6 +20,9 @@ Environment=XDG_DATA_HOME=/var/lib
 # systemd creates the data folder and gives it to the user, also one of an earlier user
 StateDirectory=uniform-chat-server
 StateDirectoryMode=0700
+# systemd creates the socket's folder at start and removes it at stop
+RuntimeDirectory=uniform-chat-server
+RuntimeDirectoryMode=0750
 Restart=on-failure
 RestartSec=5
 # Stop gracefully: SIGTERM, then wait for the database to close

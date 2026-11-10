@@ -1,7 +1,10 @@
 using Uniform.Chat.Server;
+using Uniform.Chat.Server.Management;
 using Uniform.Chat.Server.Ui;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +17,9 @@ using Uniform.Matrix.Server;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Storage;
+
+// The manager of a running server needs no server of its own
+if (args.Length > 0 && args[0] == ManageCommand.Name) return await ManageCommand.RunAsync(args[1..]);
 
 // Read appsettings.json next to the executable, not from the working directory; the application name names the folders
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = ApplicationName });
@@ -34,7 +40,10 @@ builder.AddEmbeddedTurn();
 builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 // Stopping, with its clean-up, ends well before a service manager kills the process, e.g. systemd after the unit's 30 seconds
 builder.Services.Configure<HostOptions>(host => host.ShutdownTimeout = TimeSpan.FromSeconds(20));
-bool dashboard = (builder.Configuration.GetSection(ServerHostOptions.Section).Get<ServerHostOptions>() ?? new ServerHostOptions()).UseDashboard(out string uiReason);
+ServerHostOptions host = builder.Configuration.GetSection(ServerHostOptions.Section).Get<ServerHostOptions>() ?? new ServerHostOptions();
+bool dashboard = host.UseDashboard(out string uiReason);
+string? adminSocket = string.IsNullOrWhiteSpace(host.AdminSocket) ? null : Path.GetFullPath(host.AdminSocket);
+if (adminSocket is not null) AddAdminSocket(builder, adminSocket);
 
 // One log file per session; without the dashboard also to the console, which the dashboard owns otherwise
 ServerStorageOptions storage = builder.Configuration.GetSection(ServerStorageOptions.Section).Get<ServerStorageOptions>() ?? new ServerStorageOptions();
@@ -63,17 +72,44 @@ if (!dashboard)
 {
     app.Logger.LogInformation("Running without dashboard: {Reason}; --Host:Ui=Dashboard forces it", uiReason);
     if (!await StartAsync(app)) return await StopAsync(app, 1);
+    RestrictAdminSocket(adminSocket);
     await app.WaitForShutdownAsync();
     return await StopAsync(app, 0);
 }
 
 // Dashboard: start serving first, so start-up errors such as a failed migration print to a normal terminal
 if (!await StartAsync(app)) return await StopAsync(app, 1);
+RestrictAdminSocket(adminSocket);
 using IApplication ui = Application.Create();
 ui.Init();
-using (ServerWindow window = ActivatorUtilities.CreateInstance<ServerWindow>(app.Services, ui)) ui.Run(window);
+SettingsStore settings = app.Services.GetRequiredService<SettingsStore>();
+DashboardOptions options = new() { OpenSettings = () => new SettingsEditor(settings, app.Services.GetRequiredService<OptionCatalog>().GetAll(app.Configuration)) };
+using (ServerWindow window = new(ui, ActivatorUtilities.CreateInstance<LocalServerAdmin>(app.Services), options, TimeProvider.System)) ui.Run(window);
 // Done
 return await StopAsync(app, 0);
+
+// Serve the admin socket next to the configured addresses, replacing a file a stopped server left; the data directory lock keeps another server of the same data from using it
+static void AddAdminSocket(WebApplicationBuilder builder, string path)
+{
+    // A fresh socket in its folder
+    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+    if (File.Exists(path)) File.Delete(path);
+
+    // One more address, and its connections marked as the admin's
+    string urls = builder.Configuration["Urls"] ?? "http://localhost:5000";
+    builder.WebHost.UseSetting(WebHostDefaults.ServerUrlsKey, $"{urls};http://unix:{path}");
+    // Done
+    builder.Services.Configure<KestrelServerOptions>(kestrel => kestrel.MarkAdminSocket(path));
+}
+
+// Let only the server's user and group open the admin socket, as Kestrel creates it with the process's umask
+static void RestrictAdminSocket(string? path)
+{
+    // Unix only
+    if (path is null || OperatingSystem.IsWindows()) return;
+    // Done
+    File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite);
+}
 
 // Start serving; when the listen address is taken, tell how to choose another instead of showing the exception, and return false
 static async Task<bool> StartAsync(WebApplication app)

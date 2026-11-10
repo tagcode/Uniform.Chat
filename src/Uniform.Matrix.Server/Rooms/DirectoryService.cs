@@ -116,13 +116,13 @@ public sealed class DirectoryService
     }
 
     /// <summary>List or unlists a room; a server admin, or a member allowed to change the canonical alias, may.</summary>
-    public async Task SetVisibilityAsync(string userId, string roomId, string visibility, CancellationToken cancellationToken)
+    public async Task SetVisibilityAsync(string userId, string roomId, string visibility, CancellationToken cancellationToken, bool serverAdmin = false)
     {
         // Assert value and permission
         if (visibility is not ("public" or "private")) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, "visibility must be public or private.");
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         RoomRow room = await db.Rooms.SingleOrDefaultAsync(r => r.RoomId == roomId, cancellationToken) ?? throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, "Unknown room.");
-        bool allowed = await IsAdminAsync(db, userId, cancellationToken) || await rooms.CanSendStateAsync(userId, roomId, EventTypes.RoomCanonicalAlias, cancellationToken);
+        bool allowed = serverAdmin || await IsAdminAsync(db, userId, cancellationToken) || await rooms.CanSendStateAsync(userId, roomId, EventTypes.RoomCanonicalAlias, cancellationToken);
         if (!allowed) throw new MatrixException(HttpStatusCode.Forbidden, ErrorCodes.Forbidden, "Not allowed to change the room's directory visibility.");
         room.Published = visibility == "public";
         await db.SaveChangesAsync(cancellationToken);

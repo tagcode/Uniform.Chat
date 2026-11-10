@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Accounts;
 
-/// <summary>Access token authentication of endpoints: the token from the <c>Authorization</c> header, or the deprecated <c>access_token</c> query parameter.</summary>
+/// <summary>Access token authentication of endpoints: the token from the <c>Authorization</c> header, or the deprecated <c>access_token</c> query parameter; requests through the <see cref="AdminSocket"/> need none and act as a server admin.</summary>
 public static class AccessTokens
 {
     private const string RequesterKey = "Matrix.Requester";
@@ -15,8 +15,15 @@ public static class AccessTokens
     /// <summary>Require a valid access token; the endpoint reads the user with <see cref="GetRequester"/>.</summary>
     public static TBuilder RequireAccessToken<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder => builder.AddEndpointFilter(async (context, next) =>
     {
-        // Token from header or query
+        // The local admin socket, whatever token it sends
         HttpContext http = context.HttpContext;
+        if (http.IsAdminSocket())
+        {
+            http.Items[RequesterKey] = AdminSocket.Requester;
+            return await next(context);
+        }
+
+        // Token from header or query
         string? header = http.Request.Headers.Authorization;
         string? token = header is not null && header.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? header[7..].Trim() : http.Request.Query["access_token"];
         if (string.IsNullOrEmpty(token)) throw new MatrixException(HttpStatusCode.Unauthorized, ErrorCodes.MissingToken, "Missing access token.");
