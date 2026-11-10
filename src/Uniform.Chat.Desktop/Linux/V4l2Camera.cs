@@ -6,15 +6,15 @@ using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
 using Uniform.Matrix.Video.Vp8;
 
-/// <summary>A Linux webcam through <see href="https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html">Video4Linux2</see>, encoded with the pure C# <see cref="Vp8Encoder"/>: YUYV pictures of 640x480 from memory-mapped buffers, converted to I420, and sent at 15 per second; 320x240 at 10 when the peer asks for less.</summary>
-/// <remarks>Only <c>open</c>, <c>ioctl</c>, <c>mmap</c>, <c>munmap</c> and <c>close</c> of libc are called; the structures are byte arrays at the offsets of 64-bit Linux. Every frame is a keyframe, so a coarser quantizer keeps the bitrate down, and keyframe requests need nothing.</remarks>
+/// <summary>A Linux webcam through <see href="https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html">Video4Linux2</see>, encoded with the pure C# <see cref="Vp8Encoder"/>: YUYV pictures of 640x480 from memory-mapped buffers, converted to I420, and sent at up to 30 per second; 320x240 at 10 when the peer asks for less.</summary>
+/// <remarks>Only <c>open</c>, <c>ioctl</c>, <c>mmap</c>, <c>munmap</c> and <c>close</c> of libc are called; the structures are byte arrays at the offsets of 64-bit Linux. Inter frames between keyframes keep the bitrate down; a keyframe request makes the next frame one.</remarks>
 public sealed class V4l2Camera : IVideoCamera
 {
     private const uint QueryCapability = 0x80685600, SetFormat = 0xC0D05605, RequestBuffers = 0xC0145608, QueryBuffer = 0xC0585609, QueueBuffer = 0xC058560F, DequeueBuffer = 0xC0585611, StreamOn = 0x40045612, StreamOff = 0x40045613;
     private const uint VideoCapture = 1, MemoryMap = 1, Yuyv = 0x56595559, CaptureCapability = 1, DeviceCapabilities = 0x80000000, FieldNone = 1;
     private const int ReadWrite = 2, ProtectReadWrite = 3, MapShared = 1, BufferCount = 4;
     private const long FallbackBelow = 300_000, RestoreFrom = 600_000;
-    private readonly Vp8Encoder encoder = new(60);
+    private readonly Vp8Encoder encoder = new(40);
     private readonly List<(IntPtr Address, int Length)> buffers = [];
     private CancellationTokenSource? stopping;
     private Thread? capturing;
@@ -24,6 +24,7 @@ public sealed class V4l2Camera : IVideoCamera
     private int height;
     private volatile bool low;
     private volatile bool paused;
+    private volatile int quantizer = 40;
     private long lastFrame;
     private int previews;
     private int captureCount;
@@ -57,16 +58,17 @@ public sealed class V4l2Camera : IVideoCamera
         Run();
     }
 
-    /// <summary>Every frame is a keyframe, so there is nothing to ask the encoder.</summary>
-    public void RequestKeyframe() { }
+    /// <summary>Make the next frame a keyframe.</summary>
+    public void RequestKeyframe() => encoder.RequestKeyframe();
 
     /// <summary>Stop sending and previewing, or start again; the device keeps capturing, so it resumes at once.</summary>
     public void SetPaused(bool pause) => paused = pause;
 
-    /// <summary>Follow the peer's limit: 320x240 at 10 per second below <see cref="FallbackBelow"/>, full size from <see cref="RestoreFrom"/>.</summary>
+    /// <summary>Follow the peer's limit: a coarser quantizer for lower rates; 320x240 at 10 per second below <see cref="FallbackBelow"/>, full size from <see cref="RestoreFrom"/>.</summary>
     public void LimitBitrate(long bitsPerSecond)
     {
-        // Between them as is
+        // Quantizer by the rate; the size between the thresholds as is
+        quantizer = bitsPerSecond >= 1_200_000 ? 35 : bitsPerSecond >= 800_000 ? 40 : bitsPerSecond >= 500_000 ? 48 : 56;
         if (bitsPerSecond < FallbackBelow) low = true;
         else if (bitsPerSecond >= RestoreFrom) low = false;
     }
@@ -223,12 +225,12 @@ public sealed class V4l2Camera : IVideoCamera
             ioctl(device, QueueBuffer, buffer);
 
             // At the frame rate, unless paused
-            TimeSpan interval = TimeSpan.FromSeconds(1.0 / (low ? 10 : 15));
+            TimeSpan interval = TimeSpan.FromSeconds(1.0 / (low ? 10 : 30));
             if (paused || System.Diagnostics.Stopwatch.GetElapsedTime(lastFrame) < interval) continue;
             lastFrame = System.Diagnostics.Stopwatch.GetTimestamp();
             VideoFrame picture = ToI420(yuyv, width, height, low);
             if (++previews % 3 == 0) Previewed?.Invoke(picture);
-            encoder.Quantizer = low ? 50 : 60;
+            encoder.Quantizer = quantizer;
             FrameEncoded?.Invoke(encoder.Encode(picture));
         }
     }

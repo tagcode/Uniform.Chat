@@ -12,7 +12,7 @@ namespace Uniform.Matrix.Video.Vp8;
 /// <item><description>Vp8Decoder.LoopFilter.cs: the loop filter.</description></item>
 /// </list>
 /// </remarks>
-public sealed partial class Vp8Decoder
+public sealed partial class Vp8Decoder : IVideoDecoder
 {
     private const int CoefficientsPerMacroblock = 25 * 16;
     private readonly BoolDecoder header = new();
@@ -109,6 +109,9 @@ public sealed partial class Vp8Decoder
             ProbGolden = other.ProbGolden;
         }
     }
+
+    /// <summary>Nothing to release: the decoder holds only managed memory.</summary>
+    public void Dispose() { }
 
     /// <summary>Decode one frame; return the picture when the frame is shown, or null for a frame only kept as a reference.</summary>
     /// <exception cref="InvalidDataException">The frame is corrupt or unsupported, or no keyframe came first.</exception>

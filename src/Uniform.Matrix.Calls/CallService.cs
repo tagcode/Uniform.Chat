@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Calls;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
+using Uniform.Matrix.Video;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Client.State;
@@ -44,6 +45,9 @@ public sealed class CallService : IAsyncDisposable
 
     /// <summary>Opens the platform's camera, for calls answered with video; null where there is none, as on desktops for now.</summary>
     public Func<IVideoCamera?>? Camera { get; set; }
+
+    /// <summary>Makes a decoder of a peer's video, e.g. the platform's hardware one; null for the C# decoder, as on desktops.</summary>
+    public Func<IVideoDecoder?>? VideoDecoder { get; set; }
 
     /// <summary>Whether calls go through TURN only, so the peer does not learn this device's addresses.</summary>
     public bool RelayOnly { get; set; }
@@ -253,7 +257,7 @@ public sealed class CallService : IAsyncDisposable
     private VoiceCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
     {
         // Events through the outbox, changes to the listeners
-        VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke());
+        VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
         call.Changed += c =>
         {
             CallChanged?.Invoke(c);

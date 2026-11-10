@@ -28,7 +28,7 @@ picture.CopyToBgra(pixels, stride);
 
 ## Encoding
 
-[`Vp8Encoder`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder) encodes pictures as VP8 frames, in pure C# too. For now every frame is a keyframe: each macroblock is predicted from its edges by DC, its residual transformed and quantized with one quantizer, and written with the default probabilities, without a loop filter. [`Quantizer`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Quantizer), 0 to 127, trades size for quality. The encoder reconstructs each frame with the decoder's own inverse transforms, so [`Reconstruction`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Reconstruction) is the picture that decoders show; the tests check that bit for bit, and that Chromium decodes the frames.
+[`Vp8Encoder`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder) encodes pictures as VP8 frames, in pure C# too. A keyframe predicts each macroblock from its edges by DC; the inter frames between keyframes predict each from the previous picture at the same place, and skip those with nothing left to code, which for a camera is most of the picture. Residuals are transformed and quantized with one quantizer, and written with the default probabilities, without a loop filter. A keyframe comes every [`KeyframeInterval`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.KeyframeInterval) frames, and after [`RequestKeyframe`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.RequestKeyframe), e.g. when the peer lost packets. [`Quantizer`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Quantizer), 0 to 127, trades size for quality. The encoder reconstructs each frame with the decoder's own inverse transforms, so [`Reconstruction`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Reconstruction) is the picture that decoders show; the tests check that bit for bit, and that Chromium decodes the frames.
 
 To encode a picture and send it in a call:
 
@@ -37,7 +37,7 @@ Vp8Encoder encoder = new(quantizer: 40);
 await connection.SendVideoAsync(encoder.Encode(picture));
 ```
 
-Keyframes only cost several times the bits of a stream with inter frames, which predict from the previous picture; those come next.
+With [`MotionSearch`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.MotionSearch), on by default, an inter macroblock may predict from a moved place: the neighbours' vectors and a diamond search of even whole pixels inside the frame are tried, and a vector is taken when it saves more than its bits. Even whole pixels keep chroma on whole pixels too, so predictions are plain copies.
 
 ## How the decoder is built
 

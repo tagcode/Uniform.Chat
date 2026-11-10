@@ -31,6 +31,9 @@ public sealed record GuiPlatform
     /// <summary>Opens the camera with its VP8 encoder, for calls answered with video; null where there is none.</summary>
     public Func<Uniform.Matrix.Calls.IVideoCamera>? Camera { get; init; }
 
+    /// <summary>Makes a decoder of a call's video, e.g. Android's hardware decoder; null for the C# one.</summary>
+    public Func<Uniform.Matrix.Video.IVideoDecoder>? VideoDecoder { get; init; }
+
     /// <summary>Asks for the camera permission where needed, returning whether granted; null when none is needed.</summary>
     public Func<Task<bool>>? RequestCameraAsync { get; init; }
     /// <summary>Ask for permission to show notifications, where the platform needs it, as Android 13 and later do; return whether they may be shown. Null where none is needed.</summary>

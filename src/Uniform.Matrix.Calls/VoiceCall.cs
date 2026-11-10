@@ -49,6 +49,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private readonly CallEventSender send;
     private readonly Func<IAudioDevices?> devices;
     private readonly Func<IVideoCamera?> camera;
+    private readonly Func<IVideoDecoder?> videoDecoder;
     private readonly PeerConnectionOptions options;
     private readonly ILogger logger;
     private readonly CallInviteContent? invite;
@@ -81,7 +82,8 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <param name="options">Options of the peer connection, with the TURN servers.</param>
     /// <param name="logger">Logger.</param>
     /// <param name="camera">Opens the camera when a call answered with video connects; null, or returning null, for none.</param>
-    internal VoiceCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null)
+    /// <param name="videoDecoder">Makes the decoder of the peer's video, e.g. the platform's hardware one; null, or returning null, for the C# one.</param>
+    internal VoiceCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null, Func<IVideoDecoder?>? videoDecoder = null)
     {
         // Identity, and the parts the call uses
         RoomId = roomId;
@@ -94,6 +96,7 @@ public sealed class VoiceCall : IAsyncDisposable
         this.send = send;
         this.devices = devices;
         this.camera = camera ?? (() => null);
+        this.videoDecoder = videoDecoder ?? (() => null);
         this.options = options;
         this.logger = logger;
         State = invite is null ? CallState.Inviting : CallState.Ringing;
@@ -481,7 +484,10 @@ public sealed class VoiceCall : IAsyncDisposable
     private void StartVideo(AudioPeerConnection peer)
     {
         // Pictures to the call's listeners
-        video = new VideoReceiver(peer, logger);
+        IVideoDecoder? platformDecoder = null;
+        try { platformDecoder = videoDecoder(); }
+        catch (Exception e) { logger.LogWarning(e, "The platform's video decoder did not start; decoding in C#"); }
+        video = new VideoReceiver(peer, logger, platformDecoder);
         // Done
         video.PictureDecoded += picture => PictureReceived?.Invoke(this, picture);
     }

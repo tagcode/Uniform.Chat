@@ -6,7 +6,7 @@
   uid: Uniform.Chat.Desktop.Rooms.Article
 - name: Messages and files
   uid: Uniform.Chat.Desktop.Messages.Article
-- name: Voice calls
+- name: Voice and video calls
   uid: Uniform.Chat.Desktop.Calls.Article
 - name: Security
   uid: Uniform.Chat.Desktop.Security.Article

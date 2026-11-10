@@ -217,12 +217,79 @@ public class BrowserTests
         JsonNode stats = (await chromium.EvaluateAsync("""
             const report = await pc.getStats();
             const inbound = [...report.values()].find(s => s.type === 'inbound-rtp' && s.kind === 'video');
-            return { decoded: inbound?.framesDecoded ?? 0, width: inbound?.frameWidth, height: inbound?.frameHeight, lost: inbound?.packetsLost, pli: inbound?.pliCount ?? 0 };
+            const reports = [...report.values()].find(s => s.type === 'remote-outbound-rtp' && s.kind === 'video');
+            return { decoded: inbound?.framesDecoded ?? 0, width: inbound?.frameWidth, height: inbound?.frameHeight, lost: inbound?.packetsLost, pli: inbound?.pliCount ?? 0, senderReports: reports?.reportsSent ?? 0 };
             """, cancellationToken))!;
         Assert.True(stats["decoded"]!.GetValue<int>() >= 60, stats.ToJsonString());
         Assert.Equal(width, stats["width"]!.GetValue<int>());
+        Assert.True(stats["senderReports"]!.GetValue<int>() >= 1, stats.ToJsonString());
         // Done
         Assert.Equal(height, stats["height"]!.GetValue<int>());
+    }
+
+    /// <summary>Video from Chromium over a lossy path, every 15th packet dropped the first time: our NACKs make Chromium send them again, and the video decodes on without Chromium making new keyframes for it.</summary>
+    [Fact]
+    public async Task RecoverLostVideoPackets()
+    {
+        // Browser, and our side losing packets once
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        Chromium? started;
+        try { started = await Chromium.StartAsync(cancellationToken); }
+        catch (ChromiumUnavailableException ex) { Assert.Skip(ex.Message); return; }
+        await using Chromium? chromium = started;
+        if (chromium is null) { Assert.Skip("Chromium is not installed."); return; }
+        await using AudioPeerConnection peer = new(new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true });
+        HashSet<ushort> dropped = [];
+        int seen = 0;
+        peer.DropReceivedVideo = packet => Interlocked.Increment(ref seen) % 15 == 0 && dropped.Add(packet.Sequence);
+        Video.Vp8.Vp8Decoder decoder = new();
+        int pictures = 0;
+        peer.VideoReceived += frame => { if (decoder.Decode(frame.Data) is not null) Interlocked.Increment(ref pictures); };
+
+        // Chromium's offer of a moving canvas; our answer; connect
+        string offer = (await chromium.EvaluateAsync("""
+            const context = new AudioContext();
+            const destination = context.createMediaStreamDestination();
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 480;
+            const draw = canvas.getContext('2d');
+            let frame = 0;
+            window.painter = setInterval(() => { draw.fillStyle = '#204060'; draw.fillRect(0, 0, 640, 480); draw.fillStyle = '#f0c040'; draw.fillRect((frame * 8) % 560, 200, 80, 80); frame++; }, 33);
+            const video = canvas.captureStream(30);
+            window.pc = new RTCPeerConnection();
+            pc.addTrack(destination.stream.getAudioTracks()[0], destination.stream);
+            pc.addTrack(video.getVideoTracks()[0], video);
+            await pc.setLocalDescription(await pc.createOffer());
+            await new Promise(done => { if (pc.iceGatheringState === 'complete') done(); pc.onicegatheringstatechange = () => pc.iceGatheringState === 'complete' && done(); });
+            return pc.localDescription.sdp;
+            """, cancellationToken))!.GetValue<string>();
+        TaskCompletionSource gathered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        peer.GatheringCompleted += () => gathered.TrySetResult();
+        string answer = peer.AcceptOffer(offer);
+        await gathered.Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
+        string[] candidates = [.. peer.Ice!.LocalCandidates.Select(c => c.ToString())];
+        await chromium.EvaluateAsync($$"""
+            await pc.setRemoteDescription({ type: 'answer', sdp: {{JsonSerializer.Serialize(answer)}} });
+            for (const candidate of {{JsonSerializer.Serialize(candidates)}}) await pc.addIceCandidate({ candidate, sdpMid: '0', sdpMLineIndex: 0 });
+            """, cancellationToken);
+        Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
+
+        // Four seconds of video
+        await Task.Delay(4000, cancellationToken);
+        JsonNode stats = (await chromium.EvaluateAsync("""
+            const report = await pc.getStats();
+            const outbound = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'video');
+            return { frames: outbound?.framesEncoded ?? 0, nacks: outbound?.nackCount ?? 0, resent: outbound?.retransmittedPacketsSent ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0 };
+            """, cancellationToken))!;
+
+        // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
+        Assert.True(dropped.Count > 5, $"{dropped.Count} dropped");
+        Assert.True(peer.VideoPacketsNacked >= dropped.Count / 2, $"{peer.VideoPacketsNacked} asked for {dropped.Count} dropped; Chromium: {stats.ToJsonString()}");
+        Assert.True(stats["resent"]!.GetValue<int>() > 0, stats.ToJsonString());
+        Assert.True(pictures > 60, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");
+        // Done
+        Assert.True(stats["pli"]!.GetValue<int>() <= 2, stats.ToJsonString());
     }
 
     /// <summary>We offer audio and video both ways, as a video call's caller; Chromium answers with a canvas; each side decodes the other's pictures.</summary>

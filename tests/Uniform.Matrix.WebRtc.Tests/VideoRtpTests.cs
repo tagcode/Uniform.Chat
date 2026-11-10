@@ -110,6 +110,60 @@ public class VideoRtpTests
         Assert.Equal((0x55u, 0x56789ABCu), Assert.Single(Rtcp.ReadSenderReports([.. senderReport, .. compound])));
     }
 
+    /// <summary>A sender report carries the NTP and RTP times, the counts and its block at their offsets, and reads back; NTP counts from 1900 with a 32-bit fraction.</summary>
+    [Fact]
+    public void BuildSenderReport()
+    {
+        // Arrange and act: half a second past a whole second
+        ulong ntp = Rtcp.Ntp(new DateTimeOffset(1900, 1, 1, 0, 0, 10, 500, TimeSpan.Zero));
+        ReportBlock block = new(0xAABBCCDD, 0, 0, 1, 2, 3, 4);
+        byte[] report = Rtcp.SenderReport(0x01020304, ntp, 90000, 7, 700, [block]);
+
+        // Assert
+        Assert.Equal(10UL << 32 | 1UL << 31, ntp);
+        Assert.Equal([0x81, Rtcp.SenderReportType, 0, 12], report[..4]);
+        Assert.Equal(52, report.Length);
+        Assert.Equal(90000u, BinaryPrimitives.ReadUInt32BigEndian(report.AsSpan(16)));
+        Assert.Equal(700u, BinaryPrimitives.ReadUInt32BigEndian(report.AsSpan(24)));
+        Assert.Equal(0xAABBCCDDu, BinaryPrimitives.ReadUInt32BigEndian(report.AsSpan(28)));
+        // Done
+        Assert.Equal((0x01020304u, (uint)(ntp >> 16)), Assert.Single(Rtcp.ReadSenderReports(report)));
+    }
+
+    /// <summary>The estimate falls on heavy loss, holds on moderate, and climbs back on little, within its bounds.</summary>
+    [Fact]
+    public void EstimateBandwidth()
+    {
+        // Arrange
+        BandwidthEstimator estimator = new(start: 1_000_000, minimum: 150_000, maximum: 2_000_000);
+
+        // Act and assert: 20% loss three times, 5% once, then none for a while
+        Assert.Equal(700_000, estimator.Update(51));
+        estimator.Update(51);
+        long low = estimator.Update(51);
+        Assert.Equal(low, estimator.Update(13));
+        for (int i = 0; i < 40; i++) estimator.Update(0);
+        Assert.Equal(2_000_000, estimator.Bitrate);
+        for (int i = 0; i < 40; i++) estimator.Update(255);
+        // Done
+        Assert.Equal(150_000, estimator.Bitrate);
+    }
+
+    /// <summary>A generic NACK packs nearby losses into one entry's mask, and reads back for that stream only.</summary>
+    [Fact]
+    public void BuildNack()
+    {
+        // Arrange and act: three near each other across a wraparound, and one far
+        ushort[] lost = [65535, 0, 3, 200];
+        byte[] nack = Rtcp.Nack(1, 0xAABBCCDD, lost);
+
+        // Assert: two entries, all read back
+        Assert.Equal([0x81, Rtcp.TransportFeedbackType, 0, 4], nack[..4]);
+        Assert.Equal(lost.Order(), Rtcp.ReadNacks(nack, 0xAABBCCDD).Order());
+        // Done
+        Assert.Empty(Rtcp.ReadNacks(nack, 0x11111111));
+    }
+
     /// <summary>A REMB asks one stream for a bitrate, kept to its 18-bit mantissa, and reads back for that stream only.</summary>
     [Fact]
     public void BuildRemb()

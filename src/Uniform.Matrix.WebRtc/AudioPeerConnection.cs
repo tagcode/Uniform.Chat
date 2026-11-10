@@ -43,7 +43,7 @@ public enum PeerConnectionState
 
 /// <summary>A WebRTC peer connection with one Opus audio stream each way, as 1:1 voice calls use: SDP offer and answer, ICE with trickled candidates, DTLS-SRTP, and RTP; and, when the peer offers it and <see cref="PeerConnectionOptions.ReceiveVideo"/> is set, VP8 video received.</summary>
 /// <remarks>
-/// Received video comes as whole frames in <see cref="VideoReceived"/>; the connection sends RTCP receiver reports every second, and picture loss indications while a keyframe is needed.
+/// Received video comes as whole frames in <see cref="VideoReceived"/>; the connection sends RTCP receiver reports every second, each with a REMB of the loss-based estimate, NACKs for gaps, and picture loss indications while a keyframe is needed.
 /// The caller calls <see cref="CreateOffer"/> and later <see cref="AcceptAnswer"/>; the callee calls <see cref="AcceptOffer"/>. Both trickle the candidates of <see cref="CandidateGathered"/> to the peer, give the peer's to <see cref="AddRemoteCandidate"/>, and call <see cref="ConnectAsync"/>.
 /// The offerer controls ICE, and the answerer is the DTLS client, as browsers do. Datagrams are told apart by their first byte as <see href="https://www.rfc-editor.org/rfc/rfc7983">RFC 7983</see> says.
 /// </remarks>
@@ -79,6 +79,24 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     private Task? reporting;
     private byte? videoSendPayloadType;
     private byte? orientationId;
+    /// <summary>How many sent video packets are kept for resending.</summary>
+    private const int KeptVideoPackets = 512;
+    /// <summary>Most packets one gap asks to resend; a longer gap waits for a keyframe.</summary>
+    private const int MostNacked = 64;
+    private readonly Dictionary<ushort, byte[]> sentVideo = [];
+    private readonly Queue<ushort> sentOrder = new();
+    private readonly Lock sentLock = new();
+    private int? highestVideoSequence;
+    private long videoPacketsResent;
+    private long videoPacketsNacked;
+    private readonly BandwidthEstimator bandwidth = new();
+    private long bitrateCap = long.MaxValue;
+    private uint audioPackets;
+    private uint audioOctets;
+    private uint videoPackets;
+    private uint videoOctets;
+    private long audioClockTick;
+    private uint audioClockTimestamp;
     private readonly Vp8Packetizer packetizer = new();
     private ushort videoSequence = (ushort)RandomUInt();
     private readonly uint videoTimestampBase = RandomUInt();
@@ -116,6 +134,15 @@ public sealed class AudioPeerConnection : IAsyncDisposable
 
     /// <summary>Whether the answer sends video to the peer, with <see cref="SendVideoAsync"/>.</summary>
     public bool SendsVideo => videoSendPayloadType is not null;
+
+    /// <summary>Video packets sent again because the peer asked, with a NACK.</summary>
+    public long VideoPacketsResent => Interlocked.Read(ref videoPacketsResent);
+
+    /// <summary>Video packets of the peer asked again, with NACKs, after a gap.</summary>
+    public long VideoPacketsNacked => Interlocked.Read(ref videoPacketsNacked);
+
+    /// <summary>For tests: drops received video packets for which it returns true, before SRTP sees them, as a lossy network would; their headers are in the clear.</summary>
+    internal Func<RtpPacket, bool>? DropReceivedVideo { get; set; }
 
     /// <summary>Raised when the peer asks to limit the video sent to a bitrate, in bits per second, with a REMB, e.g. as it cannot decode more; on the socket's read loop.</summary>
     public event Action<long>? BitrateRequested;
@@ -288,7 +315,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         }
         // Done, with reports on received video
         SetState(PeerConnectionState.Connected);
-        if (videoPayloadType is not null) reporting ??= ReportAsync(stopping.Token);
+        reporting ??= ReportAsync(stopping.Token);
         return true;
     }
 
@@ -301,7 +328,10 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         // Connected only
         if (outbound is null || ice is null || State != PeerConnectionState.Connected) return ValueTask.CompletedTask;
         RtpPacket packet = new() { PayloadType = payloadType, Marker = silent, Sequence = sequence++, Timestamp = timestamp, Ssrc = ssrc, Payload = opus };
+        NoteAudioClock();
         timestamp += (uint)samples;
+        audioPackets++;
+        audioOctets += (uint)opus.Length;
         silent = false;
         // Done
         return ice.SendAsync(outbound.ProtectRtp(packet.Encode()), cancellationToken);
@@ -323,20 +353,91 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         {
             bool last = i == payloads.Count - 1;
             RtpPacket packet = new() { PayloadType = type, Marker = last, Sequence = videoSequence++, Timestamp = stamp, Ssrc = videoSsrc, Payload = payloads[i], Extensions = last && orientationId is byte id ? [(id, [(byte)(rotation / 90 & 3)])] : [] };
-            await ice.SendAsync(outbound.ProtectRtp(packet.Encode()), cancellationToken);
+            byte[] protectedPacket = outbound.ProtectRtp(packet.Encode());
+            videoPackets++;
+            videoOctets += (uint)payloads[i].Length;
+            Keep(packet.Sequence, protectedPacket);
+            await ice.SendAsync(protectedPacket, cancellationToken);
         }
     }
 
-    /// <summary>Ask the peer to send its video at most at <paramref name="bitsPerSecond"/>, with a REMB, e.g. as this device cannot decode more; nothing without received video.</summary>
+    /// <summary>Keep a sent video packet, protected as sent, for resending; the oldest go.</summary>
+    private void Keep(ushort sequence, byte[] protectedPacket)
+    {
+        // Newest in, oldest out
+        lock (sentLock)
+        {
+            if (sentVideo.TryAdd(sequence, protectedPacket)) sentOrder.Enqueue(sequence);
+            else sentVideo[sequence] = protectedPacket;
+            while (sentOrder.Count > KeptVideoPackets) sentVideo.Remove(sentOrder.Dequeue());
+        }
+    }
+
+    /// <summary>Send again the kept video packets the peer asked for; those no longer kept are gone.</summary>
+    private async Task ResendAsync(IReadOnlyList<ushort> lost)
+    {
+        // As sent before, so the peer's SRTP takes them as the first copy
+        if (ice is null) return;
+        List<byte[]> again = [];
+        lock (sentLock)
+        {
+            foreach (ushort sequence in lost)
+            {
+                if (sentVideo.TryGetValue(sequence, out byte[]? packet)) again.Add(packet);
+            }
+        }
+        try
+        {
+            foreach (byte[] packet in again)
+            {
+                await ice.SendAsync(packet, stopping.Token);
+                Interlocked.Increment(ref videoPacketsResent);
+            }
+        }
+        catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or System.Net.Sockets.SocketException)
+        {
+            // Done: the connection closed meanwhile
+        }
+    }
+
+    /// <summary>Ask the peer, with a NACK, for the video packets of a gap before <paramref name="packet"/>, at once, before the frames wait for a keyframe; a gap longer than <see cref="MostNacked"/> waits for one.</summary>
+    private void NackGap(RtpPacket packet)
+    {
+        // Newer than the highest, past a gap
+        int? highest = highestVideoSequence;
+        highestVideoSequence = highest is int h && (short)(ushort)(packet.Sequence - h) <= 0 ? h : packet.Sequence;
+        if (highest is not int last) return;
+        int gap = (ushort)(packet.Sequence - last) - 1;
+        if (gap is < 1 or > MostNacked) return;
+
+        // The missing ones, to the stream's sender
+        ushort[] missing = [.. Enumerable.Range(1, gap).Select(i => (ushort)(last + i))];
+        Interlocked.Add(ref videoPacketsNacked, missing.Length);
+        // Done
+        _ = SendRtcpAsync(Rtcp.Nack(videoSsrc, packet.Ssrc, missing));
+    }
+
+    /// <summary>Send an RTCP packet, protected; nothing before connecting or after closing.</summary>
+    private async Task SendRtcpAsync(byte[] rtcp)
+    {
+        // Connected only
+        if (outbound is null || ice is null || State != PeerConnectionState.Connected) return;
+        // Done
+        try { await ice.SendAsync(outbound.ProtectRtcp(rtcp), stopping.Token); }
+        catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or System.Net.Sockets.SocketException) { }
+    }
+
+    /// <summary>Cap the bitrate asked of the peer's video at <paramref name="bitsPerSecond"/>, e.g. as this device cannot decode more, and ask at once with a REMB; every report then asks for the loss-based estimate within the cap. Nothing without received video.</summary>
     public async Task RequestBitrateAsync(long bitsPerSecond)
     {
         // Received video, from a known stream
+        Interlocked.Exchange(ref bitrateCap, bitsPerSecond);
         if (videoPayloadType is null || outbound is null || ice is null || State != PeerConnectionState.Connected) return;
         uint media;
         lock (videoLock) media = videoStatistics?.Ssrc ?? 0;
         if (media == 0) return;
         // Done
-        try { await ice.SendAsync(outbound.ProtectRtcp(Rtcp.Remb(videoSsrc, media, bitsPerSecond)), stopping.Token); }
+        try { await ice.SendAsync(outbound.ProtectRtcp(Rtcp.Remb(videoSsrc, media, Math.Min(bitsPerSecond, bandwidth.Bitrate))), stopping.Token); }
         catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or System.Net.Sockets.SocketException) { }
     }
 
@@ -354,6 +455,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     public void SkipAudio(int samples = FrameSamples)
     {
         // Time goes on
+        NoteAudioClock();
         timestamp += (uint)samples;
         silent = true;
     }
@@ -461,25 +563,53 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
         {
             bool needsKeyframe;
-            lock (videoLock) needsKeyframe = depacketizer!.NeedsKeyframe;
+            lock (videoLock) needsKeyframe = depacketizer?.NeedsKeyframe == true;
             await SendReportAsync(needsKeyframe);
         }
     }
 
-    /// <summary>Send a compound RTCP packet: the report on the received video, the CNAME, and with <paramref name="pictureLoss"/> a picture loss indication.</summary>
+    /// <summary>Note the audio clock: the RTP time the next frame starts at, and when; a sender report extrapolates from it.</summary>
+    private void NoteAudioClock()
+    {
+        // Now
+        audioClockTimestamp = timestamp;
+        // Done
+        audioClockTick = System.Diagnostics.Stopwatch.GetTimestamp();
+    }
+
+    /// <summary>Send a compound RTCP packet: sender reports of the video and audio sent, with the report block of the video received, or a receiver report when sending none; the CNAME; with <paramref name="pictureLoss"/> a picture loss indication; and the REMB of the video received.</summary>
     private async Task SendReportAsync(bool pictureLoss)
     {
-        // Nothing to report on before the first packet
+        // The report block of the received video, if any
         if (outbound is null || ice is null || State != PeerConnectionState.Connected) return;
-        byte[] compound;
+        ReportBlock? block = null;
+        long estimate = 0;
         lock (videoLock)
         {
-            if (videoStatistics!.Report() is not ReportBlock block) return;
-            compound = Rtcp.Compound(videoSsrc, [block], cname, pictureLoss ? block.Ssrc : null);
+            block = videoStatistics?.Report();
+            if (block is not null) estimate = Math.Min(bandwidth.Update(block.FractionLost), Interlocked.Read(ref bitrateCap));
         }
+
+        // Sender reports at one wall-clock moment, each stream's RTP time then
+        ulong ntp = Rtcp.Ntp(DateTimeOffset.UtcNow);
+        IReadOnlyList<ReportBlock> blocks = block is null ? [] : [block];
+        List<byte> compound = [];
+        uint first = videoSsrc;
+        if (videoSendPayloadType is not null && videoPackets > 0) compound.AddRange(Rtcp.SenderReport(videoSsrc, ntp, videoTimestampBase + (uint)(System.Diagnostics.Stopwatch.GetElapsedTime(videoClockStart).TotalSeconds * 90000), videoPackets, videoOctets, blocks));
+        else if (block is not null) compound.AddRange(Rtcp.ReceiverReport(videoSsrc, blocks));
+        if (audioPackets > 0)
+        {
+            if (compound.Count == 0) first = ssrc;
+            uint audioNow = audioClockTimestamp + (uint)(System.Diagnostics.Stopwatch.GetElapsedTime(audioClockTick).TotalSeconds * 48000);
+            compound.AddRange(Rtcp.SenderReport(ssrc, ntp, audioNow, audioPackets, audioOctets, []));
+        }
+        if (compound.Count == 0) return;
+        compound.AddRange(Rtcp.SourceDescription(first, cname));
+        if (block is not null && pictureLoss) compound.AddRange(Rtcp.PictureLossIndication(videoSsrc, block.Ssrc));
+        if (block is not null) compound.AddRange(Rtcp.Remb(videoSsrc, block.Ssrc, estimate));
         try
         {
-            await ice.SendAsync(outbound.ProtectRtcp(compound), stopping.Token);
+            await ice.SendAsync(outbound.ProtectRtcp([.. compound]), stopping.Token);
         }
         catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or System.Net.Sockets.SocketException)
         {
@@ -508,6 +638,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
             if (inbound.UnprotectRtcp(datagram) is not byte[] rtcp) return;
             if (videoSendPayloadType is not null && Rtcp.AsksKeyframe(rtcp, videoSsrc)) KeyframeRequested?.Invoke();
             if (videoSendPayloadType is not null && Rtcp.ReadRemb(rtcp, videoSsrc) is long bitrate) BitrateRequested?.Invoke(bitrate);
+            if (videoSendPayloadType is not null && Rtcp.ReadNacks(rtcp, videoSsrc) is { Count: > 0 } lost) _ = ResendAsync(lost);
             if (videoStatistics is null) return;
             lock (videoLock)
             {
@@ -518,9 +649,11 @@ public sealed class AudioPeerConnection : IAsyncDisposable
             }
             return;
         }
+        if (DropReceivedVideo is { } drop && RtpPacket.Parse(datagram) is { } header && header.PayloadType == videoPayloadType && drop(header)) return;
         if (inbound.UnprotectRtp(datagram) is not byte[] plain || RtpPacket.Parse(plain) is not RtpPacket packet) return;
         if (packet.PayloadType == videoPayloadType)
         {
+            lock (videoLock) NackGap(packet);
             OnVideo(packet);
             return;
         }

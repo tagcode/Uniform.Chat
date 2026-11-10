@@ -8,7 +8,7 @@
   uid: Uniform.Chat.Android.Rooms.Article
 - name: Messages and files
   uid: Uniform.Chat.Android.Messages.Article
-- name: Voice calls
+- name: Voice and video calls
   uid: Uniform.Chat.Android.Calls.Article
 - name: Security
   uid: Uniform.Chat.Android.Security.Article

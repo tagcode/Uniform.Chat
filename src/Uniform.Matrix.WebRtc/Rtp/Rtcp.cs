@@ -22,6 +22,8 @@ public static class Rtcp
     public const byte ReceiverReportType = 201;
     /// <summary>Packet type of source descriptions.</summary>
     public const byte SourceDescriptionType = 202;
+    /// <summary>Packet type of transport feedback, such as a generic NACK.</summary>
+    public const byte TransportFeedbackType = 205;
     /// <summary>Packet type of payload-specific feedback, such as a picture loss indication.</summary>
     public const byte PayloadFeedbackType = 206;
 
@@ -33,6 +35,35 @@ public static class Rtcp
         if (pictureLossOf is uint media) packet.AddRange(PictureLossIndication(senderSsrc, media));
         // Return bytes
         return [.. packet];
+    }
+
+    /// <summary>Return a sender report, <see href="https://www.rfc-editor.org/rfc/rfc3550#section-6.4.1">RFC 3550 6.4.1</see>, of <paramref name="senderSsrc"/>: the wall-clock time <paramref name="ntp"/> as 64-bit NTP, the stream's RTP time at that moment, the packets and payload bytes sent, and up to 31 report <paramref name="blocks"/> on streams received.</summary>
+    public static byte[] SenderReport(uint senderSsrc, ulong ntp, uint rtpTimestamp, uint packets, uint octets, IReadOnlyList<ReportBlock> blocks)
+    {
+        // A receiver report's layout with the sender information after the SSRC
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(blocks.Count, 31);
+        byte[] receiver = ReceiverReport(senderSsrc, blocks);
+        byte[] packet = new byte[receiver.Length + 20];
+        Header(packet, blocks.Count, SenderReportType);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(4), senderSsrc);
+        BinaryPrimitives.WriteUInt64BigEndian(packet.AsSpan(8), ntp);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(16), rtpTimestamp);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(20), packets);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(24), octets);
+        receiver.AsSpan(8).CopyTo(packet.AsSpan(28));
+        // Return bytes
+        return packet;
+    }
+
+    /// <summary>Return <paramref name="time"/> as 64-bit NTP: seconds since 1900 in the high half, the fraction in the low.</summary>
+    public static ulong Ntp(DateTimeOffset time)
+    {
+        // Ticks since the NTP epoch
+        long ticks = (time - new DateTimeOffset(1900, 1, 1, 0, 0, 0, TimeSpan.Zero)).Ticks;
+        ulong seconds = (ulong)(ticks / TimeSpan.TicksPerSecond);
+        ulong fraction = (ulong)((ticks % TimeSpan.TicksPerSecond) * (1L << 32) / TimeSpan.TicksPerSecond);
+        // Return both halves
+        return seconds << 32 | fraction;
     }
 
     /// <summary>Return a receiver report from <paramref name="senderSsrc"/> with up to 31 <paramref name="blocks"/>.</summary>
@@ -109,6 +140,69 @@ public static class Rtcp
         }
         // Return them
         return reports;
+    }
+
+    /// <summary>Return a generic NACK, <see href="https://www.rfc-editor.org/rfc/rfc4585#section-6.2.1">RFC 4585 6.2.1</see>, from <paramref name="senderSsrc"/>: the packets <paramref name="lost"/> of <paramref name="mediaSsrc"/> should be sent again. Each entry names a packet and a mask of the 16 after it.</summary>
+    public static byte[] Nack(uint senderSsrc, uint mediaSsrc, IEnumerable<ushort> lost)
+    {
+        // Entries of a packet ID and its bitmask, in order
+        List<(ushort Id, ushort Mask)> entries = [];
+        foreach (ushort sequence in lost.Distinct().Order(Comparer<ushort>.Create((a, b) => (short)(ushort)(a - b))))
+        {
+            if (entries.Count > 0)
+            {
+                (ushort id, ushort mask) = entries[^1];
+                int after = (ushort)(sequence - id);
+                if (after is >= 1 and <= 16)
+                {
+                    entries[^1] = (id, (ushort)(mask | 1 << (after - 1)));
+                    continue;
+                }
+            }
+            entries.Add((sequence, 0));
+        }
+
+        // Header, the two streams, the entries
+        byte[] packet = new byte[12 + 4 * entries.Count];
+        Header(packet, 1, TransportFeedbackType);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(4), senderSsrc);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(8), mediaSsrc);
+        for (int i = 0; i < entries.Count; i++)
+        {
+            BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(12 + 4 * i), entries[i].Id);
+            BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(14 + 4 * i), entries[i].Mask);
+        }
+        // Return bytes
+        return packet;
+    }
+
+    /// <summary>Return the sequence numbers that generic NACKs in a compound packet ask of <paramref name="mediaSsrc"/>.</summary>
+    public static IReadOnlyList<ushort> ReadNacks(ReadOnlySpan<byte> compound, uint mediaSsrc)
+    {
+        // Packet by packet, by their lengths
+        List<ushort> lost = [];
+        int at = 0;
+        while (at + 4 <= compound.Length && compound[at] >> 6 == 2)
+        {
+            int length = (BinaryPrimitives.ReadUInt16BigEndian(compound[(at + 2)..]) + 1) * 4;
+            if (at + length > compound.Length) break;
+            if ((compound[at] & 0x1F) == 1 && compound[at + 1] == TransportFeedbackType && length >= 16 && BinaryPrimitives.ReadUInt32BigEndian(compound[(at + 8)..]) == mediaSsrc)
+            {
+                for (int entry = at + 12; entry + 4 <= at + length; entry += 4)
+                {
+                    ushort id = BinaryPrimitives.ReadUInt16BigEndian(compound[entry..]);
+                    ushort mask = BinaryPrimitives.ReadUInt16BigEndian(compound[(entry + 2)..]);
+                    lost.Add(id);
+                    for (int bit = 0; bit < 16; bit++)
+                    {
+                        if ((mask & 1 << bit) != 0) lost.Add((ushort)(id + bit + 1));
+                    }
+                }
+            }
+            at += length;
+        }
+        // Return them
+        return lost;
     }
 
     /// <summary>Return a receiver estimated maximum bitrate, <see href="https://datatracker.ietf.org/doc/html/draft-alvestrand-rmcat-remb">REMB</see>, from <paramref name="senderSsrc"/>: the stream <paramref name="mediaSsrc"/> should send at most <paramref name="bitsPerSecond"/>.</summary>

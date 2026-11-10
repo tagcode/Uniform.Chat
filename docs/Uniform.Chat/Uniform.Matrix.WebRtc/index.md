@@ -50,7 +50,16 @@ A frame waits for packets that come out of order. After a packet is lost, only a
 
 With [`PeerConnectionOptions.SendVideo`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.SendVideo), an answer also sends video when the peer's offer receives it; the section names this side's video SSRC and stream, so browsers make a track of it. [`SendVideoAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.SendVideoAsync*) takes encoded VP8 frames, e.g. from a hardware encoder, and sends each in RTP packets of at most 1100 bytes, timed by a 90 kHz clock from the moment of sending. When the peer asks for a keyframe, with a picture loss indication or a full intra request, [`KeyframeRequested`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.KeyframeRequested) tells the encoder.
 
-Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, offering video, sender reports of the video sent, and retransmission of lost video packets (NACK).
+A call's caller offers video with [`CreateOffer(video: true)`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.CreateOffer*): both ways, and the answer decides which ways it goes.
+
+## Loss, bitrate and orientation
+
+- **Lost packets:** the last 512 video packets sent are kept, and sent again, as sent, when the peer asks with a generic NACK, [RFC 4585 6.2.1](https://www.rfc-editor.org/rfc/rfc4585#section-6.2.1). A gap in the received video is asked for at once, before its frames wait for a keyframe.
+- **Bitrate:** each receiver report carries a REMB with what the peer may send: the loss-based estimate of [`BandwidthEstimator`](xref:Uniform.Matrix.WebRtc.Rtp.BandwidthEstimator), down on heavy loss and slowly up on little, within the cap of [`RequestBitrateAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.RequestBitrateAsync*), e.g. when this device cannot decode more. The peer's REMBs, also Chromium's estimates as we announce `goog-remb`, come in [`BitrateRequested`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.BitrateRequested) for the encoder.
+- **Sender reports:** each second, a sender report of the video and one of the audio sent pair the wall-clock time with each stream's RTP time, so the peer can line picture and sound up, and carry the counts sent.
+- **Orientation:** the 3GPP video orientation header extension, `urn:3gpp:video-orientation`, is offered and answered; a sent frame's rotation goes on its last packet, and a received frame's comes with it in [`Vp8EncodedFrame.Rotation`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8EncodedFrame.Rotation).
+
+Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, lining up received video with audio, RTX retransmission streams, and transport-wide congestion control.
 
 ## Tests
 

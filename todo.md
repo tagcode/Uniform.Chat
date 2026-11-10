@@ -83,12 +83,15 @@ Rename to Uniform.Gui.Terminal.
 
 # Video calls
 
-- Desktop: Sending video feed from a desktop webcam would need either a video encoder written in C# or native libraries.
-  - C# video encoder must be built.
+- Motion search in the encoder: today moving parts cost residual bits. Motion vectors would cut the desktop's bitrate further when there's movement.
+- Sender reports and lip sync. We send no RTCP sender reports for our video, so the other side can't line up picture and sound, and video frames are shown as soon as they're decoded. On a good network it isn't noticeable; on a jittery one, sound and picture can drift apart.
+- Faster C# decoder: SIMD in the loop filter and the inverse transform, for slow devices where hardware decoding isn't available.
+- Windows camera. The desktop can send video on Linux only; Windows would need Media Foundation, a native COM API.
+Developer docs: the WebRtc and calls pages don't yet describe rotation, REMB adaptation, the preview, or turning the camera off.
+
+- Hardware decoding on Android. Phones can decode VP8 with MediaCodec, which is Java, not P/Invoke. That would make slow phones like the Xperia decode at full quality, with the C# decoder kept as the fallback. It would also save battery on every phone.
 - Android's camera API (Camera2) and its built-in VP8 hardware encoder (MediaCodec), through Java bindings rather than native code
   - the call adding a send-and-receive video section and sending the encoded frames
-  - a "Video call" button next to 📞, a camera on/off toggle, and switching between the front and back camera.
-  - Asking for the camera permission, as calls already do for the microphone.
 
 # MatrixRTC calls
 

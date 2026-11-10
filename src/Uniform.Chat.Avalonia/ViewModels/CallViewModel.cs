@@ -43,6 +43,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         this.mayRing = mayRing ?? (() => true);
         calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
         if (platform.Camera is { } camera) calls.Camera = () => camera();
+        if (platform.VideoDecoder is { } decoder) calls.VideoDecoder = () => decoder();
         calls.IncomingCall += OnIncoming;
         calls.CallChanged += OnChanged;
         clock = new Timer(_ => ui.Post(Refresh), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));

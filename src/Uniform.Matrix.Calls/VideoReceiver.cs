@@ -8,7 +8,7 @@ using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Rtp;
 
 /// <summary>Decodes the video a peer connection receives, on its own task, and gives the pictures in <see cref="PictureDecoded"/>.</summary>
-/// <remarks>A device that cannot keep up, by its decode times or by falling behind, asks the sender for less with a REMB, and for full quality again once it has room. Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
+/// <remarks>A platform decoder that gives too few pictures at first is replaced by the C# one. A device that cannot keep up, by its decode times or by falling behind, asks the sender for less with a REMB, and for full quality again once it has room. Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
 public sealed class VideoReceiver : IAsyncDisposable
 {
     /// <summary>How many frames may wait for the decoder before they are given up.</summary>
@@ -16,7 +16,14 @@ public sealed class VideoReceiver : IAsyncDisposable
     private readonly AudioPeerConnection connection;
     private readonly ILogger logger;
     private readonly Channel<Vp8EncodedFrame> queue = Channel.CreateUnbounded<Vp8EncodedFrame>(new UnboundedChannelOptions { SingleReader = true });
-    private readonly Vp8Decoder decoder = new();
+    private IVideoDecoder decoder;
+    /// <summary>Frames a platform decoder gets before it must have given <see cref="TrialPictures"/> pictures, or the C# decoder takes over.</summary>
+    private const int TrialFrames = 45;
+    /// <summary>Pictures a platform decoder must give in its first <see cref="TrialFrames"/> frames.</summary>
+    private const int TrialPictures = 10;
+    private bool onTrial;
+    private int trialFrames;
+    private int trialPictures;
     private readonly Task decoding;
     private int queued;
     private long decoded;
@@ -42,11 +49,14 @@ public sealed class VideoReceiver : IAsyncDisposable
     /// <summary>Start decoding the video of <paramref name="connection"/>.</summary>
     /// <param name="connection">A connection that receives video.</param>
     /// <param name="logger">Logger of decoding failures.</param>
-    public VideoReceiver(AudioPeerConnection connection, ILogger logger)
+    /// <param name="decoder">The decoder, e.g. the platform's hardware one; the C# <see cref="Vp8Decoder"/> when null.</param>
+    public VideoReceiver(AudioPeerConnection connection, ILogger logger, IVideoDecoder? decoder = null)
     {
         // Frames in, a task decoding them
         this.connection = connection;
         this.logger = logger;
+        this.decoder = decoder ?? new Vp8Decoder();
+        onTrial = decoder is not null;
         connection.VideoReceived += OnFrame;
         // Done
         decoding = Task.Run(DecodeAsync);
@@ -70,8 +80,9 @@ public sealed class VideoReceiver : IAsyncDisposable
         // No more frames, then the decoder finishes
         connection.VideoReceived -= OnFrame;
         queue.Writer.TryComplete();
-        // Done
         await decoding.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        // Done
+        decoder.Dispose();
     }
 
     /// <summary>Queue a received frame.</summary>
@@ -105,7 +116,11 @@ public sealed class VideoReceiver : IAsyncDisposable
         // Decoded, or skipped from here
         VideoFrame? picture;
         long started = System.Diagnostics.Stopwatch.GetTimestamp();
-        try { picture = decoder.Decode(frame.Data); }
+        try
+        {
+            picture = decoder.Decode(frame.Data);
+            if (onTrial) Try(picture is not null);
+        }
         catch (Exception e) when (e is not OutOfMemoryException)
         {
             logger.LogDebug(e, "Video frame {Timestamp} did not decode", frame.Timestamp);
@@ -122,6 +137,27 @@ public sealed class VideoReceiver : IAsyncDisposable
         AskMoreWhenRoomy();
         // Done
         PictureDecoded?.Invoke(picture);
+    }
+
+    /// <summary>Count a platform decoder's frames and pictures; when it gives too few, as one whose pictures cannot be read out does, decode in C# from the next keyframe instead.</summary>
+    private void Try(bool pictured)
+    {
+        // Counted until the trial ends
+        trialFrames++;
+        if (pictured) trialPictures++;
+        if (trialPictures >= TrialPictures)
+        {
+            onTrial = false;
+            return;
+        }
+        if (trialFrames < TrialFrames) return;
+
+        // Done: the C# decoder, from a keyframe
+        onTrial = false;
+        logger.LogWarning("The platform's video decoder gave {Pictures} pictures of {Frames} frames; decoding in C# instead", trialPictures, trialFrames);
+        decoder.Dispose();
+        decoder = new Vp8Decoder();
+        Skip("the decoder changed");
     }
 
     /// <summary>Ask the sender, once, for <see cref="FallbackBitrate"/>, as this device cannot keep up.</summary>

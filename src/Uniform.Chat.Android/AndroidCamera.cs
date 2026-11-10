@@ -21,6 +21,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <summary>Shortest time between quality changes, as peers' estimates move about.</summary>
     private static readonly TimeSpan ChangeInterval = TimeSpan.FromSeconds(3);
     private long lastChange;
+    private int encoderBitrate;
     private int sensorOrientation;
     private ImageReader? previewReader;
     private long lastPreview;
@@ -102,6 +103,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         MediaFormat format = MediaFormat.CreateVideoFormat(Vp8, quality.Width, quality.Height);
         format.SetInteger(MediaFormat.KeyColorFormat, (int)global::Android.Media.MediaCodecCapabilities.Formatsurface);
         format.SetInteger(MediaFormat.KeyBitRate, quality.Bitrate);
+        encoderBitrate = quality.Bitrate;
         format.SetInteger(MediaFormat.KeyFrameRate, quality.FrameRate);
         format.SetInteger(MediaFormat.KeyIFrameInterval, 2);
         encoder = MediaCodec.CreateEncoderByType(Vp8);
@@ -250,7 +252,8 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <summary>Follow the peer's limit: below <see cref="FallbackBelow"/> 320x240 at 10 pictures per second, as a slow receiver asks; from <see cref="RestoreFrom"/> full quality again; between them as is, and at most one change per <see cref="ChangeInterval"/>. A change makes a new encoder at the size, and moves the open camera's session to it.</summary>
     public void LimitBitrate(long bitsPerSecond)
     {
-        // A quality for the rate, on the camera thread
+        // The encoder's rate within the quality's, then a quality for the rate, on the camera thread
+        SetBitrate(bitsPerSecond);
         Quality? wanted = bitsPerSecond < FallbackBelow ? Low : bitsPerSecond >= RestoreFrom ? Normal : null;
         if (wanted is null || handler is null) return;
         handler.Post(() =>
@@ -266,6 +269,20 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
             // Done: the open camera into the new surface
             if (device is CameraDevice open) OnOpened(open);
         });
+    }
+
+    /// <summary>Set the encoder's bitrate to <paramref name="bitsPerSecond"/>, at most the quality's, when it changes by a tenth or more.</summary>
+    private void SetBitrate(long bitsPerSecond)
+    {
+        // Changed enough
+        int rate = (int)Math.Clamp(bitsPerSecond, 100_000, quality.Bitrate);
+        if (Math.Abs(rate - encoderBitrate) < encoderBitrate / 10) return;
+        encoderBitrate = rate;
+        Bundle parameters = new();
+        parameters.PutInt(MediaCodec.ParameterKeyVideoBitrate, rate);
+        // Done
+        try { encoder?.SetParameters(parameters); }
+        catch (Java.Lang.IllegalStateException) { }
     }
 
     /// <summary>A size, frame rate and bitrate of the video sent.</summary>
@@ -345,31 +362,12 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <summary>Give a preview picture as I420 with the camera's rotation.</summary>
     private void Preview(global::Android.Media.Image image)
     {
-
-        // Planes by their row and pixel strides
-        global::Android.Media.Image.Plane[] planes = image.GetPlanes()!;
-        int width = image.Width, height = image.Height, chromaWidth = (width + 1) / 2, chromaHeight = (height + 1) / 2;
-        byte[] y = Plane(planes[0], width, height), u = Plane(planes[1], chromaWidth, chromaHeight), v = Plane(planes[2], chromaWidth, chromaHeight);
+        // Converted, turned and mirrored as the camera is
+        Uniform.Matrix.Video.VideoFrame picture = AndroidImages.ToVideoFrame(image);
+        picture.Rotation = Rotation;
+        picture.Mirrored = front;
         // Done
-        Previewed?.Invoke(new Uniform.Matrix.Video.VideoFrame(width, height, y, u, v) { Rotation = Rotation, Mirrored = front });
-    }
-
-    /// <summary>Return a plane's pixels tightly packed, whatever its row and pixel strides.</summary>
-    private static byte[] Plane(global::Android.Media.Image.Plane plane, int width, int height)
-    {
-        // The buffer's bytes, then each pixel
-        Java.Nio.ByteBuffer buffer = plane.Buffer!;
-        byte[] raw = new byte[buffer.Remaining()];
-        buffer.Get(raw);
-        int rowStride = plane.RowStride, pixelStride = plane.PixelStride;
-        byte[] packed = new byte[width * height];
-        for (int row = 0; row < height; row++)
-        {
-            int from = row * rowStride;
-            for (int column = 0; column < width && from + column * pixelStride < raw.Length; column++) packed[row * width + column] = raw[from + column * pixelStride];
-        }
-        // Return pixels
-        return packed;
+        Previewed?.Invoke(picture);
     }
 
     /// <summary>Passes preview pictures on.</summary>

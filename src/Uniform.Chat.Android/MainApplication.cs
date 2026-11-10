@@ -32,6 +32,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             HasEarpiece = true,
             RequestMicrophoneAsync = MainActivity.RequestMicrophoneAsync,
             Camera = () => new AndroidCamera(this),
+            VideoDecoder = () => new AndroidVideoDecoder(),
             RequestCameraAsync = MainActivity.RequestCameraAsync,
             RequestNotificationsAsync = MainActivity.RequestNotificationsAsync,
             NotificationsAllowed = () => Notifications.Allowed(this),
