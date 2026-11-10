@@ -97,3 +97,10 @@ Rename to Uniform.Gui.Terminal.
 - LiveKit's own signalling, over a WebSocket with protobuf messages, on top of the WebRTC code we have;
 - Element X's end-to-end media encryption: each participant encrypts their audio and video frames with keys sent to the others in encrypted messages. 
 - Without it, Element X won't accept our media in encrypted rooms.
+
+- Room Signaling
+- LiveKit token
+- LiveKit signaling
+- Media encryption
+- Calls and UI
+- Tests

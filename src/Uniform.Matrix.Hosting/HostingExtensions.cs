@@ -27,11 +27,11 @@ public static class HostingExtensions
         return builder;
     }
 
-    /// <summary>Replace the log providers with one file per session in <paramref name="directory"/>, keeping <paramref name="keep"/> files, and register the <see cref="FileLoggerProvider"/>.</summary>
-    public static IHostApplicationBuilder AddSessionLogging(this IHostApplicationBuilder builder, string directory, int keep)
+    /// <summary>Replace the log providers with one file per session in <paramref name="directory"/>, named by <paramref name="name"/>, e.g. <c>server-20261110-104027.log</c>, keeping <paramref name="keep"/> files, and register the <see cref="FileLoggerProvider"/>.</summary>
+    public static IHostApplicationBuilder AddSessionLogging(this IHostApplicationBuilder builder, string directory, int keep, string name = LogFiles.DefaultName)
     {
         // The terminal may belong to a UI, so the file is the only log
-        FileLoggerProvider provider = new(directory, keep);
+        FileLoggerProvider provider = new(directory, keep, name);
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(provider);
         builder.Services.AddSingleton(provider);

@@ -47,7 +47,7 @@ if (adminSocket is not null) AddAdminSocket(builder, adminSocket);
 
 // One log file per session; without the dashboard also to the console, which the dashboard owns otherwise
 ServerStorageOptions storage = builder.Configuration.GetSection(ServerStorageOptions.Section).Get<ServerStorageOptions>() ?? new ServerStorageOptions();
-builder.AddSessionLogging(storage.ResolveLogDirectory(builder.Environment.ApplicationName), storage.LogFilesKept);
+builder.AddSessionLogging(storage.ResolveLogDirectory(builder.Environment.ApplicationName), storage.LogFilesKept, "server");
 if (!dashboard) builder.Logging.AddSimpleConsole(console => console.SingleLine = true);
 // The host's own start failure with its stack trace stays in the log file; the console gets the short message below
 builder.Logging.AddFilter<ConsoleLoggerProvider>("Microsoft.Extensions.Hosting.Internal.Host", LogLevel.Critical);

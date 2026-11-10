@@ -12,7 +12,7 @@ builder.AddSettings();
 builder.AddTurnServer();
 
 // One log file per session, and the console
-builder.AddSessionLogging(Path.Combine(AppDirectories.Data(ApplicationName), "logs"), 20);
+builder.AddSessionLogging(Path.Combine(AppDirectories.Data(ApplicationName), "logs"), 20, "turn");
 builder.Logging.AddSimpleConsole(console => console.SingleLine = true);
 
 // Start; settings that cannot work end the program with their reason

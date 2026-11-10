@@ -37,27 +37,43 @@ public sealed record LogEntry
 /// <summary>Session log files: naming, pruning, listing and parsing the format written by <see cref="FileLoggerProvider"/>.</summary>
 public static partial class LogFiles
 {
-    private const string Prefix = "client-";
+    /// <summary>Name of a program's session logs when it gives none.</summary>
+    public const string DefaultName = "client";
     private const string Extension = ".log";
     private const string StampFormat = "yyyyMMdd-HHmmss";
 
-    /// <summary>Return a new file path for a session starting at <paramref name="started"/>, e.g. <c>logs/client-20261026-010536.log</c>.</summary>
-    public static string CreateSessionPath(string directory, DateTime started)
+    /// <summary>Return a new file path for a session starting at <paramref name="started"/>, e.g. <c>logs/client-20261026-010536.log</c>, named by <paramref name="name"/>, such as <c>server</c>.</summary>
+    public static string CreateSessionPath(string directory, DateTime started, string name = DefaultName)
     {
         // Stamp, with a counter when two sessions start in the same second
         string stamp = started.ToString(StampFormat, CultureInfo.InvariantCulture);
-        string path = Path.Combine(directory, $"{Prefix}{stamp}{Extension}");
-        for (int i = 2; File.Exists(path); i++) path = Path.Combine(directory, $"{Prefix}{stamp}-{i}{Extension}");
+        string path = Path.Combine(directory, $"{name}-{stamp}{Extension}");
+        for (int i = 2; File.Exists(path); i++) path = Path.Combine(directory, $"{name}-{stamp}-{i}{Extension}");
         // Return path
         return path;
+    }
+
+    /// <summary>Return the session logs in <paramref name="directory"/>, newest first: files named like <c>name-20261026-010536.log</c>, whatever the name, so a program's logs of an earlier name are found too.</summary>
+    private static IEnumerable<(string Path, DateTime Started)> Sessions(string directory)
+    {
+        // Named by a stamp after the name
+        if (!Directory.Exists(directory)) return [];
+        List<(string, DateTime)> sessions = [];
+        foreach (string path in Directory.GetFiles(directory, $"*{Extension}"))
+        {
+            if (SessionName().Match(Path.GetFileName(path)) is not { Success: true } match) continue;
+            DateTime started = DateTime.ParseExact(match.Groups["stamp"].Value, StampFormat, CultureInfo.InvariantCulture);
+            sessions.Add((path, started));
+        }
+        // Return newest first, by stamp and then name, which orders a counter after its first
+        return sessions.OrderByDescending(s => s.Item2).ThenByDescending(s => Path.GetFileName(s.Item1), StringComparer.Ordinal);
     }
 
     /// <summary>Delete the oldest session logs so that at most <paramref name="keep"/> remain, never <paramref name="except"/>.</summary>
     public static void Prune(string directory, int keep, string? except = null)
     {
-        // Newest first by name, which sorts by time
-        if (!Directory.Exists(directory)) return;
-        IEnumerable<string> old = Directory.GetFiles(directory, $"{Prefix}*{Extension}").OrderDescending(StringComparer.Ordinal).Skip(Math.Max(1, keep));
+        // Newest first
+        IEnumerable<string> old = Sessions(directory).Select(s => s.Path).Skip(Math.Max(1, keep)).ToList();
         foreach (string path in old)
         {
             if (path == except) continue;
@@ -76,16 +92,7 @@ public static partial class LogFiles
     public static IReadOnlyList<LogFileInfo> List(string directory, string? legacyPath = null)
     {
         // Session logs
-        List<LogFileInfo> files = [];
-        if (Directory.Exists(directory))
-        {
-            foreach (string path in Directory.GetFiles(directory, $"{Prefix}*{Extension}").OrderDescending(StringComparer.Ordinal))
-            {
-                string stamp = Path.GetFileNameWithoutExtension(path)[Prefix.Length..];
-                bool parsed = DateTime.TryParseExact(stamp.Length > StampFormat.Length ? stamp[..StampFormat.Length] : stamp, StampFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime started);
-                files.Add(new LogFileInfo { Path = path, Started = parsed ? started : File.GetLastWriteTime(path), Size = new FileInfo(path).Length });
-            }
-        }
+        List<LogFileInfo> files = [.. Sessions(directory).Select(s => new LogFileInfo { Path = s.Path, Started = s.Started, Size = new FileInfo(s.Path).Length })];
 
         // Older single log
         if (legacyPath is not null && File.Exists(legacyPath)) files.Add(new LogFileInfo { Path = legacyPath, Started = File.GetLastWriteTime(legacyPath), Size = new FileInfo(legacyPath).Length, Legacy = true });
@@ -141,4 +148,8 @@ public static partial class LogFiles
     /// <summary>First line of an entry: <c>2026-10-26 01:05:36.901 [Information] Category: message</c>.</summary>
     [GeneratedRegex(@"^(?<time>\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3}) \[(?<level>\w+)\] (?<category>[^:]+):")]
     private static partial Regex HeaderPattern();
+
+    /// <summary>A session log's file name: a name, the stamp, a counter for sessions of the same second, and the extension.</summary>
+    [GeneratedRegex(@"^[A-Za-z0-9_.]+-(?<stamp>\d{8}-\d{6})(-\d+)?\.log$")]
+    private static partial Regex SessionName();
 }

@@ -12,6 +12,6 @@ Everything the server keeps is in the data folder, `~/.local/share/uniform-chat-
 | `server.db-wal`, `server.db-shm` | The database's write-ahead log and its index, while the server runs; at a clean stop the log is written into `server.db`. Copy them with the database. |
 | `media/` | Uploaded files, and the thumbnails made from them in `media/thumbnails/`. |
 | `signing.key` | The server's private signing key, which signs every event it creates. It is created when first needed and readable only by your user. |
-| `logs/` | One log file per session. |
+| `logs/` | One log file per start of the server, named by the time it started, e.g. `server-20261110-104027.log`; the newest 20 are kept. With `Storage:LogDirectory` they are elsewhere: the apt package's service writes them to `/var/log/uniform-chat-server`. |
 
 To back up the server, stop it and copy the whole folder. Keep `signing.key` with the database and keep it private: it is the server's identity.

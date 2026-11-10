@@ -17,9 +17,12 @@ public sealed record ServerStorageOptions
     /// <summary>Media repository directory name inside <see cref="DataDirectory"/>.</summary>
     [RestartRequired]
     public string MediaDirectoryName { get; set; } = "media";
-    /// <summary>Directory inside <see cref="DataDirectory"/> with one log file per session.</summary>
+    /// <summary>Directory inside <see cref="DataDirectory"/> with one log file per session, unless <see cref="LogDirectory"/> is set.</summary>
     [RestartRequired]
     public string LogDirectoryName { get; set; } = "logs";
+    /// <summary>Directory of the session logs anywhere, e.g. <c>/var/log/uniform-chat-server</c> for a system service; when unset, <see cref="LogDirectoryName"/> inside the data directory.</summary>
+    [RestartRequired]
+    public string? LogDirectory { get; set; }
     /// <summary>Session log files to keep; older ones are deleted at start.</summary>
     [RestartRequired]
     public int LogFilesKept { get; set; } = 20;
@@ -27,6 +30,6 @@ public sealed record ServerStorageOptions
     /// <summary>Return <see cref="DataDirectory"/>, or the data directory of <paramref name="applicationName"/> when unset.</summary>
     public string ResolveDataDirectory(string applicationName) => DataDirectory ?? AppDirectories.Data(applicationName);
 
-    /// <summary>Return the log directory under <see cref="ResolveDataDirectory"/>.</summary>
-    public string ResolveLogDirectory(string applicationName) => Path.Combine(ResolveDataDirectory(applicationName), LogDirectoryName);
+    /// <summary>Return <see cref="LogDirectory"/>, or the log directory under <see cref="ResolveDataDirectory"/>.</summary>
+    public string ResolveLogDirectory(string applicationName) => LogDirectory ?? Path.Combine(ResolveDataDirectory(applicationName), LogDirectoryName);
 }

@@ -79,6 +79,7 @@ Settings come from these places; later ones override earlier ones:
 | `Storage:DatabaseFileName` | `server.db` | Database file inside the data folder. ↻ |
 | `Storage:MediaDirectoryName` | `media` | Folder inside the data folder for uploaded files. ↻ |
 | `Storage:LogDirectoryName` | `logs` | Folder inside the data folder with one log file per session. ↻ |
+| `Storage:LogDirectory` | none | Folder for the session logs anywhere, in place of the one inside the data folder; the apt package's service uses `/var/log/uniform-chat-server`. ↻ |
 | `Storage:LogFilesKept` | `20` | How many session logs to keep. ↻ |
 | `Host:Ui` | `Auto` | `Auto`, `Dashboard` or `None`, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article). ↻ |
 | `Host:AdminSocket` | none | A local socket for `uniform-chat-server manage --socket=PATH`, e.g. `/run/uniform-chat-server/admin.sock`, which the service uses. Whoever may open it manages the server as an admin, without an account; the server lets only its own user and group open it. ↻ |

@@ -68,7 +68,8 @@ The `uniform-chat-server` package, see [Installing](xref:Uniform.Chat.Server.Ins
 | Program | `/opt/uniform-chat/server/uniform-chat-server`, also as the command `uniform-chat-server` |
 | Service | `uniform-chat-server`, run by the system user `uniform-chat`, which the package creates |
 | Settings | `/etc/uniform-chat-server/settings.json` |
-| Data: database, signing key, files and logs | `/var/lib/uniform-chat-server` |
+| Data: database, signing key and files | `/var/lib/uniform-chat-server` |
+| Logs: one file per start, the newest 20 kept; also in the journal, `journalctl -u uniform-chat-server` | `/var/log/uniform-chat-server` |
 
 The service is off after installing, as the server needs its name and address first. Write the settings, readable only by the service, as they may hold secrets, then start it and have it start at boot:
 

@@ -10,12 +10,12 @@ public sealed class FileLoggerProvider : ILoggerProvider
     private readonly StreamWriter writer;
     private readonly Lock gate = new();
 
-    /// <summary>Start a session log in <paramref name="directory"/>, keeping at most <paramref name="keep"/> session logs.</summary>
-    public FileLoggerProvider(string directory, int keep)
+    /// <summary>Start a session log in <paramref name="directory"/>, named by <paramref name="name"/>, keeping at most <paramref name="keep"/> session logs.</summary>
+    public FileLoggerProvider(string directory, int keep, string name = LogFiles.DefaultName)
     {
         // New file for this session, then drop the oldest
         Directory.CreateDirectory(directory);
-        FilePath = LogFiles.CreateSessionPath(directory, DateTime.Now);
+        FilePath = LogFiles.CreateSessionPath(directory, DateTime.Now, name);
         writer = new StreamWriter(new FileStream(FilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete)) { AutoFlush = true };
         LogFiles.Prune(directory, keep, except: FilePath);
     }

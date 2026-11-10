@@ -39,14 +39,15 @@ public sealed class LogFileTests : IDisposable
     [Fact]
     public void CanKeepSessionFiles()
     {
-        // Arrange: five old sessions and an older single log
-        for (int i = 1; i <= 5; i++) File.WriteAllText(Path.Combine(directory, $"client-2026010{i}-120000.log"), "x");
+        // Arrange: five old sessions, the newest two under another name, and an older single log
+        for (int i = 1; i <= 5; i++) File.WriteAllText(Path.Combine(directory, $"{(i > 3 ? "client" : "server")}-2026010{i}-120000.log"), "x");
         string legacy = Path.Combine(directory, "client.log");
         File.WriteAllText(legacy, "old");
 
         // Act: a new session keeping three
-        using (FileLoggerProvider provider = new(directory, keep: 3))
+        using (FileLoggerProvider provider = new(directory, keep: 3, name: "server"))
         {
+            Assert.StartsWith("server-", Path.GetFileName(provider.FilePath));
             provider.CreateLogger("Test").LogWarning("Hello {Name}", "log");
             Assert.Contains("[Warning] Test: Hello log", File.ReadAllText(provider.FilePath));
         }

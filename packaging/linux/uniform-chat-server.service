@@ -1,6 +1,6 @@
 # The Uniform Chat homeserver as a system service, from the uniform-chat-server package; off until enabled:
 #   sudo systemctl enable --now uniform-chat-server
-# Settings in /etc/uniform-chat-server/settings.json, data in /var/lib/uniform-chat-server, run by the system user uniform-chat.
+# Settings in /etc/uniform-chat-server/settings.json, data in /var/lib/uniform-chat-server, logs in /var/log/uniform-chat-server, run by the system user uniform-chat.
 # Change it with "sudo systemctl edit uniform-chat-server", which keeps the changes over updates.
 [Unit]
 Description=Uniform Chat homeserver
@@ -12,7 +12,8 @@ Wants=network-online.target
 User=uniform-chat
 Group=uniform-chat
 # The admin socket lets root and the uniform-chat group manage the running server: sudo uniform-chat-server manage
-ExecStart=/opt/uniform-chat/server/uniform-chat-server --Host:Ui=None --Host:AdminSocket=/run/uniform-chat-server/admin.sock
+# Session logs go to /var/log, also to the journal: journalctl -u uniform-chat-server
+ExecStart=/opt/uniform-chat/server/uniform-chat-server --Host:Ui=None --Host:AdminSocket=/run/uniform-chat-server/admin.sock --Storage:LogDirectory=/var/log/uniform-chat-server
 WorkingDirectory=/var/lib/uniform-chat-server
 # The server adds its name to these: /etc/uniform-chat-server and /var/lib/uniform-chat-server
 Environment=XDG_CONFIG_HOME=/etc
@@ -20,6 +21,9 @@ Environment=XDG_DATA_HOME=/var/lib
 # systemd creates the data folder and gives it to the user, also one of an earlier user
 StateDirectory=uniform-chat-server
 StateDirectoryMode=0700
+# systemd creates the log folder and gives it to the user
+LogsDirectory=uniform-chat-server
+LogsDirectoryMode=0750
 # systemd creates the socket's folder at start and removes it at stop
 RuntimeDirectory=uniform-chat-server
 RuntimeDirectoryMode=0750
