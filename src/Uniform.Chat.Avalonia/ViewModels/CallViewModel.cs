@@ -4,10 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Calls;
+using Uniform.Matrix.Video;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.WebRtc.Ice;
 
-/// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the loudspeaker; it tells about a call for a while after it ends.</summary>
+/// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the loudspeaker, and the caller's video when they send it; it tells about a call for a while after it ends.</summary>
 public sealed partial class CallViewModel : ViewModelBase, IDisposable
 {
     /// <summary>How long the bar stays after a call ends.</summary>
@@ -22,6 +23,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     private IDisposable? ringing;
     private readonly Func<bool> mayRing;
     private IDisposable? nearEar;
+    private int pictured;
 
     /// <summary>Follow the calls of <paramref name="calls"/>.</summary>
     /// <param name="calls">The account's calls.</param>
@@ -55,6 +57,13 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsVisible))]
     public partial VoiceCall? Current { get; set; }
+
+    /// <summary>The other user's video, while the call runs.</summary>
+    public VideoFeed RemoteVideo { get; } = new();
+
+    /// <summary>Whether the other user's video has pictures to show.</summary>
+    [ObservableProperty]
+    public partial bool HasVideo { get; set; }
 
     /// <summary>Whether the bar shows.</summary>
     public bool IsVisible => Current is not null;
@@ -155,6 +164,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         // Events and the clock
         calls.IncomingCall -= OnIncoming;
         calls.CallChanged -= OnChanged;
+        if (Current is not null) Current.PictureReceived -= OnPicture;
         clock.Dispose();
         HoldPlatform(false, false);
     }
@@ -184,7 +194,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Bar, then the notification
         ui.Post(() => Show(call));
-        if (platform.Ring is null && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync("Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+        if (platform.Ring is null && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync(call.IsVideo ? "Incoming video call" : "Incoming call", $"{nameOf(call.PeerUserId)} is calling");
     }
 
     /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>
@@ -194,6 +204,29 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         if (Current is not null && Current != call && Current.State != CallState.Ended) return;
         Show(call);
     });
+
+    /// <summary>Follow the pictures of the shown call only, starting with none.</summary>
+    partial void OnCurrentChanged(VoiceCall? oldValue, VoiceCall? newValue)
+    {
+        // Old pictures gone, new ones followed
+        if (oldValue is not null) oldValue.PictureReceived -= OnPicture;
+        if (newValue is not null) newValue.PictureReceived += OnPicture;
+        Interlocked.Exchange(ref pictured, 0);
+        RemoteVideo.Clear();
+        // Done
+        HasVideo = false;
+    }
+
+    /// <summary>Show a picture of the call's video; the first one shows the video.</summary>
+    private void OnPicture(VoiceCall call, VideoFrame picture)
+    {
+        // The shown call's, while it runs
+        if (call != Current || call.State == CallState.Ended) return;
+        RemoteVideo.Push(picture);
+        if (Interlocked.Exchange(ref pictured, 1) == 1) return;
+        // Done
+        ui.Post(() => { if (call == Current) HasVideo = true; });
+    }
 
     /// <summary>Show a call, and hide it a while after it ends.</summary>
     private void Show(VoiceCall call)
@@ -216,11 +249,16 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         IsActive = call.State is not (CallState.Ringing or CallState.Ended);
         IsMuted = call.Muted;
         HoldPlatform(IsRinging, IsActive);
+        if (call.State == CallState.Ended && HasVideo)
+        {
+            HasVideo = false;
+            RemoteVideo.Clear();
+        }
         bool relayed = call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed;
         // Done
         StateText = call.State switch
         {
-            CallState.Ringing => "Incoming voice call",
+            CallState.Ringing => call.IsVideo ? "Incoming video call" : "Incoming voice call",
             CallState.Inviting => "Calling…",
             CallState.Connecting => "Connecting…",
             CallState.Connected => $"{Duration(call)}{(relayed ? " · relayed" : "")}{(call.Muted ? " · muted" : "")}",

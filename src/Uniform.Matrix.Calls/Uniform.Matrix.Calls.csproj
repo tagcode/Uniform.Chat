@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Matrix 1:1 voice calls (m.call.*) for the Uniform.Matrix client engine: signalling over room events, WebRTC media with Uniform.Matrix.WebRtc, and voice through Uniform.Matrix.Audio.</Description>
-    <PackageTags>matrix;voip;calls;webrtc;opus</PackageTags>
+    <Description>Matrix 1:1 voice calls (m.call.*) for the Uniform.Matrix client engine: signalling over room events, WebRTC media with Uniform.Matrix.WebRtc, voice through Uniform.Matrix.Audio, and received VP8 video decoded with Uniform.Matrix.Video.</Description>
+    <PackageTags>matrix;voip;calls;webrtc;opus;vp8</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
@@ -29,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.Video\Uniform.Matrix.Video.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
   </ItemGroup>
 

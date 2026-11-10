@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>A WebRTC subset in pure C# for voice calls: SDP, ICE, DTLS-SRTP and RTP, with STUN and TURN from Uniform.Stun and BouncyCastle for DTLS.</Description>
+    <Description>A WebRTC subset in pure C# for calls: SDP, ICE, DTLS-SRTP and RTP, Opus audio both ways and VP8 video received with RTCP feedback, with STUN and TURN from Uniform.Stun and BouncyCastle for DTLS.</Description>
     <PackageTags>webrtc;stun;turn;ice;dtls;srtp;rtp;sdp;voip</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

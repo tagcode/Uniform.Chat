@@ -81,4 +81,80 @@ public class BrowserTests
         Assert.True(packets > 50, $"{packets} packets from Chromium");
         Assert.True(energy > 0, "Chromium's tone was silent.");
     }
+
+    /// <summary>Chromium offers audio and 640x480 video drawn on a canvas; we answer receiving the video, put its frames together and decode them with our VP8 decoder; our receiver reports reach it, and a picture loss indication gets a new keyframe.</summary>
+    [Fact]
+    public async Task ReceiveVideoFromChromium()
+    {
+        // Browser, and our side receiving video
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        Chromium? started;
+        try { started = await Chromium.StartAsync(cancellationToken); }
+        catch (ChromiumUnavailableException ex) { Assert.Skip(ex.Message); return; }
+        await using Chromium? chromium = started;
+        if (chromium is null) { Assert.Skip("Chromium is not installed."); return; }
+        await using AudioPeerConnection peer = new(new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true });
+        Video.Vp8.Vp8Decoder decoder = new();
+        List<(int Width, int Height)> pictures = [];
+        int keyframes = 0;
+        peer.VideoReceived += frame =>
+        {
+            if (frame.IsKeyframe) Interlocked.Increment(ref keyframes);
+            if (decoder.Decode(frame.Data) is Video.VideoFrame picture) lock (pictures) pictures.Add((picture.Width, picture.Height));
+        };
+
+        // Chromium's offer: a tone, and a canvas with a moving square
+        string offer = (await chromium.EvaluateAsync("""
+            const context = new AudioContext();
+            const destination = context.createMediaStreamDestination();
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 480;
+            const draw = canvas.getContext('2d');
+            let frame = 0;
+            window.painter = setInterval(() => { draw.fillStyle = '#204060'; draw.fillRect(0, 0, 640, 480); draw.fillStyle = '#f0c040'; draw.fillRect((frame * 8) % 560, 200, 80, 80); frame++; }, 33);
+            const video = canvas.captureStream(30);
+            window.pc = new RTCPeerConnection();
+            pc.addTrack(destination.stream.getAudioTracks()[0], destination.stream);
+            pc.addTrack(video.getVideoTracks()[0], video);
+            await pc.setLocalDescription(await pc.createOffer());
+            await new Promise(done => { if (pc.iceGatheringState === 'complete') done(); pc.onicegatheringstatechange = () => pc.iceGatheringState === 'complete' && done(); });
+            return pc.localDescription.sdp;
+            """, cancellationToken))!.GetValue<string>();
+
+        // Our answer accepts the video; both connect
+        TaskCompletionSource gathered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        peer.GatheringCompleted += () => gathered.TrySetResult();
+        string answer = peer.AcceptOffer(offer);
+        Assert.True(peer.ReceivesVideo);
+        Assert.Contains("a=recvonly", answer);
+        await gathered.Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
+        string[] candidates = [.. peer.Ice!.LocalCandidates.Select(c => c.ToString())];
+        await chromium.EvaluateAsync($$"""
+            await pc.setRemoteDescription({ type: 'answer', sdp: {{JsonSerializer.Serialize(answer)}} });
+            for (const candidate of {{JsonSerializer.Serialize(candidates)}}) await pc.addIceCandidate({ candidate, sdpMid: '0', sdpMLineIndex: 0 });
+            """, cancellationToken);
+        Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
+
+        // Three seconds of video, asking for a keyframe in between
+        await Task.Delay(1500, cancellationToken);
+        await peer.RequestKeyframeAsync();
+        await Task.Delay(1500, cancellationToken);
+
+        // Chromium sent video and got our feedback; we decoded pictures of its size
+        JsonNode stats = (await chromium.EvaluateAsync("""
+            const report = await pc.getStats();
+            const outbound = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'video');
+            const remote = [...report.values()].find(s => s.type === 'remote-inbound-rtp' && s.kind === 'video');
+            return { frames: outbound?.framesEncoded ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0, codec: outbound?.encoderImplementation, reports: remote ? 1 : 0, width: outbound?.frameWidth, height: outbound?.frameHeight };
+            """, cancellationToken))!;
+        int decoded;
+        lock (pictures) decoded = pictures.Count;
+        Assert.True(decoded > 30, $"{decoded} pictures decoded, {keyframes} keyframes; Chromium: {stats.ToJsonString()}");
+        lock (pictures) Assert.All(pictures, p => Assert.Equal((stats["width"]!.GetValue<int>(), stats["height"]!.GetValue<int>()), p));
+        Assert.True(stats["pli"]!.GetValue<int>() >= 1, stats.ToJsonString());
+        Assert.True(keyframes >= 2, $"{keyframes} keyframes; Chromium: {stats.ToJsonString()}");
+        // Done
+        Assert.Equal(1, stats["reports"]!.GetValue<int>());
+    }
 }

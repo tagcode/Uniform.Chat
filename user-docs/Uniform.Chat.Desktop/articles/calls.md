@@ -14,6 +14,10 @@ Open the direct chat, and press 📞 in its header. A bar at the top of the wind
 
 An incoming call shows the bar at the top, whichever room is open, with **Answer** and **Decline**. When the app is in the background, a notification tells about the call. If you have the app on several devices, they all ring; answering on one stops the others.
 
+## Video
+
+When the other person calls with video, e.g. from Element, the bar says *Incoming video call*, and once you answer, their video shows below the bar. You cannot send video yet: they see no picture of you, only hear you.
+
 ## During a call
 
 - **Mute** stops sending your voice; the bar says *muted*.

@@ -4,7 +4,7 @@ title: Uniform.Matrix.Video
 ---
 # Uniform.Matrix.Video
 
-Video for calls, in pure C# with no native libraries: a VP8 decoder that turns the frames of a video call into pictures. Nothing here knows about Matrix or the network; the calls will take frames from RTP and show the pictures.
+Video for calls, in pure C# with no native libraries: a VP8 decoder that turns the frames of a video call into pictures. Nothing here knows about Matrix or the network: [Uniform.Matrix.WebRtc](xref:Uniform.Matrix.WebRtc.Article) puts the frames together from RTP, and [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) decodes them and gives the pictures to the app.
 
 ## Decoding
 
@@ -20,7 +20,11 @@ foreach (byte[] frame in frames)
 }
 ```
 
-A [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame) is I420: full-size luma, and both chroma planes at half the width and height, rounded up, each tightly packed.
+A [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame) is I420: full-size luma, and both chroma planes at half the width and height, rounded up, each tightly packed. [`CopyToBgra`](xref:Uniform.Matrix.Video.VideoFrame.CopyToBgra*) converts it to 32-bit BGRA for display, from the BT.601 limited range that WebRTC video uses; e.g. into a bitmap's rows:
+
+```csharp
+picture.CopyToBgra(pixels, stride);
+```
 
 ## How the decoder is built
 

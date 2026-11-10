@@ -3,8 +3,10 @@ namespace Uniform.Matrix.Calls;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Video;
 using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Ice;
+using Uniform.Matrix.WebRtc.Sdp;
 
 /// <summary>Sends a call event into the call's room.</summary>
 public delegate Task CallEventSender(string eventType, CallContent content, CancellationToken cancellationToken);
@@ -26,7 +28,7 @@ public enum CallState
     Ended,
 }
 
-/// <summary>One <see href="https://spec.matrix.org/latest/client-server-api/#voice-over-ip">Matrix 1:1 voice call</see>, version 1: the invite, answer and select_answer, trickled candidates, and the hangup or reject; with the media of an <see cref="AudioPeerConnection"/> and <see cref="VoiceMedia"/>.</summary>
+/// <summary>One <see href="https://spec.matrix.org/latest/client-server-api/#voice-over-ip">Matrix 1:1 voice call</see>, version 1: the invite, answer and select_answer, trickled candidates, and the hangup or reject; with the media of an <see cref="AudioPeerConnection"/> and <see cref="VoiceMedia"/>, and the video a caller sends through <see cref="VideoReceiver"/>.</summary>
 /// <remarks>Events of the call reach <see cref="HandleAsync"/>, which runs them one at a time with this side's actions. Candidates are sent in batches, as Element does, and end with an empty one; those received before the offer or answer wait for it.</remarks>
 public sealed class VoiceCall : IAsyncDisposable
 {
@@ -56,6 +58,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private readonly Lock candidateLock = new();
     private AudioPeerConnection? connection;
     private VoiceMedia? media;
+    private VideoReceiver? video;
     private string? peerPartyId;
     private bool remoteDescribed;
     private bool flushScheduled;
@@ -88,6 +91,7 @@ public sealed class VoiceCall : IAsyncDisposable
         this.options = options;
         this.logger = logger;
         State = invite is null ? CallState.Inviting : CallState.Ringing;
+        IsVideo = invite is not null && OffersVideo(invite.Offer.Sdp);
     }
 
     /// <summary>Room of the call.</summary>
@@ -101,6 +105,12 @@ public sealed class VoiceCall : IAsyncDisposable
 
     /// <summary>Whether the other user called.</summary>
     public bool IsIncoming => invite is not null;
+
+    /// <summary>Whether the other user calls with video, which this side can show; this side sends none.</summary>
+    public bool IsVideo { get; }
+
+    /// <summary>Raised with each picture of the peer's video, on a decoding thread; a handler should be quick, e.g. keep the newest picture to show.</summary>
+    public event Action<VoiceCall, VideoFrame>? PictureReceived;
 
     /// <summary>The state.</summary>
     public CallState State { get; private set; }
@@ -162,6 +172,7 @@ public sealed class VoiceCall : IAsyncDisposable
             if (State != CallState.Ringing || invite is null) return;
             AudioPeerConnection peer = Connect();
             string answer = peer.AcceptOffer(invite.Offer.Sdp);
+            if (peer.ReceivesVideo) StartVideo(peer);
             await send(EventTypes.CallAnswer, new CallAnswerContent { CallId = CallId, PartyId = partyId, Answer = new CallSessionDescription { Type = "answer", Sdp = answer } }, cancellationToken);
             SetRemoteDescribed();
             SetState(CallState.Connecting);
@@ -402,6 +413,23 @@ public sealed class VoiceCall : IAsyncDisposable
         }
     }
 
+    /// <summary>Decode the peer's video from the start, so its first keyframe is not missed.</summary>
+    private void StartVideo(AudioPeerConnection peer)
+    {
+        // Pictures to the call's listeners
+        video = new VideoReceiver(peer, logger);
+        // Done
+        video.PictureDecoded += picture => PictureReceived?.Invoke(this, picture);
+    }
+
+    /// <summary>Return whether an offer sends VP8 video.</summary>
+    private static bool OffersVideo(string sdp)
+    {
+        // Parsed leniently: a bad offer fails later, when answered
+        try { return AudioSdp.ReadVideo(SessionDescription.Parse(sdp)) is { Direction: "sendrecv" or "sendonly" }; }
+        catch (FormatException) { return false; }
+    }
+
     /// <summary>Restart ICE, e.g. after the network changed: a new offer in <c>m.call.negotiate</c>, and the media move to the new path once it connects; nothing while a restart is under way.</summary>
     public async Task RestartIceAsync(string reason, CancellationToken cancellationToken = default)
     {
@@ -552,6 +580,11 @@ public sealed class VoiceCall : IAsyncDisposable
         {
             await media.DisposeAsync();
             logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for", CallId, media.Sent, media.Received, media.Lost, media.Underruns);
+        }
+        if (video is not null)
+        {
+            await video.DisposeAsync();
+            logger.LogInformation("Call {CallId} video: {Decoded} pictures decoded, {Skipped} frames skipped", CallId, video.Decoded, video.Skipped);
         }
         if (connection is not null) await connection.DisposeAsync();
         // Done

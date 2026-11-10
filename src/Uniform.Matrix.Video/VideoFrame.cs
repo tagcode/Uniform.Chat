@@ -34,4 +34,46 @@ public sealed class VideoFrame
     public byte[] U { get; }
     /// <summary>Red-difference chroma, <see cref="ChromaWidth"/> bytes per row.</summary>
     public byte[] V { get; }
+
+    /// <summary>Write the picture as 32-bit BGRA, opaque, into <paramref name="destination"/> of <paramref name="stride"/> bytes per row, converting from BT.601 limited range as WebRTC video is.</summary>
+    /// <param name="destination">At least <see cref="Height"/> rows.</param>
+    /// <param name="stride">Bytes per row, at least 4 × <see cref="Width"/>.</param>
+    public void CopyToBgra(Span<byte> destination, int stride)
+    {
+        // Assert room
+        ArgumentOutOfRangeException.ThrowIfLessThan(stride, Width * 4);
+        if (destination.Length < stride * (Height - 1) + Width * 4) throw new ArgumentException("The destination is too small.", nameof(destination));
+
+        // Two rows at a time share a chroma row; chroma's part of each color once per pair of pixels
+        int chromaWidth = ChromaWidth;
+        for (int row = 0; row < Height; row++)
+        {
+            ReadOnlySpan<byte> luma = Y.AsSpan(row * Width, Width);
+            ReadOnlySpan<byte> blue = U.AsSpan(row / 2 * chromaWidth, chromaWidth), red = V.AsSpan(row / 2 * chromaWidth, chromaWidth);
+            Span<byte> output = destination.Slice(row * stride, Width * 4);
+            for (int x = 0; x < Width; x += 2)
+            {
+                int d = blue[x / 2] - 128, e = red[x / 2] - 128;
+                int r = 409 * e + 128, g = -100 * d - 208 * e + 128, b = 516 * d + 128;
+                Pixel(output, x, luma[x], r, g, b);
+                if (x + 1 < Width) Pixel(output, x + 1, luma[x + 1], r, g, b);
+            }
+        }
+    }
+
+    /// <summary>Write pixel <paramref name="x"/> of a row from its luma and chroma's parts of red, green and blue, in 1/256ths.</summary>
+    private static void Pixel(Span<byte> output, int x, byte luma, int r, int g, int b)
+    {
+        // Luma scaled from 16..235, then clamped
+        int c = 298 * (luma - 16);
+        int at = x * 4;
+        output[at] = Clamp((c + b) >> 8);
+        output[at + 1] = Clamp((c + g) >> 8);
+        output[at + 2] = Clamp((c + r) >> 8);
+        // Done
+        output[at + 3] = 255;
+    }
+
+    /// <summary>Return <paramref name="value"/> clamped to a byte.</summary>
+    private static byte Clamp(int value) => (byte)Math.Clamp(value, 0, 255);
 }

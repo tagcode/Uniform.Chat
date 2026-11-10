@@ -40,7 +40,7 @@
 
   <!-- Call bar, above everything, so an incoming call shows whatever is open -->
   <Border DockPanel.Dock="Top" Classes="call" DataContext="{Binding Call}" IsVisible="{Binding IsVisible, FallbackValue=False}" x:DataType="vm:CallViewModel">
-    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
       <StackPanel Grid.Column="0" VerticalAlignment="Center">
         <TextBlock Classes="title" Text="{Binding PeerName}" TextTrimming="CharacterEllipsis" />
         <TextBlock Text="{Binding StateText}" TextTrimming="CharacterEllipsis" />
@@ -52,7 +52,8 @@
         <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
         <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
-      <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <views:VideoView Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" MaxHeight="480" HorizontalAlignment="Center" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
+      <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
     </Grid>
   </Border>
 

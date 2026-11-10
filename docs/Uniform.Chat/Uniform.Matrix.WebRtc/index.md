@@ -4,7 +4,7 @@ title: Uniform.Matrix.WebRtc
 ---
 # Uniform.Matrix.WebRtc
 
-The subset of WebRTC that a 1:1 voice call needs, in C#: one Opus audio stream each way, interoperating with browsers and Element. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
+The subset of WebRTC that a 1:1 call needs, in C#: one Opus audio stream each way, and VP8 video received from the peer, interoperating with browsers and Element. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
 
 ## Layers
 
@@ -15,7 +15,7 @@ STUN and TURN come from [Uniform.Stun](xref:Uniform.Stun.Article): [`StunClient`
 | `Ice/` | [`IceAgent`](xref:Uniform.Matrix.WebRtc.Ice.IceAgent): host, server-reflexive and relayed candidates, connectivity checks, role conflicts, nomination, peer-reflexive candidates, consent; [`IceCandidate`](xref:Uniform.Matrix.WebRtc.Ice.IceCandidate) as SDP writes it | [RFC 8445](https://www.rfc-editor.org/rfc/rfc8445), [RFC 8839](https://www.rfc-editor.org/rfc/rfc8839), [RFC 7675](https://www.rfc-editor.org/rfc/rfc7675) |
 | `Dtls/` | [`DtlsSrtp`](xref:Uniform.Matrix.WebRtc.Dtls.DtlsSrtp): DTLS 1.2 with BouncyCastle, use_srtp, the peer's certificate checked against its fingerprint, keys exported; [`DtlsCertificate`](xref:Uniform.Matrix.WebRtc.Dtls.DtlsCertificate) self-signed ECDSA | [RFC 5764](https://www.rfc-editor.org/rfc/rfc5764) |
 | `Srtp/` | [`SrtpSession`](xref:Uniform.Matrix.WebRtc.Srtp.SrtpSession): SRTP and SRTCP with AES_CM_128_HMAC_SHA1_80, rollover counters, replay windows | [RFC 3711](https://www.rfc-editor.org/rfc/rfc3711) |
-| `Rtp/` | [`RtpPacket`](xref:Uniform.Matrix.WebRtc.Rtp.RtpPacket) and [`JitterBuffer`](xref:Uniform.Matrix.WebRtc.Rtp.JitterBuffer) | [RFC 3550](https://www.rfc-editor.org/rfc/rfc3550) |
+| `Rtp/` | [`RtpPacket`](xref:Uniform.Matrix.WebRtc.Rtp.RtpPacket) and [`JitterBuffer`](xref:Uniform.Matrix.WebRtc.Rtp.JitterBuffer); VP8 frames put together by [`Vp8Depacketizer`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8Depacketizer) and split by [`Vp8Packetizer`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8Packetizer); receiver reports and picture loss indications of [`Rtcp`](xref:Uniform.Matrix.WebRtc.Rtp.Rtcp), counted by [`ReceiverStatistics`](xref:Uniform.Matrix.WebRtc.Rtp.ReceiverStatistics) | [RFC 3550](https://www.rfc-editor.org/rfc/rfc3550), [RFC 7741](https://www.rfc-editor.org/rfc/rfc7741), [RFC 4585](https://www.rfc-editor.org/rfc/rfc4585) |
 | `Sdp/` | [`SessionDescription`](xref:Uniform.Matrix.WebRtc.Sdp.SessionDescription), and [`AudioSdp`](xref:Uniform.Matrix.WebRtc.Sdp.AudioSdp) offers and answers: bundled, RTCP multiplexed, other media rejected | [RFC 8866](https://www.rfc-editor.org/rfc/rfc8866), [RFC 8829](https://www.rfc-editor.org/rfc/rfc8829) |
 
 One UDP socket carries everything. Its datagrams are told apart by their first byte, as [RFC 7983](https://www.rfc-editor.org/rfc/rfc7983) says: STUN 0–3, DTLS 20–63, TURN channel data 64–79, and RTP and RTCP 128–191.
@@ -40,7 +40,13 @@ await caller.SendAudioAsync(encoder.Encode(frame));
 
 TURN servers, e.g. those of a homeserver's `/voip/turnServer`, go in [`PeerConnectionOptions.Servers`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.Servers); [`RelayOnly`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.RelayOnly) keeps the call on the relay, so the peer does not learn this device's addresses.
 
-Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), ICE restarts, renegotiation, and video.
+## Received video
+
+With [`PeerConnectionOptions.ReceiveVideo`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.ReceiveVideo), an answer accepts the VP8 video of the peer's offer as `recvonly`, bundled with the audio; [`ReceivesVideo`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.ReceivesVideo) tells whether it did. The packets are put together into whole frames, given in order in [`VideoReceived`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.VideoReceived), for a decoder such as that of [Uniform.Matrix.Video](xref:Uniform.Matrix.Video.Article).
+
+A frame waits for packets that come out of order. After a packet is lost, only a keyframe is given, and the connection asks the peer for one with an RTCP picture loss indication; [`RequestKeyframeAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.RequestKeyframeAsync*) asks for one too, e.g. when a frame did not decode. Receiver reports go to the peer every second, so it can see the loss and the round trip.
+
+Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, sending video, and retransmission of lost video packets (NACK).
 
 ## Tests
 

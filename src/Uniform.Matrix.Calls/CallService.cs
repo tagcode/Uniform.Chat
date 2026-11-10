@@ -45,6 +45,9 @@ public sealed class CallService : IAsyncDisposable
     /// <summary>Whether calls go through TURN only, so the peer does not learn this device's addresses.</summary>
     public bool RelayOnly { get; set; }
 
+    /// <summary>Whether to accept the video a caller offers, to show it; this side sends none. On by default.</summary>
+    public bool ReceiveVideo { get; set; } = true;
+
     /// <summary>Raised for a new incoming call that rings.</summary>
     public event Action<VoiceCall>? IncomingCall;
 
@@ -270,7 +273,7 @@ public sealed class CallService : IAsyncDisposable
             }
         }
         // Return options
-        return new PeerConnectionOptions { Servers = turnServers, RelayOnly = RelayOnly };
+        return new PeerConnectionOptions { Servers = turnServers, RelayOnly = RelayOnly, ReceiveVideo = ReceiveVideo };
     }
 
     /// <summary>Return a call event's content by its type, or null when malformed or not handled.</summary>

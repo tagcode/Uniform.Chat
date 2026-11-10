@@ -30,6 +30,12 @@
     <ProjectReference Include="..\..\src\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
     <ProjectReference Include="..\..\src\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
     <ProjectReference Include="..\..\src\Uniform.Turn\Uniform.Turn.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Matrix.Video\Uniform.Matrix.Video.csproj" />
+  </ItemGroup>
+
+  <!-- A VP8 test vector of the video tests, sent through RTP -->
+  <ItemGroup>
+    <None Include="..\Uniform.Matrix.Video.Tests\TestVectors\vp80-00-comprehensive-017.ivf*" Link="TestVectors\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

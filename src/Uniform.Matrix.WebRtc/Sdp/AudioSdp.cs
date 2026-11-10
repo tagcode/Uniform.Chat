@@ -21,7 +21,13 @@ public sealed record LocalAudio(string Ufrag, string Password, string Fingerprin
 /// <param name="Candidates">ICE candidates in the description, if any.</param>
 public sealed record RemoteAudio(string Ufrag, string Password, string Fingerprint, string Setup, string Mid, byte OpusPayloadType, IReadOnlyList<IceCandidate> Candidates);
 
-/// <summary>Offers and answers of one Opus audio stream over WebRTC: bundled, with RTCP multiplexed, ICE credentials, DTLS-SRTP, and trickled candidates; other media in an offer, such as video, are rejected in the answer.</summary>
+/// <summary>What the peer's offer or answer says of its video.</summary>
+/// <param name="Mid">Media ID of the video section.</param>
+/// <param name="Vp8PayloadType">RTP payload type of VP8.</param>
+/// <param name="Direction">The section's direction: <c>sendrecv</c>, <c>sendonly</c>, <c>recvonly</c> or <c>inactive</c>.</param>
+public sealed record RemoteVideo(string Mid, byte Vp8PayloadType, string Direction);
+
+/// <summary>Offers and answers of one Opus audio stream over WebRTC: bundled, with RTCP multiplexed, ICE credentials, DTLS-SRTP, and trickled candidates. An offer's VP8 video may be accepted for receiving; other media are rejected in the answer.</summary>
 public static class AudioSdp
 {
     /// <summary>The payload type offered for Opus, as browsers use.</summary>
@@ -42,13 +48,15 @@ public static class AudioSdp
     /// <param name="offer">The peer's offer.</param>
     /// <param name="local">This side's audio.</param>
     /// <param name="setup">This side's DTLS role: <c>active</c> for a new connection, the current role when answering a renegotiation.</param>
+    /// <param name="receiveVideo">Whether to accept the offer's VP8 video, for receiving only.</param>
     /// <exception cref="InvalidOperationException">When the offer has no audio with Opus over DTLS-SRTP.</exception>
-    public static SessionDescription CreateAnswer(SessionDescription offer, LocalAudio local, string setup = "active")
+    public static SessionDescription CreateAnswer(SessionDescription offer, LocalAudio local, string setup = "active", bool receiveVideo = false)
     {
-        // The audio section to accept
+        // The audio section to accept, and the video one when wanted
         RemoteAudio remote = Read(offer) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
+        RemoteVideo? video = receiveVideo ? ReadVideo(offer) : null;
         SessionDescription sdp = Session();
-        sdp.Attributes.Add($"group:BUNDLE {remote.Mid}");
+        sdp.Attributes.Add(video is null ? $"group:BUNDLE {remote.Mid}" : $"group:BUNDLE {remote.Mid} {video.Mid}");
 
         // A section for each offered, in order; DTLS active, as browsers answer
         bool answered = false;
@@ -60,6 +68,12 @@ public static class AudioSdp
                 answered = true;
                 string direction = media.Get("sendonly") is not null ? "recvonly" : media.Get("recvonly") is not null ? "sendonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
                 sdp.Media.Add(Audio(local, mid, remote.OpusPayloadType, setup, direction));
+                continue;
+            }
+            if (video is not null && mid == video.Mid && media.Kind == "video")
+            {
+                // Received only, as nothing is sent yet; a peer that only receives gets an inactive section
+                sdp.Media.Add(Video(local, mid, video.Vp8PayloadType, setup, video.Direction is "sendrecv" or "sendonly" ? "recvonly" : "inactive"));
                 continue;
             }
             sdp.Media.Add(new MediaDescription { Kind = media.Kind, Port = 0, Protocol = media.Protocol, Formats = [.. media.Formats.Take(1)], Lines = ["c=IN IP4 0.0.0.0"], Attributes = [$"mid:{mid}", "inactive"] });
@@ -118,6 +132,21 @@ public static class AudioSdp
         return null;
     }
 
+    /// <summary>Return the peer's video from its offer or answer: the first video section with VP8 and DTLS-SRTP; null when there is none.</summary>
+    public static RemoteVideo? ReadVideo(SessionDescription sdp)
+    {
+        // Video over DTLS-SRTP, not rejected, with VP8 by its rtpmap
+        foreach (MediaDescription media in sdp.Media.Where(m => m.Kind == "video" && m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)))
+        {
+            if (media.GetAll("rtpmap").Select(Vp8Type).FirstOrDefault(t => t is not null) is not byte vp8) continue;
+            string direction = media.Get("sendonly") is not null ? "sendonly" : media.Get("recvonly") is not null ? "recvonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
+            // Return video
+            return new RemoteVideo(media.Get("mid") ?? "1", vp8, direction);
+        }
+        // On no usable video
+        return null;
+    }
+
     /// <summary>Return the session lines: version, origin with a random session ID, name and time.</summary>
     private static SessionDescription Session()
     {
@@ -156,6 +185,44 @@ public static class AudioSdp
                 $"ssrc:{local.Ssrc} cname:{local.Cname}",
             ],
         };
+    }
+
+    /// <summary>Return the video section of this side: VP8 with RTCP feedback for lost packets and pictures, bundled on the audio's transport.</summary>
+    private static MediaDescription Video(LocalAudio local, string mid, byte payloadType, string setup, string direction)
+    {
+        // Transport as the audio's, then the codec and its feedback
+        string pt = payloadType.ToString(CultureInfo.InvariantCulture);
+        return new MediaDescription
+        {
+            Kind = "video",
+            Formats = [pt],
+            Lines = ["c=IN IP4 0.0.0.0"],
+            Attributes =
+            [
+                "rtcp:9 IN IP4 0.0.0.0",
+                $"ice-ufrag:{local.Ufrag}",
+                $"ice-pwd:{local.Password}",
+                "ice-options:trickle",
+                $"fingerprint:{local.Fingerprint}",
+                $"setup:{setup}",
+                $"mid:{mid}",
+                direction,
+                "rtcp-mux",
+                "rtcp-rsize",
+                $"rtpmap:{pt} VP8/90000",
+                $"rtcp-fb:{pt} nack pli",
+            ],
+        };
+    }
+
+    /// <summary>Return the payload type of an rtpmap value when it maps VP8, e.g. <c>96 VP8/90000</c>.</summary>
+    private static byte? Vp8Type(string rtpmap)
+    {
+        // Payload type, then the encoding
+        string[] parts = rtpmap.Split(' ', 2);
+        if (parts.Length < 2 || !parts[1].StartsWith("VP8/90000", StringComparison.OrdinalIgnoreCase)) return null;
+        // Return payload type
+        return byte.TryParse(parts[0], CultureInfo.InvariantCulture, out byte type) ? type : null;
     }
 
     /// <summary>Return the payload type of an rtpmap value when it maps Opus, e.g. <c>111 opus/48000/2</c>.</summary>
