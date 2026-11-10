@@ -24,6 +24,9 @@ public interface IVideoCamera : IAsyncDisposable
     /// <summary>Send at most <paramref name="bitsPerSecond"/>, as the peer asked, e.g. with a lower resolution and frame rate; nothing where the camera cannot.</summary>
     void LimitBitrate(long bitsPerSecond) { }
 
+    /// <summary>Whether the device has another camera to switch to.</summary>
+    bool CanSwitch => false;
+
     /// <summary>Switch to the device's next camera, e.g. from the front to the back; nothing with one camera.</summary>
     void SwitchCamera() { }
 }

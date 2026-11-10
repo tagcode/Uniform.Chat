@@ -16,11 +16,11 @@ An incoming call shows the bar at the top, whichever room is open, with **Answer
 
 ## Video
 
-On a phone, press 📹 in a direct chat's header to start a video call. When someone calls you with video, the bar says *Incoming video call*; **Answer with video** also sends your camera, and **Answer** answers with voice only. The app asks for the camera permission the first time.
+On a device with a camera, a phone or a Linux computer with a webcam, press 📹 in a direct chat's header to start a video call. When someone calls you with video, the bar says *Incoming video call*; **Answer with video** also sends your camera, and **Answer** answers with voice only. The app asks for the camera permission the first time.
 
-During a video call the video fills the screen; **Chat** shows the rooms and messages under a smaller call bar, and **Video** brings the full screen back. Your own camera shows small in a corner. **Switch camera** changes between the front and back cameras, and **Camera off** stops your camera until you press **Camera on**; the call goes on with voice.
+During a video call the video fills the screen; **Chat** shows the rooms and messages under a smaller call bar, and **Video** brings the full screen back. Your own camera shows small in a corner. **Switch camera**, shown when there is more than one camera, changes between them, e.g. the front and back cameras of a phone; and **Camera off** stops your camera until you press **Camera on**; the call goes on with voice.
 
-The picture turns upright when either phone is held sideways. A phone that cannot keep up with the other's video asks it for a smaller picture, 320x240 at 10 frames per second, and for full quality again once it can. The desktop app shows the other person's video, but cannot send video yet.
+The picture turns upright when either phone is held sideways. A phone that cannot keep up with the other's video asks it for a smaller picture, 320x240 at 10 frames per second, and for full quality again once it can. The desktop app sends video from a webcam on Linux; your user needs access to it, usually as a member of the `video` group. On Windows it shows the other person's video, but cannot send video yet.
 
 ## During a call
 

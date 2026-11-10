@@ -41,6 +41,13 @@ internal static class Vp8Transform
     /// <summary>Inverse DCT of the 16 coefficients at <paramref name="block"/>, added to the 4x4 prediction at <paramref name="prediction"/> and written to <paramref name="output"/>, clamped to bytes; both use <paramref name="stride"/>.</summary>
     public static void InverseDctAdd(short[] coefficients, int block, byte[] prediction, int predictionIndex, byte[] output, int outputIndex, int stride)
     {
+        // Only a DC, as many blocks of camera video have: the transform adds the same value to every pixel, exactly
+        if (coefficients.AsSpan(block + 1, 15).IndexOfAnyExcept((short)0) < 0)
+        {
+            AddDc(coefficients[block], prediction, predictionIndex, output, outputIndex, stride);
+            return;
+        }
+
         // Columns
         Span<short> temp = stackalloc short[16];
         for (int i = 0; i < 4; i++)
@@ -69,6 +76,26 @@ internal static class Vp8Transform
             output[o + 3] = Clamp(prediction[p + 3] + ((a1 - d1 + 4) >> 3));
             output[o + 1] = Clamp(prediction[p + 1] + ((b1 + c1 + 4) >> 3));
             output[o + 2] = Clamp(prediction[p + 2] + ((b1 - c1 + 4) >> 3));
+        }
+    }
+
+    /// <summary>Add a block's DC alone to its prediction: <c>(dc + 4) &gt;&gt; 3</c> to each pixel, as the full transform gives when the other coefficients are zero; nothing to add copies the prediction.</summary>
+    private static void AddDc(int dc, byte[] prediction, int predictionIndex, byte[] output, int outputIndex, int stride)
+    {
+        // Row by row
+        int add = (dc + 4) >> 3;
+        for (int row = 0; row < 4; row++)
+        {
+            int p = predictionIndex + row * stride, o = outputIndex + row * stride;
+            if (add == 0)
+            {
+                if (!ReferenceEquals(prediction, output) || p != o) Array.Copy(prediction, p, output, o, 4);
+                continue;
+            }
+            output[o] = Clamp(prediction[p] + add);
+            output[o + 1] = Clamp(prediction[p + 1] + add);
+            output[o + 2] = Clamp(prediction[p + 2] + add);
+            output[o + 3] = Clamp(prediction[p + 3] + add);
         }
     }
 

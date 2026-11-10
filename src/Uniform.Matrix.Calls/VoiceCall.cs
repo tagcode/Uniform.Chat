@@ -118,6 +118,9 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <summary>Whether this side sends its camera's video in the call.</summary>
     public bool SendsVideo => sending is not null;
 
+    /// <summary>Whether this side's device has another camera to switch to.</summary>
+    public bool CanSwitchCamera => sending?.CanSwitch == true;
+
     /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
     public void SwitchCamera() => sending?.SwitchCamera();
 

@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build desktop",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/src/Uniform.Chat.Desktop", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary"],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build server",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/src/Uniform.Chat.Server", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary"],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build terminal",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/src/Uniform.Chat.Terminal", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary"],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build all",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/Uniform.Chat.slnx", "/property:GenerateFullPaths=true", "/consoleloggerparameters:NoSummary"],
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

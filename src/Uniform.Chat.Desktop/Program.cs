@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Desktop;
 
+using Uniform.Chat.Desktop.Linux;
 using global::Avalonia;
 using Uniform.Chat.Desktop.Notifications;
 using Uniform.Chat.Avalonia;
@@ -13,7 +14,11 @@ public static class Program
     public static int Main(string[] args)
     {
         // Notifications where the platform has them so far
-        App.Platform = GuiPlatform.Desktop() with { Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null };
+        App.Platform = GuiPlatform.Desktop() with
+        {
+            Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null,
+            Camera = V4l2Camera.Available() ? () => new V4l2Camera() : null,
+        };
         // Return exit code
         return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

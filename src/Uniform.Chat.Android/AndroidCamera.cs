@@ -55,6 +55,9 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <inheritdoc />
     public event Action<Uniform.Matrix.Video.VideoFrame>? Previewed;
 
+    /// <inheritdoc />
+    public bool CanSwitch => cameras.Length > 1;
+
     /// <summary>The rotation that shows the pictures upright: the camera's mounting against how the screen is turned now, the other way round for the front camera, as Android's image orientation is computed.</summary>
     public int Rotation
     {
@@ -348,7 +351,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         int width = image.Width, height = image.Height, chromaWidth = (width + 1) / 2, chromaHeight = (height + 1) / 2;
         byte[] y = Plane(planes[0], width, height), u = Plane(planes[1], chromaWidth, chromaHeight), v = Plane(planes[2], chromaWidth, chromaHeight);
         // Done
-        Previewed?.Invoke(new Uniform.Matrix.Video.VideoFrame(width, height, y, u, v) { Rotation = Rotation });
+        Previewed?.Invoke(new Uniform.Matrix.Video.VideoFrame(width, height, y, u, v) { Rotation = Rotation, Mirrored = front });
     }
 
     /// <summary>Return a plane's pixels tightly packed, whatever its row and pixel strides.</summary>

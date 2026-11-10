@@ -68,6 +68,10 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>This side's camera, small, while it sends.</summary>
     public VideoFeed LocalVideo { get; } = new();
 
+    /// <summary>Whether this side sends its camera and has another one to switch to.</summary>
+    [ObservableProperty]
+    public partial bool CanSwitchCamera { get; set; }
+
     /// <summary>Whether this side's camera has a preview to show.</summary>
     [ObservableProperty]
     public partial bool HasPreview { get; set; }
@@ -349,6 +353,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         IsRinging = call.State == CallState.Ringing;
         CanAnswerWithVideo = IsRinging && call.IsVideo && platform.Camera is not null;
         SendsVideo = call.SendsVideo && call.State != CallState.Ended;
+        CanSwitchCamera = SendsVideo && call.CanSwitchCamera;
         IsActive = call.State is not (CallState.Ringing or CallState.Ended);
         IsMuted = call.Muted;
         HoldPlatform(IsRinging, IsActive);

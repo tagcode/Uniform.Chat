@@ -1,0 +1,85 @@
+{
+    // Debug configurations of the applications.
+    // The server's dashboard and the terminal client draw with Terminal.Gui, so they need a real terminal: the debug console would redirect them.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // The desktop app; with a webcam at /dev/video*, video calls send it
+            "name": "Desktop",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build desktop",
+            "program": "${workspaceFolder}/src/Uniform.Chat.Desktop/bin/Debug/net10.0/Uniform.Chat.dll",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Server (dashboard)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build server",
+            "program": "${workspaceFolder}/src/Uniform.Chat.Server/bin/Debug/net10.0/uniform-chat-server.dll",
+            "args": ["--Host:Ui=Dashboard"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            // Logs to the debug console instead of a dashboard
+            "name": "Server (no dashboard)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build server",
+            "program": "${workspaceFolder}/src/Uniform.Chat.Server/bin/Debug/net10.0/uniform-chat-server.dll",
+            "args": ["--Host:Ui=None"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            // Create the user first in the server's dashboard: Server → Users → New
+            "name": "Terminal client (local server)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build terminal",
+            "program": "${workspaceFolder}/src/Uniform.Chat.Terminal/bin/Debug/net10.0/Uniform.Chat.dll",
+            "args": ["--Matrix:UserId=${input:localUserId}", "--Matrix:Homeserver=http://localhost:8008"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            // Finds the homeserver from the user ID's server name
+            "name": "Terminal client",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build terminal",
+            "program": "${workspaceFolder}/src/Uniform.Chat.Terminal/bin/Debug/net10.0/Uniform.Chat.dll",
+            "args": ["--Matrix:UserId=${input:userId}"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Server + terminal client",
+            "configurations": ["Server (dashboard)", "Terminal client (local server)"],
+            "stopAll": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "localUserId",
+            "type": "promptString",
+            "description": "User ID on the local server",
+            "default": "@alice:localhost"
+        },
+        {
+            "id": "userId",
+            "type": "promptString",
+            "description": "Full Matrix user ID, e.g. @alice:matrix.org"
+        }
+    ]
+}

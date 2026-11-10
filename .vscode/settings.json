@@ -1,0 +1,4 @@
+{
+    // Solution the C# extension opens
+    "dotnet.defaultSolution": "Uniform.Chat.slnx"
+}

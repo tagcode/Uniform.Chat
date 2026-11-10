@@ -50,6 +50,21 @@
   <Style Selector="Border.call Button:pointerover /template/ ContentPresenter, Border.call Button:pressed /template/ ContentPresenter">
     <Setter Property="Foreground" Value="White" />
   </Style>
+  <!-- The camera turned off: an amber button and a sign where the preview was -->
+  <Style Selector="Border.call Button.warning">
+    <Setter Property="Background" Value="#E0A000" />
+    <Setter Property="Foreground" Value="Black" />
+  </Style>
+  <Style Selector="Border.call Button.warning:pointerover /template/ ContentPresenter, Border.call Button.warning:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="#F0B000" />
+    <Setter Property="Foreground" Value="Black" />
+  </Style>
+  <Style Selector="Border.cameraoff">
+    <Setter Property="Background" Value="#E0A000" />
+    <Setter Property="Padding" Value="8,4" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="TextElement.Foreground" Value="Black" />
+  </Style>
   <!-- A video call on the whole screen: the call's green past the bar too -->
   <Style Selector="DockPanel.videocall">
     <Setter Property="Background" Value="#1B5E3A" />

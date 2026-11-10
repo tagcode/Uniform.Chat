@@ -20,8 +20,9 @@ public sealed class VideoView : Control
     private int posted;
     private volatile VideoFeed? feed;
     private int rotation;
+    private bool mirrored;
 
-    /// <summary>Whether to show the picture mirrored, as a preview of one's own front camera is.</summary>
+    /// <summary>Whether to show the pictures mirrored, besides those that say so themselves.</summary>
     public static readonly StyledProperty<bool> MirrorProperty = AvaloniaProperty.Register<VideoView, bool>(nameof(Mirror));
 
     /// <summary>Whether to show the picture mirrored, as a preview of one's own front camera is.</summary>
@@ -100,7 +101,7 @@ public sealed class VideoView : Control
         Size size = bitmap.Size * scale;
 
         // Drawn around the center, turned clockwise
-        Matrix turn = Matrix.CreateTranslation(-size.Width / 2, -size.Height / 2) * Matrix.CreateRotation(rotation * Math.PI / 180) * Matrix.CreateScale(Mirror ? -1 : 1, 1) * Matrix.CreateTranslation(Bounds.Width / 2, Bounds.Height / 2);
+        Matrix turn = Matrix.CreateTranslation(-size.Width / 2, -size.Height / 2) * Matrix.CreateRotation(rotation * Math.PI / 180) * Matrix.CreateScale(Mirror != mirrored ? -1 : 1, 1) * Matrix.CreateTranslation(Bounds.Width / 2, Bounds.Height / 2);
         using (context.PushTransform(turn))
         {
             // Done
@@ -127,7 +128,7 @@ public sealed class VideoView : Control
                 int length = picture.Width * 4 * picture.Height;
                 if (pixels.Length != length) pixels = new byte[length];
                 picture.CopyToBgra(pixels, picture.Width * 4);
-                Dispatcher.UIThread.Post(() => Show(picture.Width, picture.Height, picture.Rotation));
+                Dispatcher.UIThread.Post(() => Show(picture.Width, picture.Height, picture.Rotation, picture.Mirrored));
             }
             catch
             {
@@ -158,8 +159,11 @@ public sealed class VideoView : Control
     }
 
     /// <summary>Copy the converted pixels of a <paramref name="width"/> by <paramref name="height"/> picture into the bitmap, sized to it, and redraw; then take the next picture.</summary>
-    private void Show(int width, int height, int pictureRotation)
+    private void Show(int width, int height, int pictureRotation, bool pictureMirrored)
     {
+        // Mirrored as the picture says
+        mirrored = pictureMirrored;
+
         // Turned sideways changes the shape
         if (pictureRotation != rotation)
         {
