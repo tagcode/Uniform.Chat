@@ -75,13 +75,25 @@ Rename to Uniform.Gui.Terminal.
   - IzzyOnDroid limits APK size to around 30 MB. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. 
      - One APK per processor type, would halve it (40MB). Still not small enough. Cannot be published on IzzyOnDroid.
 
-# Adroind client 
+# Android client 
 
 - Suspended-account banner and server notices
 - F-Droid / IzzyOnDroid store screenshots
 - Admin pages (reports, accounts, tokens)
 
-# Server local socket based dashboard
+# Video calls
 
-- Test it.
-- If socket dashboard works well enough, the server dashboard mode can be removed?
+- Desktop: Sending video feed from a desktop webcam would need either a video encoder written in C# or native libraries.
+  - C# video encoder must be built.
+- Android's camera API (Camera2) and its built-in VP8 hardware encoder (MediaCodec), through Java bindings rather than native code
+  - the call adding a send-and-receive video section and sending the encoded frames
+  - a "Video call" button next to 📞, a camera on/off toggle, and switching between the front and back camera.
+  - Asking for the camera permission, as calls already do for the microphone.
+
+# MatrixRTC calls
+
+- Room events announce and join a call. 
+- Getting a LiveKit token from the JWT service your server advertises;
+- LiveKit's own signalling, over a WebSocket with protobuf messages, on top of the WebRTC code we have;
+- Element X's end-to-end media encryption: each participant encrypts their audio and video frames with keys sent to the others in encrypted messages. 
+- Without it, Element X won't accept our media in encrypted rooms.
