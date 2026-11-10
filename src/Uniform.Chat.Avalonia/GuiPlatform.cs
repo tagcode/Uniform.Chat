@@ -27,6 +27,12 @@ public sealed record GuiPlatform
     public bool HasEarpiece { get; init; }
     /// <summary>Ask for permission to record, where the platform needs it; return whether it is granted. Null where none is needed.</summary>
     public Func<Task<bool>>? RequestMicrophoneAsync { get; init; }
+
+    /// <summary>Opens the camera with its VP8 encoder, for calls answered with video; null where there is none.</summary>
+    public Func<Uniform.Matrix.Calls.IVideoCamera>? Camera { get; init; }
+
+    /// <summary>Asks for the camera permission where needed, returning whether granted; null when none is needed.</summary>
+    public Func<Task<bool>>? RequestCameraAsync { get; init; }
     /// <summary>Ask for permission to show notifications, where the platform needs it, as Android 13 and later do; return whether they may be shown. Null where none is needed.</summary>
     public Func<Task<bool>>? RequestNotificationsAsync { get; init; }
     /// <summary>Return whether the app may show notifications now; null where it always may.</summary>

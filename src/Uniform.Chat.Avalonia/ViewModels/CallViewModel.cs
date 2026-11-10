@@ -42,6 +42,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         this.nameOf = nameOf;
         this.mayRing = mayRing ?? (() => true);
         calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
+        if (platform.Camera is { } camera) calls.Camera = () => camera();
         calls.IncomingCall += OnIncoming;
         calls.CallChanged += OnChanged;
         clock = new Timer(_ => ui.Post(Refresh), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -79,6 +80,10 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>Whether an incoming call rings, to answer or decline.</summary>
     [ObservableProperty]
     public partial bool IsRinging { get; set; }
+
+    /// <summary>Whether the ringing call has video and this device a camera, to answer with video.</summary>
+    [ObservableProperty]
+    public partial bool CanAnswerWithVideo { get; set; }
 
     /// <summary>Whether the call goes on, to hang up.</summary>
     [ObservableProperty]
@@ -131,6 +136,18 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         await RunAsync("Answering", () => call.AnswerAsync());
     }
 
+    /// <summary>Answer the ringing call with this device's camera too.</summary>
+    [RelayCommand]
+    private async Task AnswerWithVideoAsync()
+    {
+        // Microphone and camera, then the answer; without the camera, voice only
+        if (Current is not VoiceCall call) return;
+        if (!await HasMicrophoneAsync()) return;
+        bool camera = platform.RequestCameraAsync is not { } request || await request();
+        if (!camera) Error = "No camera permission; answering with voice only.";
+        await RunAsync("Answering", () => camera ? call.AnswerWithVideoAsync() : call.AnswerAsync());
+    }
+
     /// <summary>Decline the ringing call.</summary>
     [RelayCommand]
     private Task RejectAsync() => Current is VoiceCall call ? RunAsync("Declining", () => call.RejectAsync()) : Task.CompletedTask;
@@ -169,13 +186,14 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         HoldPlatform(false, false);
     }
 
-    /// <summary>Hold what the platform does for the call's state: keep it alive while active, ring while ringing, and turn the screen off near the ear while active on the earpiece.</summary>
+    /// <summary>Hold what the platform does for the call's state: keep it alive while active, ring while ringing, and turn the screen off near the ear while active on the earpiece, except in video calls, which are watched.</summary>
     private void HoldPlatform(bool ringingNow, bool active)
     {
         // Each started once and stopped once
         Hold(ref keptAlive, active, platform.KeepCallAlive is { } keep ? () => keep(PeerName) : null);
         Hold(ref ringing, ringingNow && mayRing(), platform.Ring is { } ring ? () => ring(PeerName) : null);
-        Hold(ref nearEar, active && !(HasEarpiece && Loudspeaker), platform.ScreenOffNearEar);
+        bool video = HasVideo || Current?.SendsVideo == true || Current?.IsVideo == true;
+        Hold(ref nearEar, active && !video && !(HasEarpiece && Loudspeaker), platform.ScreenOffNearEar);
     }
 
     /// <summary>Start a platform action when wanted and not held, or stop it when held and no longer wanted.</summary>
@@ -225,7 +243,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         RemoteVideo.Push(picture);
         if (Interlocked.Exchange(ref pictured, 1) == 1) return;
         // Done
-        ui.Post(() => { if (call == Current) HasVideo = true; });
+        ui.Post(() => { if (call == Current) { HasVideo = true; HoldPlatform(IsRinging, IsActive); } });
     }
 
     /// <summary>Show a call, and hide it a while after it ends.</summary>
@@ -246,6 +264,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         // Nothing shown
         if (Current is not VoiceCall call) return;
         IsRinging = call.State == CallState.Ringing;
+        CanAnswerWithVideo = IsRinging && call.IsVideo && platform.Camera is not null;
         IsActive = call.State is not (CallState.Ringing or CallState.Ended);
         IsMuted = call.Muted;
         HoldPlatform(IsRinging, IsActive);

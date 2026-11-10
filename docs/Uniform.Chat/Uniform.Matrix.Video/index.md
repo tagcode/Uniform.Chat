@@ -4,7 +4,7 @@ title: Uniform.Matrix.Video
 ---
 # Uniform.Matrix.Video
 
-Video for calls, in pure C# with no native libraries: a VP8 decoder that turns the frames of a video call into pictures. Nothing here knows about Matrix or the network: [Uniform.Matrix.WebRtc](xref:Uniform.Matrix.WebRtc.Article) puts the frames together from RTP, and [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) decodes them and gives the pictures to the app.
+Video for calls, in pure C# with no native libraries: a VP8 decoder that turns the frames of a video call into pictures, and a VP8 encoder that makes frames of pictures. Nothing here knows about Matrix or the network: [Uniform.Matrix.WebRtc](xref:Uniform.Matrix.WebRtc.Article) puts the frames together from RTP, and [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) decodes them and gives the pictures to the app.
 
 ## Decoding
 
@@ -25,6 +25,19 @@ A [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame) is I420: full-size luma, 
 ```csharp
 picture.CopyToBgra(pixels, stride);
 ```
+
+## Encoding
+
+[`Vp8Encoder`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder) encodes pictures as VP8 frames, in pure C# too. For now every frame is a keyframe: each macroblock is predicted from its edges by DC, its residual transformed and quantized with one quantizer, and written with the default probabilities, without a loop filter. [`Quantizer`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Quantizer), 0 to 127, trades size for quality. The encoder reconstructs each frame with the decoder's own inverse transforms, so [`Reconstruction`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Reconstruction) is the picture that decoders show; the tests check that bit for bit, and that Chromium decodes the frames.
+
+To encode a picture and send it in a call:
+
+```csharp
+Vp8Encoder encoder = new(quantizer: 40);
+await connection.SendVideoAsync(encoder.Encode(picture));
+```
+
+Keyframes only cost several times the bits of a stream with inter frames, which predict from the previous picture; those come next.
 
 ## How the decoder is built
 

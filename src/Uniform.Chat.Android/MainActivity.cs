@@ -18,10 +18,12 @@ using global::Android.Views;
 public sealed class MainActivity : AvaloniaMainActivity
 {
     private const int MicrophoneRequest = 1;
+    private const int CameraRequest = 3;
     private const int NotificationsRequest = 2;
     private static MainActivity? current;
     private static bool shownWhenLocked;
     private TaskCompletionSource<bool>? microphoneAnswer;
+    private TaskCompletionSource<bool>? cameraAnswer;
     private TaskCompletionSource<bool>? notificationsAnswer;
 
     /// <summary>Whether the app is on screen, so that a ringing call needs no notification.</summary>
@@ -93,6 +95,20 @@ public sealed class MainActivity : AvaloniaMainActivity
         return activity.microphoneAnswer.Task;
     }
 
+    /// <summary>Ask for the camera permission, for answering with video, unless granted already; return whether granted.</summary>
+    public static Task<bool> RequestCameraAsync()
+    {
+        // Granted already, or no activity to ask from
+        if (current is not MainActivity activity) return Task.FromResult(false);
+        if (activity.CheckSelfPermission(Manifest.Permission.Camera) == Permission.Granted) return Task.FromResult(true);
+
+        // Ask; the answer comes to OnRequestPermissionsResult
+        activity.cameraAnswer = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        activity.RequestPermissions([Manifest.Permission.Camera], CameraRequest);
+        // Return the answer to come
+        return activity.cameraAnswer.Task;
+    }
+
     /// <summary>Ask on Android 13 and later for the permission to notify, which an incoming call's screen needs, unless granted already; return whether notifications may be shown.</summary>
     public static Task<bool> RequestNotificationsAsync()
     {
@@ -116,6 +132,14 @@ public sealed class MainActivity : AvaloniaMainActivity
         {
             notificationsAnswer?.TrySetResult(grantResults.Length > 0 && grantResults[0] == Permission.Granted);
             notificationsAnswer = null;
+            return;
+        }
+
+        // The camera's answer
+        if (requestCode == CameraRequest)
+        {
+            cameraAnswer?.TrySetResult(grantResults.Length > 0 && grantResults[0] == Permission.Granted);
+            cameraAnswer = null;
             return;
         }
 

@@ -158,9 +158,11 @@ public class BrowserTests
         Assert.Equal(1, stats["reports"]!.GetValue<int>());
     }
 
-    /// <summary>Chromium offers audio and to receive video; we answer sending VP8, the frames of a test vector at 30 per second, as a camera's encoder would give them; Chromium decodes pictures of the vector's size.</summary>
-    [Fact]
-    public async Task SendVideoToChromium()
+    /// <summary>Chromium offers audio and to receive video; we answer sending VP8 at 30 frames per second: a test vector's frames, as a camera's encoder would give them, or our own encoder's of a moving square; Chromium decodes pictures of their size.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SendVideoToChromium(bool ownEncoder)
     {
         // Browser, and our side sending video
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
@@ -201,13 +203,15 @@ public class BrowserTests
             """, cancellationToken);
         Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
 
-        // Three seconds of the vector's frames, from its keyframe again after its end
+        // Three seconds of frames: the vector's, from its keyframe again after its end, or ours
         byte[][] frames = [.. VideoRtpTests.ReadIvf(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "TestVectors", "vp80-00-comprehensive-017.ivf")))];
+        Video.Vp8.Vp8Encoder encoder = new();
         for (int i = 0; i < 90; i++)
         {
-            await peer.SendVideoAsync(frames[i % frames.Length], cancellationToken);
+            await peer.SendVideoAsync(ownEncoder ? encoder.Encode(Square(i)) : frames[i % frames.Length], cancellationToken);
             await Task.Delay(33, cancellationToken);
         }
+        (int width, int height) = ownEncoder ? (320, 240) : (176, 144);
 
         // Chromium decoded pictures of the vector's size
         JsonNode stats = (await chromium.EvaluateAsync("""
@@ -216,8 +220,22 @@ public class BrowserTests
             return { decoded: inbound?.framesDecoded ?? 0, width: inbound?.frameWidth, height: inbound?.frameHeight, lost: inbound?.packetsLost, pli: inbound?.pliCount ?? 0 };
             """, cancellationToken))!;
         Assert.True(stats["decoded"]!.GetValue<int>() >= 60, stats.ToJsonString());
-        Assert.Equal(176, stats["width"]!.GetValue<int>());
+        Assert.Equal(width, stats["width"]!.GetValue<int>());
         // Done
-        Assert.Equal(144, stats["height"]!.GetValue<int>());
+        Assert.Equal(height, stats["height"]!.GetValue<int>());
+    }
+
+    /// <summary>Return a 320x240 picture of frame <paramref name="index"/>: a light square moving over a dark ground.</summary>
+    private static Video.VideoFrame Square(int index)
+    {
+        // Ground, then the square
+        byte[] y = new byte[320 * 240], u = new byte[160 * 120], v = new byte[160 * 120];
+        Array.Fill(y, (byte)40);
+        Array.Fill(u, (byte)128);
+        Array.Fill(v, (byte)128);
+        int left = index * 4 % 280;
+        for (int r = 100; r < 140; r++) y.AsSpan(r * 320 + left, 40).Fill(220);
+        // Return picture
+        return new Video.VideoFrame(320, 240, y, u, v);
     }
 }

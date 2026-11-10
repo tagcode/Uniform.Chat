@@ -6,6 +6,8 @@
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <!-- Voice: the microphone, and switching call audio to the loudspeaker -->
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
   <!-- Calls go on in the background: a foreground service of the phone call and microphone types; managing its own calls is what the phone call type needs -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
