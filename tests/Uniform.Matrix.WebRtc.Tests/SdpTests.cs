@@ -89,4 +89,21 @@ public class SdpTests
         // Done
         Assert.Equal(new RemoteAudio("Xy9z", "zyxwvutsrqponmlkjihgfedc", "sha-256 01:02", "actpass", "0", 111, []), audio with { Candidates = [] });
     }
+
+    /// <summary>A video offer has the orientation extension, and an answer to an offer with it echoes the offer's ID.</summary>
+    [Fact]
+    public void NegotiateOrientation()
+    {
+        // Arrange and act: our offer, and our answer to an offer with ID 13
+        LocalAudio local = new("ufrag", "password", "sha-256 00", 1, "cname", 2);
+        SessionDescription offer = AudioSdp.CreateOffer(local, video: true);
+        string text = offer.ToString().Replace($"extmap:{AudioSdp.OrientationId} ", "extmap:13 ");
+        SessionDescription answer = AudioSdp.CreateAnswer(SessionDescription.Parse(text), local, receiveVideo: true, sendVideo: true);
+
+        // Assert
+        Assert.Contains($"a=extmap:{AudioSdp.OrientationId} {AudioSdp.VideoOrientation}", offer.ToString());
+        Assert.Equal((byte)13, AudioSdp.ReadVideo(answer)!.OrientationId);
+        // Done
+        Assert.Contains("a=extmap:13 urn:3gpp:video-orientation", answer.ToString());
+    }
 }

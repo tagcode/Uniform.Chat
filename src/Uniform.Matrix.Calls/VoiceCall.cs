@@ -62,6 +62,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private VideoReceiver? video;
     private IVideoCamera? sending;
     private bool withVideo;
+    private volatile bool cameraOff;
     private string? peerPartyId;
     private bool remoteDescribed;
     private bool flushScheduled;
@@ -119,6 +120,22 @@ public sealed class VoiceCall : IAsyncDisposable
 
     /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
     public void SwitchCamera() => sending?.SwitchCamera();
+
+    /// <summary>Whether this side's camera is turned off: nothing is captured or sent until it is turned on.</summary>
+    public bool CameraOff
+    {
+        get => cameraOff;
+        set
+        {
+            // The camera stops or starts; frames are dropped meanwhile
+            cameraOff = value;
+            sending?.SetPaused(value);
+            Changed?.Invoke(this);
+        }
+    }
+
+    /// <summary>Raised with small pictures of this side's camera, for a preview; on any thread.</summary>
+    public event Action<VoiceCall, VideoFrame>? PreviewReceived;
 
     /// <summary>Raised with each picture of the peer's video, on a decoding thread; a handler should be quick, e.g. keep the newest picture to show.</summary>
     public event Action<VoiceCall, VideoFrame>? PictureReceived;
@@ -442,7 +459,8 @@ public sealed class VoiceCall : IAsyncDisposable
         if (!peer.SendsVideo || camera() is not IVideoCamera opened) return;
         try
         {
-            opened.FrameEncoded += frame => _ = peer.SendVideoAsync(frame, ending.Token);
+            opened.FrameEncoded += frame => { if (!cameraOff) _ = peer.SendVideoAsync(frame, ending.Token, opened.Rotation); };
+            opened.Previewed += picture => { if (!cameraOff) PreviewReceived?.Invoke(this, picture); };
             peer.KeyframeRequested += opened.RequestKeyframe;
             peer.BitrateRequested += opened.LimitBitrate;
             opened.Start();

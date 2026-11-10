@@ -6,7 +6,8 @@ namespace Uniform.Matrix.WebRtc.Rtp;
 /// A frame after lost packets cannot be decoded, as it predicts from the frames before; from then on only a keyframe is given, and <see cref="NeedsKeyframe"/> tells the caller to ask the sender for one, e.g. with an RTCP PLI.
 /// </remarks>
 /// <param name="reorderWindow">How many packets past a gap may arrive before the missing ones count as lost.</param>
-public sealed class Vp8Depacketizer(int reorderWindow = 64)
+/// <param name="orientationId">The header extension ID of the video orientation, whose rotation the frames carry from their last packet; null when not used.</param>
+public sealed class Vp8Depacketizer(int reorderWindow = 64, byte? orientationId = null)
 {
     /// <summary>How many frames may wait at most; the oldest are given up.</summary>
     private const int MaxPendingFrames = 64;
@@ -16,10 +17,10 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64)
     private bool started;
 
     /// <summary>A packet's VP8 data and where it belongs.</summary>
-    private sealed record Part(ushort Sequence, bool Start, bool Marker, byte[] Data);
+    private sealed record Part(ushort Sequence, bool Start, bool Marker, byte[] Data, int Rotation = 0);
 
     /// <summary>A frame whose packets are all here.</summary>
-    private sealed record Ready(uint Timestamp, ushort First, ushort End, byte[] Data);
+    private sealed record Ready(uint Timestamp, ushort First, ushort End, byte[] Data, int Rotation);
 
     /// <summary>Whether the frames given so far do not let the next inter frame decode, as at the start or after a loss: only a keyframe will be given.</summary>
     public bool NeedsKeyframe { get; private set; } = true;
@@ -32,7 +33,8 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64)
         if (lastSequence is ushort last && (short)(ushort)(packet.Sequence - last) <= 0) return [];
         if (!pending.TryGetValue(packet.Timestamp, out List<Part>? parts)) pending[packet.Timestamp] = parts = [];
         if (parts.Any(p => p.Sequence == packet.Sequence)) return [];
-        parts.Add(new Part(packet.Sequence, descriptor.Start && descriptor.PartitionIndex == 0, packet.Marker, packet.Payload[descriptor.Length..]));
+        int rotation = orientationId is byte id && packet.Extension(id) is [byte cvo, ..] ? (cvo & 3) * 90 : 0;
+        parts.Add(new Part(packet.Sequence, descriptor.Start && descriptor.PartitionIndex == 0, packet.Marker, packet.Payload[descriptor.Length..], rotation));
         if (!started || (short)(ushort)(packet.Sequence - newestSequence) > 0) newestSequence = packet.Sequence;
         started = true;
 
@@ -83,7 +85,7 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64)
 
         // Done
         NeedsKeyframe = false;
-        frames.Add(new Vp8EncodedFrame(ready.Timestamp, keyframe, ready.Data));
+        frames.Add(new Vp8EncodedFrame(ready.Timestamp, keyframe, ready.Data, ready.Rotation));
     }
 
     /// <summary>Return the frame of <paramref name="timestamp"/> when its first packet, its last and all between are here, or null.</summary>
@@ -105,6 +107,6 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64)
             at += part.Data.Length;
         }
         // Return frame
-        return new Ready(timestamp, start.Sequence, end.Sequence, data);
+        return new Ready(timestamp, start.Sequence, end.Sequence, data, end.Rotation);
     }
 }

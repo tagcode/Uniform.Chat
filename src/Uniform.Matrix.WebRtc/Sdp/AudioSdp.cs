@@ -26,13 +26,20 @@ public sealed record RemoteAudio(string Ufrag, string Password, string Fingerpri
 /// <param name="Mid">Media ID of the video section.</param>
 /// <param name="Vp8PayloadType">RTP payload type of VP8.</param>
 /// <param name="Direction">The section's direction: <c>sendrecv</c>, <c>sendonly</c>, <c>recvonly</c> or <c>inactive</c>.</param>
-public sealed record RemoteVideo(string Mid, byte Vp8PayloadType, string Direction);
+/// <param name="OrientationId">The header extension ID of <see cref="AudioSdp.VideoOrientation"/>, when the peer uses it.</param>
+public sealed record RemoteVideo(string Mid, byte Vp8PayloadType, string Direction, byte? OrientationId = null);
 
 /// <summary>Offers and answers of one Opus audio stream over WebRTC: bundled, with RTCP multiplexed, ICE credentials, DTLS-SRTP, and trickled candidates. An offer's VP8 video may be accepted for receiving, sending or both; other media are rejected in the answer.</summary>
 public static class AudioSdp
 {
     /// <summary>The payload type offered for Opus, as browsers use.</summary>
     public const byte OpusPayloadType = 111;
+
+    /// <summary>The <see href="https://www.etsi.org/deliver/etsi_ts/126100_126199/126114/">3GPP coordination of video orientation</see>: a header extension on a frame's last packet, telling how to rotate the picture.</summary>
+    public const string VideoOrientation = "urn:3gpp:video-orientation";
+
+    /// <summary>The header extension ID offered for <see cref="VideoOrientation"/>.</summary>
+    public const byte OrientationId = 4;
 
     /// <summary>The payload type offered for VP8, as browsers use.</summary>
     public const byte Vp8PayloadType = 96;
@@ -44,7 +51,7 @@ public static class AudioSdp
         SessionDescription sdp = Session();
         sdp.Attributes.Add(video ? "group:BUNDLE 0 1" : "group:BUNDLE 0");
         sdp.Media.Add(Audio(local, "0", OpusPayloadType, "actpass", "sendrecv"));
-        if (video) sdp.Media.Add(Video(local, "1", Vp8PayloadType, "actpass", "sendrecv"));
+        if (video) sdp.Media.Add(Video(local, "1", Vp8PayloadType, "actpass", "sendrecv", OrientationId));
         // Return offer
         return sdp;
     }
@@ -79,7 +86,7 @@ public static class AudioSdp
             if (video is not null && mid == video.Mid && media.Kind == "video")
             {
                 // Each way when this side wants it and the peer offers it
-                sdp.Media.Add(Video(local, mid, video.Vp8PayloadType, setup, VideoDirection(video.Direction, receiveVideo, sendVideo)));
+                sdp.Media.Add(Video(local, mid, video.Vp8PayloadType, setup, VideoDirection(video.Direction, receiveVideo, sendVideo), video.OrientationId));
                 continue;
             }
             sdp.Media.Add(new MediaDescription { Kind = media.Kind, Port = 0, Protocol = media.Protocol, Formats = [.. media.Formats.Take(1)], Lines = ["c=IN IP4 0.0.0.0"], Attributes = [$"mid:{mid}", "inactive"] });
@@ -157,7 +164,8 @@ public static class AudioSdp
             if (media.GetAll("rtpmap").Select(Vp8Type).FirstOrDefault(t => t is not null) is not byte vp8) continue;
             string direction = media.Get("sendonly") is not null ? "sendonly" : media.Get("recvonly") is not null ? "recvonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
             // Return video
-            return new RemoteVideo(media.Get("mid") ?? "1", vp8, direction);
+            byte? orientation = media.GetAll("extmap").Select(e => e.Split(' ')).Where(e => e.Length >= 2 && e[1] == VideoOrientation && byte.TryParse(e[0].Split('/')[0], out _)).Select(e => (byte?)byte.Parse(e[0].Split('/')[0], CultureInfo.InvariantCulture)).FirstOrDefault();
+            return new RemoteVideo(media.Get("mid") ?? "1", vp8, direction, orientation);
         }
         // On no usable video
         return null;
@@ -204,7 +212,7 @@ public static class AudioSdp
     }
 
     /// <summary>Return the video section of this side: VP8 with RTCP feedback for lost packets and pictures, bundled on the audio's transport.</summary>
-    private static MediaDescription Video(LocalAudio local, string mid, byte payloadType, string setup, string direction)
+    private static MediaDescription Video(LocalAudio local, string mid, byte payloadType, string setup, string direction, byte? orientationId = null)
     {
         // Transport as the audio's, then the codec and its feedback; when sending, the stream
         string pt = payloadType.ToString(CultureInfo.InvariantCulture);
@@ -229,9 +237,11 @@ public static class AudioSdp
                 $"rtpmap:{pt} VP8/90000",
                 $"rtcp-fb:{pt} nack pli",
                 $"rtcp-fb:{pt} ccm fir",
+                $"rtcp-fb:{pt} goog-remb",
             ],
         };
         if (sends) video.Attributes.InsertRange(video.Attributes.IndexOf(direction) + 1, [$"msid:{local.Cname} video"]);
+        if (orientationId is byte id) video.Attributes.Insert(video.Attributes.IndexOf("rtcp-mux"), $"extmap:{id} {VideoOrientation}");
         if (sends) video.Attributes.Add($"ssrc:{local.VideoSsrc} cname:{local.Cname}");
         // Return section
         return video;

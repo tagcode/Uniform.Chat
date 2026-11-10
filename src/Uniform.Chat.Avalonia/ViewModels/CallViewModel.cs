@@ -65,6 +65,35 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>The other user's video, while the call runs.</summary>
     public VideoFeed RemoteVideo { get; } = new();
 
+    /// <summary>This side's camera, small, while it sends.</summary>
+    public VideoFeed LocalVideo { get; } = new();
+
+    /// <summary>Whether this side's camera has a preview to show.</summary>
+    [ObservableProperty]
+    public partial bool HasPreview { get; set; }
+
+    /// <summary>Whether this side's camera is turned off.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CameraText))]
+    public partial bool CameraOff { get; set; }
+
+    /// <summary>Text of the camera button.</summary>
+    public string CameraText => CameraOff ? "Camera on" : "Camera off";
+
+    /// <summary>Turn this side's camera off or on; the preview hides while off.</summary>
+    [RelayCommand]
+    private void ToggleCamera()
+    {
+        // The call keeps it
+        if (Current is not VoiceCall call) return;
+        call.CameraOff = !call.CameraOff;
+        CameraOff = call.CameraOff;
+        if (!CameraOff) return;
+        HasPreview = false;
+        // Done
+        LocalVideo.Clear();
+    }
+
     /// <summary>Whether the other user's video has pictures to show.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowsFullScreen))]
@@ -259,12 +288,34 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     partial void OnCurrentChanged(VoiceCall? oldValue, VoiceCall? newValue)
     {
         // Old pictures gone, new ones followed
-        if (oldValue is not null) oldValue.PictureReceived -= OnPicture;
-        if (newValue is not null) newValue.PictureReceived += OnPicture;
+        if (oldValue is not null)
+        {
+            oldValue.PictureReceived -= OnPicture;
+            oldValue.PreviewReceived -= OnPreview;
+        }
+        if (newValue is not null)
+        {
+            newValue.PictureReceived += OnPicture;
+            newValue.PreviewReceived += OnPreview;
+        }
+        LocalVideo.Clear();
+        HasPreview = false;
+        CameraOff = false;
         Interlocked.Exchange(ref pictured, 0);
         RemoteVideo.Clear();
         // Done
         HasVideo = false;
+    }
+
+    /// <summary>Show a preview picture of this side's camera; the first one shows the preview.</summary>
+    private void OnPreview(VoiceCall call, VideoFrame picture)
+    {
+        // The shown call's, while it runs
+        if (call != Current || call.State == CallState.Ended) return;
+        LocalVideo.Push(picture);
+        if (HasPreview) return;
+        // Done
+        ui.Post(() => { if (call == Current && !CameraOff) HasPreview = true; });
     }
 
     /// <summary>Show a picture of the call's video; the first one shows the video.</summary>
@@ -305,6 +356,11 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         {
             HasVideo = false;
             RemoteVideo.Clear();
+        }
+        if (call.State == CallState.Ended && HasPreview)
+        {
+            HasPreview = false;
+            LocalVideo.Clear();
         }
         bool relayed = call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed;
         // Done

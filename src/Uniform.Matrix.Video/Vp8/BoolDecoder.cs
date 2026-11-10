@@ -1,67 +1,80 @@
 namespace Uniform.Matrix.Video.Vp8;
 
+using System.Numerics;
+
 /// <summary>The boolean entropy decoder of VP8, <see href="https://www.rfc-editor.org/rfc/rfc6386#section-7">RFC 6386 section 7</see>: reads bools, each with a probability of being 0 out of 256, from one partition.</summary>
 /// <remarks>Past the end of the partition it reads zeros, as the reference decoder does.</remarks>
 internal sealed class BoolDecoder
 {
+    /// <summary>Bits of the value window.</summary>
+    private const int WindowBits = 64;
     private byte[] data = [];
     private int position;
     private int end;
     private uint range;
-    private uint value;
-    private int bitCount;
+    private ulong value;
+    private int count;
 
     /// <summary>Start reading <paramref name="length"/> bytes of <paramref name="buffer"/> at <paramref name="start"/>.</summary>
     public void Init(byte[] buffer, int start, int length)
     {
-        // The first two bytes fill the value
+        // An empty window, filled at once
         data = buffer;
-        if (length >= 2)
-        {
-            value = (uint)(buffer[start] << 8 | buffer[start + 1]);
-            position = start + 2;
-            end = start + length;
-        }
-        else
-        {
-            value = 0;
-            position = end = start;
-        }
+        position = start;
+        end = start + Math.Max(0, length);
+        value = 0;
+        count = -8;
         range = 255;
         // Done
-        bitCount = 0;
+        Fill();
     }
 
     /// <summary>Return a bool that is 0 with <paramref name="probability"/> out of 256.</summary>
+    /// <remarks>As libvpx does: the next bits wait in a 64-bit window, and the range is normalized in one shift by its leading zeros rather than bit by bit.</remarks>
     public int Read(int probability)
     {
-        // Split the range by the probability
-        uint split = 1 + (uint)((range - 1) * probability >> 8);
-        uint bigSplit = split << 8;
+        // Split the range by the probability, against the window's top byte
+        uint split = 1 + ((range - 1) * (uint)probability >> 8);
+        if (count < 0) Fill();
+        ulong bigSplit = (ulong)split << (WindowBits - 8);
         int bit;
         if (value >= bigSplit)
         {
-            bit = 1;
             range -= split;
             value -= bigSplit;
+            bit = 1;
         }
         else
         {
-            bit = 0;
             range = split;
+            bit = 0;
         }
 
-        // Shift out bits until the range is at least 128, taking in a byte every 8
-        while (range < 128)
-        {
-            value <<= 1;
-            range <<= 1;
-            if (++bitCount != 8) continue;
-            bitCount = 0;
-            if (position < end) value |= data[position++];
-        }
+        // Normalize the range to at least 128 at once
+        int shift = BitOperations.LeadingZeroCount(range) - 24;
+        range <<= shift;
+        value <<= shift;
+        count -= shift;
         // Return bool
         return bit;
+    }
+
+    /// <summary>Take in whole bytes while the window has room; past the end, zeros, as the reference decoder reads.</summary>
+    private void Fill()
+    {
+        // From the window's free top bits down
+        int shift = WindowBits - 8 - (count + 8);
+        while (shift >= 0)
+        {
+            if (position >= end)
+            {
+                count += 0x4000;
+                return;
+            }
+            count += 8;
+            value |= (ulong)data[position++] << shift;
+            shift -= 8;
+        }
     }
 
     /// <summary>Return a bool of even probability.</summary>

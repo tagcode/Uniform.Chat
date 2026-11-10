@@ -11,7 +11,7 @@ public class RtpTests
     {
         // Plain
         RtpPacket packet = new() { PayloadType = 111, Marker = true, Sequence = 0xFFFF, Timestamp = 0x12345678, Ssrc = 0xCAFEBABE, Payload = [1, 2, 3] };
-        Assert.Equal(packet with { }, RtpPacket.Parse(packet.Encode())! with { Payload = packet.Payload });
+        Assert.Equal(packet with { }, RtpPacket.Parse(packet.Encode())! with { Payload = packet.Payload, Extensions = packet.Extensions });
         Assert.Equal(packet.Payload, RtpPacket.Parse(packet.Encode())!.Payload);
 
         // One CSRC, a one-word extension, and two bytes of padding

@@ -8,7 +8,7 @@ using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Rtp;
 
 /// <summary>Decodes the video a peer connection receives, on its own task, and gives the pictures in <see cref="PictureDecoded"/>.</summary>
-/// <remarks>A device that cannot keep up, by its decode times or by falling behind, asks the sender once for less with a REMB. Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
+/// <remarks>A device that cannot keep up, by its decode times or by falling behind, asks the sender for less with a REMB, and for full quality again once it has room. Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
 public sealed class VideoReceiver : IAsyncDisposable
 {
     /// <summary>How many frames may wait for the decoder before they are given up.</summary>
@@ -30,6 +30,13 @@ public sealed class VideoReceiver : IAsyncDisposable
 
     /// <summary>The bitrate asked of a sender that this device cannot keep up with, which senders of this app meet with 320x240 at 10 pictures per second.</summary>
     public const long FallbackBitrate = 200_000;
+
+    /// <summary>The bitrate asked again once this device has room, for full quality.</summary>
+    public const long FullBitrate = 1_500_000;
+
+    /// <summary>Pictures decoded with room before asking for full quality again.</summary>
+    private const int RoomyPictures = 100;
+    private int roomy;
     private bool waitKeyframe;
 
     /// <summary>Start decoding the video of <paramref name="connection"/>.</summary>
@@ -106,11 +113,13 @@ public sealed class VideoReceiver : IAsyncDisposable
             return;
         }
         if (picture is null) return;
+        picture.Rotation = frame.Rotation;
         TimeSpan took = System.Diagnostics.Stopwatch.GetElapsedTime(started);
         Interlocked.Add(ref decodeTicks, took.Ticks);
         long count = Interlocked.Increment(ref decoded);
         averageMilliseconds = count == 1 ? took.TotalMilliseconds : averageMilliseconds * 0.9 + took.TotalMilliseconds * 0.1;
         if (count >= 15 && averageMilliseconds > SlowDecode) AskLower($"decoding takes {averageMilliseconds:F0} ms");
+        AskMoreWhenRoomy();
         // Done
         PictureDecoded?.Invoke(picture);
     }
@@ -123,6 +132,24 @@ public sealed class VideoReceiver : IAsyncDisposable
         logger.LogInformation("Asking for less video: {Why}", why);
         // Done
         _ = connection.RequestBitrateAsync(FallbackBitrate);
+    }
+
+    /// <summary>After asking for less: when pictures have decoded four times faster than needed for a while, as the larger ones would take about four times longer, ask for full quality again; and let a slow spell ask for less once more.</summary>
+    private void AskMoreWhenRoomy()
+    {
+        // Asked for less, and room for four times the work
+        if (Volatile.Read(ref askedLower) == 0) return;
+        if (averageMilliseconds * 4 > SlowDecode * 0.75)
+        {
+            roomy = 0;
+            return;
+        }
+        if (++roomy < RoomyPictures) return;
+        roomy = 0;
+        Interlocked.Exchange(ref askedLower, 0);
+        logger.LogInformation("Asking for full video again: decoding takes {Milliseconds:F0} ms", averageMilliseconds);
+        // Done
+        _ = connection.RequestBitrateAsync(FullBitrate);
     }
 
     /// <summary>Skip frames up to the next keyframe, and ask the peer for one; when decoding fell behind, also for less video.</summary>

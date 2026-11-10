@@ -51,11 +51,16 @@
         <Button Margin="4,2" Content="Decline" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
         <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
         <Button Margin="4,2" Content="Switch camera" Command="{Binding SwitchCameraCommand}" IsVisible="{Binding SendsVideo}" />
+        <Button Margin="4,2" Content="{Binding CameraText}" Command="{Binding ToggleCameraCommand}" IsVisible="{Binding SendsVideo}" />
         <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding HasVideo}" />
         <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
         <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
-      <views:VideoView x:Name="CallVideo" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" MaxHeight="260" HorizontalAlignment="Center" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
+      <Panel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" HorizontalAlignment="Center">
+        <views:VideoView x:Name="CallVideo" MaxHeight="260" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
+        <!-- Own camera, mirrored, in the corner -->
+        <views:VideoView Width="96" MaxHeight="128" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Mirror="True" Feed="{Binding LocalVideo}" IsVisible="{Binding HasPreview}" />
+      </Panel>
       <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
     </Grid>
   </Border>

@@ -10,7 +10,7 @@ using global::Avalonia.Threading;
 using Uniform.Chat.Avalonia.ViewModels;
 using Uniform.Matrix.Video;
 
-/// <summary>Shows the newest picture of a <see cref="VideoFeed"/>, scaled to fit with its aspect ratio kept; a new picture is drawn at most once per rendered frame, and pictures that come meanwhile are skipped.</summary>
+/// <summary>Shows the newest picture of a <see cref="VideoFeed"/>, turned upright by its rotation and scaled to fit with its aspect ratio kept; a new picture is drawn at most once per rendered frame, and pictures that come meanwhile are skipped.</summary>
 public sealed class VideoView : Control
 {
     /// <summary>The video shown.</summary>
@@ -19,6 +19,17 @@ public sealed class VideoView : Control
     private byte[] pixels = [];
     private int posted;
     private volatile VideoFeed? feed;
+    private int rotation;
+
+    /// <summary>Whether to show the picture mirrored, as a preview of one's own front camera is.</summary>
+    public static readonly StyledProperty<bool> MirrorProperty = AvaloniaProperty.Register<VideoView, bool>(nameof(Mirror));
+
+    /// <summary>Whether to show the picture mirrored, as a preview of one's own front camera is.</summary>
+    public bool Mirror
+    {
+        get => GetValue(MirrorProperty);
+        set => SetValue(MirrorProperty, value);
+    }
 
     /// <summary>The video shown.</summary>
     public VideoFeed? Feed
@@ -62,13 +73,17 @@ public sealed class VideoView : Control
         bitmap = null;
     }
 
+    /// <summary>Whether the picture is turned sideways, so its width shows as height.</summary>
+    private bool Turned => rotation is 90 or 270;
+
     /// <summary>Return the size that fits the picture's aspect ratio in <paramref name="availableSize"/>; nothing without a picture.</summary>
     protected override Size MeasureOverride(Size availableSize)
     {
         // The picture's own size where unconstrained
         if (bitmap is null) return default;
-        double aspect = bitmap.Size.Height / bitmap.Size.Width;
-        double width = double.IsFinite(availableSize.Width) ? availableSize.Width : bitmap.Size.Width;
+        double aspect = Turned ? bitmap.Size.Width / bitmap.Size.Height : bitmap.Size.Height / bitmap.Size.Width;
+        Size own = Turned ? new Size(bitmap.Size.Height, bitmap.Size.Width) : bitmap.Size;
+        double width = double.IsFinite(availableSize.Width) ? availableSize.Width : own.Width;
         double height = width * aspect;
         if (double.IsFinite(availableSize.Height) && height > availableSize.Height) (width, height) = (availableSize.Height / aspect, availableSize.Height);
         // Return size
@@ -78,13 +93,19 @@ public sealed class VideoView : Control
     /// <summary>Draw the picture centered and scaled to fit.</summary>
     public override void Render(DrawingContext context)
     {
-        // Fit inside the bounds
+        // Fit inside the bounds, as turned
         if (bitmap is null) return;
-        double scale = Math.Min(Bounds.Width / bitmap.Size.Width, Bounds.Height / bitmap.Size.Height);
+        Size shown = Turned ? new Size(bitmap.Size.Height, bitmap.Size.Width) : bitmap.Size;
+        double scale = Math.Min(Bounds.Width / shown.Width, Bounds.Height / shown.Height);
         Size size = bitmap.Size * scale;
-        Rect target = new(new Point((Bounds.Width - size.Width) / 2, (Bounds.Height - size.Height) / 2), size);
-        // Done
-        context.DrawImage(bitmap, new Rect(bitmap.Size), target);
+
+        // Drawn around the center, turned clockwise
+        Matrix turn = Matrix.CreateTranslation(-size.Width / 2, -size.Height / 2) * Matrix.CreateRotation(rotation * Math.PI / 180) * Matrix.CreateScale(Mirror ? -1 : 1, 1) * Matrix.CreateTranslation(Bounds.Width / 2, Bounds.Height / 2);
+        using (context.PushTransform(turn))
+        {
+            // Done
+            context.DrawImage(bitmap, new Rect(bitmap.Size), new Rect(size));
+        }
     }
 
     /// <summary>On any thread, e.g. the decoder's: convert the newest picture to screen colors on the thread pool, reading the feed from a field, as Avalonia properties are for the UI thread only; then show it on the UI thread, which only copies it, so that input is not held up on slow devices; one picture at a time, and those that come meanwhile are skipped.</summary>
@@ -106,7 +127,7 @@ public sealed class VideoView : Control
                 int length = picture.Width * 4 * picture.Height;
                 if (pixels.Length != length) pixels = new byte[length];
                 picture.CopyToBgra(pixels, picture.Width * 4);
-                Dispatcher.UIThread.Post(() => Show(picture.Width, picture.Height));
+                Dispatcher.UIThread.Post(() => Show(picture.Width, picture.Height, picture.Rotation));
             }
             catch
             {
@@ -137,8 +158,15 @@ public sealed class VideoView : Control
     }
 
     /// <summary>Copy the converted pixels of a <paramref name="width"/> by <paramref name="height"/> picture into the bitmap, sized to it, and redraw; then take the next picture.</summary>
-    private void Show(int width, int height)
+    private void Show(int width, int height, int pictureRotation)
     {
+        // Turned sideways changes the shape
+        if (pictureRotation != rotation)
+        {
+            rotation = pictureRotation;
+            InvalidateMeasure();
+        }
+
         // A bitmap of the picture's size
         if (bitmap is null || bitmap.PixelSize.Width != width || bitmap.PixelSize.Height != height)
         {

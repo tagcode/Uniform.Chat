@@ -78,6 +78,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     private long lastPictureLoss;
     private Task? reporting;
     private byte? videoSendPayloadType;
+    private byte? orientationId;
     private readonly Vp8Packetizer packetizer = new();
     private ushort videoSequence = (ushort)RandomUInt();
     private readonly uint videoTimestampBase = RandomUInt();
@@ -309,7 +310,8 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     /// <summary>Send a VP8 frame of this side's video, captured now, in RTP packets of at most 1100 bytes, so they fit a path's MTU with SRTP and TURN; dropped until connected or when the peer receives no video.</summary>
     /// <param name="frame">The encoded frame, as the encoder wrote it.</param>
     /// <param name="cancellationToken">Cancels the send.</param>
-    public async ValueTask SendVideoAsync(byte[] frame, CancellationToken cancellationToken = default)
+    /// <param name="rotation">Clockwise rotation in degrees that shows the picture upright, 0, 90, 180 or 270, sent as its video orientation when the peer takes it.</param>
+    public async ValueTask SendVideoAsync(byte[] frame, CancellationToken cancellationToken = default, int rotation = 0)
     {
         // Connected, and sending
         if (outbound is null || ice is null || State != PeerConnectionState.Connected || videoSendPayloadType is not byte type) return;
@@ -319,7 +321,8 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         IReadOnlyList<byte[]> payloads = packetizer.Packetize(frame, 1100);
         for (int i = 0; i < payloads.Count; i++)
         {
-            RtpPacket packet = new() { PayloadType = type, Marker = i == payloads.Count - 1, Sequence = videoSequence++, Timestamp = stamp, Ssrc = videoSsrc, Payload = payloads[i] };
+            bool last = i == payloads.Count - 1;
+            RtpPacket packet = new() { PayloadType = type, Marker = last, Sequence = videoSequence++, Timestamp = stamp, Ssrc = videoSsrc, Payload = payloads[i], Extensions = last && orientationId is byte id ? [(id, [(byte)(rotation / 90 & 3)])] : [] };
             await ice.SendAsync(outbound.ProtectRtp(packet.Encode()), cancellationToken);
         }
     }
@@ -422,11 +425,12 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     {
         // Each way as the answer says
         if (AudioSdp.ReadVideo(offer) is not RemoteVideo video) return;
+        orientationId = video.OrientationId;
         string direction = AudioSdp.VideoDirection(video.Direction, options.ReceiveVideo, options.SendVideo);
         if (direction is "sendrecv" or "sendonly") videoSendPayloadType = video.Vp8PayloadType;
         if (direction is not ("sendrecv" or "recvonly")) return;
         videoPayloadType = video.Vp8PayloadType;
-        depacketizer = new Vp8Depacketizer();
+        depacketizer = new Vp8Depacketizer(orientationId: orientationId);
         // Done
         videoStatistics = new ReceiverStatistics(90000);
     }

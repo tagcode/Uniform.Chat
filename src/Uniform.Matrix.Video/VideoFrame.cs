@@ -35,6 +35,9 @@ public sealed class VideoFrame
     /// <summary>Red-difference chroma, <see cref="ChromaWidth"/> bytes per row.</summary>
     public byte[] V { get; }
 
+    /// <summary>Clockwise rotation in degrees that shows the picture upright, 0, 90, 180 or 270, e.g. from a phone held upright, whose camera sees sideways.</summary>
+    public int Rotation { get; set; }
+
     /// <summary>Write the picture as 32-bit BGRA, opaque, into <paramref name="destination"/> of <paramref name="stride"/> bytes per row, converting from BT.601 limited range as WebRTC video is.</summary>
     /// <param name="destination">At least <see cref="Height"/> rows.</param>
     /// <param name="stride">Bytes per row, at least 4 × <see cref="Width"/>.</param>

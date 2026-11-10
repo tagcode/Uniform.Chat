@@ -1,5 +1,8 @@
 namespace Uniform.Matrix.Video.Vp8;
 
+using System.Buffers.Binary;
+using System.Runtime.Intrinsics;
+
 // Intra and inter prediction, and adding the residual, RFC 6386 sections 12, 14 and 18
 public sealed partial class Vp8Decoder
 {
@@ -402,6 +405,51 @@ public sealed partial class Vp8Decoder
         Vp8Transform.InverseDctAdd(coefficients, block, plane, output, plane, output, stride);
     }
 
+    /// <summary>The six-tap filter of <see cref="SixTap"/> with vectors: each row of 4 pixels is one vector, summed tap by tap from the six shifted rows, rounded, shifted and clamped as the scalar filter does.</summary>
+    private void SixTapVector(byte[] plane, int output, byte[] source, int at, int stride, short[] filters, int h, int v)
+    {
+        // Horizontal pass: rows two above to three below, at offsets -2 to +3
+        Vector128<int> h0 = Vector128.Create((int)filters[h]), h1 = Vector128.Create((int)filters[h + 1]), h2 = Vector128.Create((int)filters[h + 2]);
+        Vector128<int> h3 = Vector128.Create((int)filters[h + 3]), h4 = Vector128.Create((int)filters[h + 4]), h5 = Vector128.Create((int)filters[h + 5]);
+        Vector128<int> round = Vector128.Create(64), zero = Vector128<int>.Zero, max = Vector128.Create(255);
+        int start = at - 2 * stride;
+        for (int row = 0; row < 4 + 5; row++)
+        {
+            int s = start + row * stride;
+            Vector128<int> sum = Load(source, s - 2) * h0 + Load(source, s - 1) * h1 + Load(source, s) * h2 + Load(source, s + 1) * h3 + Load(source, s + 2) * h4 + Load(source, s + 3) * h5 + round;
+            Store(filterTemp, row * 16, Vector128.Min(Vector128.Max(sum >> 7, zero), max));
+        }
+
+        // Vertical pass into the output, from rows of the horizontal one
+        Vector128<int> v0 = Vector128.Create((int)filters[v]), v1 = Vector128.Create((int)filters[v + 1]), v2 = Vector128.Create((int)filters[v + 2]);
+        Vector128<int> v3 = Vector128.Create((int)filters[v + 3]), v4 = Vector128.Create((int)filters[v + 4]), v5 = Vector128.Create((int)filters[v + 5]);
+        for (int row = 0; row < 4; row++)
+        {
+            int i = (row + 2) * 16;
+            Vector128<int> sum = Load(filterTemp, i - 32) * v0 + Load(filterTemp, i - 16) * v1 + Load(filterTemp, i) * v2 + Load(filterTemp, i + 16) * v3 + Load(filterTemp, i + 32) * v4 + Load(filterTemp, i + 48) * v5 + round;
+            // Done per row
+            Store(plane, output + row * stride, Vector128.Min(Vector128.Max(sum >> 7, zero), max));
+        }
+    }
+
+    /// <summary>Return the 4 bytes at <paramref name="index"/> widened to 32-bit lanes.</summary>
+    private static Vector128<int> Load(byte[] bytes, int index)
+    {
+        // Four bytes as one scalar, then widened twice
+        uint four = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(index, 4));
+        // Return lanes
+        return Vector128.WidenLower(Vector128.WidenLower(Vector128.CreateScalarUnsafe(four).AsByte())).AsInt32();
+    }
+
+    /// <summary>Write 4 lanes of 0 to 255 as bytes at <paramref name="index"/>.</summary>
+    private static void Store(byte[] bytes, int index, Vector128<int> values)
+    {
+        // Narrowed twice, the lowest four bytes written
+        Vector128<byte> narrowed = Vector128.Narrow(Vector128.Narrow(values.AsUInt32(), values.AsUInt32()), Vector128<ushort>.Zero);
+        // Done
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(index, 4), narrowed.AsUInt32().ToScalar());
+    }
+
     /// <summary>Copy the 9x9 pixels at (<paramref name="x"/>, <paramref name="y"/>) of a plane into <see cref="edgeBlock"/>, repeating the edge pixels for those outside the <paramref name="width"/> by <paramref name="height"/> frame.</summary>
     private void BuildEdgeBlock(byte[] plane, int origin, int stride, int x, int y, int width, int height)
     {
@@ -427,9 +475,16 @@ public sealed partial class Vp8Decoder
     /// <summary>Filter a 4x4 block from <paramref name="source"/> at the subpixel position (<paramref name="mx"/>, <paramref name="my"/>) eighths into <paramref name="output"/>: rows first, then columns, each pass rounded and clamped.</summary>
     private void SixTap(byte[] plane, int output, byte[] source, int at, int stride, int mx, int my)
     {
-        // Horizontal pass over the rows the vertical one needs, two above and three below
+        // Vectors where the hardware has them: a row of 4 is one vector of 32-bit sums
         short[] filters = version == 0 ? SixTapFilters : BilinearFilters;
         int h = mx * 6, v = my * 6;
+        if (Vector128.IsHardwareAccelerated)
+        {
+            SixTapVector(plane, output, source, at, stride, filters, h, v);
+            return;
+        }
+
+        // Horizontal pass over the rows the vertical one needs, two above and three below
         int start = at - 2 * stride;
         for (int row = 0; row < 4 + 5; row++)
         {

@@ -128,6 +128,25 @@ public class VideoRtpTests
         Assert.Null(Rtcp.ReadRemb(low, 0x11111111));
     }
 
+    /// <summary>A one-byte header extension survives encoding and parsing, and the orientation on a frame's last packet turns the frame.</summary>
+    [Fact]
+    public void CarryOrientation()
+    {
+        // Arrange: a keyframe in two packets, the last with a 90 degree turn in extension 4
+        List<RtpPacket> packets = Packetize([[0x00, 1, 2, 3, 4, 5, 6, 7, 8, 9]], 5 + Vp8Packetizer.DescriptorLength - 3);
+        packets[^1] = packets[^1] with { Extensions = [(4, [1])] };
+
+        // Act: through the wire, then put together
+        RtpPacket[] parsed = [.. packets.Select(p => RtpPacket.Parse(p.Encode())!)];
+        Vp8EncodedFrame frame = Assert.Single(parsed.SelectMany(new Vp8Depacketizer(orientationId: 4).Push));
+
+        // Assert
+        Assert.Equal(new byte[] { 1 }, parsed[^1].Extension(4));
+        Assert.Equal(packets[^1].Payload, parsed[^1].Payload);
+        // Done
+        Assert.Equal(90, frame.Rotation);
+    }
+
     /// <summary>Statistics count the highest sequence number across a wraparound and the packets lost.</summary>
     [Fact]
     public void CountLoss()

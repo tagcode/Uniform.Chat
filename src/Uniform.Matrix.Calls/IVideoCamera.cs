@@ -6,6 +6,15 @@ public interface IVideoCamera : IAsyncDisposable
     /// <summary>Raised with each encoded VP8 frame, the first a keyframe; on any thread.</summary>
     event Action<byte[]>? FrameEncoded;
 
+    /// <summary>Raised with small pictures of what the camera sees, for a preview, a few per second; on any thread. Cameras without a preview never raise it.</summary>
+    event Action<Uniform.Matrix.Video.VideoFrame>? Previewed { add { } remove { } }
+
+    /// <summary>Stop capturing, e.g. when the user turns the camera off, or start again; nothing where the camera cannot.</summary>
+    void SetPaused(bool paused) { }
+
+    /// <summary>Clockwise rotation in degrees that shows the camera's pictures upright, 0, 90, 180 or 270, as the device is held now.</summary>
+    int Rotation => 0;
+
     /// <summary>Start capturing and encoding.</summary>
     void Start();
 

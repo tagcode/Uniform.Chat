@@ -1,6 +1,7 @@
 namespace Uniform.Chat.Android;
 
 using global::Android.Content;
+using global::Android.Runtime;
 using global::Android.Hardware.Camera2;
 using global::Android.Media;
 using global::Android.OS;
@@ -14,7 +15,22 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
 {
     private const string Vp8 = "video/x-vnd.on2.vp8";
     /// <summary>Bitrate below which a peer's limit makes the camera fall back to <see cref="Low"/>.</summary>
-    private const long FallbackBelow = 400_000;
+    private const long FallbackBelow = 300_000;
+    /// <summary>Bitrate from which a peer's limit brings the camera back to <see cref="Normal"/>.</summary>
+    private const long RestoreFrom = 600_000;
+    /// <summary>Shortest time between quality changes, as peers' estimates move about.</summary>
+    private static readonly TimeSpan ChangeInterval = TimeSpan.FromSeconds(3);
+    private long lastChange;
+    private int sensorOrientation;
+    private ImageReader? previewReader;
+    private long lastPreview;
+    private bool paused;
+    /// <summary>Size of the preview pictures.</summary>
+    private const int PreviewWidth = 176;
+    private const int PreviewHeight = 144;
+    /// <summary>Shortest time between preview pictures.</summary>
+    private static readonly TimeSpan PreviewInterval = TimeSpan.FromMilliseconds(100);
+    private bool front;
     /// <summary>The normal quality.</summary>
     private static readonly Quality Normal = new(640, 480, 30, 800_000);
     /// <summary>The fallback for slow receivers, which can decode it in C#.</summary>
@@ -36,6 +52,24 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <inheritdoc />
     public event Action<byte[]>? FrameEncoded;
 
+    /// <inheritdoc />
+    public event Action<Uniform.Matrix.Video.VideoFrame>? Previewed;
+
+    /// <summary>The rotation that shows the pictures upright: the camera's mounting against how the screen is turned now, the other way round for the front camera, as Android's image orientation is computed.</summary>
+    public int Rotation
+    {
+        get
+        {
+            // The screen's turn in degrees
+#pragma warning disable CA1422 // The default display's rotation is what the camera's pictures turn with
+            IWindowManager? windows = context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
+            int screen = (int)(windows?.DefaultDisplay?.Rotation ?? SurfaceOrientation.Rotation0) * 90;
+#pragma warning restore CA1422
+            // Return rotation
+            return front ? (sensorOrientation + screen) % 360 : (sensorOrientation - screen + 360) % 360;
+        }
+    }
+
     /// <summary>Start the encoder, then open the front camera into it.</summary>
     public void Start()
     {
@@ -44,8 +78,10 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         thread.Start();
         handler = new Handler(thread.Looper!);
 
-        // The encoder, fed by a surface
+        // The encoder, fed by a surface, and the small preview pictures
         StartEncoder();
+        previewReader = ImageReader.NewInstance(PreviewWidth, PreviewHeight, global::Android.Graphics.ImageFormatType.Yuv420888, 2);
+        previewReader.SetOnImageAvailableListener(new PreviewListener(this), handler);
 
         // The front camera, or the first
         CameraManager cameraManager = (CameraManager)context.GetSystemService(Context.CameraService)!;
@@ -160,6 +196,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
             // Already closed
         }
         StopEncoder();
+        previewReader?.Close();
         thread?.QuitSafely();
         // Done
         return ValueTask.CompletedTask;
@@ -168,8 +205,11 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     /// <summary>Start repeating captures into the encoder's surface; a camera that fails, as one still closing may, is tried once more.</summary>
     private void OnOpened(CameraDevice opened)
     {
-        // A session with the one target
+        // The camera's mounting and facing, then a session with the one target
         device = opened;
+        CameraCharacteristics characteristics = manager!.GetCameraCharacteristics(opened.Id);
+        sensorOrientation = characteristics.Get(CameraCharacteristics.SensorOrientation!) is Java.Lang.Integer mounted ? mounted.IntValue() : 0;
+        front = characteristics.Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer facing && facing.IntValue() == (int)LensFacing.Front;
         if (disposed)
         {
             opened.Close();
@@ -178,7 +218,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         try
         {
 #pragma warning disable CA1422 // The surface list form is enough here and works on every version
-            opened.CreateCaptureSession([input!], new SessionCallback(this), handler);
+            opened.CreateCaptureSession(previewReader is null ? [input!] : [input!, previewReader.Surface!], new SessionCallback(this), handler);
 #pragma warning restore CA1422
         }
         catch (Exception ex) when (ex is CameraAccessException or Java.Lang.IllegalStateException or Java.Lang.IllegalArgumentException)
@@ -195,10 +235,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         session = configured;
         try
         {
-            CaptureRequest.Builder request = device!.CreateCaptureRequest(CameraTemplate.Record);
-            request.AddTarget(input!);
-            if (FrameRateRange() is global::Android.Util.Range range) request.Set(CaptureRequest.ControlAeTargetFpsRange!, range);
-            configured.SetRepeatingRequest(request.Build(), null, handler);
+            if (!paused) Capture(configured);
         }
         catch (Exception ex) when (ex is CameraAccessException or Java.Lang.IllegalStateException or Java.Lang.IllegalArgumentException)
         {
@@ -207,16 +244,18 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         }
     }
 
-    /// <summary>Fall back to 320x240 at 10 pictures per second when the peer asks for less than <see cref="FallbackBelow"/>, as a slow receiver does: a new encoder at that size, and the open camera's session moved to it.</summary>
+    /// <summary>Follow the peer's limit: below <see cref="FallbackBelow"/> 320x240 at 10 pictures per second, as a slow receiver asks; from <see cref="RestoreFrom"/> full quality again; between them as is, and at most one change per <see cref="ChangeInterval"/>. A change makes a new encoder at the size, and moves the open camera's session to it.</summary>
     public void LimitBitrate(long bitsPerSecond)
     {
-        // Once, on the camera thread
-        if (bitsPerSecond >= FallbackBelow || handler is null) return;
+        // A quality for the rate, on the camera thread
+        Quality? wanted = bitsPerSecond < FallbackBelow ? Low : bitsPerSecond >= RestoreFrom ? Normal : null;
+        if (wanted is null || handler is null) return;
         handler.Post(() =>
         {
-            if (quality == Low || disposed) return;
-            quality = Low;
-            global::Android.Util.Log.Info("UniformChat", $"Video falls back to {Low.Width}x{Low.Height} at {Low.FrameRate} per second, as the peer asked for {bitsPerSecond} bit/s");
+            if (quality == wanted || disposed || System.Diagnostics.Stopwatch.GetElapsedTime(lastChange) < ChangeInterval) return;
+            quality = wanted;
+            lastChange = System.Diagnostics.Stopwatch.GetTimestamp();
+            global::Android.Util.Log.Info("UniformChat", $"Video changes to {wanted.Width}x{wanted.Height} at {wanted.FrameRate} per second, as the peer asked for {bitsPerSecond} bit/s");
             session?.Close();
             session = null;
             StopEncoder();
@@ -238,6 +277,107 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         static int Upper(global::Android.Util.Range r) => ((Java.Lang.Integer)r.Upper!).IntValue();
         // Return range
         return all.Where(r => Upper(r) <= quality.FrameRate).OrderByDescending(Upper).FirstOrDefault() ?? all.OrderBy(Upper).FirstOrDefault();
+    }
+
+    /// <summary>Capture continuously into the encoder and the preview, at the quality's frame rate.</summary>
+    private void Capture(CameraCaptureSession capturing)
+    {
+        // The recording template keeps the frame rate steady
+        CaptureRequest.Builder request = device!.CreateCaptureRequest(CameraTemplate.Record);
+        request.AddTarget(input!);
+        if (previewReader?.Surface is Surface preview) request.AddTarget(preview);
+        if (FrameRateRange() is global::Android.Util.Range range) request.Set(CaptureRequest.ControlAeTargetFpsRange!, range);
+        // Done
+        capturing.SetRepeatingRequest(request.Build(), null, handler);
+    }
+
+    /// <summary>Stop capturing, or start again with a keyframe, on the camera thread.</summary>
+    public void SetPaused(bool pause)
+    {
+        // The session's repeating request
+        handler?.Post(() =>
+        {
+            if (paused == pause || disposed) return;
+            paused = pause;
+            try
+            {
+                if (pause) session?.StopRepeating();
+                else if (session is CameraCaptureSession capturing)
+                {
+                    Capture(capturing);
+                    RequestKeyframe();
+                }
+            }
+            catch (Exception ex) when (ex is CameraAccessException or Java.Lang.IllegalStateException)
+            {
+                // Done: a camera that went away comes back on the next switch or call
+                global::Android.Util.Log.Warn("UniformChat", $"Camera did not {(pause ? "stop" : "start")}: {ex.Message}");
+            }
+        });
+    }
+
+    /// <summary>Give a preview picture, at most every <see cref="PreviewInterval"/>, as I420 with the camera's rotation.</summary>
+    private void OnPreview(ImageReader reader)
+    {
+        // The latest picture, closed in Java when done, as Dispose only frees the wrapper
+        global::Android.Media.Image? image = null;
+        try
+        {
+            image = reader.AcquireLatestImage();
+            if (image is null || Previewed is null || System.Diagnostics.Stopwatch.GetElapsedTime(lastPreview) < PreviewInterval) return;
+            lastPreview = System.Diagnostics.Stopwatch.GetTimestamp();
+            Preview(image);
+        }
+        catch (Java.Lang.IllegalStateException ex)
+        {
+            // On a reader that is full or closed: no preview this time
+            global::Android.Util.Log.Warn("UniformChat", $"Preview skipped: {ex.Message}");
+        }
+        finally
+        {
+            image?.Close();
+        }
+    }
+
+    /// <summary>Give a preview picture as I420 with the camera's rotation.</summary>
+    private void Preview(global::Android.Media.Image image)
+    {
+
+        // Planes by their row and pixel strides
+        global::Android.Media.Image.Plane[] planes = image.GetPlanes()!;
+        int width = image.Width, height = image.Height, chromaWidth = (width + 1) / 2, chromaHeight = (height + 1) / 2;
+        byte[] y = Plane(planes[0], width, height), u = Plane(planes[1], chromaWidth, chromaHeight), v = Plane(planes[2], chromaWidth, chromaHeight);
+        // Done
+        Previewed?.Invoke(new Uniform.Matrix.Video.VideoFrame(width, height, y, u, v) { Rotation = Rotation });
+    }
+
+    /// <summary>Return a plane's pixels tightly packed, whatever its row and pixel strides.</summary>
+    private static byte[] Plane(global::Android.Media.Image.Plane plane, int width, int height)
+    {
+        // The buffer's bytes, then each pixel
+        Java.Nio.ByteBuffer buffer = plane.Buffer!;
+        byte[] raw = new byte[buffer.Remaining()];
+        buffer.Get(raw);
+        int rowStride = plane.RowStride, pixelStride = plane.PixelStride;
+        byte[] packed = new byte[width * height];
+        for (int row = 0; row < height; row++)
+        {
+            int from = row * rowStride;
+            for (int column = 0; column < width && from + column * pixelStride < raw.Length; column++) packed[row * width + column] = raw[from + column * pixelStride];
+        }
+        // Return pixels
+        return packed;
+    }
+
+    /// <summary>Passes preview pictures on.</summary>
+    private sealed class PreviewListener(AndroidCamera owner) : Java.Lang.Object, ImageReader.IOnImageAvailableListener
+    {
+        /// <inheritdoc />
+        public void OnImageAvailable(ImageReader? reader)
+        {
+            // Done
+            if (reader is not null) owner.OnPreview(reader);
+        }
     }
 
     /// <summary>Log a camera's failure and close it; open it once more after a second, unless already tried.</summary>

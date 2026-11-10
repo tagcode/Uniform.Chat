@@ -4,7 +4,8 @@ namespace Uniform.Matrix.WebRtc.Rtp;
 /// <param name="Timestamp">RTP timestamp, in the 90 kHz video clock.</param>
 /// <param name="IsKeyframe">Whether the frame decodes on its own.</param>
 /// <param name="Data">The VP8 frame.</param>
-public sealed record Vp8EncodedFrame(uint Timestamp, bool IsKeyframe, byte[] Data);
+/// <param name="Rotation">Clockwise rotation in degrees that shows the picture upright, 0, 90, 180 or 270, from the sender's video orientation.</param>
+public sealed record Vp8EncodedFrame(uint Timestamp, bool IsKeyframe, byte[] Data, int Rotation = 0);
 
 /// <summary>The VP8 payload descriptor of <see href="https://www.rfc-editor.org/rfc/rfc7741#section-4.2">RFC 7741 4.2</see> at the start of each RTP packet's payload.</summary>
 /// <param name="Start">Whether the packet starts a partition (S).</param>
