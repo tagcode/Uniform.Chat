@@ -2,13 +2,14 @@ namespace Uniform.Matrix.Server.Tests;
 
 using System.Diagnostics;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Storage;
 
-/// <summary>Starting and stopping: a stop does not wait for long-polling clients, one process uses a data directory, and a migration lock left by a crash does not block the next start.</summary>
+/// <summary>Starting and stopping: a stop does not wait for long-polling clients, one process uses a data directory, a migration lock left by a crash does not block the next start, and the database's connections are set up for concurrent use.</summary>
 public class LifecycleTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -102,5 +103,36 @@ public class LifecycleTests
         command.CommandText = sql;
         // Return value
         return await command.ExecuteScalarAsync(Ct);
+    }
+
+    /// <summary>The server's connections use the write-ahead log, wait for locks, and sync commits only at checkpoints.</summary>
+    [Fact]
+    public async Task SetUpDatabaseConnections()
+    {
+        // Arrange: a connection as the server opens it
+        await using TestHomeserver server = await TestHomeserver.StartAsync();
+        await using ServerDbContext db = await server.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>().CreateDbContextAsync(Ct);
+        await db.Database.OpenConnectionAsync(Ct);
+
+        // Act
+        string journal = await PragmaAsync(db, "journal_mode");
+        string timeout = await PragmaAsync(db, "busy_timeout");
+        string synchronous = await PragmaAsync(db, "synchronous");
+
+        // Assert: WAL, 30 s, NORMAL
+        Assert.Equal("wal", journal);
+        Assert.Equal("30000", timeout);
+        // Done
+        Assert.Equal("1", synchronous);
+    }
+
+    /// <summary>Return the value of <paramref name="pragma"/> on the context's open connection.</summary>
+    private static async Task<string> PragmaAsync(ServerDbContext db, string pragma)
+    {
+        // One value
+        await using SqliteCommand command = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        command.CommandText = $"PRAGMA {pragma};";
+        // Return it as text
+        return Convert.ToString(await command.ExecuteScalarAsync(Ct), System.Globalization.CultureInfo.InvariantCulture)!;
     }
 }

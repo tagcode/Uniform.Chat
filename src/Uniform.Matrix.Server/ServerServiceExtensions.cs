@@ -95,7 +95,7 @@ public static class ServerServiceExtensions
         // One process per data directory, before the database or a listener opens; the host releases it when disposed
         DataDirectoryLock directoryLock = DataDirectoryLock.Acquire(dataDirectory);
         builder.Services.AddSingleton(_ => directoryLock);
-        builder.Services.AddDbContextFactory<ServerDbContext>(db => db.UseSqlite($"Data Source={Path.Combine(dataDirectory, storage.DatabaseFileName)}").AddInterceptors(new SqliteBusyTimeout()));
+        builder.Services.AddDbContextFactory<ServerDbContext>(db => db.UseSqlite($"Data Source={Path.Combine(dataDirectory, storage.DatabaseFileName)}").AddInterceptors(new SqlitePragmas()));
         builder.Services.AddHostedService<DatabaseMigrator>();
 
         // Services
