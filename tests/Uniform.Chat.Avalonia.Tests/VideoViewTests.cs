@@ -27,9 +27,9 @@ public class VideoViewTests
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(0, view.Bounds.Height);
 
-        // Act: a red 64x48 picture, BT.601 limited range
-        feed.Push(Picture(64, 48, 81, 90, 240));
-        Dispatcher.UIThread.RunJobs();
+        // Act: a red 64x48 picture, BT.601 limited range, from another thread as the decoder gives it
+        Task.Run(() => feed.Push(Picture(64, 48, 81, 90, 240))).Wait();
+        Pump(() => view.Bounds.Height == 300);
 
         // Assert: 400x300, red in the middle, black below
         Assert.Equal(new Size(400, 300), view.Bounds.Size);
@@ -41,13 +41,26 @@ public class VideoViewTests
 
         // Act and assert: a 16:9 picture, then none
         feed.Push(Picture(160, 90, 81, 90, 240));
-        Dispatcher.UIThread.RunJobs();
+        Pump(() => view.Bounds.Height == 225);
         Assert.Equal(new Size(400, 225), view.Bounds.Size);
         feed.Clear();
-        Dispatcher.UIThread.RunJobs();
+        Pump(() => view.Bounds.Height == 0);
         // Done
         Assert.Equal(0, view.Bounds.Height);
         window.Close();
+    }
+
+    /// <summary>Run the UI's jobs until <paramref name="done"/>, at most two seconds, as pictures are converted on the thread pool first.</summary>
+    private static void Pump(Func<bool> done)
+    {
+        // Jobs, then a moment
+        for (int i = 0; i < 200 && !done(); i++)
+        {
+            Dispatcher.UIThread.RunJobs();
+            Thread.Sleep(10);
+        }
+        // Done
+        Dispatcher.UIThread.RunJobs();
     }
 
     /// <summary>Return a picture of one color.</summary>

@@ -8,7 +8,7 @@ using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Rtp;
 
 /// <summary>Decodes the video a peer connection receives, on its own task, and gives the pictures in <see cref="PictureDecoded"/>.</summary>
-/// <remarks>Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
+/// <remarks>A device that cannot keep up, by its decode times or by falling behind, asks the sender once for less with a REMB. Frames queue as they arrive. When decoding falls behind by <see cref="MaxQueued"/> frames, or a frame does not decode, the frames up to the next keyframe are skipped and the peer is asked for one, as inter frames only decode after the frames before them.</remarks>
 public sealed class VideoReceiver : IAsyncDisposable
 {
     /// <summary>How many frames may wait for the decoder before they are given up.</summary>
@@ -21,6 +21,15 @@ public sealed class VideoReceiver : IAsyncDisposable
     private int queued;
     private long decoded;
     private long skipped;
+    private long decodeTicks;
+    private double averageMilliseconds;
+    private int askedLower;
+
+    /// <summary>Decode time, as a moving average, past which this device cannot keep up and asks for less, in milliseconds: about 14 pictures per second.</summary>
+    private const double SlowDecode = 70;
+
+    /// <summary>The bitrate asked of a sender that this device cannot keep up with, which senders of this app meet with 320x240 at 10 pictures per second.</summary>
+    public const long FallbackBitrate = 200_000;
     private bool waitKeyframe;
 
     /// <summary>Start decoding the video of <paramref name="connection"/>.</summary>
@@ -41,6 +50,9 @@ public sealed class VideoReceiver : IAsyncDisposable
 
     /// <summary>Pictures decoded so far.</summary>
     public long Decoded => Interlocked.Read(ref decoded);
+
+    /// <summary>Average time to decode a frame so far, e.g. to see whether a device keeps up.</summary>
+    public TimeSpan AverageDecodeTime => Decoded == 0 ? TimeSpan.Zero : TimeSpan.FromTicks(Interlocked.Read(ref decodeTicks) / Decoded);
 
     /// <summary>Frames skipped so far, because decoding fell behind or a frame did not decode.</summary>
     public long Skipped => Interlocked.Read(ref skipped);
@@ -85,6 +97,7 @@ public sealed class VideoReceiver : IAsyncDisposable
     {
         // Decoded, or skipped from here
         VideoFrame? picture;
+        long started = System.Diagnostics.Stopwatch.GetTimestamp();
         try { picture = decoder.Decode(frame.Data); }
         catch (Exception e) when (e is not OutOfMemoryException)
         {
@@ -93,14 +106,30 @@ public sealed class VideoReceiver : IAsyncDisposable
             return;
         }
         if (picture is null) return;
-        Interlocked.Increment(ref decoded);
+        TimeSpan took = System.Diagnostics.Stopwatch.GetElapsedTime(started);
+        Interlocked.Add(ref decodeTicks, took.Ticks);
+        long count = Interlocked.Increment(ref decoded);
+        averageMilliseconds = count == 1 ? took.TotalMilliseconds : averageMilliseconds * 0.9 + took.TotalMilliseconds * 0.1;
+        if (count >= 15 && averageMilliseconds > SlowDecode) AskLower($"decoding takes {averageMilliseconds:F0} ms");
         // Done
         PictureDecoded?.Invoke(picture);
     }
 
-    /// <summary>Skip frames up to the next keyframe, and ask the peer for one.</summary>
+    /// <summary>Ask the sender, once, for <see cref="FallbackBitrate"/>, as this device cannot keep up.</summary>
+    private void AskLower(string why)
+    {
+        // Once per call
+        if (Interlocked.Exchange(ref askedLower, 1) == 1) return;
+        logger.LogInformation("Asking for less video: {Why}", why);
+        // Done
+        _ = connection.RequestBitrateAsync(FallbackBitrate);
+    }
+
+    /// <summary>Skip frames up to the next keyframe, and ask the peer for one; when decoding fell behind, also for less video.</summary>
     private void Skip(string why)
     {
+        // Less, when this device is too slow
+        if (why == "decoding fell behind") AskLower(why);
         // Ask once per skip
         logger.LogDebug("Waiting for a video keyframe: {Why}", why);
         waitKeyframe = true;

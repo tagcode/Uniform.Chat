@@ -110,6 +110,24 @@ public class VideoRtpTests
         Assert.Equal((0x55u, 0x56789ABCu), Assert.Single(Rtcp.ReadSenderReports([.. senderReport, .. compound])));
     }
 
+    /// <summary>A REMB asks one stream for a bitrate, kept to its 18-bit mantissa, and reads back for that stream only.</summary>
+    [Fact]
+    public void BuildRemb()
+    {
+        // Arrange and act: 200 kbit/s, and 5 Mbit/s, which needs an exponent
+        byte[] low = Rtcp.Remb(0x01020304, 0xAABBCCDD, 200_000);
+        byte[] high = Rtcp.Remb(0x01020304, 0xAABBCCDD, 5_000_000);
+
+        // Assert: payload feedback of format 15, the identifier, and the rates
+        Assert.Equal([0x8F, Rtcp.PayloadFeedbackType, 0, 5], low[..4]);
+        Assert.Equal("REMB"u8.ToArray(), low[12..16]);
+        Assert.Equal(200_000, Rtcp.ReadRemb(low, 0xAABBCCDD));
+        Assert.InRange(Rtcp.ReadRemb([.. low, .. high], 0xAABBCCDD)!.Value, 200_000, 200_000);
+        Assert.InRange(Rtcp.ReadRemb(high, 0xAABBCCDD)!.Value, 4_999_000, 5_000_000);
+        // Done
+        Assert.Null(Rtcp.ReadRemb(low, 0x11111111));
+    }
+
     /// <summary>Statistics count the highest sequence number across a wraparound and the packets lost.</summary>
     [Fact]
     public void CountLoss()

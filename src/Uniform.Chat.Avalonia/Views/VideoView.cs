@@ -18,6 +18,7 @@ public sealed class VideoView : Control
     private WriteableBitmap? bitmap;
     private byte[] pixels = [];
     private int posted;
+    private volatile VideoFeed? feed;
 
     /// <summary>The video shown.</summary>
     public VideoFeed? Feed
@@ -33,7 +34,8 @@ public sealed class VideoView : Control
         base.OnPropertyChanged(change);
         if (change.Property != FeedProperty) return;
         if (change.OldValue is VideoFeed old) old.Updated -= OnUpdated;
-        if (change.NewValue is VideoFeed feed && VisualRoot is not null) feed.Updated += OnUpdated;
+        feed = change.NewValue as VideoFeed;
+        if (feed is not null && VisualRoot is not null) feed.Updated += OnUpdated;
         // Done
         Show();
     }
@@ -43,7 +45,8 @@ public sealed class VideoView : Control
     {
         // Subscribe, and show what is there
         base.OnAttachedToVisualTree(e);
-        if (Feed is VideoFeed feed) feed.Updated += OnUpdated;
+        feed = Feed;
+        if (feed is not null) feed.Updated += OnUpdated;
         // Done
         Show();
     }
@@ -84,46 +87,75 @@ public sealed class VideoView : Control
         context.DrawImage(bitmap, new Rect(bitmap.Size), target);
     }
 
-    /// <summary>Schedule drawing the newest picture, once until it is drawn.</summary>
+    /// <summary>On any thread, e.g. the decoder's: convert the newest picture to screen colors on the thread pool, reading the feed from a field, as Avalonia properties are for the UI thread only; then show it on the UI thread, which only copies it, so that input is not held up on slow devices; one picture at a time, and those that come meanwhile are skipped.</summary>
     private void OnUpdated()
     {
-        // One post at a time
+        // One in flight
         if (Interlocked.Exchange(ref posted, 1) == 1) return;
-        // Done
-        Dispatcher.UIThread.Post(Show, DispatcherPriority.Render);
-    }
-
-    /// <summary>Copy the newest picture into the bitmap, sized to it, and redraw.</summary>
-    private void Show()
-    {
-        // The newest, or none
-        Interlocked.Exchange(ref posted, 0);
-        if (Feed?.Latest is not VideoFrame picture)
+        VideoFrame? picture = feed?.Latest;
+        if (picture is null)
         {
-            bitmap?.Dispose();
-            bitmap = null;
-            InvalidateMeasure();
-            InvalidateVisual();
+            Dispatcher.UIThread.Post(Clear);
             return;
         }
+        // Done: converted off the UI thread, into the buffer no one else uses meanwhile
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                int length = picture.Width * 4 * picture.Height;
+                if (pixels.Length != length) pixels = new byte[length];
+                picture.CopyToBgra(pixels, picture.Width * 4);
+                Dispatcher.UIThread.Post(() => Show(picture.Width, picture.Height));
+            }
+            catch
+            {
+                // On a failed conversion: ready for the next picture
+                Interlocked.Exchange(ref posted, 0);
+                throw;
+            }
+        });
+    }
 
+    /// <summary>Show the newest picture now, e.g. when the feed changes.</summary>
+    private void Show()
+    {
+        // Through the same path
+        Interlocked.Exchange(ref posted, 0);
+        OnUpdated();
+    }
+
+    /// <summary>Show no picture.</summary>
+    private void Clear()
+    {
+        // Gone, and ready for the next
+        bitmap?.Dispose();
+        bitmap = null;
+        InvalidateMeasure();
+        InvalidateVisual();
+        Interlocked.Exchange(ref posted, 0);
+    }
+
+    /// <summary>Copy the converted pixels of a <paramref name="width"/> by <paramref name="height"/> picture into the bitmap, sized to it, and redraw; then take the next picture.</summary>
+    private void Show(int width, int height)
+    {
         // A bitmap of the picture's size
-        if (bitmap is null || bitmap.PixelSize.Width != picture.Width || bitmap.PixelSize.Height != picture.Height)
+        if (bitmap is null || bitmap.PixelSize.Width != width || bitmap.PixelSize.Height != height)
         {
             bitmap?.Dispose();
-            bitmap = new WriteableBitmap(new PixelSize(picture.Width, picture.Height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
+            bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
             InvalidateMeasure();
         }
 
-        // Converted, then copied into the bitmap's memory
+        // Row by row when the bitmap's rows are padded
         using (ILockedFramebuffer frame = bitmap.Lock())
         {
-            int length = frame.RowBytes * picture.Height;
-            if (pixels.Length != length) pixels = new byte[length];
-            picture.CopyToBgra(pixels, frame.RowBytes);
-            Marshal.Copy(pixels, 0, frame.Address, length);
+            int row = width * 4;
+            if (frame.RowBytes == row) Marshal.Copy(pixels, 0, frame.Address, row * height);
+            else for (int y = 0; y < height; y++) Marshal.Copy(pixels, y * row, frame.Address + y * frame.RowBytes, row);
         }
-        // Done
         InvalidateVisual();
+        // Done: the next picture may come
+        Interlocked.Exchange(ref posted, 0);
     }
 }

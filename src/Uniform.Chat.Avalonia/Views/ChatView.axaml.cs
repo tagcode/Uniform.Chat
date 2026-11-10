@@ -60,13 +60,22 @@ public partial class ChatView : UserControl
         model.CopyToClipboard = text => TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask;
     }
 
-    /// <summary>Give the call's video the screen when it fills it, else a third of the height, so the room stays usable.</summary>
+    /// <summary>Give the call's video the rest of the screen below the call bar when it fills the screen, else a third of the height, so the room stays usable.</summary>
     private void SizeVideo()
     {
-        // The room's height less the call bar's buttons
+        // Full screen: from the video's top to the bottom edge, measured once laid out; else a third
         double height = Bounds.Height;
-        // Done
-        CallVideo.MaxHeight = model?.Call?.ShowsFullScreen == true ? Math.Max(120, height - 200) : Math.Max(120, height * 0.35);
+        if (model?.Call?.ShowsFullScreen != true)
+        {
+            CallVideo.MaxHeight = Math.Max(120, height * 0.35);
+            return;
+        }
+        // Done: after layout, when the bar's buttons have wrapped as they will
+        Dispatcher.UIThread.Post(() =>
+        {
+            double top = CallVideo.TranslatePoint(new Point(0, 0), this)?.Y ?? 200;
+            CallVideo.MaxHeight = Math.Max(120, Bounds.Height - top - 16);
+        }, DispatcherPriority.Loaded);
     }
 
     /// <summary>Focus the message box with the caret at the end, e.g. for a reply or an edit.</summary>

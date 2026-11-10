@@ -12,6 +12,9 @@ public interface IVideoCamera : IAsyncDisposable
     /// <summary>Make the next frame a keyframe, e.g. when the peer lost packets.</summary>
     void RequestKeyframe();
 
+    /// <summary>Send at most <paramref name="bitsPerSecond"/>, as the peer asked, e.g. with a lower resolution and frame rate; nothing where the camera cannot.</summary>
+    void LimitBitrate(long bitsPerSecond) { }
+
     /// <summary>Switch to the device's next camera, e.g. from the front to the back; nothing with one camera.</summary>
     void SwitchCamera() { }
 }

@@ -111,6 +111,52 @@ public static class Rtcp
         return reports;
     }
 
+    /// <summary>Return a receiver estimated maximum bitrate, <see href="https://datatracker.ietf.org/doc/html/draft-alvestrand-rmcat-remb">REMB</see>, from <paramref name="senderSsrc"/>: the stream <paramref name="mediaSsrc"/> should send at most <paramref name="bitsPerSecond"/>.</summary>
+    public static byte[] Remb(uint senderSsrc, uint mediaSsrc, long bitsPerSecond)
+    {
+        // Payload feedback type 15, no media source, the identifier, then one stream's rate as an 18-bit mantissa and a 6-bit exponent
+        byte[] packet = new byte[24];
+        Header(packet, 15, PayloadFeedbackType);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(4), senderSsrc);
+        "REMB"u8.CopyTo(packet.AsSpan(12));
+        long mantissa = Math.Max(0, bitsPerSecond);
+        int exponent = 0;
+        while (mantissa > 0x3FFFF)
+        {
+            mantissa >>= 1;
+            exponent++;
+        }
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(16), 1u << 24 | (uint)exponent << 18 | (uint)mantissa);
+        BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(20), mediaSsrc);
+        // Return bytes
+        return packet;
+    }
+
+    /// <summary>Return the bitrate a REMB in a compound packet asks of <paramref name="mediaSsrc"/>, in bits per second; null when none does.</summary>
+    public static long? ReadRemb(ReadOnlySpan<byte> compound, uint mediaSsrc)
+    {
+        // Packet by packet, by their lengths
+        int at = 0;
+        while (at + 4 <= compound.Length && compound[at] >> 6 == 2)
+        {
+            int length = (BinaryPrimitives.ReadUInt16BigEndian(compound[(at + 2)..]) + 1) * 4;
+            if (at + length > compound.Length) break;
+            if ((compound[at] & 0x1F) == 15 && compound[at + 1] == PayloadFeedbackType && length >= 20 && compound.Slice(at + 12, 4).SequenceEqual("REMB"u8))
+            {
+                uint rate = BinaryPrimitives.ReadUInt32BigEndian(compound[(at + 16)..]);
+                int count = (int)(rate >> 24);
+                long bits = (long)(rate & 0x3FFFF) << (int)(rate >> 18 & 0x3F);
+                for (int i = 0; i < count && at + 24 + i * 4 <= at + length; i++)
+                {
+                    if (BinaryPrimitives.ReadUInt32BigEndian(compound[(at + 20 + i * 4)..]) == mediaSsrc) return bits;
+                }
+            }
+            at += length;
+        }
+        // On none
+        return null;
+    }
+
     /// <summary>Return whether a compound packet asks the sender of <paramref name="mediaSsrc"/> for a keyframe: a picture loss indication, <see href="https://www.rfc-editor.org/rfc/rfc4585#section-6.3.1">RFC 4585 6.3.1</see>, or a full intra request, <see href="https://www.rfc-editor.org/rfc/rfc5104#section-4.3.1">RFC 5104 4.3.1</see>, for that stream.</summary>
     public static bool AsksKeyframe(ReadOnlySpan<byte> compound, uint mediaSsrc)
     {

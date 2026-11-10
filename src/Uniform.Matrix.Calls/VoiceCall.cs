@@ -444,6 +444,7 @@ public sealed class VoiceCall : IAsyncDisposable
         {
             opened.FrameEncoded += frame => _ = peer.SendVideoAsync(frame, ending.Token);
             peer.KeyframeRequested += opened.RequestKeyframe;
+            peer.BitrateRequested += opened.LimitBitrate;
             opened.Start();
             sending = opened;
         }
@@ -627,7 +628,7 @@ public sealed class VoiceCall : IAsyncDisposable
         if (video is not null)
         {
             await video.DisposeAsync();
-            logger.LogInformation("Call {CallId} video: {Decoded} pictures decoded, {Skipped} frames skipped", CallId, video.Decoded, video.Skipped);
+            logger.LogInformation("Call {CallId} video: {Decoded} pictures decoded in {Milliseconds:F1} ms on average, {Skipped} frames skipped", CallId, video.Decoded, video.AverageDecodeTime.TotalMilliseconds, video.Skipped);
         }
         if (connection is not null) await connection.DisposeAsync();
         // Done

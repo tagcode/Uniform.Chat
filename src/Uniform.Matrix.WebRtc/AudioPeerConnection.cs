@@ -116,6 +116,9 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     /// <summary>Whether the answer sends video to the peer, with <see cref="SendVideoAsync"/>.</summary>
     public bool SendsVideo => videoSendPayloadType is not null;
 
+    /// <summary>Raised when the peer asks to limit the video sent to a bitrate, in bits per second, with a REMB, e.g. as it cannot decode more; on the socket's read loop.</summary>
+    public event Action<long>? BitrateRequested;
+
     /// <summary>Raised when the peer asks for a keyframe of the video sent, e.g. after it lost packets or joined; the encoder should make the next frame one. On the socket's read loop.</summary>
     public event Action? KeyframeRequested;
 
@@ -321,6 +324,19 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         }
     }
 
+    /// <summary>Ask the peer to send its video at most at <paramref name="bitsPerSecond"/>, with a REMB, e.g. as this device cannot decode more; nothing without received video.</summary>
+    public async Task RequestBitrateAsync(long bitsPerSecond)
+    {
+        // Received video, from a known stream
+        if (videoPayloadType is null || outbound is null || ice is null || State != PeerConnectionState.Connected) return;
+        uint media;
+        lock (videoLock) media = videoStatistics?.Ssrc ?? 0;
+        if (media == 0) return;
+        // Done
+        try { await ice.SendAsync(outbound.ProtectRtcp(Rtcp.Remb(videoSsrc, media, bitsPerSecond)), stopping.Token); }
+        catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or System.Net.Sockets.SocketException) { }
+    }
+
     /// <summary>Ask the peer for a keyframe of its video with an RTCP picture loss indication, e.g. after a frame failed to decode; nothing without received video.</summary>
     public Task RequestKeyframeAsync()
     {
@@ -487,6 +503,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
             // Keyframe requests for the video sent; sender reports of the video received, for the round trip in the next report
             if (inbound.UnprotectRtcp(datagram) is not byte[] rtcp) return;
             if (videoSendPayloadType is not null && Rtcp.AsksKeyframe(rtcp, videoSsrc)) KeyframeRequested?.Invoke();
+            if (videoSendPayloadType is not null && Rtcp.ReadRemb(rtcp, videoSsrc) is long bitrate) BitrateRequested?.Invoke(bitrate);
             if (videoStatistics is null) return;
             lock (videoLock)
             {
