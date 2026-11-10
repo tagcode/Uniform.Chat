@@ -21,6 +21,9 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     private Surface? input;
     private CameraDevice? device;
     private CameraCaptureSession? session;
+    private string[] cameras = [];
+    private int current;
+    private CameraManager? manager;
 
     /// <inheritdoc />
     public event Action<byte[]>? FrameEncoded;
@@ -46,11 +49,29 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         encoder.Start();
 
         // The front camera, or the first
-        CameraManager manager = (CameraManager)context.GetSystemService(Context.CameraService)!;
-        string[] ids = manager.GetCameraIdList();
-        string id = ids.FirstOrDefault(i => manager.GetCameraCharacteristics(i).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer facing && facing.IntValue() == (int)LensFacing.Front) ?? ids[0];
+        CameraManager cameraManager = (CameraManager)context.GetSystemService(Context.CameraService)!;
+        manager = cameraManager;
+        cameras = cameraManager.GetCameraIdList();
+        current = Math.Max(0, Array.FindIndex(cameras, i => cameraManager.GetCameraCharacteristics(i).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer facing && facing.IntValue() == (int)LensFacing.Front));
         // Done: the session starts when it opens
-        manager.OpenCamera(id, new DeviceCallback(this), handler);
+        cameraManager.OpenCamera(cameras[current], new DeviceCallback(this), handler);
+    }
+
+    /// <summary>Close the camera and open the next one into the same encoder, on the camera thread.</summary>
+    public void SwitchCamera()
+    {
+        // More than one camera
+        if (cameras.Length < 2 || handler is null) return;
+        handler.Post(() =>
+        {
+            session?.Close();
+            device?.Close();
+            session = null;
+            device = null;
+            current = (current + 1) % cameras.Length;
+            manager!.OpenCamera(cameras[current], new DeviceCallback(this), handler);
+            RequestKeyframe();
+        });
     }
 
     /// <summary>Ask the encoder for a keyframe next.</summary>

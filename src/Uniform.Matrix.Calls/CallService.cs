@@ -65,7 +65,13 @@ public sealed class CallService : IAsyncDisposable
 
     /// <summary>Call the other member of a room with two members, e.g. a direct chat.</summary>
     /// <exception cref="InvalidOperationException">When the room is unknown, has not exactly one other member, or already has a call.</exception>
-    public async Task<VoiceCall> PlaceCallAsync(string roomId, CancellationToken cancellationToken = default)
+    public Task<VoiceCall> PlaceCallAsync(string roomId, CancellationToken cancellationToken = default) => PlaceCallAsync(roomId, video: false, cancellationToken);
+
+    /// <summary>Call the other member of a direct room with video too: this side's camera, when <see cref="Camera"/> has one, and the peer's when it sends; or answer their call that rings, with video.</summary>
+    public Task<VoiceCall> PlaceVideoCallAsync(string roomId, CancellationToken cancellationToken = default) => PlaceCallAsync(roomId, video: true, cancellationToken);
+
+    /// <summary>Call, with or without video, or answer the call that rings.</summary>
+    private async Task<VoiceCall> PlaceCallAsync(string roomId, bool video, CancellationToken cancellationToken)
     {
         // The one other member
         MatrixClient client = await session.WhenReady;
@@ -78,13 +84,13 @@ public sealed class CallService : IAsyncDisposable
         if (FindCall(roomId) is VoiceCall existing)
         {
             if (existing.State != CallState.Ringing) throw new InvalidOperationException("The room already has a call.");
-            await existing.AnswerAsync(cancellationToken);
+            await (video ? existing.AnswerWithVideoAsync(cancellationToken) : existing.AnswerAsync(cancellationToken));
             return existing;
         }
 
         // A new call, ringing
         VoiceCall call = Create(roomId, Guid.NewGuid().ToString("N"), ownUserId, others[0], null, await OptionsAsync(client, cancellationToken));
-        await call.InviteAsync(cancellationToken);
+        await call.InviteAsync(cancellationToken, video);
         CallChanged?.Invoke(call);
         // Return the call
         return call;

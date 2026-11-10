@@ -36,7 +36,7 @@
     </Style>
   </UserControl.Styles>
 
-  <DockPanel>
+  <DockPanel Classes.videocall="{Binding Call.ShowsFullScreen, FallbackValue=False}">
 
   <!-- Call bar, above everything, so an incoming call shows whatever is open -->
   <Border DockPanel.Dock="Top" Classes="call" DataContext="{Binding Call}" IsVisible="{Binding IsVisible, FallbackValue=False}" x:DataType="vm:CallViewModel">
@@ -50,15 +50,17 @@
         <Button Classes="accent" Margin="4,2" Content="Answer with video" Command="{Binding AnswerWithVideoCommand}" IsVisible="{Binding CanAnswerWithVideo}" />
         <Button Margin="4,2" Content="Decline" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
         <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
+        <Button Margin="4,2" Content="Switch camera" Command="{Binding SwitchCameraCommand}" IsVisible="{Binding SendsVideo}" />
+        <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding HasVideo}" />
         <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
         <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
-      <views:VideoView Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" MaxHeight="260" HorizontalAlignment="Center" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
+      <views:VideoView x:Name="CallVideo" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" MaxHeight="260" HorizontalAlignment="Center" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
       <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
     </Grid>
   </Border>
 
-  <Grid ColumnDefinitions="Auto,*">
+  <Grid ColumnDefinitions="Auto,*" IsVisible="{Binding !Call.ShowsFullScreen, FallbackValue=True}">
 
     <!-- Rooms -->
     <Border x:Name="RoomPanel" Grid.Column="0" Classes="sidebar" IsVisible="{Binding ShowRoomList}">
@@ -152,6 +154,7 @@
           </StackPanel>
           <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
             <TextBlock Classes="hint" VerticalAlignment="Center" Text="🔒 Encrypted" IsVisible="{Binding SelectedRoom.IsEncrypted, FallbackValue=False}" />
+            <Button Classes="icon" Content="📹" ToolTip.Tip="Video call" Command="{Binding VideoCallRoomCommand}" IsVisible="{Binding CanVideoCallRoom}" />
             <Button Classes="icon" Content="📞" ToolTip.Tip="Voice call" Command="{Binding CallRoomCommand}" IsVisible="{Binding CanCallRoom}" />
             <Button Classes="icon" Content="⋮" ToolTip.Tip="Room" Command="{Binding LoadMembersCommand}" IsVisible="{Binding !SelectedRoom.IsInvite, FallbackValue=False}">
               <Button.Flyout>

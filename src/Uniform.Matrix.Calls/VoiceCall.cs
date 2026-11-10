@@ -112,10 +112,13 @@ public sealed class VoiceCall : IAsyncDisposable
     public bool IsIncoming => invite is not null;
 
     /// <summary>Whether the other user calls with video, which this side can show; this side sends none.</summary>
-    public bool IsVideo { get; }
+    public bool IsVideo { get; private set; }
 
     /// <summary>Whether this side sends its camera's video in the call.</summary>
     public bool SendsVideo => sending is not null;
+
+    /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
+    public void SwitchCamera() => sending?.SwitchCamera();
 
     /// <summary>Raised with each picture of the peer's video, on a decoding thread; a handler should be quick, e.g. keep the newest picture to show.</summary>
     public event Action<VoiceCall, VideoFrame>? PictureReceived;
@@ -151,15 +154,17 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <summary>Raised when <see cref="State"/> or <see cref="Muted"/> changes; on any thread.</summary>
     public event Action<VoiceCall>? Changed;
 
-    /// <summary>Send the invite with an offer, and ring until answered or <see cref="InviteLifetime"/> passes.</summary>
-    internal async Task InviteAsync(CancellationToken cancellationToken)
+    /// <summary>Send the invite with an offer, with <paramref name="video"/> of video both ways, and ring until answered or <see cref="InviteLifetime"/> passes.</summary>
+    internal async Task InviteAsync(CancellationToken cancellationToken, bool video = false)
     {
         // Offer, then the invite before any candidate
         await gate.WaitAsync(cancellationToken);
         try
         {
+            withVideo = video;
+            IsVideo = video;
             AudioPeerConnection peer = Connect();
-            string offer = peer.CreateOffer();
+            string offer = peer.CreateOffer(video);
             await send(EventTypes.CallInvite, new CallInviteContent { CallId = CallId, PartyId = partyId, Lifetime = (long)InviteLifetime.TotalMilliseconds, Invitee = PeerUserId, Offer = new CallSessionDescription { Type = "offer", Sdp = offer } }, cancellationToken);
         }
         finally
@@ -281,6 +286,7 @@ public sealed class VoiceCall : IAsyncDisposable
         peerPartyId = answer.PartyId;
         if (answer.PartyId is not null) await send(EventTypes.CallSelectAnswer, new CallSelectAnswerContent { CallId = CallId, PartyId = partyId, SelectedPartyId = answer.PartyId }, ending.Token);
         connection.AcceptAnswer(answer.Answer.Sdp);
+        if (connection.ReceivesVideo) StartVideo(connection);
         SetRemoteDescribed();
         SetState(CallState.Connecting);
         // Done
@@ -291,7 +297,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private AudioPeerConnection Connect()
     {
         // Candidates to the room, and the connection's fate to the call; video sent only when answered with it
-        AudioPeerConnection peer = new(options with { SendVideo = withVideo });
+        AudioPeerConnection peer = new(options with { SendVideo = withVideo, ReceiveVideo = options.ReceiveVideo || withVideo });
         connection = peer;
         peer.CandidateGathered += candidate => QueueCandidate(new CallCandidate { Candidate = candidate.ToString(), SdpMid = "0", SdpMLineIndex = 0 });
         peer.GatheringCompleted += () => QueueCandidate(new CallCandidate { Candidate = "", SdpMid = "0", SdpMLineIndex = 0 });

@@ -51,6 +51,9 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>Whether the platform has audio, so calls can be made.</summary>
     public bool CanCall => audio is not null;
 
+    /// <summary>Whether this device has a camera, so video calls can be made.</summary>
+    public bool CanVideoCall => CanCall && platform.Camera is not null;
+
     /// <summary>Whether the loudspeaker is a choice.</summary>
     public bool HasEarpiece { get; }
 
@@ -64,7 +67,23 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
 
     /// <summary>Whether the other user's video has pictures to show.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsFullScreen))]
     public partial bool HasVideo { get; set; }
+
+    /// <summary>Whether the video call is wanted on the whole screen rather than as a bar over the rooms; it is when video starts.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsFullScreen), nameof(ScreenText))]
+    public partial bool FullScreen { get; set; }
+
+    /// <summary>Whether the call fills the screen: video shown and wanted so.</summary>
+    public bool ShowsFullScreen => HasVideo && FullScreen;
+
+    /// <summary>Text of the button that switches between the full video and the chat.</summary>
+    public string ScreenText => FullScreen ? "Chat" : "Video";
+
+    /// <summary>Switch between the video on the whole screen and the chat under the call bar.</summary>
+    [RelayCommand]
+    private void ToggleScreen() => FullScreen = !FullScreen;
 
     /// <summary>Whether the bar shows.</summary>
     public bool IsVisible => Current is not null;
@@ -110,14 +129,19 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     public partial string Error { get; set; } = "";
 
     /// <summary>Call the other member of a direct room, asking for the microphone first where needed.</summary>
-    public async Task PlaceCallAsync(string roomId)
+    public async Task PlaceCallAsync(string roomId, bool video = false)
     {
-        // Permission, then the call
+        // Permissions, then the call; without the camera, voice only
         Error = "";
         if (!await HasMicrophoneAsync()) return;
+        if (video && platform.RequestCameraAsync is { } request && !await request())
+        {
+            Error = "No camera permission; calling with voice only.";
+            video = false;
+        }
         try
         {
-            Show(await calls.PlaceCallAsync(roomId));
+            Show(await (video ? calls.PlaceVideoCallAsync(roomId) : calls.PlaceCallAsync(roomId)));
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -147,6 +171,14 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         if (!camera) Error = "No camera permission; answering with voice only.";
         await RunAsync("Answering", () => camera ? call.AnswerWithVideoAsync() : call.AnswerAsync());
     }
+
+    /// <summary>Whether this side sends its camera, to switch it.</summary>
+    [ObservableProperty]
+    public partial bool SendsVideo { get; set; }
+
+    /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
+    [RelayCommand]
+    private void SwitchCamera() => Current?.SwitchCamera();
 
     /// <summary>Decline the ringing call.</summary>
     [RelayCommand]
@@ -243,7 +275,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         RemoteVideo.Push(picture);
         if (Interlocked.Exchange(ref pictured, 1) == 1) return;
         // Done
-        ui.Post(() => { if (call == Current) { HasVideo = true; HoldPlatform(IsRinging, IsActive); } });
+        ui.Post(() => { if (call == Current) { HasVideo = true; FullScreen = true; HoldPlatform(IsRinging, IsActive); } });
     }
 
     /// <summary>Show a call, and hide it a while after it ends.</summary>
@@ -265,6 +297,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         if (Current is not VoiceCall call) return;
         IsRinging = call.State == CallState.Ringing;
         CanAnswerWithVideo = IsRinging && call.IsVideo && platform.Camera is not null;
+        SendsVideo = call.SendsVideo && call.State != CallState.Ended;
         IsActive = call.State is not (CallState.Ringing or CallState.Ended);
         IsMuted = call.Muted;
         HoldPlatform(IsRinging, IsActive);

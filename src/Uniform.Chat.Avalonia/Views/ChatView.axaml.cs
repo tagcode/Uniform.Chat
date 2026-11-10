@@ -55,8 +55,18 @@ public partial class ChatView : UserControl
         if (model is null) return;
         model.Messages.Items.CollectionChanged += OnMessagesChanged;
         model.ComposerFocusRequested += FocusComposer;
+        if (model.Call is { } call) call.PropertyChanged += (_, change) => { if (change.PropertyName == nameof(CallViewModel.ShowsFullScreen)) SizeVideo(); };
         // Done
         model.CopyToClipboard = text => TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask;
+    }
+
+    /// <summary>Give the call's video the screen when it fills it, else a third of the height, so the room stays usable.</summary>
+    private void SizeVideo()
+    {
+        // The room's height less the call bar's buttons
+        double height = Bounds.Height;
+        // Done
+        CallVideo.MaxHeight = model?.Call?.ShowsFullScreen == true ? Math.Max(120, height - 200) : Math.Max(120, height * 0.35);
     }
 
     /// <summary>Focus the message box with the caret at the end, e.g. for a reply or an edit.</summary>
@@ -87,11 +97,12 @@ public partial class ChatView : UserControl
         if (TopLevel.GetTopLevel(this) is TopLevel top) top.BackRequested -= OnBackRequested;
     }
 
-    /// <summary>Switch to one pane when the window gets narrow.</summary>
+    /// <summary>Switch to one pane when the window gets narrow, and keep the call's video to a third of the height, so the room stays usable.</summary>
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
-        // Phones are always narrow
+        // The video's share; phones are always narrow
         base.OnSizeChanged(e);
+        SizeVideo();
         if (model is null || App.Platform.SinglePane) return;
         model.IsNarrow = e.NewSize.Width < NarrowWidth;
     }

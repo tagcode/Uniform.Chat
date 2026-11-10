@@ -119,12 +119,12 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     /// <summary>Raised when the peer asks for a keyframe of the video sent, e.g. after it lost packets or joined; the encoder should make the next frame one. On the socket's read loop.</summary>
     public event Action? KeyframeRequested;
 
-    /// <summary>Return an offer of audio, and start gathering; this side controls ICE.</summary>
-    public string CreateOffer()
+    /// <summary>Return an offer of audio, and with <paramref name="video"/> of video both ways, and start gathering; this side controls ICE. The answer decides which ways the video goes.</summary>
+    public string CreateOffer(bool video = false)
     {
         // Agent and offer
         IceAgent agent = Start(controlling: true);
-        lastLocal = AudioSdp.CreateOffer(Local(agent));
+        lastLocal = AudioSdp.CreateOffer(Local(agent), video);
         // Return the offer
         return lastLocal.ToString();
     }
@@ -153,8 +153,9 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         if (ice is null) throw new InvalidOperationException("No offer was made.");
         RemoteAudio audio = AudioSdp.Read(SessionDescription.Parse(answer)) ?? throw new InvalidOperationException("The answer has no Opus audio over DTLS-SRTP.");
         dtlsClient = audio.Setup == "passive";
-        // Done
         SetRemote(audio);
+        // Done: the video the answer accepted, when offered
+        if (lastLocal?.Media.Any(m => m.Kind == "video") == true) SetRemoteVideo(SessionDescription.Parse(answer));
     }
 
     /// <summary>Add a candidate the peer trickled, as its <c>candidate:</c> attribute, to the restarting agent while ICE restarts; unusable ones are ignored.</summary>

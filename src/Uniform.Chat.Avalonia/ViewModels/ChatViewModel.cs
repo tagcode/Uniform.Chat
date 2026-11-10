@@ -86,11 +86,23 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>The open room, or null.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasOpenRoom), nameof(ShowRoomList), nameof(ShowRoom), nameof(CanCallRoom))]
+    [NotifyPropertyChangedFor(nameof(HasOpenRoom), nameof(ShowRoomList), nameof(ShowRoom), nameof(CanCallRoom), nameof(CanVideoCallRoom))]
     public partial RoomItemViewModel? SelectedRoom { get; set; }
 
     /// <summary>Whether the open room has one other member, who can be voice called.</summary>
     public bool CanCallRoom => Call?.CanCall == true && SelectedRoom is { IsOneToOne: true, IsInvite: false };
+
+    /// <summary>Whether the open room can be video called: a direct room, on a device with a camera.</summary>
+    public bool CanVideoCallRoom => CanCallRoom && Call?.CanVideoCall == true;
+
+    /// <summary>Video call the other member of the open room.</summary>
+    [RelayCommand]
+    private async Task VideoCallRoomAsync()
+    {
+        // The call bar does the rest
+        if (Call is null || SelectedRoom is not RoomItemViewModel room) return;
+        await Call.PlaceCallAsync(room.RoomId, video: true);
+    }
 
     /// <summary>Voice call the other member of the open room.</summary>
     [RelayCommand]
@@ -945,6 +957,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         // Rooms, then the open one, whose member count may decide calls
         RefreshRooms();
         OnPropertyChanged(nameof(CanCallRoom));
+        OnPropertyChanged(nameof(CanVideoCallRoom));
         if (!singlePane && !IsNarrow && SelectedRoom is null && Rooms.Count > 0) SelectedRoom = Rooms[0];
         if (SelectedRoom is not RoomItemViewModel open) return;
 

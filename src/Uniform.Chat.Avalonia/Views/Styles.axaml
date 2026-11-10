@@ -43,6 +43,17 @@
     <Setter Property="Background" Value="#1B5E3A" />
     <Setter Property="TextElement.Foreground" Value="White" />
   </Style>
+  <!-- The call bar's buttons in its white, also when pointed at or pressed -->
+  <Style Selector="Border.call Button">
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+  <Style Selector="Border.call Button:pointerover /template/ ContentPresenter, Border.call Button:pressed /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+  <!-- A video call on the whole screen: the call's green past the bar too -->
+  <Style Selector="DockPanel.videocall">
+    <Setter Property="Background" Value="#1B5E3A" />
+  </Style>
   <Style Selector="Button.danger">
     <Setter Property="Background" Value="#C62828" />
     <Setter Property="Foreground" Value="White" />

@@ -34,13 +34,17 @@ public static class AudioSdp
     /// <summary>The payload type offered for Opus, as browsers use.</summary>
     public const byte OpusPayloadType = 111;
 
-    /// <summary>Return an offer of audio, as the caller sends it in <c>m.call.invite</c>.</summary>
-    public static SessionDescription CreateOffer(LocalAudio local)
+    /// <summary>The payload type offered for VP8, as browsers use.</summary>
+    public const byte Vp8PayloadType = 96;
+
+    /// <summary>Return an offer of audio, as the caller sends it in <c>m.call.invite</c>; with <paramref name="video"/>, also of VP8 video both ways.</summary>
+    public static SessionDescription CreateOffer(LocalAudio local, bool video = false)
     {
-        // One bundled audio section, DTLS role left to the answerer
+        // Bundled sections, DTLS role left to the answerer
         SessionDescription sdp = Session();
-        sdp.Attributes.Add("group:BUNDLE 0");
+        sdp.Attributes.Add(video ? "group:BUNDLE 0 1" : "group:BUNDLE 0");
         sdp.Media.Add(Audio(local, "0", OpusPayloadType, "actpass", "sendrecv"));
+        if (video) sdp.Media.Add(Video(local, "1", Vp8PayloadType, "actpass", "sendrecv"));
         // Return offer
         return sdp;
     }

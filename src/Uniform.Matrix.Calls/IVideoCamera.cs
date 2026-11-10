@@ -11,4 +11,7 @@ public interface IVideoCamera : IAsyncDisposable
 
     /// <summary>Make the next frame a keyframe, e.g. when the peer lost packets.</summary>
     void RequestKeyframe();
+
+    /// <summary>Switch to the device's next camera, e.g. from the front to the back; nothing with one camera.</summary>
+    void SwitchCamera() { }
 }
