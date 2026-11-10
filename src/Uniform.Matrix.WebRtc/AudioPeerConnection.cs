@@ -20,6 +20,8 @@ public sealed record PeerConnectionOptions
     public TimeSpan ConnectTimeout { get; init; } = TimeSpan.FromSeconds(30);
     /// <summary>Whether to accept an offer's VP8 video, for receiving; its frames come in <see cref="AudioPeerConnection.VideoReceived"/>.</summary>
     public bool ReceiveVideo { get; init; }
+    /// <summary>Whether to send VP8 video when the peer's offer receives it, with <see cref="AudioPeerConnection.SendVideoAsync"/>.</summary>
+    public bool SendVideo { get; init; }
 }
 
 /// <summary>The state of an <see cref="AudioPeerConnection"/>.</summary>
@@ -75,6 +77,11 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     private ReceiverStatistics? videoStatistics;
     private long lastPictureLoss;
     private Task? reporting;
+    private byte? videoSendPayloadType;
+    private readonly Vp8Packetizer packetizer = new();
+    private ushort videoSequence = (ushort)RandomUInt();
+    private readonly uint videoTimestampBase = RandomUInt();
+    private readonly long videoClockStart = System.Diagnostics.Stopwatch.GetTimestamp();
 
     /// <summary>Create a connection; nothing happens until an offer is made or accepted.</summary>
     public AudioPeerConnection(PeerConnectionOptions? options = null) => this.options = options ?? new PeerConnectionOptions();
@@ -106,6 +113,12 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     /// <summary>Whether the answer accepted the peer's video, so frames may come in <see cref="VideoReceived"/>.</summary>
     public bool ReceivesVideo => videoPayloadType is not null;
 
+    /// <summary>Whether the answer sends video to the peer, with <see cref="SendVideoAsync"/>.</summary>
+    public bool SendsVideo => videoSendPayloadType is not null;
+
+    /// <summary>Raised when the peer asks for a keyframe of the video sent, e.g. after it lost packets or joined; the encoder should make the next frame one. On the socket's read loop.</summary>
+    public event Action? KeyframeRequested;
+
     /// <summary>Return an offer of audio, and start gathering; this side controls ICE.</summary>
     public string CreateOffer()
     {
@@ -127,7 +140,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         dtlsClient = true;
         SetRemote(audio);
         SetRemoteVideo(sdp);
-        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), receiveVideo: options.ReceiveVideo);
+        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), receiveVideo: options.ReceiveVideo, sendVideo: options.SendVideo);
         // Return the answer
         return lastLocal.ToString();
     }
@@ -180,7 +193,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         // Same credentials: nothing to restart
         if (audio.Ufrag == remoteUfrag)
         {
-            lastLocal = AudioSdp.CreateAnswer(sdp, Local(ice), setup, options.ReceiveVideo);
+            lastLocal = AudioSdp.CreateAnswer(sdp, Local(ice), setup, options.ReceiveVideo, options.SendVideo);
             return lastLocal.ToString();
         }
 
@@ -191,7 +204,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         restartRemoteUfrag = audio.Ufrag;
         agent.SetRemoteCredentials(audio.Ufrag, audio.Password);
         foreach (IceCandidate candidate in audio.Candidates) agent.AddRemoteCandidate(candidate);
-        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), setup, options.ReceiveVideo);
+        lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), setup, options.ReceiveVideo, options.SendVideo);
         // Return answer
         return lastLocal.ToString();
     }
@@ -289,6 +302,24 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         return ice.SendAsync(outbound.ProtectRtp(packet.Encode()), cancellationToken);
     }
 
+    /// <summary>Send a VP8 frame of this side's video, captured now, in RTP packets of at most 1100 bytes, so they fit a path's MTU with SRTP and TURN; dropped until connected or when the peer receives no video.</summary>
+    /// <param name="frame">The encoded frame, as the encoder wrote it.</param>
+    /// <param name="cancellationToken">Cancels the send.</param>
+    public async ValueTask SendVideoAsync(byte[] frame, CancellationToken cancellationToken = default)
+    {
+        // Connected, and sending
+        if (outbound is null || ice is null || State != PeerConnectionState.Connected || videoSendPayloadType is not byte type) return;
+        uint stamp = videoTimestampBase + (uint)(System.Diagnostics.Stopwatch.GetElapsedTime(videoClockStart).TotalSeconds * 90000);
+
+        // Packets of one timestamp, the last marked
+        IReadOnlyList<byte[]> payloads = packetizer.Packetize(frame, 1100);
+        for (int i = 0; i < payloads.Count; i++)
+        {
+            RtpPacket packet = new() { PayloadType = type, Marker = i == payloads.Count - 1, Sequence = videoSequence++, Timestamp = stamp, Ssrc = videoSsrc, Payload = payloads[i] };
+            await ice.SendAsync(outbound.ProtectRtp(packet.Encode()), cancellationToken);
+        }
+    }
+
     /// <summary>Ask the peer for a keyframe of its video with an RTCP picture loss indication, e.g. after a frame failed to decode; nothing without received video.</summary>
     public Task RequestKeyframeAsync()
     {
@@ -369,11 +400,14 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         dtls.Closed += () => SetState(PeerConnectionState.Closed);
     }
 
-    /// <summary>Take the peer's video, when receiving it is wanted and the peer sends it: its payload type, a depacketizer and statistics.</summary>
+    /// <summary>Take the peer's video: when receiving is wanted and the peer sends, its payload type, a depacketizer and statistics; when sending is wanted and the peer receives, the payload type to send with.</summary>
     private void SetRemoteVideo(SessionDescription offer)
     {
-        // Wanted and sent
-        if (!options.ReceiveVideo || AudioSdp.ReadVideo(offer) is not RemoteVideo video || video.Direction is not ("sendrecv" or "sendonly")) return;
+        // Each way as the answer says
+        if (AudioSdp.ReadVideo(offer) is not RemoteVideo video) return;
+        string direction = AudioSdp.VideoDirection(video.Direction, options.ReceiveVideo, options.SendVideo);
+        if (direction is "sendrecv" or "sendonly") videoSendPayloadType = video.Vp8PayloadType;
+        if (direction is not ("sendrecv" or "recvonly")) return;
         videoPayloadType = video.Vp8PayloadType;
         depacketizer = new Vp8Depacketizer();
         // Done
@@ -433,7 +467,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     }
 
     /// <summary>Return this side's audio for the SDP.</summary>
-    private LocalAudio Local(IceAgent agent) => new(agent.LocalUfrag, agent.LocalPassword, certificate.Fingerprint, ssrc, cname);
+    private LocalAudio Local(IceAgent agent) => new(agent.LocalUfrag, agent.LocalPassword, certificate.Fingerprint, ssrc, cname, videoSsrc);
 
     /// <summary>Route a datagram from the peer: DTLS to the handshake, SRTP audio to <see cref="AudioReceived"/> and video to <see cref="VideoReceived"/>, SRTCP checked and its sender reports noted.</summary>
     private void OnData(byte[] datagram)
@@ -449,8 +483,10 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         if (inbound is null || !RtpPacket.IsRtpOrRtcp(datagram)) return;
         if (RtpPacket.IsRtcp(datagram))
         {
-            // Sender reports of the video, for the round trip in the next report
-            if (inbound.UnprotectRtcp(datagram) is not byte[] rtcp || videoStatistics is null) return;
+            // Keyframe requests for the video sent; sender reports of the video received, for the round trip in the next report
+            if (inbound.UnprotectRtcp(datagram) is not byte[] rtcp) return;
+            if (videoSendPayloadType is not null && Rtcp.AsksKeyframe(rtcp, videoSsrc)) KeyframeRequested?.Invoke();
+            if (videoStatistics is null) return;
             lock (videoLock)
             {
                 foreach ((uint sender, uint ntp) in Rtcp.ReadSenderReports(rtcp))

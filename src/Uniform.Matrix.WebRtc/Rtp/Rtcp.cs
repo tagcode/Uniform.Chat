@@ -111,6 +111,28 @@ public static class Rtcp
         return reports;
     }
 
+    /// <summary>Return whether a compound packet asks the sender of <paramref name="mediaSsrc"/> for a keyframe: a picture loss indication, <see href="https://www.rfc-editor.org/rfc/rfc4585#section-6.3.1">RFC 4585 6.3.1</see>, or a full intra request, <see href="https://www.rfc-editor.org/rfc/rfc5104#section-4.3.1">RFC 5104 4.3.1</see>, for that stream.</summary>
+    public static bool AsksKeyframe(ReadOnlySpan<byte> compound, uint mediaSsrc)
+    {
+        // Packet by packet, by their lengths
+        int at = 0;
+        while (at + 4 <= compound.Length && compound[at] >> 6 == 2)
+        {
+            int length = (BinaryPrimitives.ReadUInt16BigEndian(compound[(at + 2)..]) + 1) * 4;
+            if (at + length > compound.Length) break;
+            int format = compound[at] & 0x1F;
+            if (compound[at + 1] == PayloadFeedbackType && length >= 12)
+            {
+                // PLI names the stream after the sender; FIR names it in its first entry
+                if (format == 1 && BinaryPrimitives.ReadUInt32BigEndian(compound[(at + 8)..]) == mediaSsrc) return true;
+                if (format == 4 && length >= 20 && BinaryPrimitives.ReadUInt32BigEndian(compound[(at + 12)..]) == mediaSsrc) return true;
+            }
+            at += length;
+        }
+        // On no request
+        return false;
+    }
+
     /// <summary>Write the common header: version 2, the count or format, the type, and the length in 32-bit words less one.</summary>
     private static void Header(byte[] packet, int countOrFormat, byte type)
     {

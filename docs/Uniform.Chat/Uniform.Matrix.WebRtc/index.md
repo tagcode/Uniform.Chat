@@ -4,7 +4,7 @@ title: Uniform.Matrix.WebRtc
 ---
 # Uniform.Matrix.WebRtc
 
-The subset of WebRTC that a 1:1 call needs, in C#: one Opus audio stream each way, and VP8 video received from the peer, interoperating with browsers and Element. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
+The subset of WebRTC that a 1:1 call needs, in C#: one Opus audio stream each way, and VP8 video each way, interoperating with browsers and Element. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
 
 ## Layers
 
@@ -46,7 +46,11 @@ With [`PeerConnectionOptions.ReceiveVideo`](xref:Uniform.Matrix.WebRtc.PeerConne
 
 A frame waits for packets that come out of order. After a packet is lost, only a keyframe is given, and the connection asks the peer for one with an RTCP picture loss indication; [`RequestKeyframeAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.RequestKeyframeAsync*) asks for one too, e.g. when a frame did not decode. Receiver reports go to the peer every second, so it can see the loss and the round trip.
 
-Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, sending video, and retransmission of lost video packets (NACK).
+## Sent video
+
+With [`PeerConnectionOptions.SendVideo`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.SendVideo), an answer also sends video when the peer's offer receives it; the section names this side's video SSRC and stream, so browsers make a track of it. [`SendVideoAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.SendVideoAsync*) takes encoded VP8 frames, e.g. from a hardware encoder, and sends each in RTP packets of at most 1100 bytes, timed by a 90 kHz clock from the moment of sending. When the peer asks for a keyframe, with a picture loss indication or a full intra request, [`KeyframeRequested`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.KeyframeRequested) tells the encoder.
+
+Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, offering video, sender reports of the video sent, and retransmission of lost video packets (NACK).
 
 ## Tests
 

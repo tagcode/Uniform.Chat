@@ -48,6 +48,7 @@ public sealed class VoiceCall : IAsyncDisposable
     private readonly string ownUserId;
     private readonly CallEventSender send;
     private readonly Func<IAudioDevices?> devices;
+    private readonly Func<IVideoCamera?> camera;
     private readonly PeerConnectionOptions options;
     private readonly ILogger logger;
     private readonly CallInviteContent? invite;
@@ -59,6 +60,8 @@ public sealed class VoiceCall : IAsyncDisposable
     private AudioPeerConnection? connection;
     private VoiceMedia? media;
     private VideoReceiver? video;
+    private IVideoCamera? sending;
+    private bool withVideo;
     private string? peerPartyId;
     private bool remoteDescribed;
     private bool flushScheduled;
@@ -76,7 +79,8 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <param name="devices">Opens the microphone and speaker when connected; null for none, e.g. in tests.</param>
     /// <param name="options">Options of the peer connection, with the TURN servers.</param>
     /// <param name="logger">Logger.</param>
-    internal VoiceCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger)
+    /// <param name="camera">Opens the camera when a call answered with video connects; null, or returning null, for none.</param>
+    internal VoiceCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null)
     {
         // Identity, and the parts the call uses
         RoomId = roomId;
@@ -88,6 +92,7 @@ public sealed class VoiceCall : IAsyncDisposable
         peerPartyId = invite?.PartyId;
         this.send = send;
         this.devices = devices;
+        this.camera = camera ?? (() => null);
         this.options = options;
         this.logger = logger;
         State = invite is null ? CallState.Inviting : CallState.Ringing;
@@ -108,6 +113,9 @@ public sealed class VoiceCall : IAsyncDisposable
 
     /// <summary>Whether the other user calls with video, which this side can show; this side sends none.</summary>
     public bool IsVideo { get; }
+
+    /// <summary>Whether this side sends its camera's video in the call.</summary>
+    public bool SendsVideo => sending is not null;
 
     /// <summary>Raised with each picture of the peer's video, on a decoding thread; a handler should be quick, e.g. keep the newest picture to show.</summary>
     public event Action<VoiceCall, VideoFrame>? PictureReceived;
@@ -162,14 +170,21 @@ public sealed class VoiceCall : IAsyncDisposable
         _ = TimeOutAsync(InviteLifetime);
     }
 
-    /// <summary>Answer an incoming call, and connect.</summary>
-    public async Task AnswerAsync(CancellationToken cancellationToken = default)
+    /// <summary>Answer an incoming call, and connect; this side sends no video.</summary>
+    public Task AnswerAsync(CancellationToken cancellationToken = default) => AnswerAsync(video: false, cancellationToken);
+
+    /// <summary>Answer an incoming call with this side's camera too, when the caller receives video and the platform has a camera; and connect.</summary>
+    public Task AnswerWithVideoAsync(CancellationToken cancellationToken = default) => AnswerAsync(video: true, cancellationToken);
+
+    /// <summary>Answer, with or without video, and connect.</summary>
+    private async Task AnswerAsync(bool video, CancellationToken cancellationToken)
     {
         // Ringing only
         await gate.WaitAsync(cancellationToken);
         try
         {
             if (State != CallState.Ringing || invite is null) return;
+            withVideo = video;
             AudioPeerConnection peer = Connect();
             string answer = peer.AcceptOffer(invite.Offer.Sdp);
             if (peer.ReceivesVideo) StartVideo(peer);
@@ -275,8 +290,8 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <summary>Create the peer connection, sending its candidates in batches.</summary>
     private AudioPeerConnection Connect()
     {
-        // Candidates to the room, and the connection's fate to the call
-        AudioPeerConnection peer = new(options);
+        // Candidates to the room, and the connection's fate to the call; video sent only when answered with it
+        AudioPeerConnection peer = new(options with { SendVideo = withVideo });
         connection = peer;
         peer.CandidateGathered += candidate => QueueCandidate(new CallCandidate { Candidate = candidate.ToString(), SdpMid = "0", SdpMLineIndex = 0 });
         peer.GatheringCompleted += () => QueueCandidate(new CallCandidate { Candidate = "", SdpMid = "0", SdpMLineIndex = 0 });
@@ -368,6 +383,7 @@ public sealed class VoiceCall : IAsyncDisposable
         {
             if (State == CallState.Ended) return;
             StartMedia(peer);
+            StartCamera(peer);
             ConnectedAt = DateTimeOffset.UtcNow;
             logger.LogInformation("Call {CallId} connected from {Local} to {Remote}", CallId, peer.Ice?.SelectedLocal, peer.Ice?.SelectedRemote);
             SetState(CallState.Connected);
@@ -410,6 +426,26 @@ public sealed class VoiceCall : IAsyncDisposable
         {
             // On devices that did not open
             logger.LogWarning(e, "Audio devices of call {CallId} did not open", CallId);
+        }
+    }
+
+    /// <summary>Open the camera and send its frames, when the answer sends video; a camera that fails leaves the call without it.</summary>
+    private void StartCamera(AudioPeerConnection peer)
+    {
+        // Sending, with a camera
+        if (!peer.SendsVideo || camera() is not IVideoCamera opened) return;
+        try
+        {
+            opened.FrameEncoded += frame => _ = peer.SendVideoAsync(frame, ending.Token);
+            peer.KeyframeRequested += opened.RequestKeyframe;
+            opened.Start();
+            sending = opened;
+        }
+        catch (Exception e)
+        {
+            // On a camera that did not open
+            logger.LogWarning(e, "Camera of call {CallId} did not open", CallId);
+            _ = opened.DisposeAsync();
         }
     }
 
@@ -581,6 +617,7 @@ public sealed class VoiceCall : IAsyncDisposable
             await media.DisposeAsync();
             logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for", CallId, media.Sent, media.Received, media.Lost, media.Underruns);
         }
+        if (sending is not null) await sending.DisposeAsync();
         if (video is not null)
         {
             await video.DisposeAsync();

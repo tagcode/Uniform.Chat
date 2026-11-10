@@ -33,6 +33,7 @@
   <!-- Chromium as a caller with video, as the WebRTC tests drive it -->
   <ItemGroup>
     <Compile Include="..\Uniform.Matrix.WebRtc.Tests\Chromium.cs" Link="Chromium.cs" />
+    <None Include="..\Uniform.Matrix.Video.Tests\TestVectors\vp80-00-comprehensive-017.ivf" Link="TestVectors\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

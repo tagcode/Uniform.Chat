@@ -160,7 +160,7 @@ public class VideoRtpTests
     }
 
     /// <summary>Return the frames of an IVF file.</summary>
-    private static IEnumerable<byte[]> ReadIvf(byte[] file)
+    internal static IEnumerable<byte[]> ReadIvf(byte[] file)
     {
         // After the header, size-prefixed frames
         int at = BinaryPrimitives.ReadUInt16LittleEndian(file.AsSpan(6));

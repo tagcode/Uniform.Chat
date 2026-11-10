@@ -42,6 +42,9 @@ public sealed class CallService : IAsyncDisposable
     /// <summary>Open the microphone and speaker of a call; the platform's devices by default, which Android replaces.</summary>
     public Func<IAudioDevices?> Devices { get; set; } = () => AudioDevices.ForThisPlatform();
 
+    /// <summary>Opens the platform's camera, for calls answered with video; null where there is none, as on desktops for now.</summary>
+    public Func<IVideoCamera?>? Camera { get; set; }
+
     /// <summary>Whether calls go through TURN only, so the peer does not learn this device's addresses.</summary>
     public bool RelayOnly { get; set; }
 
@@ -244,7 +247,7 @@ public sealed class CallService : IAsyncDisposable
     private VoiceCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
     {
         // Events through the outbox, changes to the listeners
-        VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger);
+        VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke());
         call.Changed += c =>
         {
             CallChanged?.Invoke(c);

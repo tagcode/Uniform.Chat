@@ -157,4 +157,67 @@ public class BrowserTests
         // Done
         Assert.Equal(1, stats["reports"]!.GetValue<int>());
     }
+
+    /// <summary>Chromium offers audio and to receive video; we answer sending VP8, the frames of a test vector at 30 per second, as a camera's encoder would give them; Chromium decodes pictures of the vector's size.</summary>
+    [Fact]
+    public async Task SendVideoToChromium()
+    {
+        // Browser, and our side sending video
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        Chromium? started;
+        try { started = await Chromium.StartAsync(cancellationToken); }
+        catch (ChromiumUnavailableException ex) { Assert.Skip(ex.Message); return; }
+        await using Chromium? chromium = started;
+        if (chromium is null) { Assert.Skip("Chromium is not installed."); return; }
+        await using AudioPeerConnection peer = new(new PeerConnectionOptions { IncludeLoopback = true, SendVideo = true });
+        int keyframeRequests = 0;
+        peer.KeyframeRequested += () => Interlocked.Increment(ref keyframeRequests);
+
+        // Chromium's offer: a tone, and video to receive into a playing element
+        string offer = (await chromium.EvaluateAsync("""
+            const context = new AudioContext();
+            const destination = context.createMediaStreamDestination();
+            window.pc = new RTCPeerConnection();
+            pc.addTrack(destination.stream.getAudioTracks()[0], destination.stream);
+            pc.addTransceiver('video', { direction: 'recvonly' });
+            pc.ontrack = event => { if (event.track.kind !== 'video') return; window.screen = document.createElement('video'); screen.muted = true; screen.srcObject = new MediaStream([event.track]); document.body.appendChild(screen); screen.play(); };
+            await pc.setLocalDescription(await pc.createOffer());
+            await new Promise(done => { if (pc.iceGatheringState === 'complete') done(); pc.onicegatheringstatechange = () => pc.iceGatheringState === 'complete' && done(); });
+            return pc.localDescription.sdp;
+            """, cancellationToken))!.GetValue<string>();
+
+        // Our answer sends the video; both connect
+        TaskCompletionSource gathered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        peer.GatheringCompleted += () => gathered.TrySetResult();
+        string answer = peer.AcceptOffer(offer);
+        Assert.True(peer.SendsVideo);
+        Assert.False(peer.ReceivesVideo);
+        Assert.Contains("a=sendonly", answer);
+        await gathered.Task.WaitAsync(TimeSpan.FromSeconds(10), cancellationToken);
+        string[] candidates = [.. peer.Ice!.LocalCandidates.Select(c => c.ToString())];
+        await chromium.EvaluateAsync($$"""
+            await pc.setRemoteDescription({ type: 'answer', sdp: {{JsonSerializer.Serialize(answer)}} });
+            for (const candidate of {{JsonSerializer.Serialize(candidates)}}) await pc.addIceCandidate({ candidate, sdpMid: '0', sdpMLineIndex: 0 });
+            """, cancellationToken);
+        Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
+
+        // Three seconds of the vector's frames, from its keyframe again after its end
+        byte[][] frames = [.. VideoRtpTests.ReadIvf(File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "TestVectors", "vp80-00-comprehensive-017.ivf")))];
+        for (int i = 0; i < 90; i++)
+        {
+            await peer.SendVideoAsync(frames[i % frames.Length], cancellationToken);
+            await Task.Delay(33, cancellationToken);
+        }
+
+        // Chromium decoded pictures of the vector's size
+        JsonNode stats = (await chromium.EvaluateAsync("""
+            const report = await pc.getStats();
+            const inbound = [...report.values()].find(s => s.type === 'inbound-rtp' && s.kind === 'video');
+            return { decoded: inbound?.framesDecoded ?? 0, width: inbound?.frameWidth, height: inbound?.frameHeight, lost: inbound?.packetsLost, pli: inbound?.pliCount ?? 0 };
+            """, cancellationToken))!;
+        Assert.True(stats["decoded"]!.GetValue<int>() >= 60, stats.ToJsonString());
+        Assert.Equal(176, stats["width"]!.GetValue<int>());
+        // Done
+        Assert.Equal(144, stats["height"]!.GetValue<int>());
+    }
 }
