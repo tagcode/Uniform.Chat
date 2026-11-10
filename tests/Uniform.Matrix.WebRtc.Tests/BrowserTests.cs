@@ -227,7 +227,7 @@ public class BrowserTests
         Assert.Equal(height, stats["height"]!.GetValue<int>());
     }
 
-    /// <summary>Video from Chromium over a lossy path, every 15th packet dropped the first time: our NACKs make Chromium send them again, and the video decodes on without Chromium making new keyframes for it.</summary>
+    /// <summary>Video from Chromium over a lossy path, every 8th packet dropped the first time, until ten are: our NACKs make Chromium send them again, and the video decodes on without Chromium making new keyframes for it.</summary>
     [Fact]
     public async Task RecoverLostVideoPackets()
     {
@@ -241,7 +241,7 @@ public class BrowserTests
         await using AudioPeerConnection peer = new(new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true });
         HashSet<ushort> dropped = [];
         int seen = 0;
-        peer.DropReceivedVideo = packet => Interlocked.Increment(ref seen) % 15 == 0 && dropped.Add(packet.Sequence);
+        peer.DropReceivedVideo = packet => { lock (dropped) return dropped.Count < 10 && Interlocked.Increment(ref seen) % 8 == 0 && dropped.Add(packet.Sequence); };
         Video.Vp8.Vp8Decoder decoder = new();
         int pictures = 0;
         peer.VideoReceived += frame => { if (decoder.Decode(frame.Data) is not null) Interlocked.Increment(ref pictures); };
@@ -275,8 +275,14 @@ public class BrowserTests
             """, cancellationToken);
         Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
 
-        // Four seconds of video
-        await Task.Delay(4000, cancellationToken);
+        // Video until ten packets are lost, as slow machines send fewer, then a second for their resending
+        DateTime until = DateTime.UtcNow.AddSeconds(15);
+        while (DateTime.UtcNow < until)
+        {
+            lock (dropped) if (dropped.Count >= 10) break;
+            await Task.Delay(100, cancellationToken);
+        }
+        await Task.Delay(1000, cancellationToken);
         JsonNode stats = (await chromium.EvaluateAsync("""
             const report = await pc.getStats();
             const outbound = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'video');
@@ -284,10 +290,12 @@ public class BrowserTests
             """, cancellationToken))!;
 
         // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
-        Assert.True(dropped.Count > 5, $"{dropped.Count} dropped");
-        Assert.True(peer.VideoPacketsNacked >= dropped.Count / 2, $"{peer.VideoPacketsNacked} asked for {dropped.Count} dropped; Chromium: {stats.ToJsonString()}");
+        int lost;
+        lock (dropped) lost = dropped.Count;
+        Assert.True(lost >= 10, $"{lost} dropped");
+        Assert.True(peer.VideoPacketsNacked >= lost / 2, $"{peer.VideoPacketsNacked} asked for {lost} dropped; Chromium: {stats.ToJsonString()}");
         Assert.True(stats["resent"]!.GetValue<int>() > 0, stats.ToJsonString());
-        Assert.True(pictures > 60, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");
+        Assert.True(pictures > stats["frames"]!.GetValue<int>() / 2, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");
         // Done
         Assert.True(stats["pli"]!.GetValue<int>() <= 2, stats.ToJsonString());
     }
