@@ -13,10 +13,8 @@ using global::Terminal.Gui.Views;
 /// <summary>What a dashboard may do besides the admin lists, which depends on how it reaches the server.</summary>
 public sealed record DashboardOptions
 {
-    /// <summary>Open the server's settings; null when this dashboard cannot reach them, e.g. over the network.</summary>
+    /// <summary>Open the server's settings; null when this dashboard cannot reach them, as over the network.</summary>
     public Func<SettingsEditor>? OpenSettings { get; init; }
-    /// <summary>When the settings belong to another process, e.g. the service a manager attached to: what saving means for it. Null applies them live, in the server's own dashboard.</summary>
-    public string? SettingsOtherProcess { get; init; }
     /// <summary>What quitting does, shown in the menu.</summary>
     public string QuitHelp { get; init; } = "Stop the server";
     /// <summary>The last line of the dashboard: how to use it.</summary>
@@ -180,14 +178,14 @@ public sealed class ServerWindow : Window
         // The editor, which may fail to read another process's file
         SettingsEditor editor;
         try { editor = dashboard.OpenSettings!(); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or FormatException)
+        catch (IOException ex)
         {
-            Dialogs.Error(app, "Settings", $"{ex.Message}\n\nThe server's settings file needs its owner's rights, e.g. sudo.");
+            Dialogs.Error(app, "Settings", ex.Message);
             return;
         }
 
         // Run until closed with nothing unsaved, or confirmed
-        using SettingsWindow window = new(app, editor, dashboard.SettingsOtherProcess);
+        using SettingsWindow window = new(app, editor);
         do app.Run(window);
         while (!window.ConfirmClose());
     }

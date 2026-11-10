@@ -89,7 +89,7 @@ To manage the running service, open the dashboard on it; the service keeps servi
 sudo uniform-chat-server manage
 ```
 
-The manager connects through the service's admin socket, `/run/uniform-chat-server/admin.sock`, which only root and the `uniform-chat` group may open, and needs no account. It has the users, rooms and reports windows, the service's logs, and its settings file. Saved settings take effect when the service starts again: `sudo systemctl restart uniform-chat-server`. Ctrl+Q closes the manager, not the server. See [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article) to manage a server on another machine.
+The manager connects through the service's admin socket, `/run/uniform-chat-server/admin.sock`, which only root and the `uniform-chat` group may open, and needs no account. It has the users, rooms and reports windows, the service's logs, and its settings. The settings work as in the dashboard, through the service itself: **Apply** changes the running service at once, and **Save** has the service write its settings file. Options marked ↻ take effect when the service starts again: `sudo systemctl restart uniform-chat-server`. Secrets, such as registration tokens, show as hidden and are changed only in the file. Ctrl+Q closes the manager, not the server. See [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article) to manage a server on another machine.
 
 The dashboard of the server itself still runs when the service is stopped. Only one server runs on a data folder at a time: while the service still runs or is stopping, it exits at once with *Another server (pid N) is using /var/lib/uniform-chat-server; stop it first.*
 

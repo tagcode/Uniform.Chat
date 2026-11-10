@@ -16,7 +16,7 @@ The server's own program opens its dashboard on a server elsewhere, with the use
 uniform-chat-server manage https://matrix.example.org --user=@admin:example.org
 ```
 
-Settings and logs stay on the server's machine; manage them there with `sudo uniform-chat-server manage`, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package).
+Settings and logs are reachable only on the server's machine, through its admin socket, never over the network; manage them there with `sudo uniform-chat-server manage`, see [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package).
 
 The admin API is under `/_synapse/admin/`. A reverse proxy must forward that path too, which the example in [Installing](xref:Uniform.Chat.Server.Install.Article) does not; add it to its `location` line, e.g. `location ~ ^/(_matrix|_synapse/admin|\.well-known/matrix)/`. Leave it out to allow administration only on the server's machine.
 

@@ -93,35 +93,42 @@ public class ManageTests
         Assert.Equal(0, alice.Devices);
     }
 
-    /// <summary>A service's settings file opens with the server's options, and saving writes it.</summary>
+    /// <summary>Through the socket, the manager reads the server's settings with their sources, applies a change live and saves it to the server's file; secrets stay hidden and cannot be changed, invalid values are refused, and the network cannot reach any of it.</summary>
     [Fact]
-    public void EditServiceSettings()
+    public async Task ManageSettingsThroughSocket()
     {
-        // Arrange: a file with one setting
-        string folder = Directory.CreateTempSubdirectory("uniform-chat-settings-").FullName;
-        string path = Path.Combine(folder, "settings.json");
-        File.WriteAllText(path, """{ "Server": { "ServerName": "example.org" } }""");
+        // Arrange: the editor over the socket
+        await using SocketHomeserver server = await SocketHomeserver.StartAsync();
+        await using HttpServerAdmin admin = await HttpServerAdmin.ConnectSocketAsync(server.Socket, Ct);
+        SettingsEditor editor = SocketSettingsStore.Open(admin);
+        OptionInfo registration = editor.Options.Single(o => o.Key == "Server:Registration");
+        OptionInfo secret = editor.Options.Single(o => o.Key == "Calls:TurnSharedSecret");
 
-        try
-        {
-            // Act: open, change, save
-            SettingsEditor editor = ManagedSettings.Open(path);
-            OptionInfo name = editor.Options.Single(o => o.Key == "Server:ServerName");
-            Assert.Equal("example.org", editor.GetValue(name));
-            Assert.Contains(editor.Options, o => o.Key == "Host:AdminSocket");
-            Assert.Contains(editor.Options, o => o.Key.StartsWith("Turn:", StringComparison.Ordinal));
-            Assert.Null(editor.Set(editor.Options.Single(o => o.Key == "Server:Registration"), "Token"));
-            editor.Save();
+        // Assert: the server's file, its values and sources, the secret hidden
+        Assert.Equal(server.SettingsFile, editor.SettingsPath);
+        Assert.Equal(SocketHomeserver.ServerName, editor.GetValue(editor.Options.Single(o => o.Key == "Server:ServerName")));
+        Assert.Equal("(hidden)", editor.GetDisplayValue(secret));
 
-            // Assert: both in the file
-            IReadOnlyDictionary<string, string?> saved = SettingsStore.Read(path);
-            Assert.Equal("example.org", saved["Server:ServerName"]);
-            // Done
-            Assert.Equal("Token", saved["Server:Registration"]);
-        }
-        finally
-        {
-            Directory.Delete(folder, recursive: true);
-        }
+        // Act and assert: applied live, then saved to the file by the server
+        Assert.Null(editor.Set(registration, "Token"));
+        editor.Apply();
+        SettingsEditor reread = SocketSettingsStore.Open(admin);
+        Assert.Equal("Token", reread.GetValue(registration));
+        Assert.Equal("applied", reread.GetSource(registration));
+        editor.Save();
+        Assert.Equal("Token", SettingsStore.Read(server.SettingsFile)["Server:Registration"]);
+        Assert.Equal(Path.GetFileName(server.SettingsFile), SocketSettingsStore.Open(admin).GetSource(registration));
+
+        // Act and assert: refused changes
+        IOException invalid = await Assert.ThrowsAsync<IOException>(() => admin.ChangeSettingsAsync("apply", new Dictionary<string, string?> { ["Server:Registration"] = "Anyone" }, Ct));
+        Assert.Contains("Server:Registration", invalid.Message);
+        await Assert.ThrowsAsync<IOException>(() => admin.ChangeSettingsAsync("save", new Dictionary<string, string?> { ["Calls:TurnSharedSecret"] = "mine" }, Ct));
+        await Assert.ThrowsAsync<IOException>(() => admin.ChangeSettingsAsync("apply", new Dictionary<string, string?> { ["No:Such"] = "x" }, Ct));
+
+        // Assert: nothing of it over the network
+        using HttpClient network = new() { BaseAddress = server.Address };
+        using HttpResponseMessage response = await network.GetAsync("_uniform/admin/v1/settings", Ct);
+        // Done
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }

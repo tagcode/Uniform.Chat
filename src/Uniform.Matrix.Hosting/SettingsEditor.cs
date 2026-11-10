@@ -11,15 +11,15 @@ public enum OptionChange
     Applied,
 }
 
-/// <summary>Edits options for the settings window: changes are kept here, then applied to the running client or saved to the settings file.</summary>
+/// <summary>Edits options for the settings window: changes are kept here, then applied to the running program or saved to the settings file, through an <see cref="ISettingsStore"/>.</summary>
 public sealed class SettingsEditor
 {
-    private readonly SettingsStore store;
+    private readonly ISettingsStore store;
     private readonly Dictionary<string, string?> edits = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string?> applied = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>Edit <paramref name="options"/> stored in <paramref name="store"/>.</summary>
-    public SettingsEditor(SettingsStore store, IReadOnlyList<OptionInfo> options)
+    public SettingsEditor(ISettingsStore store, IReadOnlyList<OptionInfo> options)
     {
         // Store dependencies
         this.store = store;
@@ -135,8 +135,8 @@ public sealed class SettingsEditor
             if (option.Secret || value is null || value == option.DefaultValue) continue;
             values[option.Key] = value;
         }
-        // Write
-        store.Save(values, path);
+        // Write, without applying
+        SettingsStore.Write(values, path);
     }
 
     /// <summary>Load the known options of a settings file as edits; return how many were loaded.</summary>

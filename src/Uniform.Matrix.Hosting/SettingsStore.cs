@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration.Json;
 /// Layers from lowest: <c>appsettings.json</c>, the settings file, environment variables, the command line, then applied changes.
 /// Saving writes the settings file; applying sets the top layer until the next start. Both reload the configuration, so options read through <c>IOptionsMonitor</c> see the change.
 /// </remarks>
-public sealed class SettingsStore
+public sealed class SettingsStore : ISettingsStore
 {
     private readonly IConfigurationRoot configuration;
     private readonly AppliedConfigurationProvider applied;
@@ -86,6 +86,18 @@ public sealed class SettingsStore
     /// <summary>Write <paramref name="changes"/> into <paramref name="path"/>, keeping its other settings; the changes are applied when it is the settings file.</summary>
     public void Save(IReadOnlyDictionary<string, string?> changes, string path)
     {
+        // Merge into the file
+        Write(changes, path);
+
+        // Saved values come from the file now, not the applied layer
+        if (path != Path) return;
+        applied.Set(changes.ToDictionary(c => c.Key, _ => (string?)null));
+        configuration.Reload();
+    }
+
+    /// <summary>Write <paramref name="changes"/> into the settings file at <paramref name="path"/>, keeping its other settings; a null value removes the setting. Nothing is applied, e.g. for an exported copy.</summary>
+    public static void Write(IReadOnlyDictionary<string, string?> changes, string path)
+    {
         // Merge into the existing file
         Dictionary<string, string?> values = new(Read(path), StringComparer.OrdinalIgnoreCase);
         foreach ((string key, string? value) in changes)
@@ -94,12 +106,8 @@ public sealed class SettingsStore
             else values[key] = value;
         }
         Directory.CreateDirectory(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(path))!);
+        // Done
         File.WriteAllText(path, ToJson(values).ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
-
-        // Saved values come from the file now, not the applied layer
-        if (path != Path) return;
-        applied.Set(changes.ToDictionary(c => c.Key, _ => (string?)null));
-        configuration.Reload();
     }
 
     /// <summary>Read a settings file as flat keys like <c>Ui:InlineImages</c>; empty when it does not exist.</summary>

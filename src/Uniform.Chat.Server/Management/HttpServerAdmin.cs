@@ -136,6 +136,30 @@ public sealed class HttpServerAdmin : IServerAdmin, IAsyncDisposable
         };
     }
 
+    /// <summary>Return the server's settings file, and each option's value and source; through the socket only.</summary>
+    /// <exception cref="IOException">When the server refuses, e.g. without a settings file.</exception>
+    public Task<JsonObject> GetSettingsAsync(CancellationToken cancellationToken) => SettingsAsync(null, null, cancellationToken);
+
+    /// <summary>Apply or save changes of the server's settings, <paramref name="action"/> <c>apply</c> or <c>save</c>; return the settings after; through the socket only.</summary>
+    /// <exception cref="IOException">When the server refuses, e.g. an unknown option or an invalid value, which the message tells.</exception>
+    public Task<JsonObject> ChangeSettingsAsync(string action, IReadOnlyDictionary<string, string?> changes, CancellationToken cancellationToken) => SettingsAsync(action, changes, cancellationToken);
+
+    /// <summary>Read the settings, or send changes to <paramref name="action"/>; a refusal becomes an <see cref="IOException"/> with the server's words.</summary>
+    private async Task<JsonObject> SettingsAsync(string? action, IReadOnlyDictionary<string, string?>? changes, CancellationToken cancellationToken)
+    {
+        // Assert the socket, which alone has settings
+        if (!socket) throw new IOException("Settings can be managed only on the server's machine.");
+        string path = AdminSocket.SettingsPath.TrimStart('/') + (action is null ? "" : "/" + action);
+        JsonObject request = new() { ["changes"] = new JsonObject([.. (changes ?? new Dictionary<string, string?>()).Select(c => KeyValuePair.Create(c.Key, (JsonNode?)c.Value))]) };
+        using HttpResponseMessage response = action is null ? await http.GetAsync(path, cancellationToken) : await http.PostAsJsonAsync(path, request, cancellationToken);
+
+        // The settings, or the server's reason
+        JsonObject body = await response.Content.ReadFromJsonAsync<JsonObject>(cancellationToken) ?? [];
+        if (!response.IsSuccessStatusCode) throw new IOException(body["error"]?.GetValue<string>() ?? $"The server answered {(int)response.StatusCode}.");
+        // Return settings
+        return body;
+    }
+
     /// <summary>Return every local account, page by page.</summary>
     public async Task<IReadOnlyList<AdminUser>> GetUsersAsync(CancellationToken cancellationToken)
     {

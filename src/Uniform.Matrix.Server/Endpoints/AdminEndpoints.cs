@@ -3,17 +3,10 @@ namespace Uniform.Matrix.Server.Endpoints;
 using System.Net;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Accounts;
-using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Http;
 using Uniform.Matrix.Server.Rooms;
 using Uniform.Matrix.Server.Storage;
@@ -60,10 +53,6 @@ public static class AdminEndpoints
         MapReports(synapse);
         MapRooms(synapse);
         MapMediaAndNotices(synapse);
-
-        // The local manager's view of the server, on the admin socket only
-        routes.MapGet(AdminSocket.StatusPath, Status).AddEndpointFilter(async (context, next) =>
-            context.HttpContext.IsAdminSocket() ? await next(context) : MatrixHttp.Error(HttpStatusCode.NotFound, ErrorCodes.Unrecognized, "Unrecognized request."));
         // Return routes
         return routes;
     }
@@ -263,29 +252,6 @@ public static class AdminEndpoints
             if (pattern.EndsWith('}')) synapse.MapPut(pattern, send);
             else synapse.MapPost(pattern, send);
         }
-    }
-
-    /// <summary>Answer the manager's status: name, version, addresses and counters, and the data, log and settings files, which it may open on this machine.</summary>
-    private static IResult Status(HttpContext http, ServerStatus status, IServer server, IOptions<ServerOptions> options, IOptions<ServerStorageOptions> storage, IHostEnvironment environment)
-    {
-        // Optional parts of the host: the session log and the settings file
-        IServiceProvider services = http.RequestServices;
-        IEnumerable<string> addresses = server.Features.Get<IServerAddressesFeature>()?.Addresses ?? [];
-        // Return status
-        return MatrixHttp.Json(new JsonObject
-        {
-            ["server_name"] = options.Value.ServerName,
-            ["version"] = typeof(AdminEndpoints).Assembly.GetName().Version?.ToString(3),
-            ["addresses"] = new JsonArray([.. addresses.Select(a => (JsonNode)a)]),
-            ["started_ts"] = status.Started.ToUnixTimeMilliseconds(),
-            ["requests"] = status.Requests,
-            ["active_requests"] = status.ActiveRequests,
-            ["failed_requests"] = status.FailedRequests,
-            ["data_directory"] = storage.Value.ResolveDataDirectory(environment.ApplicationName),
-            ["log_directory"] = storage.Value.ResolveLogDirectory(environment.ApplicationName),
-            ["log_file"] = services.GetService<FileLoggerProvider>()?.FilePath,
-            ["settings_file"] = services.GetService<SettingsStore>()?.Path,
-        });
     }
 
     /// <summary>Answer whois: the user's devices, each with its last connection; for admins about anyone local, for others about themselves.</summary>

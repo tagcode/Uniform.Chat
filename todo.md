@@ -1,9 +1,3 @@
-# UserManagement 
-
-- Separate user management out into Uniform.UserManagement that is agnostic of Uniform.Matrix.*
-- Create Uniform.UserManagement.Gui.Terminal
-- Have Matrix server include Uniform.UserManagement.Gui.Terminal
-
 # Look and feel
 
 - Material.Avalonia 
@@ -30,6 +24,12 @@
 
 - Android conventions:
   - edge-to-edge layout with the right system bar colours; the back gesture; the keyboard pushing the composer up;
+
+# UserManagement 
+
+- Separate user management class libraries: Uniform.UserManagement that is agnostic of Uniform.Matrix.*
+- Create Uniform.UserManagement.Gui.Terminal
+- Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
 # Documentations
 
@@ -81,3 +81,7 @@ Rename to Uniform.Gui.Terminal.
 - F-Droid / IzzyOnDroid store screenshots
 - Admin pages (reports, accounts, tokens)
 
+# Server local socket based dashboard
+
+- Test it.
+- If socket dashboard works well enough, the server dashboard mode can be removed?

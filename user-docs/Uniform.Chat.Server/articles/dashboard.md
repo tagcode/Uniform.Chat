@@ -87,7 +87,7 @@ Users can report a message, a room or another user from their client. Server →
 
 ## Managing a running server
 
-The dashboard also opens on a server that already runs, e.g. as a service, without stopping it: `sudo uniform-chat-server manage`. It shows the same windows, except that saved settings take effect when the server starts again, and Ctrl+Q closes only the manager. See [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package) and [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article).
+The dashboard also opens on a server that already runs, e.g. as a service, without stopping it: `sudo uniform-chat-server manage`. It shows the same windows, with the settings applied and saved by the running server itself; Ctrl+Q closes only the manager. See [Run without the dashboard](xref:Uniform.Chat.Server.Service.Article#from-the-apt-package) and [Remote administration](xref:Uniform.Chat.Server.RemoteAdmin.Article).
 
 ## Logs window
 

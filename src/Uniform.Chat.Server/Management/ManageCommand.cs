@@ -35,7 +35,7 @@ internal static class ManageCommand
         if (admin is null) return 1;
         await using (admin)
         {
-            DashboardOptions dashboard = await DashboardOfAsync(admin);
+            DashboardOptions dashboard = DashboardOf(admin);
             using IApplication ui = Application.Create();
             ui.Init();
             using ServerWindow window = new(ui, admin, dashboard, TimeProvider.System);
@@ -45,24 +45,13 @@ internal static class ManageCommand
         return 0;
     }
 
-    /// <summary>Return what the dashboard may do: through the socket also the settings, which apply when the service starts again.</summary>
-    private static async Task<DashboardOptions> DashboardOfAsync(HttpServerAdmin admin)
+    /// <summary>Return what the dashboard may do: through the socket also the server's settings, which it reads and changes itself.</summary>
+    private static DashboardOptions DashboardOf(HttpServerAdmin admin) => new()
     {
-        // Network: the admin lists only
-        const string hint = "F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q closes the manager; the server keeps running.";
-        if (!admin.IsSocket) return new DashboardOptions { QuitHelp = "Close the manager", Hint = hint };
-
-        // Socket: the settings file the server reports
-        ServerSnapshot snapshot = await admin.GetSnapshotAsync(CancellationToken.None);
-        // Return options
-        return new DashboardOptions
-        {
-            OpenSettings = snapshot.SettingsFile is string path ? () => ManagedSettings.Open(path) : null,
-            SettingsOtherProcess = "The server reads the file when it starts again, e.g. with: sudo systemctl restart uniform-chat-server",
-            QuitHelp = "Close the manager",
-            Hint = hint,
-        };
-    }
+        OpenSettings = admin.IsSocket ? () => SocketSettingsStore.Open(admin) : null,
+        QuitHelp = "Close the manager",
+        Hint = "F9 or Alt+F for the menu; Server → Users to create accounts. Ctrl+Q closes the manager; the server keeps running.",
+    };
 
     /// <summary>Connect to the admin socket; tell why not and return null when it fails.</summary>
     private static async Task<HttpServerAdmin?> ConnectSocketAsync(string path)

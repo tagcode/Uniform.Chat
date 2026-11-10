@@ -15,22 +15,17 @@ public sealed class SettingsWindow : Dialog
 {
     private readonly IApplication app;
     private readonly SettingsEditor editor;
-    private readonly string? otherProcess;
     private readonly ObservableCollection<string> rows = [];
     private readonly ListView list = new() { X = 1, Y = 1, Width = Dim.Fill(1), Height = Dim.Fill(8) };
     private readonly Label description = new() { X = 1, Y = Pos.AnchorEnd(7), Width = Dim.Fill(1), Height = 5 };
     private string descriptionText = "";
 
     /// <summary>Build the window over <paramref name="editor"/>.</summary>
-    /// <param name="app">Application the window runs in.</param>
-    /// <param name="editor">The settings and their edits.</param>
-    /// <param name="otherProcess">When the settings belong to another process, e.g. a service that this one manages: what saving means for it, e.g. how to restart it. There is then no Apply, as applying would change only this process.</param>
-    public SettingsWindow(IApplication app, SettingsEditor editor, string? otherProcess = null)
+    public SettingsWindow(IApplication app, SettingsEditor editor)
     {
         // Layout: file, list, description, actions
         this.app = app;
         this.editor = editor;
-        this.otherProcess = otherProcess;
         Title = "Settings";
         Width = Dim.Fill(2);
         Height = Dim.Fill(1);
@@ -46,7 +41,6 @@ public sealed class SettingsWindow : Dialog
         View? previous = null;
         foreach ((string text, Action action) in new (string, Action)[] { ("_Edit", Edit), ("_Reset", Reset), ("_Apply", Apply), ("_Save", Save), ("_Load…", Load), ("E_xport…", Export) })
         {
-            if (otherProcess is not null && action == Apply) continue;
             Button button = new() { Text = text, X = previous is null ? 1 : Pos.Right(previous) + 1, Y = Pos.AnchorEnd(1) };
             button.Accepting += (_, e) => { e.Handled = true; action(); };
             Add(button);
@@ -61,7 +55,7 @@ public sealed class SettingsWindow : Dialog
     }
 
     /// <summary>Whether the user may close: asks when changes are not saved.</summary>
-    public bool ConfirmClose() => !editor.HasUnsavedChanges || Dialogs.Confirm(app, "Unsaved settings", "Some changes are not saved to the settings file. Close anyway?\n\nApplied changes last until the client exits.");
+    public bool ConfirmClose() => !editor.HasUnsavedChanges || Dialogs.Confirm(app, "Unsaved settings", "Some changes are not saved to the settings file. Close anyway?\n\nApplied changes last until the program restarts.");
 
     /// <summary>Option of the selected row.</summary>
     private OptionInfo? Selected => list.SelectedItem is int index && index < editor.Options.Count ? editor.Options[index] : null;
@@ -145,15 +139,31 @@ public sealed class SettingsWindow : Dialog
     {
         // One step back per press
         if (Selected is not OptionInfo option || option.Secret) return;
-        editor.Reset(option);
+        try
+        {
+            editor.Reset(option);
+        }
+        catch (IOException ex)
+        {
+            Dialogs.Error(app, "Reset", ex.Message);
+        }
         Refresh();
     }
 
     /// <summary>Apply edits to the running client.</summary>
     private void Apply()
     {
-        // Apply and report what waits for a restart
-        IReadOnlyList<string> restart = editor.Apply();
+        // Apply and report what waits for a restart; a store elsewhere may not answer
+        IReadOnlyList<string> restart;
+        try
+        {
+            restart = editor.Apply();
+        }
+        catch (IOException ex)
+        {
+            Dialogs.Error(app, "Apply", ex.Message);
+            return;
+        }
         Refresh();
         if (restart.Count > 0) Dialogs.Info(app, "Applied", $"Applied. These take effect after restart:\n\n{string.Join('\n', restart)}");
     }
@@ -173,8 +183,7 @@ public sealed class SettingsWindow : Dialog
             return;
         }
         Refresh();
-        if (otherProcess is not null) Dialogs.Info(app, "Saved", $"Saved to {editor.SettingsPath}.\n\n{otherProcess}");
-        else Dialogs.Info(app, "Saved", $"Saved to {editor.SettingsPath}.{(restart.Count > 0 ? $"\n\nThese take effect after restart:\n\n{string.Join('\n', restart)}" : "")}");
+        Dialogs.Info(app, "Saved", $"Saved to {editor.SettingsPath}.{(restart.Count > 0 ? $"\n\nThese take effect after restart:\n\n{string.Join('\n', restart)}" : "")}");
     }
 
     /// <summary>Load options from a settings file as edits, to apply or save.</summary>

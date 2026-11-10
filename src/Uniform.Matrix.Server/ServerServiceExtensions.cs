@@ -221,6 +221,7 @@ public static class ServerServiceExtensions
         app.MapFederation();
         app.MapCalls();
         app.MapAdmin();
+        app.MapManagement();
 
         // Addresses in the log once listening
         app.Lifetime.ApplicationStarted.Register(() => logger.LogInformation("Serving {ServerName} at {Addresses}", app.Services.GetRequiredService<IOptions<ServerOptions>>().Value.ServerName, string.Join(", ", app.Urls)));

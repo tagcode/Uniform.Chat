@@ -5,12 +5,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Uniform.Matrix.Server.Accounts;
 
-/// <summary>A local Unix socket through which the server's own machine manages it, e.g. <c>uniform-chat-server manage</c> while the server runs as a service: requests through it act as a server admin without an access token, and may use calls that the network never sees, such as <see cref="StatusPath"/>.</summary>
+/// <summary>A local Unix socket through which the server's own machine manages it, e.g. <c>uniform-chat-server manage</c> while the server runs as a service: requests through it act as a server admin without an access token, and may use calls that the network never sees: the status and the settings.</summary>
 /// <remarks>Who may connect is decided by the socket file's permissions, e.g. root and the service's group; the server serves it next to its other addresses, as <c>http://unix:</c> followed by the path.</remarks>
 public static class AdminSocket
 {
-    /// <summary>The server's state for the manager: addresses, counters and where its files are; answered on the socket only.</summary>
-    public const string StatusPath = "/_uniform/admin/v1/status";
+    /// <summary>Prefix of the calls that are answered on the socket only, see <see cref="Endpoints.ManagementEndpoints"/>.</summary>
+    public const string Prefix = "/_uniform/admin/v1";
+
+    /// <summary>The server's state for the manager: addresses, counters and where its files are.</summary>
+    public const string StatusPath = Prefix + "/status";
+
+    /// <summary>The server's settings: values and sources; <c>/apply</c> and <c>/save</c> below it change them.</summary>
+    public const string SettingsPath = Prefix + "/settings";
 
     /// <summary>The requester of socket requests, an admin without an account.</summary>
     public static readonly Requester Requester = new("@admin-socket", "admin-socket", Admin: true);
