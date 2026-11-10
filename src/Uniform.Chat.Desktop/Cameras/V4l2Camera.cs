@@ -1,20 +1,16 @@
-namespace Uniform.Chat.Desktop.Linux;
+namespace Uniform.Chat.Desktop.Cameras;
 
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
-using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
-using Uniform.Matrix.Video.Vp8;
 
-/// <summary>A Linux webcam through <see href="https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html">Video4Linux2</see>, encoded with the pure C# <see cref="Vp8Encoder"/>: YUYV pictures of 640x480 from memory-mapped buffers, converted to I420, and sent at up to 30 per second; 320x240 at 10 when the peer asks for less.</summary>
+/// <summary>A Linux webcam through <see href="https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html">Video4Linux2</see>: YUYV pictures of 640x480 from memory-mapped buffers, converted to I420 and encoded by <see cref="EncodingCamera"/>; 320x240 when the peer asks for less.</summary>
 /// <remarks>Only <c>open</c>, <c>ioctl</c>, <c>mmap</c>, <c>munmap</c> and <c>close</c> of libc are called; the structures are byte arrays at the offsets of 64-bit Linux. Inter frames between keyframes keep the bitrate down; a keyframe request makes the next frame one.</remarks>
-public sealed class V4l2Camera : IVideoCamera
+public sealed class V4l2Camera : EncodingCamera
 {
     private const uint QueryCapability = 0x80685600, SetFormat = 0xC0D05605, RequestBuffers = 0xC0145608, QueryBuffer = 0xC0585609, QueueBuffer = 0xC058560F, DequeueBuffer = 0xC0585611, StreamOn = 0x40045612, StreamOff = 0x40045613;
     private const uint VideoCapture = 1, MemoryMap = 1, Yuyv = 0x56595559, CaptureCapability = 1, DeviceCapabilities = 0x80000000, FieldNone = 1;
     private const int ReadWrite = 2, ProtectReadWrite = 3, MapShared = 1, BufferCount = 4;
-    private const long FallbackBelow = 300_000, RestoreFrom = 600_000;
-    private readonly Vp8Encoder encoder = new(40);
     private readonly List<(IntPtr Address, int Length)> buffers = [];
     private CancellationTokenSource? stopping;
     private Thread? capturing;
@@ -22,27 +18,16 @@ public sealed class V4l2Camera : IVideoCamera
     private int index;
     private int width;
     private int height;
-    private volatile bool low;
-    private volatile bool paused;
-    private volatile int quantizer = 40;
-    private long lastFrame;
-    private int previews;
     private int captureCount;
-
-    /// <inheritdoc />
-    public event Action<byte[]>? FrameEncoded;
-
-    /// <inheritdoc />
-    public event Action<VideoFrame>? Previewed;
 
     /// <summary>Return whether this machine has a video device that captures, e.g. <c>/dev/video0</c>.</summary>
     public static bool Available() => OperatingSystem.IsLinux() && CaptureDevices().Any();
 
     /// <summary>Whether another device captures, as counted at start; a webcam's metadata node does not.</summary>
-    public bool CanSwitch => captureCount > 1;
+    public override bool CanSwitch => captureCount > 1;
 
     /// <summary>Open the first capture device and start capturing on a thread of its own.</summary>
-    public void Start()
+    public override void Start()
     {
         // The first device that captures, and how many do
         int[] capturing = [.. CaptureDevices()];
@@ -58,23 +43,8 @@ public sealed class V4l2Camera : IVideoCamera
         Run();
     }
 
-    /// <summary>Make the next frame a keyframe.</summary>
-    public void RequestKeyframe() => encoder.RequestKeyframe();
-
-    /// <summary>Stop sending and previewing, or start again; the device keeps capturing, so it resumes at once.</summary>
-    public void SetPaused(bool pause) => paused = pause;
-
-    /// <summary>Follow the peer's limit: a coarser quantizer for lower rates; 320x240 at 10 per second below <see cref="FallbackBelow"/>, full size from <see cref="RestoreFrom"/>.</summary>
-    public void LimitBitrate(long bitsPerSecond)
-    {
-        // Quantizer by the rate; the size between the thresholds as is
-        quantizer = bitsPerSecond >= 1_200_000 ? 35 : bitsPerSecond >= 800_000 ? 40 : bitsPerSecond >= 500_000 ? 48 : 56;
-        if (bitsPerSecond < FallbackBelow) low = true;
-        else if (bitsPerSecond >= RestoreFrom) low = false;
-    }
-
     /// <summary>Open the next video device that captures, after the current one.</summary>
-    public void SwitchCamera()
+    public override void SwitchCamera()
     {
         // The capturing devices after this one, then from the start
         int[] all = [.. CaptureDevices()];
@@ -91,7 +61,7 @@ public sealed class V4l2Camera : IVideoCamera
     }
 
     /// <summary>Stop capturing and close the device.</summary>
-    public ValueTask DisposeAsync()
+    public override ValueTask DisposeAsync()
     {
         // The thread, then the device
         Stop();
@@ -224,19 +194,14 @@ public sealed class V4l2Camera : IVideoCamera
             Marshal.Copy(buffers[number].Address, yuyv, 0, Math.Min(used, buffers[number].Length));
             ioctl(device, QueueBuffer, buffer);
 
-            // At the frame rate, unless paused
-            TimeSpan interval = TimeSpan.FromSeconds(1.0 / (low ? 10 : 30));
-            if (paused || System.Diagnostics.Stopwatch.GetElapsedTime(lastFrame) < interval) continue;
-            lastFrame = System.Diagnostics.Stopwatch.GetTimestamp();
-            VideoFrame picture = ToI420(yuyv, width, height, low);
-            if (++previews % 3 == 0) Previewed?.Invoke(picture);
-            encoder.Quantizer = quantizer;
-            FrameEncoded?.Invoke(encoder.Encode(picture));
+            // Paced, converted and encoded by the base
+            byte[] captured = yuyv;
+            Deliver(() => ToI420(captured, width, height, Low));
         }
     }
 
     /// <summary>Return YUYV, two pixels in four bytes, as I420; with <paramref name="half"/>, every other pixel and row, at half the size. Chroma is taken from every other row.</summary>
-    private static VideoFrame ToI420(byte[] yuyv, int width, int height, bool half)
+    internal static VideoFrame ToI420(byte[] yuyv, int width, int height, bool half)
     {
         // Sizes of the result
         int step = half ? 2 : 1;

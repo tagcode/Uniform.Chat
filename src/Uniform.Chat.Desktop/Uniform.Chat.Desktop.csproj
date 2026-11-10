@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
+    <!-- Source-generated COM and P/Invoke of the Windows camera -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -37,6 +39,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Chat.Avalonia\Uniform.Chat.Avalonia.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Uniform.Chat.Desktop.Tests" />
   </ItemGroup>
 
 </Project>

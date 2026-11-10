@@ -1,6 +1,6 @@
 namespace Uniform.Chat.Desktop;
 
-using Uniform.Chat.Desktop.Linux;
+using Uniform.Chat.Desktop.Cameras;
 using global::Avalonia;
 using Uniform.Chat.Desktop.Notifications;
 using Uniform.Chat.Avalonia;
@@ -17,7 +17,7 @@ public static class Program
         App.Platform = GuiPlatform.Desktop() with
         {
             Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null,
-            Camera = V4l2Camera.Available() ? () => new V4l2Camera() : null,
+            Camera = V4l2Camera.Available() ? () => new V4l2Camera() : MediaFoundationCamera.Available() ? () => new MediaFoundationCamera() : null,
         };
         // Return exit code
         return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);

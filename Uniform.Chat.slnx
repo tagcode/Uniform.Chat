@@ -36,6 +36,7 @@
     <Project Path="tests/Uniform.Matrix.Video.Tests/Uniform.Matrix.Video.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Calls.Tests/Uniform.Matrix.Calls.Tests.csproj" />
     <Project Path="tests/Uniform.Chat.Avalonia.Tests/Uniform.Chat.Avalonia.Tests.csproj" />
+    <Project Path="tests/Uniform.Chat.Desktop.Tests/Uniform.Chat.Desktop.Tests.csproj" />
     <Project Path="tests/Uniform.Chat.Server.Tests/Uniform.Chat.Server.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Server.Tests/Uniform.Matrix.Server.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.WebRtc.Tests/Uniform.Matrix.WebRtc.Tests.csproj" />
