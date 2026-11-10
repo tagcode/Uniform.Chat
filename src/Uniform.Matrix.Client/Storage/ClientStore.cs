@@ -5,9 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 
+/// <summary>Stored lines of a room, from <see cref="ClientStore.GetRoomLinesAsync"/>.</summary>
+/// <param name="Events">The events on the lines, oldest line first; each line's own event before its edits, reactions and redactions.</param>
+/// <param name="OldestLine">The oldest line returned, to read further back from; null when there were none.</param>
+/// <param name="LineCount">How many lines the events are on.</param>
+public sealed record RoomLines(IReadOnlyList<ClientEvent> Events, long? OldestLine, int LineCount);
+
 /// <summary>Local storage of session, sync position, room history, outbox and media metadata; thread-safe as each call uses its own context.</summary>
+/// <remarks>Each stored event has a <see cref="StoredEvent.Line"/> in display order. Events shown on their own get one from their time; edits, reactions and redactions take the line of the event they change, so a page of lines brings each message with all its changes. A change stored before its target waits without a line until the target comes, e.g. from older history.</remarks>
 public sealed class ClientStore
 {
+    /// <summary>How many events of one millisecond get lines of their own; any more share the last.</summary>
+    public const long LinesPerMillisecond = 1024;
+
     private readonly IDbContextFactory<ClientDbContext> contexts;
     private readonly TimeProvider time;
 
@@ -88,6 +98,7 @@ public sealed class ClientStore
             if (ev.Type == EventTypes.RoomRedaction) await RedactAsync(db, ev, added, cancellationToken);
             if (ev.Sender == ownUserId && ev.Unsigned?.TransactionId is string txnId) await ConfirmEchoAsync(db, txnId, ev.EventId, cancellationToken);
         }
+        await AssignLinesAsync(db, [.. added.Values], cancellationToken);
 
         // Save position
         StoredAccount? account = await db.Accounts.SingleOrDefaultAsync(cancellationToken);
@@ -103,12 +114,16 @@ public sealed class ClientStore
         List<string> ids = events.Select(e => e.EventId).ToList();
         HashSet<string> known = [.. await db.Events.Where(e => ids.Contains(e.EventId)).Select(e => e.EventId).ToListAsync(cancellationToken)];
 
-        // Add new events
+        // Add new events on their lines
+        List<StoredEvent> added = [];
         foreach (ClientEvent ev in events)
         {
             if (!known.Add(ev.EventId)) continue;
-            db.Events.Add(ToStored(ev with { RoomId = roomId }));
+            StoredEvent stored = ToStored(ev with { RoomId = roomId });
+            db.Events.Add(stored);
+            added.Add(stored);
         }
+        await AssignLinesAsync(db, added, cancellationToken);
         await db.SaveChangesAsync(cancellationToken);
     }
 
@@ -144,7 +159,37 @@ public sealed class ClientStore
         row.Type = updated.Type;
         row.StateKey = updated.StateKey;
         row.Json = updated.Json;
+
+        // Decrypted into a change of another event: onto that event's line, or waiting for it
+        if (IsChange(updated) && (!IsChange(row) || row.RelatesTo != updated.RelatesTo))
+        {
+            row.RelatesTo = updated.RelatesTo;
+            row.Line = updated.RelatesTo is string target ? await db.Events.Where(e => e.EventId == target).Select(e => e.Line).FirstOrDefaultAsync(cancellationToken) : null;
+        }
+        // Done
         await db.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>Return the newest <paramref name="lines"/> stored lines of a room before <paramref name="beforeLine"/>, with every event on them: the event shown and its edits, reactions and redactions.</summary>
+    /// <param name="roomId">Room ID.</param>
+    /// <param name="lines">How many lines at most.</param>
+    /// <param name="beforeLine">Exclusive upper bound of lines, e.g. the <see cref="RoomLines.OldestLine"/> of the page before; the newest lines when null.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<RoomLines> GetRoomLinesAsync(string roomId, int lines, long? beforeLine = null, CancellationToken cancellationToken = default)
+    {
+        // The oldest of the newest lines: the line count back, or the room's first
+        ArgumentOutOfRangeException.ThrowIfLessThan(lines, 1);
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        IQueryable<StoredEvent> room = db.Events.AsNoTracking().Where(e => e.RoomId == roomId && e.Line != null);
+        if (beforeLine is long before) room = room.Where(e => e.Line < before);
+        long? oldest = await room.Select(e => e.Line).Distinct().OrderByDescending(l => l).Skip(lines - 1).FirstOrDefaultAsync(cancellationToken);
+        oldest ??= await room.MinAsync(e => e.Line, cancellationToken);
+        if (oldest is null) return new RoomLines([], null, 0);
+
+        // Their events, each line's own first, then its changes in time order
+        List<StoredEvent> rows = await room.Where(e => e.Line >= oldest).OrderBy(e => e.Line).ThenBy(e => e.RelatesTo != null).ThenBy(e => e.OriginServerTs).ToListAsync(cancellationToken);
+        // Return lines
+        return new RoomLines([.. rows.Select(FromStored)], oldest, rows.Select(r => r.Line).Distinct().Count());
     }
 
     /// <summary>Return up to <paramref name="limit"/> stored events of a room before <paramref name="beforeTs"/>, oldest first.</summary>
@@ -251,8 +296,59 @@ public sealed class ClientStore
         StateKey = clientEvent.StateKey,
         OriginServerTs = clientEvent.OriginServerTs,
         Redacted = clientEvent.Unsigned?.RedactedBecause is not null,
+        RelatesTo = ChangeTarget(clientEvent),
         Json = JsonSerializer.Serialize(clientEvent, MatrixJson.Options),
     };
+
+    /// <summary>Return the event that <paramref name="clientEvent"/> edits, reacts to or redacts; null for an event shown on its own line. Encrypted events tell theirs in the clear.</summary>
+    internal static string? ChangeTarget(ClientEvent clientEvent)
+    {
+        // A redaction names its target; room version 11 moved it into content
+        if (clientEvent.Type == EventTypes.RoomRedaction) return clientEvent.Redacts ?? (clientEvent.TryGetContent(out RedactionContent? redaction) ? redaction.Redacts : null);
+
+        // Else an annotation or a replacement in m.relates_to; replies and threads keep lines of their own
+        if (clientEvent.StateKey is not null || clientEvent.Content.ValueKind != JsonValueKind.Object) return null;
+        if (!clientEvent.Content.TryGetProperty("m.relates_to", out JsonElement relation) || relation.ValueKind != JsonValueKind.Object) return null;
+        if (!relation.TryGetProperty("rel_type", out JsonElement type) || type.ValueKind != JsonValueKind.String || type.GetString() is not (RelationTypes.Annotation or RelationTypes.Replace)) return null;
+        // Return target
+        return relation.TryGetProperty("event_id", out JsonElement target) && target.ValueKind == JsonValueKind.String ? target.GetString() : null;
+    }
+
+    /// <summary>Return whether a row changes another event instead of showing on a line of its own; a reaction or redaction whose target is unknown, e.g. one already redacted, is one too, and never shows.</summary>
+    private static bool IsChange(StoredEvent row) => row.RelatesTo is not null || row.Type is EventTypes.RoomRedaction or EventTypes.Reaction;
+
+    /// <summary>Give new rows their lines: events shown on their own a line from their time, changes their target's line; then changes stored earlier that waited for one of the new rows take its line.</summary>
+    private static async Task AssignLinesAsync(ClientDbContext db, IReadOnlyList<StoredEvent> rows, CancellationToken cancellationToken)
+    {
+        // Own lines: the next free one of the room's millisecond, counting this batch
+        Dictionary<string, StoredEvent> batch = rows.ToDictionary(r => r.EventId);
+        Dictionary<(string Room, long Time), long> taken = [];
+        foreach (StoredEvent row in rows.Where(r => !IsChange(r)))
+        {
+            long first = row.OriginServerTs * LinesPerMillisecond, last = first + LinesPerMillisecond - 1;
+            if (!taken.TryGetValue((row.RoomId, row.OriginServerTs), out long previous)) previous = await db.Events.Where(e => e.RoomId == row.RoomId && e.Line >= first && e.Line <= last).MaxAsync(e => e.Line, cancellationToken) ?? first - 1;
+            row.Line = Math.Min(previous + 1, last);
+            taken[(row.RoomId, row.OriginServerTs)] = row.Line.Value;
+        }
+
+        // Changes: their target's line, from this batch or stored
+        foreach (StoredEvent row in rows.Where(r => r.RelatesTo is not null))
+        {
+            row.Line = batch.TryGetValue(row.RelatesTo!, out StoredEvent? target) ? target.Line : await db.Events.Where(e => e.EventId == row.RelatesTo).Select(e => e.Line).FirstOrDefaultAsync(cancellationToken);
+        }
+
+        // Changes waiting for a placed event, stored or in this batch, then those waiting for them, e.g. a redacted reaction
+        List<StoredEvent> placed = [.. rows.Where(r => r.Line is not null)];
+        while (placed.Count > 0)
+        {
+            Dictionary<string, long> lines = placed.ToDictionary(r => r.EventId, r => r.Line!.Value);
+            List<string> ids = [.. lines.Keys];
+            List<StoredEvent> waiting = await db.Events.Where(e => e.Line == null && e.RelatesTo != null && ids.Contains(e.RelatesTo)).ToListAsync(cancellationToken);
+            waiting.AddRange(rows.Where(r => r.RelatesTo is not null && lines.ContainsKey(r.RelatesTo)));
+            placed = [.. waiting.Where(w => w.Line is null).Distinct()];
+            foreach (StoredEvent change in placed) change.Line = lines[change.RelatesTo!];
+        }
+    }
 
     /// <summary>Convert a row back to an event.</summary>
     private static ClientEvent FromStored(StoredEvent row) => JsonSerializer.Deserialize<ClientEvent>(row.Json, MatrixJson.Options)!;

@@ -28,9 +28,6 @@ public sealed class MessageList
     /// <summary>Items in time order, unsent messages last.</summary>
     public ObservableCollection<MessageViewModel> Items { get; } = [];
 
-    /// <summary>Time of the oldest event shown, for loading older history.</summary>
-    public long? OldestTimestamp => Items.FirstOrDefault(m => m.EventId is not null)?.Timestamp.ToUnixTimeMilliseconds();
-
     /// <summary>Newest event ID shown, for read markers.</summary>
     public string? NewestEventId => Items.LastOrDefault(m => m.EventId is not null)?.EventId;
 
@@ -43,7 +40,7 @@ public sealed class MessageList
         Append(room, events);
     }
 
-    /// <summary>Add newer events, oldest first, before the unsent messages.</summary>
+    /// <summary>Add newer events, oldest first, before the unsent messages; an edit, reaction or deletion of a message not shown changes nothing, as it loads with that message's line.</summary>
     public void Append(Room room, IEnumerable<ClientEvent> events)
     {
         // Each event becomes an item or changes one
@@ -52,7 +49,11 @@ public sealed class MessageList
         {
             if (clientEvent.EventId is not null && byEventId.ContainsKey(clientEvent.EventId)) continue;
             RemoveEcho(clientEvent);
-            if (ApplyToExisting(room, clientEvent)) continue;
+            if (IsChange(clientEvent))
+            {
+                ApplyToExisting(room, clientEvent);
+                continue;
+            }
             if (Create(room, clientEvent) is not MessageViewModel message) continue;
             Items.Insert(insertAt++, message);
             byEventId[clientEvent.EventId!] = message;

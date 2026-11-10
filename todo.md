@@ -99,6 +99,3 @@ Rename to Uniform.Gui.Terminal.
 
 - a dashboard to running server services for managing users and server settings.
 
-# Clients
-
-- When chat room history becomes very long, clients should only read and populate UI from the message history tail, and when user scrolls upwards, the dynamically reads more content.

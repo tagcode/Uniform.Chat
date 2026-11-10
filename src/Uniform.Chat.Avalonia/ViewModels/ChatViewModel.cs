@@ -19,6 +19,11 @@ using Uniform.Matrix.Protocol.Crypto;
 /// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>. Partial files: ChatViewModel.cs, and ChatViewModel.Actions.cs for the action sheets of messages and rooms.</remarks>
 public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 {
+    /// <summary>How many lines a room opens with.</summary>
+    private const int InitialLines = 250;
+    /// <summary>How many older lines scrolling to the top adds.</summary>
+    private const int MoreLines = 100;
+    /// <summary>How many events a page of history from the server asks for.</summary>
     private const int PageSize = 50;
     private static readonly TimeSpan TypingRenewal = TimeSpan.FromSeconds(20);
     private readonly ClientConnection connection;
@@ -33,6 +38,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     private readonly DateTimeOffset startedAt = DateTimeOffset.UtcNow;
     private readonly HashSet<string> avatarsLoading = [];
     private readonly Dictionary<string, Task<Bitmap?>> pictures = [];
+    private string? openedRoomId;
+    private long? oldestLine;
     private DateTimeOffset typingSentAt = DateTimeOffset.MinValue;
     private int pendingVersion;
     private string? openWhenArrived;
@@ -275,6 +282,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         TypingText = "";
         ReplyingTo = null;
         Editing = null;
+        openedRoomId = null;
         if (value is null)
         {
             Messages.Items.Clear();
@@ -502,11 +510,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         {
             for (int attempt = 0; attempt < 5; attempt++)
             {
-                IReadOnlyList<ClientEvent> older = await connection.Store.GetRoomEventsAsync(room.RoomId, PageSize, Messages.OldestTimestamp);
+                RoomLines older = await connection.Store.GetRoomLinesAsync(room.RoomId, MoreLines, oldestLine);
                 if (SelectedRoom != room) return;
-                if (older.Count > 0)
+                if (older.LineCount > 0)
                 {
-                    connection.Processor.Read(store => { if (store?.TryGetRoom(room.RoomId, out Room? state) == true) Messages.Prepend(state, older); return 0; });
+                    oldestLine = older.OldestLine;
+                    connection.Processor.Read(store => { if (store?.TryGetRoom(room.RoomId, out Room? state) == true) Messages.Prepend(state, older.Events); return 0; });
                     LoadThumbnails();
                     return;
                 }
@@ -877,18 +886,21 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         return true;
     }
 
-    /// <summary>Show a room's stored history and unsent messages; fetch more when little is stored.</summary>
+    /// <summary>Show a room's newest stored lines and unsent messages, at least as many as are shown when the room opens again, e.g. after decryption; fetch more when few are stored.</summary>
     private async Task OpenRoomAsync(string roomId)
     {
-        // Stored history
-        IReadOnlyList<ClientEvent> events = await connection.Store.GetRoomEventsAsync(roomId, PageSize * 2);
+        // Stored lines, with the edits, reactions and deletions on them
+        int lines = openedRoomId == roomId ? Math.Max(InitialLines, Messages.Items.Count(m => !m.IsOutbox)) : InitialLines;
+        RoomLines page = await connection.Store.GetRoomLinesAsync(roomId, lines);
         if (SelectedRoom?.RoomId != roomId) return;
-        connection.Processor.Read(store => { if (store?.TryGetRoom(roomId, out Room? room) == true) { Messages.Reset(room, events); RefreshTyping(room); } return 0; });
+        openedRoomId = roomId;
+        oldestLine = page.OldestLine;
+        connection.Processor.Read(store => { if (store?.TryGetRoom(roomId, out Room? room) == true) { Messages.Reset(room, page.Events); RefreshTyping(room); } return 0; });
         await RefreshPendingAsync(roomId);
         LoadThumbnails();
 
         // More from the server, then mark read
-        if (events.Count < 30) await LoadOlderAsync();
+        if (page.LineCount < 30) await LoadOlderAsync();
         MarkRead(roomId);
         RefreshRooms();
     }

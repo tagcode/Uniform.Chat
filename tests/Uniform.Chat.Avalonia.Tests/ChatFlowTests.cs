@@ -522,6 +522,55 @@ public class ChatFlowTests
         }
     }
 
+    /// <summary>A long room opens with its newest 250 lines; scrolling up adds older ones until its first message, which shows its later edit and reaction rather than the edit on a line of its own; opened again, it starts from 250 lines.</summary>
+    [AvaloniaFact]
+    public async Task PageLongHistory()
+    {
+        // Arrange: Bob's first message, edited and reacted to after 300 others
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient bob = await server.RegisterAsync("bob");
+        MatrixClient alice = await server.RegisterAsync("alice");
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Long", Preset = RoomPresets.PublicChat });
+        await alice.JoinRoomAsync(roomId);
+        string first = await bob.SendTextAsync(roomId, "first");
+        for (int i = 0; i < 300; i++) await bob.SendTextAsync(roomId, $"line {i}");
+        await bob.SendEditAsync(roomId, first, "first, edited");
+        await bob.SendReactionAsync(roomId, first, "👍");
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+
+        try
+        {
+            ChatViewModel chat = await SignInAsync(model, alice.UserId!);
+            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text == "line 299"), "the room's newest lines");
+
+            // Act: scroll up page by page to the first message
+            for (int page = 0; page < 20 && !chat.Messages.Items.Any(m => m.EventId == first); page++)
+            {
+                await chat.LoadOlderCommand.ExecuteAsync(null);
+            }
+
+            // Assert: the first message carries its edit and reaction, and the edit has no line of its own
+            MessageViewModel original = chat.Messages.Items.Single(m => m.EventId == first);
+            Assert.Equal("first, edited", original.Text);
+            Assert.True(original.IsEdited);
+            Assert.Equal("👍 1", original.Reactions);
+            Assert.Single(chat.Messages.Items, m => m.Text.Contains("first, edited", StringComparison.Ordinal));
+            Assert.True(chat.Messages.Items.Count(m => !m.IsOutbox) > 300);
+
+            // Act and assert: opened again, the newest 250 lines
+            RoomItemViewModel room = chat.SelectedRoom!;
+            chat.SelectedRoom = null;
+            chat.SelectedRoom = room;
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "line 299"), "the room opened again");
+            Assert.Equal(250, chat.Messages.Items.Count(m => !m.IsOutbox));
+            Assert.DoesNotContain(chat.Messages.Items, m => m.EventId == first);
+        }
+        finally
+        {
+            await model.StopAsync();
+        }
+    }
+
     /// <summary>Unread messages, and calls, count in the room list and the window title until the room is opened; after that they stay read, also once another room is opened.</summary>
     [AvaloniaFact]
     public async Task ClearUnreadWhenRead()

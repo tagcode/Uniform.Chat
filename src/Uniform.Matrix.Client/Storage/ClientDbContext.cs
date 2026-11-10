@@ -49,6 +49,10 @@ public sealed class ClientDbContext : DbContext
         // History is read per room in time order
         modelBuilder.Entity<StoredEvent>().HasIndex(e => new { e.RoomId, e.OriginServerTs });
 
+        // Lines are read per room in display order; changes are found by the event they change
+        modelBuilder.Entity<StoredEvent>().HasIndex(e => new { e.RoomId, e.Line });
+        modelBuilder.Entity<StoredEvent>().HasIndex(e => e.RelatesTo);
+
         // Outbox lookups by state and by echoed transaction ID
         modelBuilder.Entity<OutboxMessage>().HasIndex(m => m.State);
         modelBuilder.Entity<OutboxMessage>().HasIndex(m => m.TransactionId).IsUnique();

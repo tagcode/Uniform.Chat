@@ -36,6 +36,10 @@ public sealed class StoredEvent
     public long OriginServerTs { get; set; }
     /// <summary>Whether the content was removed by a redaction.</summary>
     public bool Redacted { get; set; }
+    /// <summary>The line the event shows on, in display order: <see cref="OriginServerTs"/> × <see cref="ClientStore.LinesPerMillisecond"/> plus a count of earlier events of the same millisecond. Edits, reactions and redactions take their target's line, so they load with it; null while their target is not stored.</summary>
+    public long? Line { get; set; }
+    /// <summary>The event that this edit, reaction or redaction changes; null for events shown on their own line.</summary>
+    public string? RelatesTo { get; set; }
     /// <summary>Full event as JSON in <see cref="Uniform.Matrix.Protocol.Core.MatrixJson"/> format.</summary>
     public required string Json { get; set; }
 }
