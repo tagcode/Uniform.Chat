@@ -94,3 +94,7 @@ Rename to Uniform.Gui.Terminal.
 - Suspended-account banner and server notices, from my earlier list. They're small and visible to every user.
 - F-Droid / IzzyOnDroid store screenshots, still missing. I'd take them with the @note test accounts once Edict is reachable again.
 - Admin pages (reports, accounts, tokens), if you want to administer the server from the phone.
+
+# Server administration
+
+- a dashboard to running server services for managing users and server settings.

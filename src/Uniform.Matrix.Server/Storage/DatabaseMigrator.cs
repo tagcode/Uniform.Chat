@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-/// <summary>Creates or upgrades the schema at start, before the server accepts requests, and flushes the database at stop.</summary>
+/// <summary>Creates or upgrades the schema at start, before the server accepts requests, in write-ahead log mode so reads do not block writes; and flushes the database at stop.</summary>
 /// <remarks>It holds the <see cref="DataDirectoryLock"/>, so no other process uses the database meanwhile; a migration lock that a process left behind when it died is therefore removed instead of waited for, as EF Core would wait forever.</remarks>
 public sealed class DatabaseMigrator : IHostedService
 {
@@ -26,12 +26,15 @@ public sealed class DatabaseMigrator : IHostedService
         _ = directoryLock;
     }
 
-    /// <summary>Remove a leftover migration lock, then apply pending migrations; throw with advice when the database has tables the migration history does not know.</summary>
+    /// <summary>Remove a leftover migration lock, switch to the write-ahead log, and apply pending migrations; throw with advice when the database has tables the migration history does not know.</summary>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // Leftover lock of a process that died while migrating
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         await RemoveLeftoverLockAsync(db, cancellationToken);
+
+        // Write-ahead log, kept in the file, before anything else writes
+        await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode = WAL;", cancellationToken);
 
         // Migrate
         try

@@ -24,6 +24,9 @@ internal sealed partial class Chromium : IAsyncDisposable
         this.profile = profile;
     }
 
+    /// <summary>How long Chromium may take to start and let us attach to its page.</summary>
+    private static readonly TimeSpan StartLimit = TimeSpan.FromSeconds(60);
+
     /// <summary>Start Chromium with a blank page, and attach to the page; null when there is no Chromium.</summary>
     public static async Task<Chromium?> StartAsync(CancellationToken cancellationToken)
     {
@@ -38,7 +41,7 @@ internal sealed partial class Chromium : IAsyncDisposable
 
         // The DevTools port from what it prints, then the page's socket
         using CancellationTokenSource limit = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        limit.CancelAfter(TimeSpan.FromSeconds(30));
+        limit.CancelAfter(StartLimit);
         int port = 0;
         List<string> output = [];
         try
@@ -52,7 +55,7 @@ internal sealed partial class Chromium : IAsyncDisposable
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
             // Silent for the whole limit, as a browser may be on a CI runner
-            output.Add("Chromium did not start within 30 seconds.");
+            output.Add($"Chromium did not start within {StartLimit.TotalSeconds} seconds.");
         }
         if (port == 0)
         {
@@ -61,10 +64,19 @@ internal sealed partial class Chromium : IAsyncDisposable
             throw new ChromiumUnavailableException(string.Join('\n', output.TakeLast(10)));
         }
         _ = DrainAsync(process.StandardError);
-        using HttpClient http = new();
-        JsonArray targets = (await http.GetFromJsonAsync<JsonArray>($"http://127.0.0.1:{port}/json/list", limit.Token))!;
-        string page = targets.First(t => t!["type"]!.GetValue<string>() == "page")!["webSocketDebuggerUrl"]!.GetValue<string>();
-        await chromium.socket.ConnectAsync(new Uri(page), limit.Token);
+        try
+        {
+            using HttpClient http = new();
+            JsonArray targets = (await http.GetFromJsonAsync<JsonArray>($"http://127.0.0.1:{port}/json/list", limit.Token))!;
+            string page = targets.First(t => t!["type"]!.GetValue<string>() == "page")!["webSocketDebuggerUrl"]!.GetValue<string>();
+            await chromium.socket.ConnectAsync(new Uri(page), limit.Token);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or WebSocketException or InvalidOperationException || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+        {
+            // On DevTools that never answers, as on a loaded CI runner
+            await chromium.DisposeAsync();
+            throw new ChromiumUnavailableException($"Chromium's DevTools on port {port} did not answer within {StartLimit.TotalSeconds} seconds: {ex.Message}");
+        }
         // Return browser
         return chromium;
     }

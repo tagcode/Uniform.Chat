@@ -74,6 +74,24 @@ internal sealed class TestHomeserver : IAsyncDisposable
         // Stop the background services first, as disposing alone leaves them running; then remove files
         await app.StopAsync(CancellationToken.None);
         await app.DisposeAsync();
-        Directory.Delete(directory, recursive: true);
+        await DeleteAsync(directory);
+    }
+
+    /// <summary>Delete <paramref name="path"/>, retrying while SQLite's write-ahead log files of closing connections still come and go.</summary>
+    private static async Task DeleteAsync(string path)
+    {
+        // A few tries, the last one throws
+        for (int attempt = 0; attempt < 10; attempt++)
+        {
+            try
+            {
+                if (Directory.Exists(path)) Directory.Delete(path, recursive: true);
+                return;
+            }
+            catch (IOException) when (attempt < 9)
+            {
+                await Task.Delay(100);
+            }
+        }
     }
 }
