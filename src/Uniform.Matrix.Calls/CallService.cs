@@ -223,7 +223,14 @@ public sealed class CallService : IAsyncDisposable
                     foreach (RtcCall call in calls.Values.OfType<RtcCall>().Where(c => c.RoomId == roomId)) await call.DeclinedAsync(ev.Sender, declined);
                     continue;
                 }
-                if (ev.Type == EventTypes.RtcNotification && ev.TryGetContent(out RtcNotificationContent? ring)) await RingRtcAsync(client, roomId, ev, ring);
+                if (ev.Type != EventTypes.RtcNotification) continue;
+                if (!ev.TryGetContent(out RtcNotificationContent? ring))
+                {
+                    logger.LogInformation("MatrixRTC notification {EventId} in {RoomId} not understood", ev.EventId, roomId);
+                    continue;
+                }
+                logger.LogInformation("MatrixRTC notification {EventId} {Type} from {Sender} in {RoomId}", ev.EventId, ring.NotificationType, ev.Sender, roomId);
+                await RingRtcAsync(client, roomId, ev, ring);
             }
             catch (Exception e)
             {
@@ -237,8 +244,7 @@ public sealed class CallService : IAsyncDisposable
     {
         // A ring of another, not expired: by the sender's clock unless it is far off
         if (ring.NotificationType != "ring" || ev.Sender == client.UserId) return;
-        long basis = ring.SenderTs - ev.OriginServerTs > 20_000 ? ev.OriginServerTs : ring.SenderTs;
-        TimeSpan remaining = DateTimeOffset.FromUnixTimeMilliseconds(basis + Math.Min(ring.Lifetime, 120_000)) - DateTimeOffset.UtcNow;
+        TimeSpan remaining = RingExpiry(ring.SenderTs, ev.OriginServerTs, ring.Lifetime) - DateTimeOffset.UtcNow;
         if (remaining <= TimeSpan.Zero)
         {
             logger.LogInformation("MatrixRTC ring {EventId} ignored: expired {Ago} ago", ev.EventId, -remaining);
@@ -251,7 +257,11 @@ public sealed class CallService : IAsyncDisposable
             logger.LogInformation("MatrixRTC ring {EventId} ignored: {Sender} is not in the call", ev.EventId, ev.Sender);
             return;
         }
-        if (FindCall(roomId) is not null) return;
+        if (FindCall(roomId) is VoiceCall existing)
+        {
+            logger.LogInformation("MatrixRTC ring {EventId} ignored: the room has call {Other} ({State})", ev.EventId, existing.CallId, existing.State);
+            return;
+        }
         if (await RtcTransportAsync(client, CancellationToken.None) is not RtcTransport transport)
         {
             logger.LogWarning("MatrixRTC ring {EventId} ignored: the homeserver has no LiveKit transport", ev.EventId);
@@ -263,6 +273,16 @@ public sealed class CallService : IAsyncDisposable
         call.Ring(remaining);
         // Done
         IncomingCall?.Invoke(call);
+    }
+
+    /// <summary>Return when a ring of <paramref name="lifetime"/> milliseconds stops ringing: from its sender's time, or from the server's when the two differ by more than 20 seconds either way, as a sender's clock may be off, e.g. by its time zone; at most two minutes.</summary>
+    /// <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4075"/>
+    public static DateTimeOffset RingExpiry(long senderTs, long originServerTs, long lifetime)
+    {
+        // The sender's clock unless far from the server's
+        long basis = Math.Abs(senderTs - originServerTs) > 20_000 ? originServerTs : senderTs;
+        // Return expiry
+        return DateTimeOffset.FromUnixTimeMilliseconds(basis + Math.Clamp(lifetime, 0, 120_000));
     }
 
     /// <summary>Return the members' devices of a room's call now.</summary>
