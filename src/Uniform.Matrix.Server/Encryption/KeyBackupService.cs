@@ -85,20 +85,50 @@ public sealed class KeyBackupService
     /// <param name="cancellationToken">Cancellation token.</param>
     public async Task<JsonObject> PutKeysAsync(string userId, string version, IEnumerable<(string RoomId, string SessionId, JsonObject Data)> keys, CancellationToken cancellationToken)
     {
+        // Once more when a request at the same time stored one of the keys first
+        List<(string RoomId, string SessionId, JsonObject Data)> list = [.. keys];
+        try
+        {
+            return await TryPutKeysAsync(userId, version, list, cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            // Done, against what the other request stored
+            return await TryPutKeysAsync(userId, version, list, cancellationToken);
+        }
+    }
+
+    /// <summary>Store the better of each key and the stored one, updating stored rows in place; a key given twice counts once, its better copy.</summary>
+    private async Task<JsonObject> TryPutKeysAsync(string userId, string version, IReadOnlyList<(string RoomId, string SessionId, JsonObject Data)> keys, CancellationToken cancellationToken)
+    {
         // Only into the current version
         await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
         KeyBackupVersionRow current = await FindAsync(db, userId, null, cancellationToken);
         if (current.Version.ToString(CultureInfo.InvariantCulture) != version) throw new MatrixErrorException(HttpStatusCode.Forbidden, "M_WRONG_ROOM_KEYS_VERSION", "Not the current backup version.", new JsonObject { ["current_version"] = current.Version.ToString(CultureInfo.InvariantCulture) });
 
-        // Better keys replace stored ones
+        // Better keys replace stored ones, or ones earlier in this request
         bool changed = false;
+        Dictionary<(string RoomId, string SessionId), RoomKeyRow> rows = [];
         foreach ((string roomId, string sessionId, JsonObject data) in keys)
         {
             RoomKeyRow candidate = ToRow(userId, current.Version, roomId, sessionId, data);
-            RoomKeyRow? stored = await db.RoomKeys.SingleOrDefaultAsync(k => k.UserId == userId && k.Version == current.Version && k.RoomId == roomId && k.SessionId == sessionId, cancellationToken);
-            if (stored is not null && !IsBetter(candidate, stored)) continue;
-            if (stored is not null) db.RoomKeys.Remove(stored);
-            db.RoomKeys.Add(candidate);
+            if (!rows.TryGetValue((roomId, sessionId), out RoomKeyRow? stored))
+            {
+                stored = await db.RoomKeys.SingleOrDefaultAsync(k => k.UserId == userId && k.Version == current.Version && k.RoomId == roomId && k.SessionId == sessionId, cancellationToken);
+                if (stored is null)
+                {
+                    db.RoomKeys.Add(candidate);
+                    rows[(roomId, sessionId)] = candidate;
+                    changed = true;
+                    continue;
+                }
+                rows[(roomId, sessionId)] = stored;
+            }
+            if (!IsBetter(candidate, stored)) continue;
+            stored.Json = candidate.Json;
+            stored.FirstMessageIndex = candidate.FirstMessageIndex;
+            stored.ForwardedCount = candidate.ForwardedCount;
+            stored.IsVerified = candidate.IsVerified;
             changed = true;
         }
         if (changed) current.Etag++;

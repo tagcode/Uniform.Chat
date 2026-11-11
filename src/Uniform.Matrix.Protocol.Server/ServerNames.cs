@@ -34,8 +34,9 @@ public static class ServerNames
         {
             if (!IPAddress.TryParse(candidate[1..^1], out IPAddress? address) || address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6) return false;
         }
-        else if (!candidate.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '-'))
+        else if (!candidate.All(c => char.IsAsciiLetterOrDigit(c) || c is '.' or '-') || candidate.Split('.').Any(label => label.Length is 0 or > 63))
         {
+            // On other characters, or an empty or too long label, e.g. ".rip" or "matrix..rip" while a name is typed
             return false;
         }
         host = candidate;

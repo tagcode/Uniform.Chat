@@ -337,6 +337,33 @@ public class EncryptionTests
         Assert.Equal(1, version?.Count);
     }
 
+    /// <summary>Back up keys given again, twice in one upload and in uploads at the same time, without failing: the better copy is kept, once.</summary>
+    [Fact]
+    public async Task BackUpKeysAgain()
+    {
+        // Arrange
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient alice = await RegisterAsync(server, "alice");
+        using HttpClient http = Authorized(server, alice);
+        string current = await alice.CreateKeyBackupVersionAsync("m.megolm_backup.v1.curve25519-aes-sha2", new JsonObject { ["public_key"] = "abc" }, Ct);
+        static JsonObject Key(int index, string marker) => new() { ["first_message_index"] = index, ["forwarded_count"] = 0, ["is_verified"] = false, ["session_data"] = new JsonObject { ["marker"] = marker } };
+        static JsonObject Upload(params (string Session, JsonObject Key)[] keys) => new() { ["rooms"] = new JsonObject { ["!room:test.local"] = new JsonObject { ["sessions"] = new JsonObject(keys.Select(k => KeyValuePair.Create(k.Session, (JsonNode?)k.Key))) } } };
+
+        // Act: stored, then better again in a batch, then the same batch at once from many requests
+        HttpResponseMessage stored = await http.PutAsync($"_matrix/client/v3/room_keys/keys?version={current}", Json(Upload(("a", Key(5, "first")))), Ct);
+        HttpResponseMessage better = await http.PutAsync($"_matrix/client/v3/room_keys/keys?version={current}", Json(Upload(("a", Key(2, "better")), ("b", Key(1, "new")))), Ct);
+        HttpResponseMessage[] parallel = await Task.WhenAll(Enumerable.Range(0, 8).Select(i => http.PutAsync($"_matrix/client/v3/room_keys/keys?version={current}", Json(Upload(("c", Key(i, $"parallel{i}")), ("a", Key(9, "worse")))), Ct)));
+        JsonNode a = JsonNode.Parse(await http.GetStringAsync($"_matrix/client/v3/room_keys/keys/!room:test.local/a?version={current}", Ct))!;
+        KeyBackupVersion? version = await alice.GetKeyBackupVersionAsync(Ct);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, stored.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, better.StatusCode);
+        Assert.All(parallel, response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+        Assert.Equal("better", a["session_data"]!["marker"]!.GetValue<string>());
+        Assert.Equal(3, version?.Count);
+    }
+
     /// <summary>Register a user without encryption.</summary>
     private static async Task<MatrixClient> RegisterAsync(TestHomeserver server, string name)
     {

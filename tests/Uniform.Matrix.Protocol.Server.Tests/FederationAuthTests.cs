@@ -63,7 +63,7 @@ public class FederationAuthTests
         Assert.Equal((host, port), (parsedHost, parsedPort));
     }
 
-    /// <summary>Names with bad characters, ports or brackets are not server names.</summary>
+    /// <summary>Names with bad characters, ports, brackets or empty labels are not server names.</summary>
     [Theory]
     [InlineData("")]
     [InlineData("exa mple.org")]
@@ -74,6 +74,9 @@ public class FederationAuthTests
     [InlineData("[::1")]
     [InlineData("[1.2.3.4]")]
     [InlineData("a/b")]
+    [InlineData(".rip")]
+    [InlineData("matrix..rip")]
+    [InlineData("example.org.")]
     public void RefuseServerNames(string serverName)
     {
         // Act and assert
