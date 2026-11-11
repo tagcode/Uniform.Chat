@@ -16,7 +16,7 @@ using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 
 /// <summary>The signed-in screen: the room list, the open room's messages and the message box.</summary>
-/// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>. Partial files: ChatViewModel.cs, and ChatViewModel.Actions.cs for the action sheets of messages and rooms.</remarks>
+/// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>. Partial files: ChatViewModel.cs, ChatViewModel.Actions.cs for the action sheets of messages and rooms, and ChatViewModel.Share.cs for content shared from other apps.</remarks>
 public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 {
     /// <summary>How many lines a room opens with.</summary>
@@ -70,6 +70,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         Messages.Items.CollectionChanged += (_, e) => ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
         IsNarrow = singlePane;
         StatusText = Describe(connection.Status.State, connection.Status.Message);
+        ListenForShares();
     }
 
     /// <summary>Rooms, invites first, then favourites, others and low priority, each by name.</summary>
@@ -275,6 +276,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         // Unsubscribe and end the reader
+        ShareInbox.Arrived -= OnShared;
         connection.Status.Changed -= OnConnectionChanged;
         connection.Processor.EventsDecrypted -= OnEventsDecrypted;
         connection.Outbox.RoomChanged -= OnOutboxChanged;
@@ -301,6 +303,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             return;
         }
         _ = OpenRoomAsync(value.RoomId);
+        ApplyShare(value);
     }
 
     /// <summary>Send typing notices while writing, renewed now and then.</summary>

@@ -100,6 +100,14 @@
           <Button Grid.Column="2" Margin="6,0,0,0" Classes="icon" Content="🔍" ToolTip.Tip="Room directory" Command="{Binding OpenDirectoryCommand}" />
         </Grid>
 
+        <!-- Content shared from another app waits for a room -->
+        <Border DockPanel.Dock="Top" Classes="notice" Margin="12,0,12,8" IsVisible="{Binding HasPendingShare}">
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding PendingShareText}" TextWrapping="Wrap" />
+            <Button Content="Cancel" Command="{Binding CancelShareCommand}" />
+          </StackPanel>
+        </Border>
+
         <!-- Set up recovery, or verify this device, until done or dismissed -->
         <Border DockPanel.Dock="Top" Classes="notice" Margin="12,0,12,8" IsVisible="{Binding HasSecuritySuggestion}">
           <StackPanel Spacing="6">
@@ -242,6 +250,13 @@
         <TextBox x:Name="ComposerBox" Grid.Column="1" Text="{Binding Composer}" PlaceholderText="Message" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="160" IsEnabled="{Binding CanCompose}" />
         <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="Send" Command="{Binding SendCommand}" Focusable="False" ToolTip.Tip="Send (Enter); the message box keeps the focus" VerticalAlignment="Bottom" />
       </Grid>
+      <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding HasSharedFiles}">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+          <TextBlock Grid.Column="0" Text="{Binding SharedFilesText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+          <Button Grid.Column="1" Classes="accent" Margin="6,0,0,0" Content="Send" Command="{Binding SendSharedFilesCommand}" />
+          <Button Grid.Column="2" Margin="6,0,0,0" Content="Cancel" Command="{Binding CancelShareCommand}" />
+        </Grid>
+      </Border>
       <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding IsComposingSpecial}">
         <Grid ColumnDefinitions="*,Auto">
           <TextBlock Grid.Column="0" Text="{Binding ComposeMode}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />

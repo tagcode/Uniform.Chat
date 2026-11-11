@@ -36,3 +36,10 @@ Blocking someone hides their messages and invites from you, on all your devices;
 📎 next to the message box sends files. On the desktop you can also drag files onto the room, or paste copied files or an image, such as a screenshot, into the message box with Ctrl+V. On Android, paste a copied image or file into the message box: hold it and choose *Paste*. In encrypted rooms files are encrypted before upload.
 
 Images show a preview in the room; click it to open the image. Under a file or image, *Open* opens it in the app your system uses for its type, and *Save…* saves it where you choose. On Android, use *Save…*.
+
+## Sharing from other apps
+
+On Android, Uniform Chat is in the share menu of other apps. Share a link from a browser, or a photo from the gallery, and choose *Uniform Chat*. The app opens and asks you to choose a room; *Cancel* stops sharing.
+
+- Text and links go into the room's message box, where you can add to them before you press *Send*.
+- Images and other files wait above the message box: *Send* sends them, *Cancel* drops them.

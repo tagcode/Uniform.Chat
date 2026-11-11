@@ -35,7 +35,7 @@ internal static class AndroidClipboard
     }
 
     /// <summary>Return the content's display name, else a name from its type, e.g. <c>image-20261111-191500.png</c>.</summary>
-    private static string NameOf(ContentResolver resolver, global::Android.Net.Uri uri, string type)
+    internal static string NameOf(ContentResolver resolver, global::Android.Net.Uri uri, string type)
     {
         // The provider's name, when it tells
         try
