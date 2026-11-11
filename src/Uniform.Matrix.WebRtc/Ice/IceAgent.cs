@@ -171,7 +171,7 @@ public sealed class IceAgent : IAsyncDisposable
     public async Task GatherAsync(CancellationToken cancellationToken = default)
     {
         // Host candidates on every interface address and the socket's port; IPv6 preferred
-        if (socket6 is not null) AddHostCandidates(socket6, host6, AddressFamily.InterNetworkV6, "h6-", 65535);
+        if (socket6 is not null) AddHostCandidates(socket6, host6, AddressFamily.InterNetworkV6, "i", 65535);
         AddHostCandidates(socket, host, AddressFamily.InterNetwork, "h", 49151);
 
         // Servers in parallel

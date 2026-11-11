@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>LiveKit access tokens and their grants, and the MatrixRTC authorization service's messages, room names and participant identities, as Element Call and lk-jwt-service use them.</Description>
+    <Description>LiveKit's signalling messages, access tokens and their grants, and the MatrixRTC authorization service's messages, room names and participant identities, as Element Call and lk-jwt-service use them.</Description>
     <PackageTags>livekit;matrixrtc;matrix;jwt;webrtc</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -26,8 +26,11 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <!-- LiveKit's signalling messages, generated from its protocol's files -->
   <ItemGroup>
-
+    <PackageReference Include="Google.Protobuf" Version="3.36.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.85.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <Protobuf Include="Protos/**/*.proto" ProtoRoot="Protos" GrpcServices="None" Access="Public" />
   </ItemGroup>
 
   <ItemGroup>

@@ -31,6 +31,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Uniform.LiveKit.Hosting\Uniform.LiveKit.Hosting.csproj" />
     <ProjectReference Include="..\..\src\Uniform.LiveKit.Server\Uniform.LiveKit.Server.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.LiveKit\Uniform.LiveKit.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Matrix.Video\Uniform.Matrix.Video.csproj" />
   </ItemGroup>
 
 </Project>

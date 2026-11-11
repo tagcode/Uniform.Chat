@@ -2,7 +2,10 @@ namespace Uniform.Matrix.Calls;
 
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Uniform.LiveKit;
+using Uniform.Matrix.Protocol.Crypto;
 using Uniform.Matrix.Video;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Client.Services;
@@ -12,8 +15,11 @@ using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Ice;
 
-/// <summary>Matrix 1:1 voice calls of the logged-in user: places calls, raises incoming ones, and routes the m.call.* events of the synced timelines to their <see cref="VoiceCall"/>; sends through the outbox, which encrypts in encrypted rooms.</summary>
-/// <remarks>Register it as a singleton beside the client engine; it follows <see cref="SyncProcessor.Applied"/> from construction. TURN credentials come from the homeserver, and are kept until shortly before they expire.</remarks>
+/// <summary>Matrix 1:1 calls of the logged-in user: places calls, raises incoming ones, and routes the events of the synced timelines to their <see cref="VoiceCall"/>; sends through the outbox, which encrypts in encrypted rooms.</summary>
+/// <remarks>
+/// Register it as a singleton beside the client engine; it follows <see cref="SyncProcessor.Applied"/> from construction. TURN credentials come from the homeserver, and are kept until shortly before they expire.
+/// Calls go over MatrixRTC, as <see cref="RtcCall"/>, when the homeserver has a LiveKit transport, as Element X can only take those; else as <see cref="LegacyCall"/> of <c>m.call.*</c> events. Both kinds of incoming call ring.
+/// </remarks>
 public sealed class CallService : IAsyncDisposable
 {
     private readonly SyncProcessor processor;
@@ -21,24 +27,33 @@ public sealed class CallService : IAsyncDisposable
     private readonly ClientSession session;
     private readonly NetworkMonitor network;
     private readonly ILogger<CallService> logger;
+    private static readonly HttpClient AuthorizationHttp = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private readonly CryptoService? crypto;
     private readonly ConcurrentDictionary<string, VoiceCall> calls = new();
+    private IReadOnlyList<RtcTransport>? transports;
+    private DateTimeOffset transportsFetched;
     private readonly ConcurrentDictionary<string, WaitingInvite> waiting = new();
     private readonly string partyId = RandomNumberGenerator.GetString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 10);
     private IReadOnlyList<IceServer> turnServers = [];
     private DateTimeOffset turnExpires;
 
-    /// <summary>Follow the synced timelines for call events.</summary>
-    public CallService(SyncProcessor processor, OutboxSender outbox, ClientSession session, NetworkMonitor network, ILogger<CallService> logger)
+    /// <summary>Follow the synced timelines for call events, and the to-device messages for MatrixRTC's keys.</summary>
+    public CallService(SyncProcessor processor, OutboxSender outbox, ClientSession session, NetworkMonitor network, ILogger<CallService> logger, CryptoService? crypto = null)
     {
-        // Dependencies, the sync hook, and network changes
+        // Dependencies, the sync hook, keys, and network changes
         this.processor = processor;
         this.outbox = outbox;
         this.session = session;
         this.network = network;
         this.logger = logger;
+        this.crypto = crypto;
         processor.Applied += OnApplied;
         network.Changed += OnNetworkChanged;
+        if (crypto is not null) crypto.ToDeviceReceived += OnToDevice;
     }
+
+    /// <summary>Whether to place calls over MatrixRTC when the homeserver has a LiveKit transport; on by default. Off places <c>m.call.*</c> calls only.</summary>
+    public bool UseMatrixRtc { get; set; } = true;
 
     /// <summary>Open the microphone and speaker of a call; the platform's devices by default, which Android replaces.</summary>
     public Func<IAudioDevices?> Devices { get; set; } = () => AudioDevices.ForThisPlatform();
@@ -92,12 +107,52 @@ public sealed class CallService : IAsyncDisposable
             return existing;
         }
 
-        // A new call, ringing
-        VoiceCall call = Create(roomId, Guid.NewGuid().ToString("N"), ownUserId, others[0], null, await OptionsAsync(client, cancellationToken));
+        // A MatrixRTC call when the homeserver has LiveKit
+        if (await RtcTransportAsync(client, cancellationToken) is RtcTransport transport)
+        {
+            RtcCall rtc = CreateRtc(client, roomId, others[0], transport, null, video, await OptionsAsync(client, cancellationToken));
+            try
+            {
+                await rtc.StartAsync(cancellationToken);
+            }
+            catch
+            {
+                // On a call that could not start
+                await rtc.DisposeAsync();
+                throw;
+            }
+            CallChanged?.Invoke(rtc);
+            return rtc;
+        }
+
+        // Else a legacy call, ringing
+        LegacyCall call = Create(roomId, Guid.NewGuid().ToString("N"), ownUserId, others[0], null, await OptionsAsync(client, cancellationToken));
         await call.InviteAsync(cancellationToken, video);
         CallChanged?.Invoke(call);
         // Return the call
         return call;
+    }
+
+    /// <summary>Return the homeserver's LiveKit transport, fetched again every few minutes; null without one, or when <see cref="UseMatrixRtc"/> is off.</summary>
+    private async Task<RtcTransport?> RtcTransportAsync(MatrixClient client, CancellationToken cancellationToken)
+    {
+        // Cached for a while
+        if (!UseMatrixRtc) return null;
+        if (transports is null || DateTimeOffset.UtcNow - transportsFetched > TimeSpan.FromMinutes(5))
+        {
+            try
+            {
+                transports = await client.GetRtcTransportsAsync(cancellationToken);
+                transportsFetched = DateTimeOffset.UtcNow;
+            }
+            catch (Exception e) when (e is MatrixException or HttpRequestException)
+            {
+                logger.LogWarning(e, "MatrixRTC transports not available");
+                transports ??= [];
+            }
+        }
+        // Return the first LiveKit one
+        return transports.FirstOrDefault(t => t.Type == RtcTransport.LiveKit && t.LivekitServiceUrl is not null);
     }
 
     /// <summary>Hang up all calls, and stop following the timelines; a server that does not answer holds each hangup for a few seconds at most.</summary>
@@ -106,6 +161,7 @@ public sealed class CallService : IAsyncDisposable
         // Each active call
         processor.Applied -= OnApplied;
         network.Changed -= OnNetworkChanged;
+        if (crypto is not null) crypto.ToDeviceReceived -= OnToDevice;
         foreach (VoiceCall call in ActiveCalls)
         {
             try
@@ -126,7 +182,7 @@ public sealed class CallService : IAsyncDisposable
         foreach (VoiceCall call in ActiveCalls.Where(c => c.State is CallState.Connected or CallState.Reconnecting)) _ = call.RestartIceAsync("network changed");
     }
 
-    /// <summary>Route the call events of a sync.</summary>
+    /// <summary>Route the call events of a sync, and update the MatrixRTC calls of the rooms that changed.</summary>
     private void OnApplied(SyncChanges changes)
     {
         // Call events of each room, in order, off the sync loop
@@ -134,7 +190,108 @@ public sealed class CallService : IAsyncDisposable
         {
             ClientEvent[] events = [.. batch.Events.Where(e => e.Type.StartsWith("m.call.", StringComparison.Ordinal))];
             if (events.Length > 0) _ = RouteAsync(batch.Room.RoomId, events);
+            ClientEvent[] rtc = [.. batch.Events.Where(e => e.Type is EventTypes.RtcNotification or EventTypes.RtcDecline)];
+            if (rtc.Length > 0) _ = RouteRtcAsync(batch.Room.RoomId, rtc);
         }
+        // Done: memberships may have changed in the rooms with new events
+        foreach (string roomId in changes.Timeline.Select(b => b.Room.RoomId).Concat(changes.Joined.Select(r => r.RoomId)).Distinct())
+        {
+            foreach (RtcCall call in calls.Values.OfType<RtcCall>().Where(c => c.RoomId == roomId && c.State != CallState.Ended)) _ = call.UpdateAsync();
+        }
+    }
+
+    /// <summary>Give a member's media key to the MatrixRTC calls of its room.</summary>
+    private void OnToDevice(DecryptedToDeviceEvent ev)
+    {
+        // Keys only
+        if (ev.Type != EventTypes.CallEncryptionKeys || ev.Content["room_id"]?.GetValue<string>() is not string roomId) return;
+        // Done
+        foreach (RtcCall call in calls.Values.OfType<RtcCall>().Where(c => c.RoomId == roomId && c.State != CallState.Ended)) call.TakeKey(ev);
+    }
+
+    /// <summary>Ring for MatrixRTC notifications of calls the peer is in, and route declines to their calls.</summary>
+    private async Task RouteRtcAsync(string roomId, ClientEvent[] events)
+    {
+        // Each in order
+        MatrixClient client = await session.WhenReady;
+        foreach (ClientEvent ev in events)
+        {
+            try
+            {
+                if (ev.Type == EventTypes.RtcDecline && ev.TryGetContent(out RtcDeclineContent? decline) && decline.RelatesTo.EventId is string declined)
+                {
+                    foreach (RtcCall call in calls.Values.OfType<RtcCall>().Where(c => c.RoomId == roomId)) await call.DeclinedAsync(ev.Sender, declined);
+                    continue;
+                }
+                if (ev.Type == EventTypes.RtcNotification && ev.TryGetContent(out RtcNotificationContent? ring)) await RingRtcAsync(client, roomId, ev, ring);
+            }
+            catch (Exception e)
+            {
+                logger.LogWarning(e, "MatrixRTC event {EventId} in {RoomId} failed", ev.EventId, roomId);
+            }
+        }
+    }
+
+    /// <summary>Ring for a MatrixRTC notification that rings, from someone else, still valid, while its sender is in the room's call and no other call is.</summary>
+    private async Task RingRtcAsync(MatrixClient client, string roomId, ClientEvent ev, RtcNotificationContent ring)
+    {
+        // A ring of another, not expired: by the sender's clock unless it is far off
+        if (ring.NotificationType != "ring" || ev.Sender == client.UserId) return;
+        long basis = ring.SenderTs - ev.OriginServerTs > 20_000 ? ev.OriginServerTs : ring.SenderTs;
+        TimeSpan remaining = DateTimeOffset.FromUnixTimeMilliseconds(basis + Math.Min(ring.Lifetime, 120_000)) - DateTimeOffset.UtcNow;
+        if (remaining <= TimeSpan.Zero)
+        {
+            logger.LogInformation("MatrixRTC ring {EventId} ignored: expired {Ago} ago", ev.EventId, -remaining);
+            return;
+        }
+
+        // The caller in the call, and no call here yet
+        if (!ReadMembers(roomId).Any(m => m.UserId == ev.Sender))
+        {
+            logger.LogInformation("MatrixRTC ring {EventId} ignored: {Sender} is not in the call", ev.EventId, ev.Sender);
+            return;
+        }
+        if (FindCall(roomId) is not null) return;
+        if (await RtcTransportAsync(client, CancellationToken.None) is not RtcTransport transport)
+        {
+            logger.LogWarning("MatrixRTC ring {EventId} ignored: the homeserver has no LiveKit transport", ev.EventId);
+            return;
+        }
+
+        // Ringing until answered, declined or expired
+        RtcCall call = CreateRtc(client, roomId, ev.Sender, transport, ev.EventId, ring.CallIntent == "video", await OptionsAsync(client, CancellationToken.None));
+        call.Ring(remaining);
+        // Done
+        IncomingCall?.Invoke(call);
+    }
+
+    /// <summary>Return the members' devices of a room's call now.</summary>
+    private IReadOnlyList<(string UserId, string DeviceId, CallMemberContent Membership)> ReadMembers(string roomId) =>
+        processor.Read(rooms => rooms?.TryGetRoom(roomId, out Room? room) == true ? RtcCall.Members(room, DateTimeOffset.UtcNow) : []) ?? [];
+
+    /// <summary>Create and register a MatrixRTC call.</summary>
+    private RtcCall CreateRtc(MatrixClient client, string roomId, string peerUserId, RtcTransport transport, string? notificationId, bool video, PeerConnectionOptions options)
+    {
+        // Its context: the client, the room's encryption, and LiveKit's options
+        bool encrypted = processor.Read(rooms => rooms?.TryGetRoom(roomId, out Room? room) == true && room.IsEncrypted);
+        RtcContext context = new()
+        {
+            Client = client,
+            OwnUserId = client.UserId!,
+            OwnDeviceId = client.DeviceId!,
+            Transport = transport,
+            SendEvent = (type, content, token) => outbox.SendNowAsync(client, roomId, type, content, token),
+            SendToDevices = (type, content, devices, token) => crypto?.SendEncryptedToDevicesAsync(type, content, devices, token) ?? Task.FromResult(0),
+            Encrypted = encrypted,
+            RoomOptions = new LiveKitRoomOptions { Servers = options.Servers, RelayOnly = options.RelayOnly, ReceiveVideo = options.ReceiveVideo },
+            Http = AuthorizationHttp,
+            ReadMembers = () => ReadMembers(roomId),
+        };
+        RtcCall call = new(roomId, peerUserId, context, notificationId, video, () => Devices(), logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
+        call.Changed += c => CallChanged?.Invoke(c);
+        calls[call.CallId] = call;
+        // Return call
+        return call;
     }
 
     /// <summary>Route call events of a room to their calls, creating incoming ones for fresh invites.</summary>
@@ -153,7 +310,7 @@ public sealed class CallService : IAsyncDisposable
                     continue;
                 }
                 logger.LogInformation("Call event {Type} of call {CallId} from {Sender} in {RoomId}", ev.Type, content.CallId, ev.Sender, roomId);
-                if (calls.TryGetValue(content.CallId, out VoiceCall? call))
+                if (calls.TryGetValue(content.CallId, out VoiceCall? found) && found is LegacyCall call)
                 {
                     await call.HandleAsync(ev.Sender, ev.Type, content);
                     continue;
@@ -186,7 +343,7 @@ public sealed class CallService : IAsyncDisposable
         // From someone else, to this user, still valid
         if (ev.Sender == ownUserId || (invite.Invitee is not null && invite.Invitee != ownUserId)) return;
         TimeSpan age = TimeSpan.FromMilliseconds(ev.Unsigned?.Age ?? Math.Max(0, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - ev.OriginServerTs));
-        TimeSpan remaining = TimeSpan.FromMilliseconds(invite.Lifetime > 0 ? invite.Lifetime : VoiceCall.InviteLifetime.TotalMilliseconds) - age;
+        TimeSpan remaining = TimeSpan.FromMilliseconds(invite.Lifetime > 0 ? invite.Lifetime : LegacyCall.InviteLifetime.TotalMilliseconds) - age;
         if (remaining <= TimeSpan.Zero)
         {
             logger.LogInformation("Invite of call {CallId} ignored: expired {Ago} ago", invite.CallId, -remaining);
@@ -209,7 +366,7 @@ public sealed class CallService : IAsyncDisposable
                 logger.LogInformation("Both called: call {CallId} kept waiting, our call {Other} goes on", invite.CallId, other.CallId);
                 return;
             }
-            if (other.State == CallState.Ringing) await other.ReplaceAsync();
+            if (other.State == CallState.Ringing && other is LegacyCall ringing) await ringing.ReplaceAsync();
             else
             {
                 // Glare that theirs wins, or they started over: ours ends, theirs is answered
@@ -220,7 +377,7 @@ public sealed class CallService : IAsyncDisposable
         }
 
         // Ringing until answered or expired, or answered at once
-        VoiceCall call = Create(roomId, invite.CallId, ownUserId, ev.Sender, invite, await OptionsAsync(client, CancellationToken.None));
+        LegacyCall call = Create(roomId, invite.CallId, ownUserId, ev.Sender, invite, await OptionsAsync(client, CancellationToken.None));
         call.Ring(remaining);
         if (!answer)
         {
@@ -240,7 +397,7 @@ public sealed class CallService : IAsyncDisposable
         TimeSpan remaining = kept.Expires - DateTimeOffset.UtcNow;
         if (remaining <= TimeSpan.Zero) return;
         MatrixClient client = await session.WhenReady;
-        VoiceCall call = Create(roomId, kept.Invite.CallId, client.UserId!, kept.Event.Sender, kept.Invite, await OptionsAsync(client, CancellationToken.None));
+        LegacyCall call = Create(roomId, kept.Invite.CallId, client.UserId!, kept.Event.Sender, kept.Invite, await OptionsAsync(client, CancellationToken.None));
         call.Ring(remaining);
         // Done
         logger.LogInformation("Call {CallId} that waited rings now", kept.Invite.CallId);
@@ -254,10 +411,10 @@ public sealed class CallService : IAsyncDisposable
     private sealed record WaitingInvite(ClientEvent Event, CallInviteContent Invite, DateTimeOffset Expires);
 
     /// <summary>Create and register a call.</summary>
-    private VoiceCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
+    private LegacyCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
     {
         // Events through the outbox, changes to the listeners
-        VoiceCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
+        LegacyCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
         call.Changed += c =>
         {
             CallChanged?.Invoke(c);

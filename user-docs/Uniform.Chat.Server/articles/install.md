@@ -142,4 +142,6 @@ sudo certbot certonly --webroot -w /var/www/html -d example.org
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
+For video calls in Element X through the homeserver's LiveKit service, the `location` line must also pass `/livekit/jwt`; see [Video calls in Element X](xref:Uniform.Chat.Server.LiveKit.Article).
+
 Then enable the HTTPS part, reload nginx again, and start the server. Check from another computer that `https://example.org/.well-known/matrix/server` answers `{"m.server":"example.org:443"}`; the [federation tester](https://federationtester.matrix.org) then shows whether other servers can reach yours. Leave out the `[::]` lines when the name has no IPv6 address.

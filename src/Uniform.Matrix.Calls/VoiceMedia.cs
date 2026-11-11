@@ -11,7 +11,7 @@ public sealed class VoiceMedia : IAsyncDisposable
     /// <summary>How much audio the speaker is kept queued.</summary>
     public static readonly TimeSpan SpeakerTarget = TimeSpan.FromMilliseconds(60);
     private static readonly TimeSpan Tick = TimeSpan.FromMilliseconds(10);
-    private readonly AudioPeerConnection connection;
+    private readonly IMediaConnection connection;
     private readonly MicrophoneFrames microphone;
     private readonly SpeakerFrames speaker;
     private readonly VoiceEncoder encoder = new();
@@ -24,7 +24,7 @@ public sealed class VoiceMedia : IAsyncDisposable
     private long sent;
 
     /// <summary>Open the devices for a connection; nothing records or plays until <see cref="Start"/>.</summary>
-    public VoiceMedia(AudioPeerConnection connection, IAudioDevices devices)
+    public VoiceMedia(IMediaConnection connection, IAudioDevices devices)
     {
         // Devices, and the connection's audio into the jitter buffer
         this.connection = connection;

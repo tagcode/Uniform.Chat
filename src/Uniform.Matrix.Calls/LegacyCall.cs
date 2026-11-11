@@ -11,26 +11,9 @@ using Uniform.Matrix.WebRtc.Sdp;
 /// <summary>Sends a call event into the call's room.</summary>
 public delegate Task CallEventSender(string eventType, CallContent content, CancellationToken cancellationToken);
 
-/// <summary>The state of a <see cref="VoiceCall"/>.</summary>
-public enum CallState
-{
-    /// <summary>An incoming call, not yet answered.</summary>
-    Ringing,
-    /// <summary>An outgoing call, not yet answered.</summary>
-    Inviting,
-    /// <summary>Answered; the media path is connecting.</summary>
-    Connecting,
-    /// <summary>Voice flows.</summary>
-    Connected,
-    /// <summary>The network path broke; it may come back.</summary>
-    Reconnecting,
-    /// <summary>Ended; <see cref="VoiceCall.EndReason"/> says why.</summary>
-    Ended,
-}
-
-/// <summary>One <see href="https://spec.matrix.org/latest/client-server-api/#voice-over-ip">Matrix 1:1 voice call</see>, version 1: the invite, answer and select_answer, trickled candidates, and the hangup or reject; with the media of an <see cref="AudioPeerConnection"/> and <see cref="VoiceMedia"/>, and the video a caller sends through <see cref="VideoReceiver"/>.</summary>
+/// <summary>One <see href="https://spec.matrix.org/latest/client-server-api/#voice-over-ip">Matrix 1:1 call</see> of <c>m.call.*</c> events, version 1, as Element Web and SchildiChat Legacy call: the invite, answer and select_answer, trickled candidates, and the hangup or reject; with the media of an <see cref="AudioPeerConnection"/> and <see cref="VoiceMedia"/>, and the video a caller sends through <see cref="VideoReceiver"/>.</summary>
 /// <remarks>Events of the call reach <see cref="HandleAsync"/>, which runs them one at a time with this side's actions. Candidates are sent in batches, as Element does, and end with an empty one; those received before the offer or answer wait for it.</remarks>
-public sealed class VoiceCall : IAsyncDisposable
+public sealed class LegacyCall : VoiceCall
 {
     /// <summary>How long an invite rings.</summary>
     public static readonly TimeSpan InviteLifetime = TimeSpan.FromSeconds(60);
@@ -47,27 +30,16 @@ public sealed class VoiceCall : IAsyncDisposable
     private readonly string partyId;
     private readonly string ownUserId;
     private readonly CallEventSender send;
-    private readonly Func<IAudioDevices?> devices;
-    private readonly Func<IVideoCamera?> camera;
-    private readonly Func<IVideoDecoder?> videoDecoder;
     private readonly PeerConnectionOptions options;
-    private readonly ILogger logger;
     private readonly CallInviteContent? invite;
-    private readonly SemaphoreSlim gate = new(1, 1);
-    private readonly CancellationTokenSource ending = new();
     private readonly List<CallCandidate> outgoingCandidates = [];
     private readonly Dictionary<string, List<string>> incomingCandidates = [];
     private readonly Lock candidateLock = new();
     private AudioPeerConnection? connection;
-    private VoiceMedia? media;
-    private VideoReceiver? video;
-    private IVideoCamera? sending;
     private bool withVideo;
-    private volatile bool cameraOff;
     private string? peerPartyId;
     private bool remoteDescribed;
     private bool flushScheduled;
-    private bool muted;
     private int watchingReconnect;
 
     /// <summary>Create a call; <see cref="CallService"/> does.</summary>
@@ -83,99 +55,25 @@ public sealed class VoiceCall : IAsyncDisposable
     /// <param name="logger">Logger.</param>
     /// <param name="camera">Opens the camera when a call answered with video connects; null, or returning null, for none.</param>
     /// <param name="videoDecoder">Makes the decoder of the peer's video, e.g. the platform's hardware one; null, or returning null, for the C# one.</param>
-    internal VoiceCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null, Func<IVideoDecoder?>? videoDecoder = null)
+    internal LegacyCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null, Func<IVideoDecoder?>? videoDecoder = null)
+        : base(roomId, callId, peerUserId, devices, logger, camera, videoDecoder)
     {
         // Identity, and the parts the call uses
-        RoomId = roomId;
-        CallId = callId;
         this.partyId = partyId;
         this.ownUserId = ownUserId;
-        PeerUserId = peerUserId;
         this.invite = invite;
         peerPartyId = invite?.PartyId;
         this.send = send;
-        this.devices = devices;
-        this.camera = camera ?? (() => null);
-        this.videoDecoder = videoDecoder ?? (() => null);
         this.options = options;
-        this.logger = logger;
-        State = invite is null ? CallState.Inviting : CallState.Ringing;
+        if (invite is null) SetState(CallState.Inviting);
         IsVideo = invite is not null && OffersVideo(invite.Offer.Sdp);
     }
 
-    /// <summary>Room of the call.</summary>
-    public string RoomId { get; }
-
-    /// <summary>The call's ID.</summary>
-    public string CallId { get; }
-
-    /// <summary>The other user.</summary>
-    public string PeerUserId { get; }
-
     /// <summary>Whether the other user called.</summary>
-    public bool IsIncoming => invite is not null;
-
-    /// <summary>Whether the other user calls with video, which this side can show; this side sends none.</summary>
-    public bool IsVideo { get; private set; }
-
-    /// <summary>Whether this side sends its camera's video in the call.</summary>
-    public bool SendsVideo => sending is not null;
-
-    /// <summary>Whether this side's device has another camera to switch to.</summary>
-    public bool CanSwitchCamera => sending?.CanSwitch == true;
-
-    /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
-    public void SwitchCamera() => sending?.SwitchCamera();
-
-    /// <summary>Whether this side's camera is turned off: nothing is captured or sent until it is turned on.</summary>
-    public bool CameraOff
-    {
-        get => cameraOff;
-        set
-        {
-            // The camera stops or starts; frames are dropped meanwhile
-            cameraOff = value;
-            sending?.SetPaused(value);
-            Changed?.Invoke(this);
-        }
-    }
-
-    /// <summary>Raised with small pictures of this side's camera, for a preview; on any thread.</summary>
-    public event Action<VoiceCall, VideoFrame>? PreviewReceived;
-
-    /// <summary>Raised with each picture of the peer's video, on a decoding thread; a handler should be quick, e.g. keep the newest picture to show.</summary>
-    public event Action<VoiceCall, VideoFrame>? PictureReceived;
-
-    /// <summary>The state.</summary>
-    public CallState State { get; private set; }
-
-    /// <summary>Why the call ended, e.g. <c>user_hangup</c>, <c>rejected</c>, <c>invite_timeout</c>, <c>ice_failed</c> or <c>answered_elsewhere</c>; null until ended.</summary>
-    public string? EndReason { get; private set; }
-
-    /// <summary>Whether the other side ended the call.</summary>
-    public bool EndedByPeer { get; private set; }
-
-    /// <summary>When voice started to flow; null before.</summary>
-    public DateTimeOffset? ConnectedAt { get; private set; }
+    public override bool IsIncoming => invite is not null;
 
     /// <summary>The local and remote candidates the media goes through, once connected, e.g. to show whether it is relayed.</summary>
-    public (IceCandidate? Local, IceCandidate? Remote) Path => (connection?.Ice?.SelectedLocal, connection?.Ice?.SelectedRemote);
-
-    /// <summary>Whether this side's microphone is muted.</summary>
-    public bool Muted
-    {
-        get => muted;
-        set
-        {
-            // Now, and for media started later
-            muted = value;
-            if (media is not null) media.Muted = value;
-            Changed?.Invoke(this);
-        }
-    }
-
-    /// <summary>Raised when <see cref="State"/> or <see cref="Muted"/> changes; on any thread.</summary>
-    public event Action<VoiceCall>? Changed;
+    public override (IceCandidate? Local, IceCandidate? Remote) Path => (connection?.Ice?.SelectedLocal, connection?.Ice?.SelectedRemote);
 
     /// <summary>Send the invite with an offer, with <paramref name="video"/> of video both ways, and ring until answered or <see cref="InviteLifetime"/> passes.</summary>
     internal async Task InviteAsync(CancellationToken cancellationToken, bool video = false)
@@ -198,14 +96,8 @@ public sealed class VoiceCall : IAsyncDisposable
         _ = TimeOutAsync(InviteLifetime);
     }
 
-    /// <summary>Answer an incoming call, and connect; this side sends no video.</summary>
-    public Task AnswerAsync(CancellationToken cancellationToken = default) => AnswerAsync(video: false, cancellationToken);
-
-    /// <summary>Answer an incoming call with this side's camera too, when the caller receives video and the platform has a camera; and connect.</summary>
-    public Task AnswerWithVideoAsync(CancellationToken cancellationToken = default) => AnswerAsync(video: true, cancellationToken);
-
     /// <summary>Answer, with or without video, and connect.</summary>
-    private async Task AnswerAsync(bool video, CancellationToken cancellationToken)
+    private protected override async Task AnswerAsync(bool video, CancellationToken cancellationToken)
     {
         // Ringing only
         await gate.WaitAsync(cancellationToken);
@@ -229,7 +121,7 @@ public sealed class VoiceCall : IAsyncDisposable
     }
 
     /// <summary>Decline an incoming call.</summary>
-    public async Task RejectAsync(CancellationToken cancellationToken = default)
+    public override async Task RejectAsync(CancellationToken cancellationToken = default)
     {
         // Version 1 rejects; version 0 only knows hangup
         if (State != CallState.Ringing) return;
@@ -240,7 +132,7 @@ public sealed class VoiceCall : IAsyncDisposable
     }
 
     /// <summary>Hang up, or cancel an outgoing call that rings.</summary>
-    public async Task HangupAsync(string reason = "user_hangup", CancellationToken cancellationToken = default)
+    public override async Task HangupAsync(string reason = "user_hangup", CancellationToken cancellationToken = default)
     {
         // Once
         if (State == CallState.Ended) return;
@@ -290,9 +182,6 @@ public sealed class VoiceCall : IAsyncDisposable
 
     /// <summary>End a call that rings, without telling the peer, because the peer called again with a new invite that replaces it.</summary>
     internal Task ReplaceAsync() => EndAsync("replaced", byPeer: true);
-
-    /// <summary>End the call without telling the peer, and release the media.</summary>
-    public async ValueTask DisposeAsync() => await EndAsync("disposed", byPeer: false);
 
     /// <summary>Take the peer's answer to an outgoing call, or notice that another of this user's devices answered an incoming one.</summary>
     private async Task OnAnswerAsync(string sender, CallAnswerContent answer)
@@ -423,75 +312,6 @@ public sealed class VoiceCall : IAsyncDisposable
         }
     }
 
-    /// <summary>Reopen the microphone and speaker, e.g. to switch between the earpiece and the loudspeaker, which phones choose when the speaker opens.</summary>
-    public async Task RestartAudioAsync()
-    {
-        // While voice flows
-        await gate.WaitAsync();
-        try
-        {
-            if (State is not (CallState.Connected or CallState.Reconnecting) || connection is null) return;
-            if (media is not null) await media.DisposeAsync();
-            media = null;
-            StartMedia(connection);
-        }
-        finally
-        {
-            gate.Release();
-        }
-    }
-
-    /// <summary>Open the devices and start the voice, unless there are none; a device that fails leaves the call without voice, not ended.</summary>
-    private void StartMedia(AudioPeerConnection peer)
-    {
-        // Devices as chosen now
-        if (devices() is not IAudioDevices audio) return;
-        try
-        {
-            media = new VoiceMedia(peer, audio) { Muted = muted };
-            media.Start();
-        }
-        catch (Exception e)
-        {
-            // On devices that did not open
-            logger.LogWarning(e, "Audio devices of call {CallId} did not open", CallId);
-        }
-    }
-
-    /// <summary>Open the camera and send its frames, when the answer sends video; a camera that fails leaves the call without it.</summary>
-    private void StartCamera(AudioPeerConnection peer)
-    {
-        // Sending, with a camera
-        if (!peer.SendsVideo || camera() is not IVideoCamera opened) return;
-        try
-        {
-            opened.FrameEncoded += frame => { if (!cameraOff) _ = peer.SendVideoAsync(frame, ending.Token, opened.Rotation); };
-            opened.Previewed += picture => { if (!cameraOff) PreviewReceived?.Invoke(this, picture); };
-            peer.KeyframeRequested += opened.RequestKeyframe;
-            peer.BitrateRequested += opened.LimitBitrate;
-            opened.Start();
-            sending = opened;
-        }
-        catch (Exception e)
-        {
-            // On a camera that did not open
-            logger.LogWarning(e, "Camera of call {CallId} did not open", CallId);
-            _ = opened.DisposeAsync();
-        }
-    }
-
-    /// <summary>Decode the peer's video from the start, so its first keyframe is not missed.</summary>
-    private void StartVideo(AudioPeerConnection peer)
-    {
-        // Pictures to the call's listeners
-        IVideoDecoder? platformDecoder = null;
-        try { platformDecoder = videoDecoder(); }
-        catch (Exception e) { logger.LogWarning(e, "The platform's video decoder did not start; decoding in C#"); }
-        video = new VideoReceiver(peer, logger, platformDecoder);
-        // Done
-        video.PictureDecoded += picture => PictureReceived?.Invoke(this, picture);
-    }
-
     /// <summary>Return whether an offer sends VP8 video.</summary>
     private static bool OffersVideo(string sdp)
     {
@@ -501,7 +321,7 @@ public sealed class VoiceCall : IAsyncDisposable
     }
 
     /// <summary>Restart ICE, e.g. after the network changed: a new offer in <c>m.call.negotiate</c>, and the media move to the new path once it connects; nothing while a restart is under way.</summary>
-    public async Task RestartIceAsync(string reason, CancellationToken cancellationToken = default)
+    public override async Task RestartIceAsync(string reason, CancellationToken cancellationToken = default)
     {
         // Connected calls, one restart at a time
         await gate.WaitAsync(cancellationToken);
@@ -634,41 +454,14 @@ public sealed class VoiceCall : IAsyncDisposable
         else if (State is CallState.Ringing) await EndAsync("invite_timeout", byPeer: true);
     }
 
+    /// <summary>Close the peer connection.</summary>
+    private protected override async ValueTask OnEndedAsync()
+    {
+        // Done
+        if (connection is not null) await connection.DisposeAsync();
+    }
+
     /// <summary>Start ringing an incoming call until its invite expires.</summary>
     internal void Ring(TimeSpan remaining) => _ = TimeOutAsync(remaining);
 
-    /// <summary>End the call: stop the media, close the connection, and tell.</summary>
-    private async Task EndAsync(string reason, bool byPeer)
-    {
-        // Once
-        if (State == CallState.Ended) return;
-        EndReason = reason;
-        EndedByPeer = byPeer;
-        SetState(CallState.Ended);
-        await ending.CancelAsync();
-        if (media is not null)
-        {
-            await media.DisposeAsync();
-            logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for", CallId, media.Sent, media.Received, media.Lost, media.Underruns);
-        }
-        if (sending is not null) await sending.DisposeAsync();
-        if (video is not null)
-        {
-            await video.DisposeAsync();
-            logger.LogInformation("Call {CallId} video: {Decoded} pictures decoded in {Milliseconds:F1} ms on average, {Skipped} frames skipped", CallId, video.Decoded, video.AverageDecodeTime.TotalMilliseconds, video.Skipped);
-        }
-        if (connection is not null) await connection.DisposeAsync();
-        // Done
-        logger.LogInformation("Call {CallId} in {RoomId} ended: {Reason}", CallId, RoomId, reason);
-    }
-
-    /// <summary>Set the state, and tell when it changed.</summary>
-    private void SetState(CallState state)
-    {
-        // Changes only; ended stays ended
-        if (State == state || (State == CallState.Ended && state != CallState.Ended)) return;
-        State = state;
-        // Done
-        Changed?.Invoke(this);
-    }
 }

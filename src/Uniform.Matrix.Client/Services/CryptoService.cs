@@ -97,8 +97,12 @@ public sealed class CryptoService : IDisposable
         // Assert encryption
         if (machine is null) return sync;
 
-        // To-device messages and keys first, as they bring room keys
-        await machine.ReceiveSyncAsync(sync, cancellationToken);
+        // To-device messages and keys first, as they bring room keys; the others' encrypted events to their listeners
+        foreach (DecryptedToDeviceEvent decrypted in await machine.ReceiveSyncAsync(sync, cancellationToken))
+        {
+            try { ToDeviceReceived?.Invoke(decrypted); }
+            catch (Exception e) { logger.LogWarning(e, "To-device event {Type} from {Sender} failed", decrypted.Type, decrypted.Sender); }
+        }
         await BackUpAsync(cancellationToken);
 
         // Replace decryptable timeline events
@@ -114,6 +118,12 @@ public sealed class CryptoService : IDisposable
         // Return decrypted sync
         return sync with { Rooms = sync.Rooms with { Join = joined, Leave = left } };
     }
+
+    /// <summary>Raised for each to-device event that came encrypted over Olm, decrypted, e.g. MatrixRTC's media keys; on the sync loop, so a handler should be quick.</summary>
+    public event Action<DecryptedToDeviceEvent>? ToDeviceReceived;
+
+    /// <summary>Send a to-device event to each of <paramref name="devices"/>, encrypted over Olm; return how many it went to, none without encryption.</summary>
+    public Task<int> SendEncryptedToDevicesAsync(string type, JsonObject content, IReadOnlyCollection<(string UserId, string DeviceId)> devices, CancellationToken cancellationToken = default) => machine is null ? Task.FromResult(0) : machine.SendEncryptedToDevicesAsync(type, content, devices, cancellationToken);
 
     /// <summary>Send a room event, encrypted in encrypted rooms: the room, event type and content; set by the outbox, which in-room verification answers through.</summary>
     public Func<string, string, JsonObject, CancellationToken, Task>? RoomEventSender { get; set; }

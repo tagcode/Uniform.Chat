@@ -6,7 +6,7 @@ uid: Uniform.Chat.Server.LiveKit.Article
 
 Element X, Element Call and other MatrixRTC apps don't call each other directly. They all join a room on a LiveKit server, a media server that forwards everyone's audio and video. Before joining, an app asks the homeserver's authorization service for a LiveKit token, proving who it is with a Matrix OpenID token.
 
-The homeserver has that authorization service built in. You run the LiveKit server next to it. Uniform Chat's own calls don't need any of this; see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article) for those.
+The homeserver has that authorization service built in. You run the LiveKit server next to it. Uniform Chat's apps call this way too when the homeserver has LiveKit, so that Element X users can answer. Without it, they call each other directly; see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article).
 
 ## LiveKit server
 
@@ -26,6 +26,8 @@ room:
 ```
 
 `auto_create: false` makes sure only your users can start calls. The authorization service creates each call's room for them. Run it with `livekit-server --config livekit.yaml`.
+
+If lk-jwt-service also uses this LiveKit, note that it reads only one key from a key file. Give it a file of its own with just its key, rather than LiveKit's `keys` list.
 
 LiveKit must be reachable from the internet on these ports. Behind a home router, forward them to its computer:
 
@@ -58,7 +60,15 @@ Turn on the authorization service and point it at LiveKit. Put the secret in the
 }
 ```
 
-The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. No restart is needed. Only users joined to the call's room get in. Your users can start calls and send audio and video. Users of other homeservers who are in the room can join calls that are already going, but only to watch and listen, unless you add their servers to `LiveKit:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
+Restart the homeserver after editing its settings file, as it reads the file only on starting. The dashboard's **Apply** changes the settings of the running server at once, with no restart.
+
+The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. Only users joined to the call's room get in. Your users can start calls and send audio and video. Users of other homeservers who are in the room can join calls that are already going, but only to watch and listen, unless you add their servers to `LiveKit:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
+
+A reverse proxy in front of the homeserver must pass `/livekit/jwt` to it as well. With the nginx site of [Installing](xref:Uniform.Chat.Server.Install.Article), add it to the `location` line:
+
+```nginx
+location ~ ^/(_matrix|livekit/jwt|\.well-known/matrix)/ {
+```
 
 To check the service, open `https://example.org/livekit/jwt/healthz`, with your server's address. It answers with an empty page and status 200 when the service is on, and 404 when it is off.
 

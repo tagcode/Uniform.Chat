@@ -100,7 +100,7 @@ public class VoiceCallTests
         private readonly CancellationTokenSource stopping = new();
         private readonly Task[] pumps;
         private readonly FakeAudio? bobAudio;
-        private VoiceCall? bob;
+        private LegacyCall? bob;
 
         /// <summary>Create Alice's call, and start carrying events.</summary>
         public Pair(FakeAudio? aliceAudio, FakeAudio? bobAudio)
@@ -108,12 +108,12 @@ public class VoiceCallTests
             // Loopback media; events into the queues
             this.bobAudio = bobAudio;
             PeerConnectionOptions options = new() { IncludeLoopback = true };
-            Alice = new VoiceCall(Room, "call1", "ALICE", AliceId, BobId, null, (type, content, _) => toBob.Writer.WriteAsync((type, content)).AsTask(), () => aliceAudio, options, NullLogger.Instance);
+            Alice = new LegacyCall(Room, "call1", "ALICE", AliceId, BobId, null, (type, content, _) => toBob.Writer.WriteAsync((type, content)).AsTask(), () => aliceAudio, options, NullLogger.Instance);
             pumps = [PumpToBobAsync(options), PumpToAliceAsync()];
         }
 
         /// <summary>Alice's call.</summary>
-        public VoiceCall Alice { get; }
+        public LegacyCall Alice { get; }
 
         /// <summary>Bob's call, once the invite arrived.</summary>
         public TaskCompletionSource<VoiceCall> Ringing { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -136,7 +136,7 @@ public class VoiceCallTests
             {
                 if (content is CallInviteContent invite)
                 {
-                    bob = new VoiceCall(Room, invite.CallId, "BOB", BobId, AliceId, invite, (t, c, _) => toAlice.Writer.WriteAsync((t, c)).AsTask(), () => bobAudio, options, NullLogger.Instance);
+                    bob = new LegacyCall(Room, invite.CallId, "BOB", BobId, AliceId, invite, (t, c, _) => toAlice.Writer.WriteAsync((t, c)).AsTask(), () => bobAudio, options, NullLogger.Instance);
                     Ringing.TrySetResult(bob);
                     continue;
                 }

@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Uniform.Chat.Server\Uniform.Chat.Server.csproj" />
+    <ProjectReference Include="..\..\src\Uniform.Matrix.Calls\Uniform.Matrix.Calls.csproj" />
+    <Compile Include="..\Uniform.Matrix.Calls.Tests\FakeAudio.cs" Link="FakeAudio.cs" />
   </ItemGroup>
 
 </Project>

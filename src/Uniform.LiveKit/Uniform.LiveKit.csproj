@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Clients of LiveKit's room service and of a MatrixRTC authorization service (lk-jwt-service), which exchanges a Matrix OpenID token for a LiveKit access token.</Description>
+    <Description>A LiveKit client in pure C#: signalling, publishing and subscribing over WebRTC, and the end-to-end encryption of frames; and clients of LiveKit's room service and of a MatrixRTC authorization service (lk-jwt-service), which exchanges a Matrix OpenID token for a LiveKit access token.</Description>
     <PackageTags>livekit;matrixrtc;matrix;webrtc</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <ProjectReference Include="..\Uniform.LiveKit.Protocol\Uniform.LiveKit.Protocol.csproj" />
+    <ProjectReference Include="..\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -22,6 +22,14 @@ public sealed record PeerConnectionOptions
     public bool ReceiveVideo { get; init; }
     /// <summary>Whether to send VP8 video when the peer's offer receives it, with <see cref="AudioPeerConnection.SendVideoAsync"/>.</summary>
     public bool SendVideo { get; init; }
+    /// <summary>Whether offers only send, as to an SFU that is published to, and receive nothing.</summary>
+    public bool SendOnly { get; init; }
+    /// <summary>Media stream ID of the tracks sent, in their <c>msid</c>; random when null.</summary>
+    public string? StreamId { get; init; }
+    /// <summary>Track ID of the audio sent, in its <c>msid</c>, e.g. the <c>cid</c> an SFU was told of; <c>audio</c> when null.</summary>
+    public string? AudioTrackId { get; init; }
+    /// <summary>Track ID of the video sent, in its <c>msid</c>; <c>video</c> when null.</summary>
+    public string? VideoTrackId { get; init; }
 }
 
 /// <summary>The state of an <see cref="AudioPeerConnection"/>.</summary>
@@ -47,7 +55,7 @@ public enum PeerConnectionState
 /// The caller calls <see cref="CreateOffer"/> and later <see cref="AcceptAnswer"/>; the callee calls <see cref="AcceptOffer"/>. Both trickle the candidates of <see cref="CandidateGathered"/> to the peer, give the peer's to <see cref="AddRemoteCandidate"/>, and call <see cref="ConnectAsync"/>.
 /// The offerer controls ICE, and the answerer is the DTLS client, as browsers do. Datagrams are told apart by their first byte as <see href="https://www.rfc-editor.org/rfc/rfc7983">RFC 7983</see> says.
 /// </remarks>
-public sealed class AudioPeerConnection : IAsyncDisposable
+public sealed class AudioPeerConnection : IMediaConnection, IAsyncDisposable
 {
     /// <summary>Samples per 20 ms frame at Opus's 48 kHz RTP clock.</summary>
     public const int FrameSamples = 960;
@@ -129,6 +137,12 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     /// <summary>Raised for each whole VP8 frame received, in order, on the socket's read loop; after lost packets, from the next keyframe.</summary>
     public event Action<Vp8EncodedFrame>? VideoReceived;
 
+    /// <summary>The media ID of the first section this side accepted, which carries the bundled transport, e.g. for the <c>sdpMid</c> of trickled candidates; null before any.</summary>
+    public string? BundleMid => lastLocal?.Media.FirstOrDefault(m => m.Port != 0)?.Get("mid") ?? lastLocal?.Media.FirstOrDefault()?.Get("mid");
+
+    /// <summary>The index of the section of <see cref="BundleMid"/>, for the <c>sdpMLineIndex</c> of trickled candidates.</summary>
+    public int BundleIndex => Math.Max(0, lastLocal?.Media.FindIndex(m => m.Port != 0) ?? 0);
+
     /// <summary>Whether the answer accepted the peer's video, so frames may come in <see cref="VideoReceived"/>.</summary>
     public bool ReceivesVideo => videoPayloadType is not null;
 
@@ -155,21 +169,22 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     {
         // Agent and offer
         IceAgent agent = Start(controlling: true);
-        lastLocal = AudioSdp.CreateOffer(Local(agent), video);
+        lastLocal = AudioSdp.CreateOffer(Local(agent), video, options.SendOnly);
         // Return the offer
         return lastLocal.ToString();
     }
 
-    /// <summary>Accept the peer's offer, and start gathering; return the answer, in which this side is the DTLS client.</summary>
-    /// <exception cref="InvalidOperationException">When the offer has no Opus audio over DTLS-SRTP.</exception>
+    /// <summary>Accept the peer's offer, and start gathering; return the answer, in which this side is the DTLS client. An offer without audio, as an SFU makes before anyone publishes, connects the transport for media that a later offer adds.</summary>
+    /// <exception cref="InvalidOperationException">When the offer has no transport over DTLS-SRTP.</exception>
     public string AcceptOffer(string offer)
     {
-        // The peer's audio, then the agent and answer
+        // The peer's transport and audio, then the agent, controlling only when the peer is ICE lite, and the answer
         SessionDescription sdp = SessionDescription.Parse(offer);
-        RemoteAudio audio = AudioSdp.Read(sdp) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
-        IceAgent agent = Start(controlling: false);
+        RemoteTransport transport = AudioSdp.ReadTransport(sdp) ?? throw new InvalidOperationException("The offer has no transport over DTLS-SRTP.");
+        IceAgent agent = Start(controlling: transport.IceLite);
         dtlsClient = true;
-        SetRemote(audio);
+        SetTransport(transport);
+        if (AudioSdp.Read(sdp) is RemoteAudio audio) payloadType = audio.OpusPayloadType;
         SetRemoteVideo(sdp);
         lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), receiveVideo: options.ReceiveVideo, sendVideo: options.SendVideo);
         // Return the answer
@@ -184,7 +199,8 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         if (ice is null) throw new InvalidOperationException("No offer was made.");
         RemoteAudio audio = AudioSdp.Read(SessionDescription.Parse(answer)) ?? throw new InvalidOperationException("The answer has no Opus audio over DTLS-SRTP.");
         dtlsClient = audio.Setup == "passive";
-        SetRemote(audio);
+        payloadType = audio.OpusPayloadType;
+        SetTransport(new RemoteTransport(audio.Ufrag, audio.Password, audio.Fingerprint, audio.Setup, false, audio.Candidates));
         // Done: the video the answer accepted, when offered
         if (lastLocal?.Media.Any(m => m.Kind == "video") == true) SetRemoteVideo(SessionDescription.Parse(answer));
     }
@@ -212,18 +228,20 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         return lastLocal.ToString();
     }
 
-    /// <summary>Answer the peer's new offer: an ICE restart when its credentials changed, with a new agent this side is controlled in, else the same connection; this side keeps its DTLS role either way.</summary>
-    /// <exception cref="InvalidOperationException">Before the first offer and answer, or when the offer has no Opus audio.</exception>
+    /// <summary>Answer the peer's new offer: an ICE restart when its credentials changed, with a new agent this side is controlled in, else the same connection, with the media the offer adds, as an SFU offers each track published; this side keeps its DTLS role either way.</summary>
+    /// <exception cref="InvalidOperationException">Before the first offer and answer, or when the offer has no transport.</exception>
     public string AcceptRestartOffer(string offer)
     {
-        // The peer's audio
+        // The peer's transport, and its audio and video now
         if (ice is null || dtls is null) throw new InvalidOperationException("Offer and answer first.");
         SessionDescription sdp = SessionDescription.Parse(offer);
-        RemoteAudio audio = AudioSdp.Read(sdp) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
+        RemoteTransport transport = AudioSdp.ReadTransport(sdp) ?? throw new InvalidOperationException("The offer has no transport over DTLS-SRTP.");
+        if (AudioSdp.Read(sdp) is RemoteAudio audio) payloadType = audio.OpusPayloadType;
+        SetRemoteVideo(sdp);
         string setup = dtlsClient ? "active" : "passive";
 
         // Same credentials: nothing to restart
-        if (audio.Ufrag == remoteUfrag)
+        if (transport.Ufrag == remoteUfrag)
         {
             lastLocal = AudioSdp.CreateAnswer(sdp, Local(ice), setup, options.ReceiveVideo, options.SendVideo);
             return lastLocal.ToString();
@@ -231,11 +249,11 @@ public sealed class AudioPeerConnection : IAsyncDisposable
 
         // New credentials: a new agent, this side's own restart giving way
         CancelRestart();
-        IceAgent agent = NewAgent(controlling: false);
+        IceAgent agent = NewAgent(controlling: transport.IceLite);
         restarting = agent;
-        restartRemoteUfrag = audio.Ufrag;
-        agent.SetRemoteCredentials(audio.Ufrag, audio.Password);
-        foreach (IceCandidate candidate in audio.Candidates) agent.AddRemoteCandidate(candidate);
+        restartRemoteUfrag = transport.Ufrag;
+        agent.SetRemoteCredentials(transport.Ufrag, transport.Password);
+        foreach (IceCandidate candidate in transport.Candidates) agent.AddRemoteCandidate(candidate);
         lastLocal = AudioSdp.CreateAnswer(sdp, Local(agent), setup, options.ReceiveVideo, options.SendVideo);
         // Return answer
         return lastLocal.ToString();
@@ -509,20 +527,19 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         GatheringCompleted?.Invoke();
     }
 
-    /// <summary>Take the peer's audio: its ICE credentials and candidates, its payload type, and DTLS with its fingerprint.</summary>
-    private void SetRemote(RemoteAudio audio)
+    /// <summary>Take the peer's transport: its ICE credentials and candidates, and DTLS with its fingerprint.</summary>
+    private void SetTransport(RemoteTransport transport)
     {
         // ICE, then DTLS, which takes records from now on
-        payloadType = audio.OpusPayloadType;
-        remoteUfrag = audio.Ufrag;
-        ice!.SetRemoteCredentials(audio.Ufrag, audio.Password);
-        foreach (IceCandidate candidate in audio.Candidates) ice.AddRemoteCandidate(candidate);
+        remoteUfrag = transport.Ufrag;
+        ice!.SetRemoteCredentials(transport.Ufrag, transport.Password);
+        foreach (IceCandidate candidate in transport.Candidates) ice.AddRemoteCandidate(candidate);
         // Done; DTLS goes over whichever agent is current
-        dtls = new DtlsSrtp(certificate, dtlsClient, audio.Fingerprint, datagram => ice!.SendAsync(datagram, stopping.Token).AsTask().Wait());
+        dtls = new DtlsSrtp(certificate, dtlsClient, transport.Fingerprint, datagram => ice!.SendAsync(datagram, stopping.Token).AsTask().Wait());
         dtls.Closed += () => SetState(PeerConnectionState.Closed);
     }
 
-    /// <summary>Take the peer's video: when receiving is wanted and the peer sends, its payload type, a depacketizer and statistics; when sending is wanted and the peer receives, the payload type to send with.</summary>
+    /// <summary>Take the peer's video: when receiving is wanted and the peer sends, its payload type, a depacketizer and statistics; when sending is wanted and the peer receives, the payload type to send with. A renegotiation keeps the depacketizer and statistics of the same payload type.</summary>
     private void SetRemoteVideo(SessionDescription offer)
     {
         // Each way as the answer says
@@ -531,10 +548,14 @@ public sealed class AudioPeerConnection : IAsyncDisposable
         string direction = AudioSdp.VideoDirection(video.Direction, options.ReceiveVideo, options.SendVideo);
         if (direction is "sendrecv" or "sendonly") videoSendPayloadType = video.Vp8PayloadType;
         if (direction is not ("sendrecv" or "recvonly")) return;
-        videoPayloadType = video.Vp8PayloadType;
-        depacketizer = new Vp8Depacketizer(orientationId: orientationId);
-        // Done
-        videoStatistics = new ReceiverStatistics(90000);
+        lock (videoLock)
+        {
+            if (videoPayloadType == video.Vp8PayloadType && depacketizer is not null) return;
+            videoPayloadType = video.Vp8PayloadType;
+            depacketizer = new Vp8Depacketizer(orientationId: orientationId);
+            // Done
+            videoStatistics = new ReceiverStatistics(90000);
+        }
     }
 
     /// <summary>Count a video packet, give the frames it completes, and ask for a keyframe when one is needed, at most every 300 ms.</summary>
@@ -618,7 +639,7 @@ public sealed class AudioPeerConnection : IAsyncDisposable
     }
 
     /// <summary>Return this side's audio for the SDP.</summary>
-    private LocalAudio Local(IceAgent agent) => new(agent.LocalUfrag, agent.LocalPassword, certificate.Fingerprint, ssrc, cname, videoSsrc);
+    private LocalAudio Local(IceAgent agent) => new(agent.LocalUfrag, agent.LocalPassword, certificate.Fingerprint, ssrc, cname, videoSsrc, options.StreamId, options.AudioTrackId, options.VideoTrackId);
 
     /// <summary>Route a datagram from the peer: DTLS to the handshake, SRTP audio to <see cref="AudioReceived"/> and video to <see cref="VideoReceived"/>, SRTCP checked and its sender reports noted.</summary>
     private void OnData(byte[] datagram)

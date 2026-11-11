@@ -13,7 +13,7 @@ public sealed class VideoReceiver : IAsyncDisposable
 {
     /// <summary>How many frames may wait for the decoder before they are given up.</summary>
     private const int MaxQueued = 30;
-    private readonly AudioPeerConnection connection;
+    private readonly IMediaConnection connection;
     private readonly ILogger logger;
     private readonly Channel<Vp8EncodedFrame> queue = Channel.CreateUnbounded<Vp8EncodedFrame>(new UnboundedChannelOptions { SingleReader = true });
     private IVideoDecoder decoder;
@@ -50,7 +50,7 @@ public sealed class VideoReceiver : IAsyncDisposable
     /// <param name="connection">A connection that receives video.</param>
     /// <param name="logger">Logger of decoding failures.</param>
     /// <param name="decoder">The decoder, e.g. the platform's hardware one; the C# <see cref="Vp8Decoder"/> when null.</param>
-    public VideoReceiver(AudioPeerConnection connection, ILogger logger, IVideoDecoder? decoder = null)
+    public VideoReceiver(IMediaConnection connection, ILogger logger, IVideoDecoder? decoder = null)
     {
         // Frames in, a task decoding them
         this.connection = connection;

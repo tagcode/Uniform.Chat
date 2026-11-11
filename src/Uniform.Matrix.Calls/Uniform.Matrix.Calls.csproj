@@ -31,6 +31,7 @@
     <ProjectReference Include="..\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Video\Uniform.Matrix.Video.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
+    <ProjectReference Include="..\Uniform.LiveKit\Uniform.LiveKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -63,6 +63,14 @@ public static class EventTypes
     public const string CallNegotiate = "m.call.negotiate";
     /// <summary>1:1 call: ends the call, content <see cref="CallHangupContent"/>.</summary>
     public const string CallHangup = "m.call.hangup";
+    /// <summary>MatrixRTC: a device's membership in a room's call, a state event, content <see cref="CallMemberContent"/>.</summary>
+    public const string CallMember = "org.matrix.msc3401.call.member";
+    /// <summary>MatrixRTC: a call started, ringing or notifying the others, content <see cref="RtcNotificationContent"/>.</summary>
+    public const string RtcNotification = "org.matrix.msc4075.rtc.notification";
+    /// <summary>MatrixRTC: the callee declined, content <see cref="RtcDeclineContent"/>.</summary>
+    public const string RtcDecline = "org.matrix.msc4310.rtc.decline";
+    /// <summary>MatrixRTC: a member's media key, sent to each other member's device over Olm, content <see cref="CallEncryptionKeysContent"/>.</summary>
+    public const string CallEncryptionKeys = "io.element.call.encryption_keys";
     /// <summary>Room power levels.</summary>
     public const string RoomPowerLevels = "m.room.power_levels";
     /// <summary>State event marking a room as end-to-end encrypted.</summary>

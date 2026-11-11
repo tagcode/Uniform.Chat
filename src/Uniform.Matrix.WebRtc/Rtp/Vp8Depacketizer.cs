@@ -22,6 +22,9 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64, byte? orientationId 
     /// <summary>A frame whose packets are all here.</summary>
     private sealed record Ready(uint Timestamp, ushort First, ushort End, byte[] Data, int Rotation);
 
+    /// <summary>SSRC of the last packet taken.</summary>
+    private uint ssrc;
+
     /// <summary>Whether the frames given so far do not let the next inter frame decode, as at the start or after a loss: only a keyframe will be given.</summary>
     public bool NeedsKeyframe { get; private set; } = true;
 
@@ -34,6 +37,7 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64, byte? orientationId 
         if (!pending.TryGetValue(packet.Timestamp, out List<Part>? parts)) pending[packet.Timestamp] = parts = [];
         if (parts.Any(p => p.Sequence == packet.Sequence)) return [];
         int rotation = orientationId is byte id && packet.Extension(id) is [byte cvo, ..] ? (cvo & 3) * 90 : 0;
+        ssrc = packet.Ssrc;
         parts.Add(new Part(packet.Sequence, descriptor.Start && descriptor.PartitionIndex == 0, packet.Marker, packet.Payload[descriptor.Length..], rotation));
         if (!started || (short)(ushort)(packet.Sequence - newestSequence) > 0) newestSequence = packet.Sequence;
         started = true;
@@ -85,7 +89,7 @@ public sealed class Vp8Depacketizer(int reorderWindow = 64, byte? orientationId 
 
         // Done
         NeedsKeyframe = false;
-        frames.Add(new Vp8EncodedFrame(ready.Timestamp, keyframe, ready.Data, ready.Rotation));
+        frames.Add(new Vp8EncodedFrame(ready.Timestamp, keyframe, ready.Data, ready.Rotation, ssrc));
     }
 
     /// <summary>Return the frame of <paramref name="timestamp"/> when its first packet, its last and all between are here, or null.</summary>

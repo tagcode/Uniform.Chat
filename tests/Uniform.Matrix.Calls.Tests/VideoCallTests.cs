@@ -44,7 +44,7 @@ public class VideoCallTests
         // Our side rings as a video call
         Channel<(string Type, CallContent Content)> sent = Channel.CreateUnbounded<(string, CallContent)>();
         CallInviteContent invite = new() { CallId = "video1", PartyId = "CHROMIUM", Offer = new CallSessionDescription { Type = "offer", Sdp = offer }, Lifetime = 60000 };
-        await using VoiceCall call = new("!room:example.org", "video1", "OURS", "@we:example.org", "@chromium:example.org", invite, (type, content, _) => sent.Writer.WriteAsync((type, content)).AsTask(), () => null, new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true }, NullLogger.Instance);
+        await using LegacyCall call = new("!room:example.org", "video1", "OURS", "@we:example.org", "@chromium:example.org", invite, (type, content, _) => sent.Writer.WriteAsync((type, content)).AsTask(), () => null, new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true }, NullLogger.Instance);
         Assert.True(call.IsVideo);
         int pictures = 0;
         (int Width, int Height) size = default;
@@ -104,7 +104,7 @@ public class VideoCallTests
         Channel<(string Type, CallContent Content)> sent = Channel.CreateUnbounded<(string, CallContent)>();
         CallInviteContent invite = new() { CallId = "video2", PartyId = "CHROMIUM", Offer = new CallSessionDescription { Type = "offer", Sdp = offer }, Lifetime = 60000 };
         await using FakeCamera camera = new(Path.Combine(AppContext.BaseDirectory, "TestVectors", "vp80-00-comprehensive-017.ivf"));
-        await using VoiceCall call = new("!room:example.org", "video2", "OURS", "@we:example.org", "@chromium:example.org", invite, (type, content, _) => sent.Writer.WriteAsync((type, content)).AsTask(), () => null, new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true }, NullLogger.Instance, () => camera);
+        await using LegacyCall call = new("!room:example.org", "video2", "OURS", "@we:example.org", "@chromium:example.org", invite, (type, content, _) => sent.Writer.WriteAsync((type, content)).AsTask(), () => null, new PeerConnectionOptions { IncludeLoopback = true, ReceiveVideo = true }, NullLogger.Instance, () => camera);
         int pictures = 0;
         call.PictureReceived += (_, _) => Interlocked.Increment(ref pictures);
 

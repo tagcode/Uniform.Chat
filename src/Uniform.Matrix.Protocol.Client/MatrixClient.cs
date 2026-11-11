@@ -22,6 +22,7 @@ using Uniform.Matrix.Protocol.Core;
 /// <item><description>MatrixClient.Devices.cs: devices and user-interactive auth.</description></item>
 /// <item><description>MatrixClient.Keys.cs: encryption keys and to-device messages.</description></item>
 /// <item><description>MatrixClient.Admin.cs: server administration, for admins.</description></item>
+/// <item><description>MatrixClient.Rtc.cs: MatrixRTC transports, OpenID tokens and delayed events.</description></item>
 /// </list>
 /// </remarks>
 /// <example><code><![CDATA[

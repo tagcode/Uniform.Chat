@@ -4,7 +4,7 @@ title: Uniform.Matrix.WebRtc
 ---
 # Uniform.Matrix.WebRtc
 
-The subset of WebRTC that a 1:1 call needs, in C#: one Opus audio stream each way, and VP8 video each way, interoperating with browsers and Element. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
+The subset of WebRTC that a 1:1 call needs, in C#: one Opus audio stream each way, and VP8 video each way, interoperating with browsers, Element and LiveKit's SFU. Only DTLS uses a library, BouncyCastle; the rest is written here against the RFCs and their test vectors. Nothing here knows about Matrix; [Uniform.Matrix.Calls](xref:Uniform.Matrix.Calls.Article) builds calls on it.
 
 ## Layers
 
@@ -38,6 +38,8 @@ await Task.WhenAll(caller.ConnectAsync(), callee.ConnectAsync());
 await caller.SendAudioAsync(encoder.Encode(frame));
 ```
 
+The voice and video pipelines see a connection as an [`IMediaConnection`](xref:Uniform.Matrix.WebRtc.IMediaConnection), so they also run over the connections of an SFU call together, such as [`LiveKitMedia`](xref:Uniform.LiveKit.LiveKitMedia).
+
 TURN servers, e.g. those of a homeserver's `/voip/turnServer`, go in [`PeerConnectionOptions.Servers`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.Servers); [`RelayOnly`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.RelayOnly) keeps the call on the relay, so the peer does not learn this device's addresses.
 
 ## Received video
@@ -52,12 +54,21 @@ With [`PeerConnectionOptions.SendVideo`](xref:Uniform.Matrix.WebRtc.PeerConnecti
 
 A call's caller offers video with [`CreateOffer(video: true)`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.CreateOffer*): both ways, and the answer decides which ways it goes.
 
+## SFUs
+
+An SFU, such as LiveKit, needs a few more things of a connection:
+
+- **Publishing:** with [`SendOnly`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.SendOnly), an offer only sends, and [`AudioTrackId`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.AudioTrackId) and [`VideoTrackId`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.VideoTrackId) name the tracks in their `msid`, as the SFU was told of them.
+- **Subscribing:** the SFU's offer may carry no audio before anyone publishes, and a data channel section, which is rejected. The transport connects all the same, its credentials at the session level when every section is rejected. Later offers on the same transport add the tracks. Sections an SFU left inactive come after active ones.
+- **ICE lite:** an SFU that is an ICE lite agent makes this side control ICE, also when it answers.
+- **Streams:** [`Vp8EncodedFrame.Ssrc`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8EncodedFrame.Ssrc) tells the SFU's streams apart.
+
 ## Loss, bitrate and orientation
 
 - **Lost packets:** the last 512 video packets sent are kept, and sent again, as sent, when the peer asks with a generic NACK, [RFC 4585 6.2.1](https://www.rfc-editor.org/rfc/rfc4585#section-6.2.1). A gap in the received video is asked for at once, before its frames wait for a keyframe.
 - **Bitrate:** each receiver report carries a REMB with what the peer may send: the loss-based estimate of [`BandwidthEstimator`](xref:Uniform.Matrix.WebRtc.Rtp.BandwidthEstimator), down on heavy loss and slowly up on little, within the cap of [`RequestBitrateAsync`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.RequestBitrateAsync*), e.g. when this device cannot decode more. The peer's REMBs, also Chromium's estimates as we announce `goog-remb`, come in [`BitrateRequested`](xref:Uniform.Matrix.WebRtc.AudioPeerConnection.BitrateRequested) for the encoder.
 - **Sender reports:** each second, a sender report of the video and one of the audio sent pair the wall-clock time with each stream's RTP time, so the peer can line picture and sound up, and carry the counts sent.
-- **Orientation:** the 3GPP video orientation header extension, `urn:3gpp:video-orientation`, is offered and answered; a sent frame's rotation goes on its last packet, and a received frame's comes with it in [`Vp8EncodedFrame.Rotation`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8EncodedFrame.Rotation).
+- **Orientation:** the 3GPP video orientation header extension, `urn:3gpp:video-orientation`, is offered and answered; a sent frame's rotation goes on its last packet, and a received frame's comes with it in [`Vp8EncodedFrame.Rotation`](xref:Uniform.Matrix.WebRtc.Rtp.Vp8EncodedFrame.Rotation). LiveKit does not answer it, so over LiveKit the rotation does not travel.
 
 Not supported: IPv6 and TCP candidates, mDNS host names (browsers' hidden host candidates; the peer-reflexive path covers them), renegotiation other than ICE restarts, lining up received video with audio, RTX retransmission streams, and transport-wide congestion control.
 

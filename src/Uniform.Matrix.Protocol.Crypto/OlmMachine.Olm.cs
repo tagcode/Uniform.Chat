@@ -23,6 +23,48 @@ public sealed record DecryptedToDeviceEvent
 // Olm sessions with other devices and to-device messages, including received room keys.
 public sealed partial class OlmMachine
 {
+    /// <summary>Send a to-device event of <paramref name="type"/> to each of <paramref name="devices"/>, encrypted over Olm, as MatrixRTC sends its media keys; return how many devices it went to. Devices without keys, or whose Olm session could not be made, are left out.</summary>
+    /// <param name="type">Event type, e.g. <c>io.element.call.encryption_keys</c>.</param>
+    /// <param name="content">Event content.</param>
+    /// <param name="devices">Recipients, by user and device ID; this device is left out.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<int> SendEncryptedToDevicesAsync(string type, JsonObject content, IReadOnlyCollection<(string UserId, string DeviceId)> devices, CancellationToken cancellationToken = default)
+    {
+        // One operation at a time; each user's devices known
+        await gate.WaitAsync(cancellationToken);
+        try
+        {
+            await UpdateDeviceListsAsync(devices.Select(d => d.UserId).Distinct(), cancellationToken);
+            List<DeviceInfo> recipients = [.. devices.Where(d => !(d.UserId == UserId && d.DeviceId == DeviceId)).Distinct().Select(d => GetDevices(d.UserId).FirstOrDefault(info => info.DeviceId == d.DeviceId)).OfType<DeviceInfo>()];
+            if (recipients.Count == 0) return 0;
+
+            // Olm per device, one request for all
+            Dictionary<DeviceInfo, OlmSession> sessions = await GetOutboundOlmSessionsAsync(recipients, cancellationToken);
+            try
+            {
+                Dictionary<string, Dictionary<string, object>> messages = [];
+                foreach ((DeviceInfo device, OlmSession olm) in sessions)
+                {
+                    if (!messages.TryGetValue(device.UserId, out Dictionary<string, object>? byDevice)) messages[device.UserId] = byDevice = [];
+                    byDevice[device.DeviceId] = EncryptForDevice(olm, device, type, content);
+                }
+                if (messages.Count > 0) await transport.SendToDeviceAsync(EventTypes.RoomEncrypted, messages, cancellationToken);
+                foreach ((DeviceInfo device, OlmSession olm) in sessions) await SaveOlmSessionAsync(device.Curve25519Key, olm, cancellationToken);
+                await SaveAccountAsync(cancellationToken);
+                // Return reached
+                return sessions.Count;
+            }
+            finally
+            {
+                foreach (OlmSession session in sessions.Values) session.Dispose();
+            }
+        }
+        finally
+        {
+            gate.Release();
+        }
+    }
+
     /// <summary>Decrypt an Olm to-device event, creating an inbound session from a pre-key message; return null when it is not for this device or fails checks.</summary>
     private async Task<DecryptedToDeviceEvent?> DecryptToDeviceAsync(ToDeviceEvent ev, CancellationToken cancellationToken)
     {

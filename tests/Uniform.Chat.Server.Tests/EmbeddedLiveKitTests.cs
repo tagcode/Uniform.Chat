@@ -100,6 +100,55 @@ public sealed class EmbeddedLiveKitTests
         return await http.PostAsJsonAsync("/livekit/jwt/get_token", new { room_id = roomId, slot_id = "m.call#ROOM", openid_token = openId, member = new { id = "m", claimed_user_id = $"@{localpart}:test.local", claimed_device_id = user.DeviceId } }, Ct);
     }
 
+    /// <summary>Turn the service on in a running server, as the dashboard's Apply does: the endpoint answers and the homeserver announces it, without a restart.</summary>
+    [Fact]
+    public async Task ApplyWithoutRestart()
+    {
+        // A homeserver with LiveKit off
+        string directory = Directory.CreateTempSubdirectory("uniform-chat-livekit-").FullName;
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Server:ServerName"] = "test.local", ["Server:PublicBaseUrl"] = "https://matrix.test.local/", ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory });
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
+        builder.Logging.ClearProviders();
+        builder.AddMatrixServer();
+        builder.AddEmbeddedLiveKit();
+        WebApplication app = builder.Build();
+        app.MapMatrixServer();
+        app.MapEmbeddedLiveKit();
+        await app.StartAsync(Ct);
+        try
+        {
+            // Off: nothing announced, no service
+            Uri address = new(app.Urls.First() + "/");
+            MatrixClient alice = new(new HttpClient { BaseAddress = address }, address);
+            await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+            using HttpClient http = new() { BaseAddress = address };
+            http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
+            Assert.Equal(HttpStatusCode.NotFound, (await http.GetAsync("/livekit/jwt/healthz", Ct)).StatusCode);
+            Assert.Empty((await http.GetFromJsonAsync<JsonElement>("/_matrix/client/unstable/org.matrix.msc4143/rtc/transports", Ct)).GetProperty("rtc_transports").EnumerateArray());
+
+            // Applied
+            IConfigurationRoot configuration = (IConfigurationRoot)app.Configuration;
+            configuration["LiveKit:Enabled"] = "true";
+            configuration["LiveKit:Url"] = "wss://livekit.test.local";
+            configuration["LiveKit:ApiKey"] = "key";
+            configuration["LiveKit:ApiSecret"] = "secret";
+            configuration.Reload();
+
+            // Done
+            Assert.Equal(HttpStatusCode.OK, (await http.GetAsync("/livekit/jwt/healthz", Ct)).StatusCode);
+            JsonElement transports = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/unstable/org.matrix.msc4143/rtc/transports", Ct);
+            Assert.Equal("https://matrix.test.local/livekit/jwt", transports.GetProperty("rtc_transports")[0].GetProperty("livekit_service_url").GetString());
+        }
+        finally
+        {
+            await app.StopAsync(CancellationToken.None);
+            await app.DisposeAsync();
+            try { Directory.Delete(directory, recursive: true); }
+            catch (IOException) { }
+        }
+    }
+
     /// <summary>Answers LiveKit's room service, and records the requests.</summary>
     private sealed class FakeLiveKit : HttpMessageHandler
     {

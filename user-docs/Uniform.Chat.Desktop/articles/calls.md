@@ -4,7 +4,7 @@ uid: Uniform.Chat.Desktop.Calls.Article
 ---
 # Voice and video calls
 
-You can voice call the other person of a direct chat. Calls work with other apps that make Matrix 1:1 calls, such as Element on the desktop and Element Classic on Android. Element X makes group-style calls, which this app does not support yet.
+You can voice call the other person of a direct chat. When your homeserver has a LiveKit server for calls, calls go through it, the way Element X and Element Call make them, so Element X users can answer and call you. Otherwise they go directly between the apps, the way Element on the desktop and Element Classic on Android make them. Both kinds of call ring here.
 
 ## Calling
 

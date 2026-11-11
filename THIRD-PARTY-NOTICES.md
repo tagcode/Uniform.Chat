@@ -28,6 +28,14 @@ Ported files: `Vp8Decoder.cs` and its partial files, `BoolDecoder.cs`, `Vp8Trans
 
 Changes: the code was translated from C to C#, with arrays and indices in place of pointers. Where the reference decoder and libvpx differ, it follows libvpx, whose output the test vectors record: the skip flag without coefficient skipping, loop filter deltas that are not updated, and quantizers recomputed every frame. All 17 test vectors decode bit for bit.
 
+## LiveKit protocol
+
+The signalling messages of `Uniform.LiveKit.Protocol` are generated from the protocol definitions of [LiveKit](https://github.com/livekit/protocol): `livekit_rtc.proto`, `livekit_models.proto`, `livekit_metrics.proto` and `logger/options.proto`, copied unchanged from commit e6dd7c1 (2026-11-10) into `src/Uniform.LiveKit.Protocol/Protos`.
+
+- Copyright 2023 LiveKit, Inc.
+
+Licensed under the Apache License, Version 2.0; see [LICENSES/Apache-2.0.txt](LICENSES/Apache-2.0.txt) or <http://www.apache.org/licenses/LICENSE-2.0>.
+
 ## Bundled in the apps
 
 The release archives of the apps are self-contained: they include the .NET runtime and the packages below. Each keeps its own license. The full license text of each, with its copyright notice, is in [LICENSES/packages/](LICENSES/packages/) and [LICENSES/runtime/](LICENSES/runtime/); the desktop and Android clients also show them under Settings → Licences.
@@ -65,6 +73,7 @@ The [Inter font](https://github.com/rsms/inter), which the desktop and Android c
 | ColorHelper | 1.8.1 | server, terminal client | [MIT](LICENSES/packages/ColorHelper.txt) |
 | CommunityToolkit.Mvvm | 8.4.2 | Android client, desktop client | [MIT](LICENSES/packages/CommunityToolkit.Mvvm.txt) |
 | Concentus | 2.2.2 | Android client, desktop client, terminal client | [see file](LICENSES/packages/Concentus.txt) |
+| Google.Protobuf | 3.36.2 | Android client, desktop client, server, terminal client | [BSD-3-Clause](LICENSES/packages/Google.Protobuf.txt) |
 | HarfBuzzSharp | 8.3.1.3 | Android client, desktop client | [MIT](LICENSES/packages/HarfBuzzSharp.txt) |
 | HarfBuzzSharp.NativeAssets.Android | 8.3.1.3 | Android client | [MIT](LICENSES/packages/HarfBuzzSharp.NativeAssets.Android.txt) |
 | HarfBuzzSharp.NativeAssets.Linux | 8.3.1.3 | Android client, desktop client | [MIT](LICENSES/packages/HarfBuzzSharp.NativeAssets.Linux.txt) |

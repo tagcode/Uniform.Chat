@@ -10,7 +10,19 @@ using Uniform.Matrix.WebRtc.Ice;
 /// <param name="Ssrc">SSRC of the audio sent.</param>
 /// <param name="Cname">RTCP canonical name.</param>
 /// <param name="VideoSsrc">SSRC of the video sent, when this side sends video.</param>
-public sealed record LocalAudio(string Ufrag, string Password, string Fingerprint, uint Ssrc, string Cname, uint VideoSsrc = 0);
+/// <param name="StreamId">Media stream ID of the tracks sent, in their <c>msid</c>; the CNAME when null.</param>
+/// <param name="AudioTrackId">Track ID of the audio sent, in its <c>msid</c>, e.g. as an SFU knows the track by it; <c>audio</c> when null.</param>
+/// <param name="VideoTrackId">Track ID of the video sent, in its <c>msid</c>; <c>video</c> when null.</param>
+public sealed record LocalAudio(string Ufrag, string Password, string Fingerprint, uint Ssrc, string Cname, uint VideoSsrc = 0, string? StreamId = null, string? AudioTrackId = null, string? VideoTrackId = null);
+
+/// <summary>What the peer's offer or answer says of its transport, which all bundled sections share.</summary>
+/// <param name="Ufrag">ICE username fragment.</param>
+/// <param name="Password">ICE password.</param>
+/// <param name="Fingerprint">DTLS certificate fingerprint.</param>
+/// <param name="Setup">DTLS role: <c>actpass</c> in offers, <c>active</c> or <c>passive</c> in answers.</param>
+/// <param name="IceLite">Whether the peer is an <see href="https://www.rfc-editor.org/rfc/rfc8445#section-2.5">ICE lite</see> agent, as SFUs are, so that this side controls ICE.</param>
+/// <param name="Candidates">ICE candidates in the description, if any.</param>
+public sealed record RemoteTransport(string Ufrag, string Password, string Fingerprint, string Setup, bool IceLite, IReadOnlyList<IceCandidate> Candidates);
 
 /// <summary>What the peer's offer or answer says of its audio.</summary>
 /// <param name="Ufrag">ICE username fragment.</param>
@@ -44,39 +56,43 @@ public static class AudioSdp
     /// <summary>The payload type offered for VP8, as browsers use.</summary>
     public const byte Vp8PayloadType = 96;
 
-    /// <summary>Return an offer of audio, as the caller sends it in <c>m.call.invite</c>; with <paramref name="video"/>, also of VP8 video both ways.</summary>
-    public static SessionDescription CreateOffer(LocalAudio local, bool video = false)
+    /// <summary>Return an offer of audio, as the caller sends it in <c>m.call.invite</c>; with <paramref name="video"/>, also of VP8 video both ways; with <paramref name="sendOnly"/>, each only sent, as to an SFU that is published to.</summary>
+    public static SessionDescription CreateOffer(LocalAudio local, bool video = false, bool sendOnly = false)
     {
         // Bundled sections, DTLS role left to the answerer
         SessionDescription sdp = Session();
+        string direction = sendOnly ? "sendonly" : "sendrecv";
         sdp.Attributes.Add(video ? "group:BUNDLE 0 1" : "group:BUNDLE 0");
-        sdp.Media.Add(Audio(local, "0", OpusPayloadType, "actpass", "sendrecv"));
-        if (video) sdp.Media.Add(Video(local, "1", Vp8PayloadType, "actpass", "sendrecv", OrientationId));
+        sdp.Media.Add(Audio(local, "0", OpusPayloadType, "actpass", direction));
+        if (video) sdp.Media.Add(Video(local, "1", Vp8PayloadType, "actpass", direction, OrientationId));
         // Return offer
         return sdp;
     }
 
-    /// <summary>Return the answer to <paramref name="offer"/>: its audio section accepted, with this side the DTLS client unless <paramref name="setup"/> says otherwise, and the other sections rejected.</summary>
+    /// <summary>Return the answer to <paramref name="offer"/>: its audio section accepted, with this side the DTLS client unless <paramref name="setup"/> says otherwise, and the other sections rejected. An offer without Opus audio, as an SFU's before anyone publishes, gets its sections rejected, and the transport's credentials at the session level, so that the transport connects all the same.</summary>
     /// <param name="offer">The peer's offer.</param>
     /// <param name="local">This side's audio.</param>
     /// <param name="setup">This side's DTLS role: <c>active</c> for a new connection, the current role when answering a renegotiation.</param>
     /// <param name="receiveVideo">Whether to receive the offer's VP8 video, when the peer sends it.</param>
     /// <param name="sendVideo">Whether to send VP8 video with <see cref="LocalAudio.VideoSsrc"/>, when the peer receives it.</param>
-    /// <exception cref="InvalidOperationException">When the offer has no audio with Opus over DTLS-SRTP.</exception>
+    /// <exception cref="InvalidOperationException">When the offer has no transport over DTLS-SRTP.</exception>
     public static SessionDescription CreateAnswer(SessionDescription offer, LocalAudio local, string setup = "active", bool receiveVideo = false, bool sendVideo = false)
     {
         // The audio section to accept, and the video one when wanted
-        RemoteAudio remote = Read(offer) ?? throw new InvalidOperationException("The offer has no Opus audio over DTLS-SRTP.");
+        if (ReadTransport(offer) is null) throw new InvalidOperationException("The offer has no transport over DTLS-SRTP.");
+        RemoteAudio? remote = Read(offer);
         RemoteVideo? video = receiveVideo || sendVideo ? ReadVideo(offer) : null;
         SessionDescription sdp = Session();
-        sdp.Attributes.Add(video is null ? $"group:BUNDLE {remote.Mid}" : $"group:BUNDLE {remote.Mid} {video.Mid}");
+        string[] bundled = [.. new[] { remote?.Mid, video?.Mid }.OfType<string>()];
+        if (bundled.Length > 0) sdp.Attributes.Add($"group:BUNDLE {string.Join(' ', bundled)}");
+        else sdp.Attributes.AddRange([$"ice-ufrag:{local.Ufrag}", $"ice-pwd:{local.Password}", $"fingerprint:{local.Fingerprint}", $"setup:{setup}"]);
 
         // A section for each offered, in order; DTLS active, as browsers answer
         bool answered = false;
         foreach (MediaDescription media in offer.Media)
         {
             string mid = media.Get("mid") ?? "";
-            if (!answered && mid == remote.Mid)
+            if (!answered && remote is not null && mid == remote.Mid)
             {
                 answered = true;
                 string direction = media.Get("sendonly") is not null ? "recvonly" : media.Get("recvonly") is not null ? "sendonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
@@ -137,11 +153,27 @@ public static class AudioSdp
         return string.Join(' ', fields);
     }
 
-    /// <summary>Return the peer's audio from its offer or answer: the first audio section with Opus and DTLS-SRTP; null when there is none.</summary>
+    /// <summary>Return the peer's transport from its offer or answer: the credentials and fingerprint of its first section over DTLS that is not rejected, or of the session; null when there are none.</summary>
+    public static RemoteTransport? ReadTransport(SessionDescription sdp)
+    {
+        // Any section over DTLS, not rejected, as all are bundled on one transport
+        foreach (MediaDescription media in sdp.Media.Where(m => m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)))
+        {
+            string? ufrag = sdp.Get(media, "ice-ufrag"), password = sdp.Get(media, "ice-pwd"), fingerprint = sdp.Get(media, "fingerprint");
+            if (ufrag is null || password is null || fingerprint is null) continue;
+            IceCandidate[] candidates = [.. media.GetAll("candidate").Select(c => IceCandidate.Parse("candidate:" + c)).OfType<IceCandidate>()];
+            // Return transport
+            return new RemoteTransport(ufrag, password, fingerprint, sdp.Get(media, "setup") ?? "actpass", sdp.Get("ice-lite") is not null, candidates);
+        }
+        // On no usable section
+        return null;
+    }
+
+    /// <summary>Return the peer's audio from its offer or answer: the first audio section with Opus and DTLS-SRTP, one that is not inactive when there is one, as an SFU leaves the sections of tracks gone inactive; null when there is none.</summary>
     public static RemoteAudio? Read(SessionDescription sdp)
     {
-        // Audio over DTLS-SRTP, not rejected
-        foreach (MediaDescription media in sdp.Media.Where(m => m.Kind == "audio" && m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)))
+        // Audio over DTLS-SRTP, not rejected, the active first
+        foreach (MediaDescription media in sdp.Media.Where(m => m.Kind == "audio" && m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)).OrderBy(m => m.Get("inactive") is not null))
         {
             // Opus by its rtpmap, and the credentials
             byte? opus = media.GetAll("rtpmap").Select(OpusType).FirstOrDefault(t => t is not null);
@@ -155,11 +187,11 @@ public static class AudioSdp
         return null;
     }
 
-    /// <summary>Return the peer's video from its offer or answer: the first video section with VP8 and DTLS-SRTP; null when there is none.</summary>
+    /// <summary>Return the peer's video from its offer or answer: the first video section with VP8 and DTLS-SRTP, one that is not inactive when there is one; null when there is none.</summary>
     public static RemoteVideo? ReadVideo(SessionDescription sdp)
     {
-        // Video over DTLS-SRTP, not rejected, with VP8 by its rtpmap
-        foreach (MediaDescription media in sdp.Media.Where(m => m.Kind == "video" && m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)))
+        // Video over DTLS-SRTP, not rejected, the active first, with VP8 by its rtpmap
+        foreach (MediaDescription media in sdp.Media.Where(m => m.Kind == "video" && m.Port != 0 && m.Protocol.Contains("TLS", StringComparison.Ordinal)).OrderBy(m => m.Get("inactive") is not null))
         {
             if (media.GetAll("rtpmap").Select(Vp8Type).FirstOrDefault(t => t is not null) is not byte vp8) continue;
             string direction = media.Get("sendonly") is not null ? "sendonly" : media.Get("recvonly") is not null ? "recvonly" : media.Get("inactive") is not null ? "inactive" : "sendrecv";
@@ -187,7 +219,7 @@ public static class AudioSdp
     {
         // Transport, then the stream and codec; candidates trickle
         string pt = payloadType.ToString(CultureInfo.InvariantCulture);
-        return new MediaDescription
+        MediaDescription audio = new()
         {
             Kind = "audio",
             Formats = [pt],
@@ -202,13 +234,17 @@ public static class AudioSdp
                 $"setup:{setup}",
                 $"mid:{mid}",
                 direction,
-                $"msid:{local.Cname} audio",
+                $"msid:{local.StreamId ?? local.Cname} {local.AudioTrackId ?? "audio"}",
                 "rtcp-mux",
                 $"rtpmap:{pt} opus/48000/2",
                 $"fmtp:{pt} minptime=10;useinbandfec=1",
                 $"ssrc:{local.Ssrc} cname:{local.Cname}",
             ],
         };
+        // Return section, the stream only when sending
+        if (direction is "sendrecv" or "sendonly") return audio;
+        audio.Attributes.RemoveAll(a => a.StartsWith("msid:", StringComparison.Ordinal) || a.StartsWith("ssrc:", StringComparison.Ordinal));
+        return audio;
     }
 
     /// <summary>Return the video section of this side: VP8 with RTCP feedback for lost packets and pictures, bundled on the audio's transport.</summary>
@@ -240,7 +276,7 @@ public static class AudioSdp
                 $"rtcp-fb:{pt} goog-remb",
             ],
         };
-        if (sends) video.Attributes.InsertRange(video.Attributes.IndexOf(direction) + 1, [$"msid:{local.Cname} video"]);
+        if (sends) video.Attributes.InsertRange(video.Attributes.IndexOf(direction) + 1, [$"msid:{local.StreamId ?? local.Cname} {local.VideoTrackId ?? "video"}"]);
         if (orientationId is byte id) video.Attributes.Insert(video.Attributes.IndexOf("rtcp-mux"), $"extmap:{id} {VideoOrientation}");
         if (sends) video.Attributes.Add($"ssrc:{local.VideoSsrc} cname:{local.Cname}");
         // Return section
