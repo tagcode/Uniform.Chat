@@ -101,7 +101,7 @@ public sealed class DelayedEvents : IDisposable
         catch (MatrixException ex)
         {
             // On error log
-            logger.LogInformation("Delayed event of {UserId} in {RoomId} not sent: {Error}", entry.Requester.UserId, entry.RoomId, ex.Message);
+            logger.LogInformation("Delayed event of {UserId} in {RoomId} not sent: {Error}", entry.Requester.UserId, entry.RoomId, ex.Describe());
         }
     }
 

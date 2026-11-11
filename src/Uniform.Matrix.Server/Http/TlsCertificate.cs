@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Protocol.Core;
 
 /// <summary>The server's HTTPS certificate from the PEM files of <see cref="TlsOptions"/>, with its intermediates, read again when the files change.</summary>
 /// <remarks>Other servers check the whole chain, so the intermediates of <see cref="TlsOptions.CertificatePath"/> are sent too. The files are looked at once per <see cref="CheckInterval"/> at most; when a new file cannot be read, the previous certificate stays in use.</remarks>
@@ -61,7 +62,7 @@ public sealed class TlsCertificate
                 }
                 catch (Exception ex) when (ex is IOException or CryptographicException or UnauthorizedAccessException)
                 {
-                    logger.LogWarning("Keeping the previous TLS certificate: {Error}", ex.Message);
+                    logger.LogWarning("Keeping the previous TLS certificate: {Error}", ex.Describe());
                 }
                 // Return current
                 return context!;

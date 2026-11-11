@@ -25,7 +25,7 @@ public sealed partial class MainWindow
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException or InvalidOperationException)
         {
-            logger.LogInformation("Security status not available: {Error}", ex.Message);
+            logger.LogInformation("Security status not available: {Error}", ex.Describe());
             return;
         }
 

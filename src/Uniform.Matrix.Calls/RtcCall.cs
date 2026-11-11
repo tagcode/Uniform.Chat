@@ -397,7 +397,7 @@ public sealed class RtcCall : VoiceCall
             catch (Exception e) when (e is MatrixException or HttpRequestException or OperationCanceledException)
             {
                 // On a leave that did not go; the delayed one goes later
-                logger.LogInformation("Leaving MatrixRTC call in {RoomId} now failed: {Error}", RoomId, e.Message);
+                logger.LogInformation("Leaving MatrixRTC call in {RoomId} now failed: {Error}", RoomId, e.Describe());
             }
         }
         foreach (LiveKitRoom other in otherSfus.Values) await other.DisposeAsync();

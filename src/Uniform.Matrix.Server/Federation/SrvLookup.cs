@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Protocol.Server;
+using Uniform.Matrix.Protocol.Core;
 
 /// <summary>Looks up DNS SRV records over UDP at the system's name servers, for <see href="https://spec.matrix.org/latest/server-server-api/#resolving-server-names">resolving server names</see> that delegate with <c>_matrix-fed._tcp</c>.</summary>
 /// <remarks>Each name server of the network interfaces that are up is asked in turn until one answers; truncated answers are not retried over TCP, as SRV answers are small.</remarks>
@@ -42,7 +43,7 @@ public class SrvLookup
             }
             catch (Exception ex) when (ex is SocketException or OperationCanceledException && !cancellationToken.IsCancellationRequested)
             {
-                logger.LogDebug("Name server {Server} did not answer for {Name}: {Error}", server, name, ex.Message);
+                logger.LogDebug("Name server {Server} did not answer for {Name}: {Error}", server, name, ex.Describe());
             }
         }
         // Return none

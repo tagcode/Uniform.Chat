@@ -98,7 +98,7 @@ public sealed class MatrixWorker : BackgroundService
     private void OnSyncRetry(Exception exception, TimeSpan wait)
     {
         // Log and publish
-        logger.LogWarning("Sync failed, retrying in {Wait}: {Error}", wait, exception.Message);
+        logger.LogWarning("Sync failed, retrying in {Wait}: {Error}", wait, exception.Describe());
         status.Set(ConnectionState.Retrying, $"{exception.Message}; retrying in {wait.TotalSeconds:F0} s");
     }
 }

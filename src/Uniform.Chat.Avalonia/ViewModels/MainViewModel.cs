@@ -155,7 +155,7 @@ public sealed partial class MainViewModel : ViewModelBase
         }
         catch (Exception exception)
         {
-            connection.Logger.LogWarning("Keeping the connection in the background failed: {Error}", exception.Message);
+            connection.Logger.LogWarning("Keeping the connection in the background failed: {Error}", exception.Describe());
         }
     }
 

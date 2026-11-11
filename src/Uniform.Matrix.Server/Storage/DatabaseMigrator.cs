@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Uniform.Matrix.Protocol.Core;
 
 /// <summary>Creates or upgrades the schema at start, before the server accepts requests, in write-ahead log mode so reads do not block writes; and flushes the database at stop.</summary>
 /// <remarks>It holds the <see cref="DataDirectoryLock"/>, so no other process uses the database meanwhile; a migration lock that a process left behind when it died is therefore removed instead of waited for, as EF Core would wait forever.</remarks>
@@ -61,7 +62,7 @@ public sealed class DatabaseMigrator : IHostedService
         catch (Exception ex) when (ex is SqliteException or OperationCanceledException or InvalidOperationException)
         {
             // On a database in use or a stop cut short: SQLite checkpoints when the last connection closes
-            logger.LogWarning("Checkpointing the database at stop failed: {Error}", ex.Message);
+            logger.LogWarning("Checkpointing the database at stop failed: {Error}", ex.Describe());
         }
         // Done
         SqliteConnection.ClearAllPools();

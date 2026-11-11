@@ -63,7 +63,7 @@ public sealed class ClientSession
         }
         catch (MatrixException ex) when (ex.Errcode is ErrorCodes.UnknownToken or ErrorCodes.MissingToken)
         {
-            logger.LogWarning("Stored session of {UserId} was rejected: {Error}", account.UserId, ex.Message);
+            logger.LogWarning("Stored session of {UserId} was rejected: {Error}", account.UserId, ex.Describe());
             await store.ClearAccessTokenAsync(cancellationToken);
             return null;
         }
@@ -75,7 +75,7 @@ public sealed class ClientSession
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
             // The server cannot be reached, e.g. offline: keep the session, as syncing retries until it can
-            logger.LogInformation("Cannot reach the server to check the stored session of {UserId}, resuming it anyway: {Error}", account.UserId, ex.Message);
+            logger.LogInformation("Cannot reach the server to check the stored session of {UserId}, resuming it anyway: {Error}", account.UserId, ex.Describe());
         }
 
         // Return resumed client

@@ -6,6 +6,7 @@ using Uniform.Chat.Terminal.Configuration;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Hosting;
+using Uniform.Matrix.Protocol.Core;
 
 // Settings and log windows, and the audio test.
 public sealed partial class MainWindow
@@ -57,7 +58,7 @@ public sealed partial class MainWindow
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            logger.LogWarning("Audio test failed to start: {Error}", ex.Message);
+            logger.LogWarning("Audio test failed to start: {Error}", ex.Describe());
             Dialogs.Error(app, "Audio test", $"Cannot open the microphone or speaker: {ex.Message}");
             return;
         }

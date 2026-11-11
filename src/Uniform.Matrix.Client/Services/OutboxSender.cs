@@ -115,21 +115,21 @@ public sealed class OutboxSender
         }
         catch (EncryptionUnavailableException ex)
         {
-            logger.LogWarning("Outbox message {Id} to encrypted room {RoomId} not sent: {Error}", message.Id, message.RoomId, ex.Message);
+            logger.LogWarning("Outbox message {Id} to encrypted room {RoomId} not sent: {Error}", message.Id, message.RoomId, ex.Describe());
             await store.MarkAttemptFailedAsync(message.Id, $"encryption unavailable: {ex.Message}", permanent: true, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
             return true;
         }
         catch (MatrixException ex) when (IsPermanent(ex))
         {
-            logger.LogWarning("Outbox message {Id} to {RoomId} rejected: {Error}", message.Id, message.RoomId, ex.Message);
+            logger.LogWarning("Outbox message {Id} to {RoomId} rejected: {Error}", message.Id, message.RoomId, ex.Describe());
             await store.MarkAttemptFailedAsync(message.Id, ex.Message, permanent: true, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
             return true;
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException || (ex is TaskCanceledException && !cancellationToken.IsCancellationRequested))
         {
-            logger.LogInformation("Outbox message {Id} to {RoomId} will be retried: {Error}", message.Id, message.RoomId, ex.Message);
+            logger.LogInformation("Outbox message {Id} to {RoomId} will be retried: {Error}", message.Id, message.RoomId, ex.Describe());
             await store.MarkAttemptFailedAsync(message.Id, ex.Message, permanent: false, cancellationToken);
             return false;
         }

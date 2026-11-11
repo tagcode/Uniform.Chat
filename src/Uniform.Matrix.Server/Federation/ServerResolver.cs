@@ -101,7 +101,7 @@ public sealed class ServerResolver
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException or InvalidOperationException && !cancellationToken.IsCancellationRequested)
         {
             // On error no delegation
-            logger.LogDebug("No well-known delegation for {Host}: {Error}", host, ex.Message);
+            logger.LogDebug("No well-known delegation for {Host}: {Error}", host, ex.Describe());
             return null;
         }
     }

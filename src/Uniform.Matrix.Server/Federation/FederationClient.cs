@@ -72,7 +72,7 @@ public sealed class FederationClient
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("Cannot reach {Destination}: {Error}", destination, ex.Message);
+            logger.LogInformation("Cannot reach {Destination}: {Error}", destination, ex.Describe());
             throw new MatrixException(HttpStatusCode.BadGateway, ErrorCodes.Unknown, $"Cannot reach {destination}.");
         }
 
@@ -118,7 +118,7 @@ public sealed class FederationClient
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException && !cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("Cannot download from {Destination}: {Error}", destination, ex.Message);
+            logger.LogInformation("Cannot download from {Destination}: {Error}", destination, ex.Describe());
             throw new MatrixException(HttpStatusCode.BadGateway, ErrorCodes.Unknown, $"Cannot reach {destination}.");
         }
     }

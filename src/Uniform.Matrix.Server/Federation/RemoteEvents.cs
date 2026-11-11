@@ -68,7 +68,7 @@ public sealed class RemoteEvents
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Cannot get the state before {EventId} of {RoomId} from {Origin}: {Error}", eventId, roomId, origin, ex.Message);
+            logger.LogInformation("Cannot get the state before {EventId} of {RoomId} from {Origin}: {Error}", eventId, roomId, origin, ex.Describe());
             return null;
         }
         List<string> stateIds = [.. Ids(answer?["pdu_ids"])];
@@ -109,7 +109,7 @@ public sealed class RemoteEvents
             }
             catch (MatrixException ex)
             {
-                logger.LogDebug("Cannot fetch {EventId} from {Origin}: {Error}", eventId, origin, ex.Message);
+                logger.LogDebug("Cannot fetch {EventId} from {Origin}: {Error}", eventId, origin, ex.Describe());
             }
         });
         await keys.PrefetchAsync(fetched.Values.Select(p => UserId.TryParse(p["sender"]?.GetValue<string>(), out UserId user) ? user.ServerName : null).OfType<string>(), cancellationToken);
@@ -169,7 +169,7 @@ public sealed class RemoteEvents
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Cannot get the events missing before an event of {RoomId} from {Origin}: {Error}", roomId, origin, ex.Message);
+            logger.LogInformation("Cannot get the events missing before an event of {RoomId} from {Origin}: {Error}", roomId, origin, ex.Describe());
             return;
         }
         List<JsonObject> missing = [.. (answer?["events"] as JsonArray ?? []).OfType<JsonObject>().Where(e => e["room_id"]?.GetValue<string>() == roomId).Take(MaxMissing)];

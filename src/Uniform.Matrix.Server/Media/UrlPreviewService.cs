@@ -104,7 +104,7 @@ public sealed class UrlPreviewService
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Preview image of {Host} not stored: {Error}", address.Host, ex.Message);
+            logger.LogInformation("Preview image of {Host} not stored: {Error}", address.Host, ex.Describe());
             return null;
         }
     }
@@ -138,7 +138,7 @@ public sealed class UrlPreviewService
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("Preview of {Host} failed: {Error}", address.Host, ex.Message);
+            logger.LogInformation("Preview of {Host} failed: {Error}", address.Host, ex.Describe());
             return null;
         }
     }

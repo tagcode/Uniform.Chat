@@ -44,7 +44,7 @@ public sealed class AccountDeactivation
             }
             catch (MatrixException ex)
             {
-                logger.LogWarning("Deactivating {UserId} could not leave {RoomId}: {Error}", userId, roomId, ex.Message);
+                logger.LogWarning("Deactivating {UserId} could not leave {RoomId}: {Error}", userId, roomId, ex.Describe());
             }
         }
 

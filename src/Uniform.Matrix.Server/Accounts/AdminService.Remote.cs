@@ -176,7 +176,7 @@ public sealed partial class AdminService
             }
             catch (MatrixException ex)
             {
-                logger.LogWarning("Shutting down {RoomId} could not remove {UserId}: {Error}", roomId, member, ex.Message);
+                logger.LogWarning("Shutting down {RoomId} could not remove {UserId}: {Error}", roomId, member, ex.Describe());
                 failed.Add(member);
             }
         }

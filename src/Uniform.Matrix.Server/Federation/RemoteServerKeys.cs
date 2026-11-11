@@ -157,7 +157,7 @@ public sealed class RemoteServerKeys
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Cannot fetch the keys of {ServerName}: {Error}", serverName, ex.Message);
+            logger.LogInformation("Cannot fetch the keys of {ServerName}: {Error}", serverName, ex.Describe());
         }
 
         // Key servers, each until one answers
@@ -194,7 +194,7 @@ public sealed class RemoteServerKeys
         }
         catch (DbUpdateException ex)
         {
-            logger.LogDebug("Keys of {ServerName} were stored meanwhile: {Error}", serverName, ex.Message);
+            logger.LogDebug("Keys of {ServerName} were stored meanwhile: {Error}", serverName, ex.Describe());
         }
         // Return keys
         return entry;
@@ -214,7 +214,7 @@ public sealed class RemoteServerKeys
         }
         catch (MatrixException ex)
         {
-            logger.LogInformation("Key server {Notary} cannot give the keys of {Count} servers: {Error}", notary, serverNames.Count, ex.Message);
+            logger.LogInformation("Key server {Notary} cannot give the keys of {Count} servers: {Error}", notary, serverNames.Count, ex.Describe());
             return answers;
         }
 

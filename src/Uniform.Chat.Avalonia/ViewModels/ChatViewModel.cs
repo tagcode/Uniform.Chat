@@ -831,7 +831,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException or InvalidOperationException)
         {
-            connection.Logger.LogInformation("Security status not available: {Error}", ex.Message);
+            connection.Logger.LogInformation("Security status not available: {Error}", ex.Describe());
             return;
         }
         // Done
@@ -1016,7 +1016,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            connection.Logger.LogInformation("Notification failed: {Error}", exception.Message);
+            connection.Logger.LogInformation("Notification failed: {Error}", exception.Describe());
         }
     }
 
@@ -1150,7 +1150,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            connection.Logger.LogInformation("Thumbnail of {Uri} failed: {Error}", message.ImageUri, exception.Message);
+            connection.Logger.LogInformation("Thumbnail of {Uri} failed: {Error}", message.ImageUri, exception.Describe());
         }
     }
 
@@ -1226,7 +1226,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error none
-            connection.Logger.LogInformation("Avatar {Uri} failed: {Error}", uri, exception.Message);
+            connection.Logger.LogInformation("Avatar {Uri} failed: {Error}", uri, exception.Describe());
             return null;
         }
     }
@@ -1266,7 +1266,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
         {
-            connection.Logger.LogInformation("{What} failed: {Error}", what, exception.Message);
+            connection.Logger.LogInformation("{What} failed: {Error}", what, exception.Describe());
             if (NoteSuspension(exception.Message)) return false;
             if (report) ui.Post(() => Notice = $"{what} failed: {exception.Message}");
             return false;

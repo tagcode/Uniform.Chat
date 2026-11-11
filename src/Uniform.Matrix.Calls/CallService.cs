@@ -170,7 +170,7 @@ public sealed class CallService : IAsyncDisposable
             }
             catch (Exception ex) when (ex is TimeoutException or MatrixException or HttpRequestException or OperationCanceledException)
             {
-                logger.LogInformation("Hanging up call {CallId} on stopping failed: {Error}", call.CallId, ex.Message);
+                logger.LogInformation("Hanging up call {CallId} on stopping failed: {Error}", call.CallId, ex.Describe());
             }
         }
     }

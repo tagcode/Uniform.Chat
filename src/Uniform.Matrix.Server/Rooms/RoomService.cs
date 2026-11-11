@@ -195,7 +195,7 @@ public sealed class RoomService
             }
             catch (MatrixException ex)
             {
-                logger.LogInformation("Rejecting the invite of {UserId} to {RoomId} could not reach {Server}: {Error}", userId, roomId, inviting, ex.Message);
+                logger.LogInformation("Rejecting the invite of {UserId} to {RoomId} could not reach {Server}: {Error}", userId, roomId, inviting, ex.Describe());
             }
             await remoteInvites.EndAsync(userId, roomId, joined: false, cancellationToken);
             return;

@@ -148,7 +148,7 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
         catch (Exception e) when (e is WebSocketException or OperationCanceledException or InvalidProtocolBufferException or ObjectDisposedException)
         {
             // On a socket that broke or closed
-            if (!stopping.IsCancellationRequested) logger.LogInformation("LiveKit signalling ended: {Error}", e.Message);
+            if (!stopping.IsCancellationRequested) logger.LogInformation("LiveKit signalling ended: {Error}", Describe(e));
         }
         // Done
         Closed?.Invoke();
@@ -163,6 +163,19 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
         {
             await SendAsync(new SignalRequest { PingReq = new Ping { Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), Rtt = (long)RoundTrip.TotalMilliseconds } }, stopping.Token);
         }
+    }
+
+    /// <summary>Return the messages of <paramref name="exception"/> and its inner exceptions, joined with arrows.</summary>
+    private static string Describe(Exception exception)
+    {
+        // Each message down the chain, once
+        List<string> messages = [];
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (messages.Count == 0 || messages[^1] != current.Message) messages.Add(current.Message);
+        }
+        // Return text
+        return string.Join(" → ", messages);
     }
 
     /// <summary>Return the next whole message of the socket, or null when it closed.</summary>

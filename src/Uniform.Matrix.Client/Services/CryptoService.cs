@@ -141,7 +141,7 @@ public sealed class CryptoService : IDisposable
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                logger.LogWarning("Verification event {EventId} in {RoomId} failed: {Error}", ev.EventId, roomId, ex.Message);
+                logger.LogWarning("Verification event {EventId} in {RoomId} failed: {Error}", ev.EventId, roomId, ex.Describe());
             }
         }
     }
@@ -241,7 +241,7 @@ public sealed class CryptoService : IDisposable
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException)
         {
-            logger.LogWarning("Key backup failed: {Error}", ex.Message);
+            logger.LogWarning("Key backup failed: {Error}", ex.Describe());
         }
     }
 

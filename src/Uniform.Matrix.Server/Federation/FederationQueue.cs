@@ -205,13 +205,13 @@ public sealed class FederationQueue : IDisposable
         }
         catch (MatrixException ex) when ((int)ex.StatusCode is >= 400 and < 500 && ex.StatusCode != HttpStatusCode.TooManyRequests)
         {
-            logger.LogInformation("{Destination} refused a transaction of {Pdus} events and {Edus} EDUs: {Error}", destination, pdus.Count, edus.Count, ex.Message);
+            logger.LogInformation("{Destination} refused a transaction of {Pdus} events and {Edus} EDUs: {Error}", destination, pdus.Count, edus.Count, ex.Describe());
             return true;
         }
         catch (MatrixException ex)
         {
             // On error retry later
-            logger.LogInformation("Sending to {Destination} failed, retrying later: {Error}", destination, ex.Message);
+            logger.LogInformation("Sending to {Destination} failed, retrying later: {Error}", destination, ex.Describe());
             return false;
         }
         catch (OperationCanceledException) when (stopping.IsCancellationRequested)

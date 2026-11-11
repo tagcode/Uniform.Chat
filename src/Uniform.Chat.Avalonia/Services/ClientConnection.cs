@@ -132,7 +132,7 @@ public sealed class ClientConnection : IAsyncDisposable
             }
             catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException)
             {
-                Logger.LogWarning("Logging out on the server failed: {Error}", ex.Message);
+                Logger.LogWarning("Logging out on the server failed: {Error}", ex.Describe());
             }
         }
         await Store.ClearAccessTokenAsync();

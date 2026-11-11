@@ -630,7 +630,7 @@ public sealed partial class MainWindow : Window
             }
             catch (Exception ex)
             {
-                logger.LogInformation("Read marker for {RoomId} failed: {Error}", roomId, ex.Message);
+                logger.LogInformation("Read marker for {RoomId} failed: {Error}", roomId, ex.Describe());
             }
         });
     }
@@ -911,7 +911,7 @@ public sealed partial class MainWindow : Window
         {
             // Best effort: an unreachable server still ends the local session
             try { await client.LogoutAsync(); }
-            catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException) { logger.LogWarning("Logging out on the server failed: {Error}", ex.Message); }
+            catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException) { logger.LogWarning("Logging out on the server failed: {Error}", ex.Describe()); }
             await store.ClearAccessTokenAsync();
             app.Invoke(() =>
             {

@@ -72,7 +72,7 @@ public sealed class RemoteActivity
         catch (MatrixException ex)
         {
             // On error ignore, e.g. not in the room
-            logger.LogDebug("Typing of {UserId} in {RoomId} ignored: {Error}", user, roomId, ex.Message);
+            logger.LogDebug("Typing of {UserId} in {RoomId} ignored: {Error}", user, roomId, ex.Describe());
         }
     }
 
@@ -93,7 +93,7 @@ public sealed class RemoteActivity
                 catch (MatrixException ex)
                 {
                     // Ignore, e.g. an event not here yet
-                    logger.LogDebug("Receipt of {UserId} in {RoomId} ignored: {Error}", userId, roomId, ex.Message);
+                    logger.LogDebug("Receipt of {UserId} in {RoomId} ignored: {Error}", userId, roomId, ex.Describe());
                 }
             }
         }

@@ -97,7 +97,7 @@ public sealed partial class DirectoryViewModel : ViewModelBase
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
         {
-            connection.Logger.LogInformation("Room directory of {Server} failed: {Error}", server.Length > 0 ? server : "this server", exception.Message);
+            connection.Logger.LogInformation("Room directory of {Server} failed: {Error}", server.Length > 0 ? server : "this server", exception.Describe());
             if (current == generation) Message = $"Search failed: {exception.Message}";
         }
         finally

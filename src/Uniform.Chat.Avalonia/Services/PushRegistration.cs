@@ -80,7 +80,7 @@ public sealed class PushRegistration : IDisposable
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or InvalidOperationException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
-            connection.Logger.LogWarning("Setting the pusher failed: {Error}", exception.Message);
+            connection.Logger.LogWarning("Setting the pusher failed: {Error}", exception.Describe());
         }
         finally
         {
@@ -101,7 +101,7 @@ public sealed class PushRegistration : IDisposable
         }
         catch (Exception exception) when (exception is HttpRequestException or JsonException or TaskCanceledException or NotSupportedException && !cancellationToken.IsCancellationRequested)
         {
-            connection.Logger.LogInformation("No Matrix gateway at {Gateway}: {Error}", own, exception.Message);
+            connection.Logger.LogInformation("No Matrix gateway at {Gateway}: {Error}", own, exception.Describe());
         }
         // Return the common one
         return FallbackGateway;

@@ -175,7 +175,7 @@ public sealed class PushNotifier : BackgroundService
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException && !cancellationToken.IsCancellationRequested)
         {
-            logger.LogInformation("Push gateway {Gateway} failed for {UserId}: {Error}", gateway.Host, pusher.UserId, ex.Message);
+            logger.LogInformation("Push gateway {Gateway} failed for {UserId}: {Error}", gateway.Host, pusher.UserId, ex.Describe());
         }
     }
 

@@ -325,7 +325,7 @@ public sealed partial class MainWindow
             }
             catch (Exception ex)
             {
-                logger.LogInformation("Typing notification for {RoomId} failed: {Error}", roomId, ex.Message);
+                logger.LogInformation("Typing notification for {RoomId} failed: {Error}", roomId, ex.Describe());
             }
         });
     }

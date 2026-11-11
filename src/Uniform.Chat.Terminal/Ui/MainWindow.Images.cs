@@ -64,7 +64,7 @@ public sealed partial class MainWindow
             }
             catch (Exception ex)
             {
-                logger.LogInformation("Preview of {Uri} failed: {Error}", uri, ex.Message);
+                logger.LogInformation("Preview of {Uri} failed: {Error}", uri, ex.Describe());
             }
 
             // Show on the UI thread
@@ -87,7 +87,7 @@ public sealed partial class MainWindow
         catch (MatrixException ex)
         {
             // Done; the caller uses the full image
-            logger.LogInformation("No thumbnail for {Uri} ({Error}), using the full image", uri, ex.Message);
+            logger.LogInformation("No thumbnail for {Uri} ({Error}), using the full image", uri, ex.Describe());
             return null;
         }
     }

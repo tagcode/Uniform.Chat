@@ -249,7 +249,7 @@ public sealed class MediaService
         catch (MatrixException ex) when (ex.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.BadRequest or HttpStatusCode.Unauthorized or HttpStatusCode.MethodNotAllowed && ex.Errcode is ErrorCodes.Unrecognized or ErrorCodes.Unknown or ErrorCodes.Unauthorized)
         {
             // Servers without authenticated media; unsigned, as they were
-            logger.LogDebug("{Server} has no authenticated media download, using the legacy one: {Error}", serverName, ex.Message);
+            logger.LogDebug("{Server} has no authenticated media download, using the legacy one: {Error}", serverName, ex.Describe());
             fetched = await federation.DownloadAsync(serverName, $"/_matrix/media/v3/download/{Uri.EscapeDataString(serverName)}/{Uri.EscapeDataString(mediaId)}?allow_remote=false", (response, token) => ReadPlainAsync(localId, response, token), cancellationToken, signed: false);
         }
         catch (MatrixException ex) when (ex.StatusCode == HttpStatusCode.Forbidden && ex.Errcode == ErrorCodes.Forbidden)
