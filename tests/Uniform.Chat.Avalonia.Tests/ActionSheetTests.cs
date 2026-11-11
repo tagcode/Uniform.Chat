@@ -35,7 +35,7 @@ public class ActionSheetTests
             await ChatFlowTests.WaitUntilAsync(() => Row<MessageViewModel>(window, m => m.Text == "hello") is not null, "the message");
 
             // Act: long press on the message
-            Press(Row<MessageViewModel>(window, m => m.Text == "hello")!);
+            Press(await ShownRowAsync<MessageViewModel>(window, m => m.Text == "hello"));
 
             // Assert: a sheet with the sender, the actions for others' messages and reactions
             ActionSheetViewModel sheet = Assert.IsType<ActionSheetViewModel>(chat.ActionSheet);
@@ -56,7 +56,7 @@ public class ActionSheetTests
             Assert.Null(chat.ActionSheet);
 
             // Act and assert: a reaction from the sheet reaches the message and closes the sheet
-            Press(Row<MessageViewModel>(window, m => m.Text == "hello")!);
+            Press(await ShownRowAsync<MessageViewModel>(window, m => m.Text == "hello"));
             chat.ActionSheet!.ReactCommand.Execute("👍");
             Assert.Null(chat.ActionSheet);
             await ChatFlowTests.WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "hello" && m.Reactions.Contains("👍")), "the reaction");
@@ -91,7 +91,7 @@ public class ActionSheetTests
             await ChatFlowTests.WaitUntilAsync(() => zebras.Unread == 2, "two unread");
 
             // Act: long press on the room
-            Press(Row<RoomItemViewModel>(window, r => r.RoomId == second)!);
+            Press(await ShownRowAsync<RoomItemViewModel>(window, r => r.RoomId == second));
 
             // Assert: its details and actions
             ActionSheetViewModel sheet = Assert.IsType<ActionSheetViewModel>(chat.ActionSheet);
@@ -111,10 +111,10 @@ public class ActionSheetTests
             Assert.Equal(0, zebras.Unread);
 
             // Act and assert: a favourite moves first
-            Press(Row<RoomItemViewModel>(window, r => r.RoomId == second)!);
+            Press(await ShownRowAsync<RoomItemViewModel>(window, r => r.RoomId == second));
             chat.ActionSheet!.ChooseCommand.Execute(chat.ActionSheet.Actions.Single(a => a.Label == "Favourite"));
             await ChatFlowTests.WaitUntilAsync(() => zebras.IsFavourite && chat.Rooms[0] == zebras, "the favourite first");
-            Press(Row<RoomItemViewModel>(window, r => r.RoomId == second)!);
+            Press(await ShownRowAsync<RoomItemViewModel>(window, r => r.RoomId == second));
             Assert.Contains(chat.ActionSheet!.Actions, a => a.Label == "Remove from favourites");
         }
         finally
@@ -216,6 +216,15 @@ public class ActionSheetTests
 
     /// <summary>Return the shown row whose item of type <typeparamref name="T"/> matches <paramref name="match"/>, or null.</summary>
     private static ListBoxItem? Row<T>(Window window, Func<T, bool> match) => window.GetVisualDescendants().OfType<ListBoxItem>().FirstOrDefault(i => i.DataContext is T item && match(item));
+
+    /// <summary>Return the row whose item matches <paramref name="match"/> once the list shows it, as a list that just reordered draws its rows a moment later.</summary>
+    private static async Task<ListBoxItem> ShownRowAsync<T>(Window window, Func<T, bool> match)
+    {
+        // Shown within the wait
+        await ChatFlowTests.WaitUntilAsync(() => Row(window, match) is not null, "the row shown");
+        // Return row
+        return Row(window, match)!;
+    }
 
     /// <summary>Press long on <paramref name="row"/>, which Avalonia turns into a context request as a right-click is.</summary>
     private static void Press(ListBoxItem row) => row.RaiseEvent(new ContextRequestedEventArgs { RoutedEvent = Control.ContextRequestedEvent, Source = row });
