@@ -292,7 +292,7 @@ public class BrowserTests
         // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
         int lost;
         lock (dropped) lost = dropped.Count;
-        Assert.True(lost >= 10, $"{lost} dropped");
+        Assert.True(lost >= 10, $"{lost} dropped of {Volatile.Read(ref seen)} video packets, {Volatile.Read(ref pictures)} pictures; Chromium: {stats.ToJsonString()}");
         Assert.True(peer.VideoPacketsNacked >= lost / 2, $"{peer.VideoPacketsNacked} asked for {lost} dropped; Chromium: {stats.ToJsonString()}");
         Assert.True(stats["resent"]!.GetValue<int>() > 0, stats.ToJsonString());
         Assert.True(pictures > stats["frames"]!.GetValue<int>() / 2, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");
