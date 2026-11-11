@@ -21,7 +21,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The workflow builds and tests, packs the `Uniform.Matrix.*`, `Uniform.Stun.*` and `Uniform.Turn` libraries with the tag's version, publishes the desktop app, the terminal client, the server and the STUN and TURN server, each with its user guide, for `linux-x64`, `linux-arm64`, `win-x64` and `win-arm64` as self-contained single-file apps (`.tar.gz` for Linux, `.zip` for Windows), pushes the packages to NuGet.org, and creates a GitHub release with the archives, the signed Android APK `uniform-chat-android-<version>.apk` and `SHA256SUMS.txt`. A tag with a suffix, such as `v0.2.0-alpha.1`, makes a prerelease on both.
+The workflow builds and tests, packs the `Uniform.Matrix.*`, `Uniform.Stun.*`, `Uniform.LiveKit.*` and `Uniform.Turn` libraries with the tag's version, publishes the desktop app, the terminal client, the server, the STUN and TURN server and the MatrixRTC authorization server, each with its user guide, for `linux-x64`, `linux-arm64`, `win-x64` and `win-arm64` as self-contained single-file apps (`.tar.gz` for Linux, `.zip` for Windows), pushes the packages to NuGet.org, and creates a GitHub release with the archives, the signed Android APK `uniform-chat-android-<version>.apk` and `SHA256SUMS.txt`. A tag with a suffix, such as `v0.2.0-alpha.1`, makes a prerelease on both.
 
 Packages are pushed with [trusted publishing](https://learn.microsoft.com/nuget/nuget-org/trusted-publishing): the job exchanges GitHub's OIDC token for a short-lived NuGet API key, so no key is stored. It needs a trusted publishing policy on nuget.org for this repository and `release.yml`, a `release` environment in the repository settings, and the nuget.org user name in the `NUGET_USER` secret.
 
@@ -60,7 +60,7 @@ The version code follows the version: major × 10000 + minor × 100 + patch, so 
 
 ### Debian packages and the apt repository
 
-The workflow also packages the four Linux apps for Debian and Ubuntu, for `amd64` and `arm64`, with `packaging/linux/build-deb.sh`. The packages are self-contained like the archives, and need only the system's usual libraries:
+The workflow also packages the five Linux apps for Debian and Ubuntu, for `amd64` and `arm64`, with `packaging/linux/build-deb.sh`. The packages are self-contained like the archives, and need only the system's usual libraries:
 
 | Package | Installs |
 |---|---|
@@ -68,6 +68,7 @@ The workflow also packages the four Linux apps for Debian and Ubuntu, for `amd64
 | `uniform-chat-terminal` | The terminal client in `/opt/uniform-chat/terminal`, the command `uniform-chat-terminal` |
 | `uniform-chat-server` | The server in `/opt/uniform-chat/server`, the command `uniform-chat-server`, and the system service `uniform-chat-server` run by the user `uniform-chat`, off until enabled; settings in `/etc/uniform-chat-server`, data in `/var/lib/uniform-chat-server` |
 | `uniform-stun-server` | The STUN and TURN server in `/opt/uniform-chat/stun`, the command `uniform-stun-server` |
+| `uniform-livekit-server` | The MatrixRTC authorization service in `/opt/uniform-chat/livekit`, the command `uniform-livekit-server` |
 
 A prerelease's version gets a tilde, so that it sorts before its release: `0.2.0-rc.1` is `0.2.0~rc.1`.
 
@@ -109,7 +110,7 @@ After each release, but not a prerelease, the workflow publishes the documentati
 | Address | Site |
 |---|---|
 | `https://tagcode.github.io/Uniform.Chat/docs/` | This developer site, with the API reference |
-| `https://tagcode.github.io/Uniform.Chat/user-docs/Uniform.Chat.Desktop/` | The user guide of the desktop app; likewise `Uniform.Chat.Android`, `Uniform.Chat.Terminal`, `Uniform.Chat.Server` and `Uniform.Stun.Server` |
+| `https://tagcode.github.io/Uniform.Chat/user-docs/Uniform.Chat.Desktop/` | The user guide of the desktop app; likewise `Uniform.Chat.Android`, `Uniform.Chat.Terminal`, `Uniform.Chat.Server`, `Uniform.Stun.Server` and `Uniform.LiveKit.Server` |
 
 Each release replaces the previous documentation. The same job updates the F-Droid repository below, so both go into one commit. It needs the `PAGES_TOKEN` secret, described below; without the F-Droid secrets only the documentation is published.
 

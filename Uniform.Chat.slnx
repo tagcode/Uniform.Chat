@@ -8,6 +8,11 @@
     <Project Path="src/Uniform.Matrix.Gui.Terminal/Uniform.Matrix.Gui.Terminal.csproj" />
     <Project Path="src/Uniform.Matrix.Client/Uniform.Matrix.Client.csproj" />
     <Project Path="src/Uniform.Chat.Terminal/Uniform.Chat.Terminal.csproj" />
+    <Project Path="src/Uniform.LiveKit.Authorization/Uniform.LiveKit.Authorization.csproj" />
+    <Project Path="src/Uniform.LiveKit.Hosting/Uniform.LiveKit.Hosting.csproj" />
+    <Project Path="src/Uniform.LiveKit.Protocol/Uniform.LiveKit.Protocol.csproj" />
+    <Project Path="src/Uniform.LiveKit.Server/Uniform.LiveKit.Server.csproj" />
+    <Project Path="src/Uniform.LiveKit/Uniform.LiveKit.csproj" />
     <Project Path="src/Uniform.Matrix.Audio/Uniform.Matrix.Audio.csproj" />
     <Project Path="src/Uniform.Matrix.Video/Uniform.Matrix.Video.csproj" />
     <Project Path="src/Uniform.Matrix.Calls/Uniform.Matrix.Calls.csproj" />
@@ -32,6 +37,7 @@
     <Project Path="tests/Uniform.Matrix.Hosting.Tests/Uniform.Matrix.Hosting.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Client.Tests/Uniform.Matrix.Client.Tests.csproj" />
     <Project Path="tests/Uniform.Chat.Terminal.Tests/Uniform.Chat.Terminal.Tests.csproj" />
+    <Project Path="tests/Uniform.LiveKit.Tests/Uniform.LiveKit.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Audio.Tests/Uniform.Matrix.Audio.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Video.Tests/Uniform.Matrix.Video.Tests.csproj" />
     <Project Path="tests/Uniform.Matrix.Calls.Tests/Uniform.Matrix.Calls.Tests.csproj" />

@@ -17,6 +17,10 @@ items:
   href: Uniform.Stun.Protocol/toc.yml
 - name: Uniform.Stun
   href: Uniform.Stun/toc.yml
+- name: Uniform.LiveKit.Protocol
+  href: Uniform.LiveKit.Protocol/toc.yml
+- name: Uniform.LiveKit
+  href: Uniform.LiveKit/toc.yml
 - name: Uniform.Matrix.WebRtc
   href: Uniform.Matrix.WebRtc/toc.yml
 - name: Uniform.Matrix.Client
@@ -43,6 +47,12 @@ items:
   href: Uniform.Stun.Hosting/toc.yml
 - name: Uniform.Stun.Server
   href: Uniform.Stun.Server/toc.yml
+- name: Uniform.LiveKit.Authorization
+  href: Uniform.LiveKit.Authorization/toc.yml
+- name: Uniform.LiveKit.Hosting
+  href: Uniform.LiveKit.Hosting/toc.yml
+- name: Uniform.LiveKit.Server
+  href: Uniform.LiveKit.Server/toc.yml
 - name: Building
   uid: Uniform.Matrix.Building.Article
 - name: Testing

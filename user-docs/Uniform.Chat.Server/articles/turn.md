@@ -4,7 +4,7 @@ uid: Uniform.Chat.Server.Turn.Article
 ---
 # Calls through firewalls
 
-Voice calls go straight from one phone or computer to the other when the networks allow it. Many don't: mobile networks, office firewalls and some home routers block such direct traffic, and then the call connects but nobody hears anything. A TURN server fixes this by relaying the call. The server has one built in, which your users' calls use as soon as it is on. Element X and other apps that call through Element Call use their own call service instead, see `Calls:LiveKitServiceUrl` in [Settings](xref:Uniform.Chat.Server.Settings.Article).
+Voice calls go straight from one phone or computer to the other when the networks allow it. Many don't: mobile networks, office firewalls and some home routers block such direct traffic, and then the call connects but nobody hears anything. A TURN server fixes this by relaying the call. The server has one built in, which your users' calls use as soon as it is on. Element X and other apps that call through Element Call use a LiveKit server instead, see [Video calls in Element X](xref:Uniform.Chat.Server.LiveKit.Article).
 
 ## Turning it on
 

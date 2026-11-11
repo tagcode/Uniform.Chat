@@ -65,6 +65,13 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 - User guide: [Running](user-docs/Uniform.Stun.Server/articles/running.md), [Calls through firewalls](user-docs/Uniform.Chat.Server/articles/turn.md)
 - Developer guide: [Uniform.Turn](docs/Uniform.Chat/Uniform.Turn/index.md)
 
+## MatrixRTC authorization server
+
+`uniform-livekit-server` gives Element X, Element Call and other MatrixRTC apps tokens of a LiveKit server, after checking their users with their homeservers; it replaces lk-jwt-service. The homeserver has the same service built in: `--LiveKit:Enabled=true`.
+
+- User guide: [Running](user-docs/Uniform.LiveKit.Server/articles/running.md), [Video calls in Element X](user-docs/Uniform.Chat.Server/articles/livekit.md)
+- Developer guide: [Uniform.LiveKit.Authorization](docs/Uniform.Chat/Uniform.LiveKit.Authorization/index.md)
+
 ## Libraries
 
 | Package | Contents |
@@ -81,6 +88,10 @@ There are chat clients for the terminal, the desktop (Windows and Linux) and And
 | `Uniform.Stun` | STUN and TURN clients |
 | `Uniform.Turn` | STUN and TURN server: relaying over UDP, TCP and TLS, credentials, quotas, peer filtering |
 | `Uniform.Stun.Hosting` | The TURN server in a .NET host, with settings |
+| `Uniform.LiveKit.Protocol` | LiveKit access tokens, MatrixRTC room names and identities, and the authorization service's messages |
+| `Uniform.LiveKit` | Clients of LiveKit's room service and of MatrixRTC authorization services |
+| `Uniform.LiveKit.Authorization` | MatrixRTC authorization service like lk-jwt-service: OpenID verification over federation, LiveKit tokens |
+| `Uniform.LiveKit.Hosting` | The authorization service in ASP.NET, with settings and the lk-jwt-service endpoints |
 
 ## Building
 

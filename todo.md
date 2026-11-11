@@ -107,3 +107,8 @@ Developer docs: the WebRtc and calls pages don't yet describe rotation, REMB ada
 - Media encryption
 - Calls and UI
 - Tests
+
+# Windows Desktop client video calls
+
+- Start the desktop app on a Windows machine with a webcam (dotnet run --project src/Uniform.Chat.Desktop, or the Desktop launch configuration) and video call a phone. If the 📹 button is missing, Media Foundation found no camera.
+- Add a Windows job to the release workflow that runs Uniform.Chat.Desktop.Tests. It costs a few CI minutes per release.

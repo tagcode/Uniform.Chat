@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build the .deb of one Linux app from its published, self-contained folder: the app in /opt/uniform-chat/<kind>, its command
 # in /usr/bin; the desktop app also gets a menu entry and an icon, the server a systemd service run by the user uniform-chat.
-# Usage: build-deb.sh <desktop|terminal|server|stun> <published folder> <version> <linux-x64|linux-arm64> <output folder>
+# Usage: build-deb.sh <desktop|terminal|server|stun|livekit> <published folder> <version> <linux-x64|linux-arm64> <output folder>
 # The output is <package>_<version>_<architecture>.deb, e.g. uniform-chat-server_0.2.0_amd64.deb.
 set -euo pipefail
 kind=$1 source=$2 version=$3 rid=$4 out=$5
@@ -44,6 +44,12 @@ case "$kind" in
         depends="$runtime"
         summary="STUN and TURN server for calls"
         details="A STUN and TURN server that relays voice calls through firewalls, with time-limited credentials shared with Matrix homeservers. Run it with uniform-stun-server."
+        ;;
+    livekit)
+        package=uniform-livekit-server command=uniform-livekit-server program=uniform-livekit-server
+        depends="$runtime"
+        summary="MatrixRTC authorization service for LiveKit"
+        details="Gives Element X, Element Call and other MatrixRTC apps tokens of a LiveKit server, after checking their users with their Matrix homeservers; a replacement of lk-jwt-service. Run it with uniform-livekit-server."
         ;;
     *) echo "Unknown app $kind" >&2; exit 1 ;;
 esac

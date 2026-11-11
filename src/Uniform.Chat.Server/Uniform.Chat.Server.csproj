@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
     <ProjectReference Include="..\Uniform.Stun.Hosting\Uniform.Stun.Hosting.csproj" />
+    <ProjectReference Include="..\Uniform.LiveKit.Hosting\Uniform.LiveKit.Hosting.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Gui.Terminal\Uniform.Matrix.Gui.Terminal.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.Protocol.Client\Uniform.Matrix.Protocol.Client.csproj" />
   </ItemGroup>

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      { "files": [ "**/*.{md,yml}" ], "exclude": [ "_site/**" ] }
+    ],
+    "output": "_site",
+    "template": [ "statictoc", "../../theme" ],
+    "globalMetadata": {
+      "_appFooter": "<span>Uniform LiveKit Authorization Server</span>",
+      "_appTitle": "Uniform LiveKit Authorization Server",
+      "_appName": "Uniform LiveKit Authorization Server",
+      "_enableSearch": true
+    }
+  }
+}

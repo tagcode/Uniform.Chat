@@ -37,6 +37,7 @@ catch (DataDirectoryInUseException inUse)
     return 1;
 }
 builder.AddEmbeddedTurn();
+builder.AddEmbeddedLiveKit();
 builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 // Stopping, with its clean-up, ends well before a service manager kills the process, e.g. systemd after the unit's 30 seconds
 builder.Services.Configure<HostOptions>(host => host.ShutdownTimeout = TimeSpan.FromSeconds(20));
@@ -67,6 +68,7 @@ catch (Exception exception) when (FindTlsError(exception) is TlsCertificateExcep
 
 // No dashboard: serve until stopped; a slow stop shows between the two log lines
 app.MapMatrixServer();
+app.MapEmbeddedLiveKit();
 app.Lifetime.ApplicationStopping.Register(() => app.Logger.LogInformation("Stopping…"));
 if (!dashboard)
 {

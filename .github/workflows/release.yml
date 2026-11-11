@@ -1,5 +1,5 @@
 # Release: on a version tag such as v0.1.0 or v0.2.0-alpha.1, build and test, pack the libraries,
-# build the apps (desktop, terminal client, server, STUN and TURN server) with their user guides for Windows and Linux, as Debian packages, and the signed Android APK,
+# build the apps (desktop, terminal client, server, STUN and TURN server, MatrixRTC authorization server) with their user guides for Windows and Linux, as Debian packages, and the signed Android APK,
 # push the packages to NuGet.org with trusted publishing, create a GitHub release with the app archives and the APK,
 # and, for a release but not a prerelease, make the release an apt repository, publish the documentation on https://tagcode.github.io/Uniform.Chat/ and add the APK to the F-Droid repository on https://tagcode.github.io/fdroid/repo.
 name: Release
@@ -84,7 +84,7 @@ jobs:
       # Warnings fail the build, so broken links and missing uids are found here
       - name: Build guides
         run: |
-          for guide in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server stun:Uniform.Stun.Server; do
+          for guide in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server stun:Uniform.Stun.Server livekit:Uniform.LiveKit.Server; do
             IFS=: read -r kind folder <<< "$guide"
             dotnet docfx "user-docs/$folder/docfx.json" --warningsAsErrors
             mkdir -p guides && cp -r "user-docs/$folder/_site" "guides/$kind"
@@ -104,7 +104,7 @@ jobs:
         run: |
           mkdir -p sites/user-docs
           cp -r docs/_site sites/docs
-          for folder in Uniform.Chat.Desktop Uniform.Chat.Terminal Uniform.Chat.Server Uniform.Stun.Server Uniform.Chat.Android; do
+          for folder in Uniform.Chat.Desktop Uniform.Chat.Terminal Uniform.Chat.Server Uniform.Stun.Server Uniform.LiveKit.Server Uniform.Chat.Android; do
             cp -r "user-docs/$folder/_site" "sites/user-docs/$folder"
           done
       - uses: actions/upload-artifact@v5
@@ -131,7 +131,7 @@ jobs:
           name: guides
           path: guides
       # Self-contained single-file apps, no ahead-of-time compilation; .tar.gz for Linux, .zip for Windows.
-      # desktop is the Avalonia app; its Linux archive has install-desktop-entry.sh for the application menu. stun is uniform-stun-server.
+      # desktop is the Avalonia app; its Linux archive has install-desktop-entry.sh for the application menu. stun is uniform-stun-server, livekit is uniform-livekit-server.
       # Each archive has its own user guide as HTML in docs/, built from its project's folder in user-docs/.
       - name: Publish and archive
         env:
@@ -139,7 +139,7 @@ jobs:
           RID: ${{ matrix.rid }}
         run: |
           mkdir -p release
-          for app in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server stun:Uniform.Stun.Server; do
+          for app in desktop:Uniform.Chat.Desktop terminal:Uniform.Chat.Terminal server:Uniform.Chat.Server stun:Uniform.Stun.Server livekit:Uniform.LiveKit.Server; do
             IFS=: read -r kind project <<< "$app"
             name="uniform-chat-$kind-$VERSION-$RID"
             dotnet publish "src/$project" -c Release -r "$RID" --self-contained \

@@ -12,4 +12,6 @@ Start-up errors that people can fix themselves are shown in two lines instead of
 
 With `Turn:Enabled`, `EmbeddedTurn` adds the STUN and TURN server of [Uniform.Stun.Hosting](xref:Uniform.Stun.Hosting.Article) and connects it to the homeserver's calls.
 
+With `LiveKit:Enabled`, `EmbeddedLiveKit` serves the MatrixRTC authorization service of [Uniform.LiveKit.Hosting](xref:Uniform.LiveKit.Hosting.Article) at `/livekit/jwt`. It checks the homeserver's own OpenID tokens in its store, without a round trip, and those of other servers over federation. Unless they are set, `LiveKit:FullAccessHomeservers` becomes the server name, and `Calls:LiveKitServiceUrl` becomes the service at `Server:PublicBaseUrl`.
+
 How to run it, as a service too, is in the server's user guide.

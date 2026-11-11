@@ -49,12 +49,19 @@ Settings come from these places; later ones override earlier ones:
 | `Federation:KeyRequestTimeout` | `00:00:10` | How long to wait for a server's signing keys, from it or a key server. |
 | `Federation:KeyValidity` | `1.00:00:00` | How long other servers may keep this server's signing key before asking again. |
 | `Federation:WellKnownServer` | not set | Where other servers should connect, served as `/.well-known/matrix/server`, such as `example.org:443` when a reverse proxy on port 443 forwards to this server. Needed when the server name has no port and the server is not on port 8448. |
-| `Calls:LiveKitServiceUrl` | not set | Address of the MatrixRTC authorization service (lk-jwt-service) in front of a LiveKit server, for calls in Element X and other MatrixRTC clients. Announced to clients through `rtc/transports` and `/.well-known/matrix/client`. |
+| `Calls:LiveKitServiceUrl` | not set | Address of the MatrixRTC authorization service (lk-jwt-service) in front of a LiveKit server, for calls in Element X and other MatrixRTC clients. Announced to clients through `rtc/transports` and `/.well-known/matrix/client`. With `LiveKit:Enabled`, the built-in service at `/livekit/jwt` of `Server:PublicBaseUrl` when not set. |
 | `Calls:TurnUris` | not set | TURN server addresses for older 1:1 calls, separated by commas, such as `turn:turn.example.org:3478?transport=udp`. |
 | `Calls:TurnSharedSecret` | not set | Shared secret of the TURN server, such as coturn's `static-auth-secret`. Keep it out of command lines; set it in the settings file or as the environment variable `Calls__TurnSharedSecret`. |
 | `Calls:TurnUserLifetime` | `1.00:00:00` | How long TURN credentials hold. |
 | `Calls:MaxEventDelay` | `1.00:00:00` | Longest delay of a delayed event, which calls use to end the membership of a client that disappears. |
 | `Calls:OpenIdTokenLifetime` | `01:00:00` | How long an OpenID token holds; call services use these tokens to check who a user is. |
+| `LiveKit:Enabled` | `false` | Serve the built-in MatrixRTC authorization service at `/livekit/jwt`, which gives Element X and other MatrixRTC clients tokens of your LiveKit server. See [Video calls in Element X](xref:Uniform.Chat.Server.LiveKit.Article). |
+| `LiveKit:Url` | not set | Address of the LiveKit server that clients join, such as `wss://livekit.example.org`. |
+| `LiveKit:ApiKey` | not set | API key of the LiveKit server, one of the `keys` in its configuration. |
+| `LiveKit:ApiSecret` | not set | Secret of that API key. Keep it out of command lines; set it in the settings file or as the environment variable `LiveKit__ApiSecret`. |
+| `LiveKit:FullAccessHomeservers` | not set | Homeservers whose users may start calls and send audio and video, separated by commas, or `*` for all; users of other servers can only watch and listen in calls that are already going. This server's name when not set. |
+| `LiveKit:TokenLifetime` | `01:00:00` | How long a LiveKit token can be used to join; a call that has started goes on. |
+| `LiveKit:CanUpdateOwnMetadata` | `false` | Let participants change their own name and metadata in LiveKit. |
 | `Turn:Enabled` | `false` | Run the built-in STUN and TURN server, which relays calls between users whose networks would block them; calls then use it unless `Calls:TurnUris` names another. See [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article). ↻ |
 | `Turn:Realm` | not set | Realm of the TURN credentials; the server name when not set. ↻ |
 | `Turn:ListenAddress` | `0.0.0.0` | Address the TURN server listens on. ↻ |
