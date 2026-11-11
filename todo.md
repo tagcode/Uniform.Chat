@@ -108,6 +108,9 @@ Developer docs: the WebRtc and calls pages don't yet describe rotation, REMB ada
 - Calls and UI
 - Tests
 
+- Later:
+  - Element Call's "Matrix 2.0" mode, with sticky memberships (MSC4354), once Element makes it the default; data channels for reactions and raised hands;
+
 # Windows Desktop client video calls
 
 - Start the desktop app on a Windows machine with a webcam (dotnet run --project src/Uniform.Chat.Desktop, or the Desktop launch configuration) and video call a phone. If the 📹 button is missing, Media Foundation found no camera.

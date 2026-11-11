@@ -41,6 +41,43 @@ public sealed class VideoFrame
     /// <summary>Whether to show the picture mirrored, as a preview of one's own front camera is, like a mirror.</summary>
     public bool Mirrored { get; set; }
 
+    /// <summary>Return the picture turned <paramref name="degrees"/> clockwise, 0, 90, 180 or 270, e.g. by its <see cref="Rotation"/> to send it upright where the receiver is not told the rotation; the result has no rotation of its own.</summary>
+    /// <exception cref="ArgumentOutOfRangeException">When <paramref name="degrees"/> is not a quarter turn.</exception>
+    public VideoFrame Rotated(int degrees)
+    {
+        // Assert a quarter turn; none is the picture itself
+        degrees = (degrees % 360 + 360) % 360;
+        if (degrees % 90 != 0) throw new ArgumentOutOfRangeException(nameof(degrees), "Only quarter turns.");
+        if (degrees == 0) return this;
+        bool sideways = degrees != 180;
+        int width = sideways ? Height : Width, height = sideways ? Width : Height;
+        // Return each plane turned
+        return new VideoFrame(width, height, Turn(Y, Width, Height, degrees), Turn(U, ChromaWidth, ChromaHeight, degrees), Turn(V, ChromaWidth, ChromaHeight, degrees)) { Mirrored = Mirrored };
+    }
+
+    /// <summary>Return a plane of <paramref name="width"/> by <paramref name="height"/> turned <paramref name="degrees"/> clockwise.</summary>
+    private static byte[] Turn(byte[] plane, int width, int height, int degrees)
+    {
+        // Each source pixel to its place: clockwise, a row becomes a column from the right
+        byte[] turned = new byte[plane.Length];
+        for (int row = 0; row < height; row++)
+        {
+            int from = row * width;
+            for (int column = 0; column < width; column++)
+            {
+                int to = degrees switch
+                {
+                    90 => column * height + (height - 1 - row),
+                    180 => (height - 1 - row) * width + (width - 1 - column),
+                    _ => (width - 1 - column) * height + row,
+                };
+                turned[to] = plane[from + column];
+            }
+        }
+        // Return plane
+        return turned;
+    }
+
     /// <summary>Write the picture as 32-bit BGRA, opaque, into <paramref name="destination"/> of <paramref name="stride"/> bytes per row, converting from BT.601 limited range as WebRTC video is.</summary>
     /// <param name="destination">At least <see cref="Height"/> rows.</param>
     /// <param name="stride">Bytes per row, at least 4 × <see cref="Width"/>.</param>

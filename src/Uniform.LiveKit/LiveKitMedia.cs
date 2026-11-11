@@ -12,7 +12,7 @@ public sealed class LiveKitMedia : IMediaConnection
     private readonly ConcurrentDictionary<string, FrameCryptor> keys = new();
     private readonly List<LiveKitRoom> subscribed = [];
     private readonly Lock gate = new();
-    private readonly AudioPeerConnection publisher;
+    private AudioPeerConnection publisher;
     private uint audioClock;
     private uint videoClock;
 
@@ -23,10 +23,40 @@ public sealed class LiveKitMedia : IMediaConnection
         // The publisher and its feedback
         publisher = room.Publisher ?? throw new InvalidOperationException("Publish first.");
         Encrypted = encrypted;
-        publisher.KeyframeRequested += () => KeyframeRequested?.Invoke();
-        publisher.BitrateRequested += bitrate => BitrateRequested?.Invoke(bitrate);
+        Follow(publisher);
         // Done
         Subscribe(room);
+    }
+
+    /// <summary>Move the media from <paramref name="old"/> to <paramref name="replacement"/>, a room joined again, e.g. after the network changed: publishing there when <paramref name="old"/> published, and receiving there; the voice and video pipelines stay as they are.</summary>
+    /// <exception cref="InvalidOperationException">When <paramref name="old"/> published and <paramref name="replacement"/> has not.</exception>
+    public void Replace(LiveKitRoom old, LiveKitRoom replacement)
+    {
+        // The publisher, then the subscription
+        if (ReferenceEquals(old.Publisher, publisher))
+        {
+            publisher = replacement.Publisher ?? throw new InvalidOperationException("Publish first.");
+            Follow(publisher);
+        }
+        Unsubscribe(old);
+        // Done
+        Subscribe(replacement);
+    }
+
+    /// <summary>Stop receiving on <paramref name="room"/>, e.g. one that is left.</summary>
+    public void Unsubscribe(LiveKitRoom room)
+    {
+        // Done
+        lock (gate) subscribed.Remove(room);
+    }
+
+    /// <summary>Pass a publisher's feedback on, while it is the current one.</summary>
+    private void Follow(AudioPeerConnection connection)
+    {
+        // Only the current publisher's
+        connection.KeyframeRequested += () => { if (ReferenceEquals(connection, publisher)) KeyframeRequested?.Invoke(); };
+        // Done
+        connection.BitrateRequested += bitrate => { if (ReferenceEquals(connection, publisher)) BitrateRequested?.Invoke(bitrate); };
     }
 
     /// <summary>Whether frames are encrypted end to end.</summary>
@@ -55,6 +85,9 @@ public sealed class LiveKitMedia : IMediaConnection
 
     /// <inheritdoc/>
     public bool SendsVideo => publisher.SendsVideo;
+
+    /// <inheritdoc/>
+    public bool SendsOrientation => publisher.SendsOrientation;
 
     /// <summary>Frames received from someone whose key is not known.</summary>
     public long FramesWithoutKey => Interlocked.Read(ref framesWithoutKey);
@@ -127,17 +160,20 @@ public sealed class LiveKitMedia : IMediaConnection
     /// <summary>Take the media of a room's subscriber connection.</summary>
     private void Listen(LiveKitRoom room, AudioPeerConnection subscriber)
     {
-        // Each kind, decrypted by its sender's key
+        // Each kind, decrypted by its sender's key, while the room is subscribed
         subscriber.AudioReceived += packet =>
         {
-            if (Open(room, packet.Ssrc, packet.Payload, FrameKind.Audio) is byte[] plain) AudioReceived?.Invoke(packet with { Payload = plain });
+            if (IsSubscribed(room) && Open(room, packet.Ssrc, packet.Payload, FrameKind.Audio) is byte[] plain) AudioReceived?.Invoke(packet with { Payload = plain });
         };
         // Done
         subscriber.VideoReceived += frame =>
         {
-            if (Open(room, frame.Ssrc, frame.Data, FrameKind.Vp8) is byte[] plain) VideoReceived?.Invoke(frame with { Data = plain });
+            if (IsSubscribed(room) && Open(room, frame.Ssrc, frame.Data, FrameKind.Vp8) is byte[] plain) VideoReceived?.Invoke(frame with { Data = plain });
         };
     }
+
+    /// <summary>Return whether <paramref name="room"/> is received on.</summary>
+    private bool IsSubscribed(LiveKitRoom room) { lock (gate) return subscribed.Contains(room); }
 
     /// <summary>Return a received frame as its sender sent it: decrypted with the sender's key when encrypted; null when it does not decrypt.</summary>
     private byte[]? Open(LiveKitRoom room, uint ssrc, byte[] frame, FrameKind kind)

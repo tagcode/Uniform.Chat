@@ -13,6 +13,7 @@ using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 using Uniform.Matrix.Video;
+using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Ice;
 
 /// <summary>What a <see cref="RtcCall"/> needs of the client and its homeserver.</summary>
@@ -73,6 +74,13 @@ public sealed class RtcCall : VoiceCall
     private string? ownNotificationId;
     private bool peerSeen;
     private bool joined;
+    private bool sendsVideo;
+    private int reconnecting;
+    private CallMemberContent? membership;
+    /// <summary>How long a lost path may stay down before reconnecting, and between attempts.</summary>
+    private static readonly TimeSpan ReconnectDelay = TimeSpan.FromSeconds(2);
+    /// <summary>How long a call may try to reconnect before it ends.</summary>
+    private static readonly TimeSpan ReconnectLimit = TimeSpan.FromSeconds(45);
 
     /// <summary>Create a call; <see cref="CallService"/> does.</summary>
     /// <param name="roomId">Room of the call.</param>
@@ -262,15 +270,9 @@ public sealed class RtcCall : VoiceCall
     /// <summary>Join the call: a LiveKit token, publish on the SFU, the membership with its delayed leave, and the media; return the membership's event ID.</summary>
     private async Task<string> JoinAsync(bool video, CancellationToken cancellationToken)
     {
-        // A publisher's token from the homeserver's service
-        string serviceUrl = context.Transport.LivekitServiceUrl ?? throw new InvalidOperationException("The homeserver's transport has no LiveKit service.");
-        OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(cancellationToken);
-        SfuResponse sfu = await new MatrixRtcAuthorizationClient(context.Http, serviceUrl).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn } }, cancellationToken);
-
         // Published, with the media on it
-        room = await LiveKitRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, cancellationToken);
-        room.Closed += () => { if (State != CallState.Ended) _ = EndAsync("sfu_closed", byPeer: false); };
-        await room.PublishAsync(video, context.Encrypted ? Encryption.Types.Type.Gcm : Encryption.Types.Type.None, cancellationToken: cancellationToken);
+        sendsVideo = video;
+        room = await ConnectRoomAsync(cancellationToken);
         LiveKitMedia opened = new(room, context.Encrypted);
         opened.OwnKey.SetKey(0, ownKey);
         opened.DecryptionFailed += identity => logger.LogDebug("MatrixRTC frame of {Identity} did not decrypt", identity);
@@ -286,13 +288,111 @@ public sealed class RtcCall : VoiceCall
 
         // The membership, emptied after a delay unless restarted
         delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, LeaveDelay, cancellationToken);
-        CallMemberContent membership = new() { Application = Application, CallId = "", Scope = "m.room", DeviceId = context.OwnDeviceId, FocusActive = new RtcFocusActive(), FociPreferred = [context.Transport with { LivekitAlias = RoomId }], Expires = (long)MembershipExpiry.TotalMilliseconds, CallIntent = IsVideo ? "video" : "audio", MembershipId = OwnIdentity };
+        membership = new() { Application = Application, CallId = "", Scope = "m.room", DeviceId = context.OwnDeviceId, FocusActive = new RtcFocusActive(), FociPreferred = [context.Transport with { LivekitAlias = RoomId }], Expires = (long)MembershipExpiry.TotalMilliseconds, CallIntent = IsVideo ? "video" : "audio", MembershipId = OwnIdentity };
         string membershipId = await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership, StateKey, cancellationToken);
         joined = true;
         _ = KeepAliveAsync();
-        logger.LogInformation("Joined MatrixRTC call in {RoomId} on {Url} as {Identity}, encrypted {Encrypted}", RoomId, sfu.Url, OwnIdentity, context.Encrypted);
+        logger.LogInformation("Joined MatrixRTC call in {RoomId} as {Identity}, encrypted {Encrypted}", RoomId, OwnIdentity, context.Encrypted);
         // Return membership
         return membershipId;
+    }
+
+    /// <summary>Connect to this side's SFU with a new publisher's token, publish, and follow the connection: its loss reconnects.</summary>
+    private async Task<LiveKitRoom> ConnectRoomAsync(CancellationToken cancellationToken)
+    {
+        // A publisher's token from the homeserver's service
+        string serviceUrl = context.Transport.LivekitServiceUrl ?? throw new InvalidOperationException("The homeserver's transport has no LiveKit service.");
+        OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(cancellationToken);
+        SfuResponse sfu = await new MatrixRtcAuthorizationClient(context.Http, serviceUrl).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn } }, cancellationToken);
+
+        // Joined and published; a lost signalling or media path reconnects, while this is the current room
+        LiveKitRoom connected = await LiveKitRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, cancellationToken);
+        try
+        {
+            connected.Closed += () => { if (ReferenceEquals(connected, room)) _ = ReconnectAsync("signalling closed"); };
+            AudioPeerConnection publisher = await connected.PublishAsync(sendsVideo, context.Encrypted ? Encryption.Types.Type.Gcm : Encryption.Types.Type.None, cancellationToken: cancellationToken);
+            publisher.StateChanged += state => { if (state is PeerConnectionState.Disconnected or PeerConnectionState.Failed && ReferenceEquals(connected, room)) _ = ReconnectSoonAsync(publisher); };
+            connected.SubscriberCreated += subscriber => subscriber.StateChanged += state => { if (state is PeerConnectionState.Disconnected or PeerConnectionState.Failed && ReferenceEquals(connected, room)) _ = ReconnectSoonAsync(subscriber); };
+            logger.LogInformation("Published on {Url} for MatrixRTC call in {RoomId}", sfu.Url, RoomId);
+            // Return room
+            return connected;
+        }
+        catch
+        {
+            // On a room that did not publish
+            await connected.DisposeAsync();
+            throw;
+        }
+    }
+
+    /// <summary>Restart the media path after the network changed: join the SFUs again.</summary>
+    public override Task RestartIceAsync(string reason, CancellationToken cancellationToken = default) => ReconnectAsync(reason);
+
+    /// <summary>Reconnect when a connection that went down is still down after <see cref="ReconnectDelay"/>, as ICE recovers from short losses by itself.</summary>
+    private async Task ReconnectSoonAsync(AudioPeerConnection connection)
+    {
+        // Still down a moment later
+        try { await Task.Delay(ReconnectDelay, ending.Token); }
+        catch (OperationCanceledException) { return; }
+        if (connection.State is not (PeerConnectionState.Disconnected or PeerConnectionState.Failed)) return;
+        // Done
+        await ReconnectAsync($"media path {connection.State}");
+    }
+
+    /// <summary>Join this side's SFU again, and move the media to it, trying every <see cref="ReconnectDelay"/> until <see cref="ReconnectLimit"/>, when the call ends; the others' SFUs are joined again on the next update. The membership and keys stay, and so does the identity, which the SFU moves to the new connection.</summary>
+    private async Task ReconnectAsync(string reason)
+    {
+        // Once at a time, joined calls only
+        if (!joined || State == CallState.Ended || Interlocked.Exchange(ref reconnecting, 1) == 1) return;
+        try
+        {
+            logger.LogInformation("Reconnecting MatrixRTC call in {RoomId}: {Reason}", RoomId, reason);
+            if (State == CallState.Connected) SetState(CallState.Reconnecting);
+            DateTime started = DateTime.UtcNow;
+            while (State != CallState.Ended)
+            {
+                try
+                {
+                    // A new room, the media moved to it, then the old one left
+                    LiveKitRoom replacement = await ConnectRoomAsync(ending.Token);
+                    LiveKitRoom? old = room;
+                    room = replacement;
+                    if (old is not null) media!.Replace(old, replacement);
+                    if (old is not null) await old.DisposeAsync();
+                    foreach (LiveKitRoom other in otherSfus.Values)
+                    {
+                        media!.Unsubscribe(other);
+                        await other.DisposeAsync();
+                    }
+                    otherSfus.Clear();
+                    break;
+                }
+                catch (Exception e) when (e is not OperationCanceledException)
+                {
+                    // On a network still down: again, until the limit
+                    logger.LogInformation("Reconnecting MatrixRTC call in {RoomId} failed: {Error}", RoomId, e.Describe());
+                    if (DateTime.UtcNow - started > ReconnectLimit)
+                    {
+                        await EndAsync("ice_failed", byPeer: false);
+                        return;
+                    }
+                    await Task.Delay(ReconnectDelay, ending.Token);
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Ended meanwhile
+            return;
+        }
+        finally
+        {
+            Interlocked.Exchange(ref reconnecting, 0);
+        }
+        // Done: the others again, and connected
+        if (State == CallState.Reconnecting) SetState(CallState.Connected);
+        logger.LogInformation("MatrixRTC call in {RoomId} reconnected", RoomId);
+        await UpdateAsync();
     }
 
     /// <summary>Send this side's key to the peer's devices that do not have it yet.</summary>
@@ -348,9 +448,10 @@ public sealed class RtcCall : VoiceCall
                 }
                 catch (MatrixException e) when (e.Errcode == ErrorCodes.NotFound)
                 {
-                    // The leave was sent: a new one, and the membership again
+                    // The leave was sent, e.g. while the network was down: a new one, and the membership again
                     logger.LogWarning("Delayed leave of MatrixRTC call in {RoomId} was sent; joining again", RoomId);
                     delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, LeaveDelay, ending.Token);
+                    if (membership is not null) await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership with { CreatedTs = null }, StateKey, ending.Token);
                 }
                 catch (Exception e) when (e is HttpRequestException or MatrixException)
                 {

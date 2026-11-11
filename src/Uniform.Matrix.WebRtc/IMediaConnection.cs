@@ -23,6 +23,9 @@ public interface IMediaConnection
     /// <summary>Whether video is sent, with <see cref="SendVideoAsync"/>.</summary>
     bool SendsVideo { get; }
 
+    /// <summary>Whether the rotation of sent frames reaches the receiver, with the video orientation extension; when not, frames must be sent upright.</summary>
+    bool SendsOrientation { get; }
+
     /// <summary>Send a frame of Opus, <paramref name="samples"/> long at 48 kHz.</summary>
     ValueTask SendAudioAsync(byte[] opus, int samples = AudioPeerConnection.FrameSamples, CancellationToken cancellationToken = default);
 

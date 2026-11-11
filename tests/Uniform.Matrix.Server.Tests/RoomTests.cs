@@ -442,4 +442,24 @@ public class RoomTests
         // Return ID
         return (await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(Ct)).GetProperty("event_id").GetString()!;
     }
+
+    /// <summary>Refuse a room whose invite cannot go, before creating it: an unknown local user, an invalid ID, or a server that does not exist; no room is left behind.</summary>
+    [Fact]
+    public async Task RefuseRoomsOfFailingInvites()
+    {
+        // Arrange
+        await using TestHomeserver server = await TestHomeserver.StartAsync(new Dictionary<string, string?>(Open) { ["Federation:Enabled"] = "true" });
+        MatrixClient alice = await UserAsync(server, "alice");
+
+        // Act
+        MatrixException unknown = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@nobody:test.local"] }, Ct));
+        MatrixException invalid = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@toni:matrix..invalid"] }, Ct));
+        MatrixException unreachable = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@toni:nowhere.invalid"] }, Ct));
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+        Assert.Equal(HttpStatusCode.BadGateway, unreachable.StatusCode);
+        Assert.Empty(await alice.GetJoinedRoomsAsync(Ct));
+    }
 }

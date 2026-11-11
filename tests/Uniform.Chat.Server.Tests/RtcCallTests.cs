@@ -25,7 +25,7 @@ public sealed class RtcCallTests
     private const string ApiKey = "devkey";
     private const string ApiSecret = "a-secret-for-tests-of-matrixrtc-calls";
 
-    /// <summary>Call over MatrixRTC in an encrypted direct chat: the ring, the answer, both members, encrypted voice both ways, and the hangup that ends it on both sides.</summary>
+    /// <summary>Call over MatrixRTC in an encrypted direct chat: the ring, the answer, both members, encrypted voice both ways, a reconnect as after a network change, and the hangup that ends it on both sides.</summary>
     [Fact]
     public async Task CallOverMatrixRtc()
     {
@@ -65,6 +65,14 @@ public sealed class RtcCallTests
             // Both connected, each hearing the other's voice, decrypted
             await WaitForAsync(() => outgoing.State == CallState.Connected && incoming.State == CallState.Connected);
             await WaitForAsync(() => aliceAudio.Speaker?.Energy > 0 && bobAudio.Speaker?.Energy > 0);
+
+            // Alice's network changes: her call joins the SFU again, and the voice goes on both ways
+            await outgoing.RestartIceAsync("test", Ct);
+            Assert.Equal(CallState.Connected, outgoing.State);
+            await Task.Delay(TimeSpan.FromSeconds(1), Ct);
+            double aliceHeard = aliceAudio.Speaker!.Energy, bobHeard = bobAudio.Speaker!.Energy;
+            await Task.Delay(TimeSpan.FromSeconds(1), Ct);
+            Assert.True(aliceAudio.Speaker.Energy > aliceHeard && bobAudio.Speaker.Energy > bobHeard, "Voice stopped after reconnecting.");
 
             // Bob hangs up; Alice's call ends as his membership goes
             await incoming.HangupAsync(cancellationToken: Ct);

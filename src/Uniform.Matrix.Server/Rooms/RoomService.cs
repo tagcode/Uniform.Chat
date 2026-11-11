@@ -51,6 +51,7 @@ public sealed class RoomService
         if (preset is not ("private_chat" or "public_chat" or "trusted_private_chat")) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Unknown preset {preset}.");
         string? alias = body["room_alias_name"]?.GetValue<string>() is string aliasName ? $"#{aliasName}:{ServerName}" : null;
         List<string> invites = [.. (body["invite"] as JsonArray ?? []).Select(i => i!.GetValue<string>())];
+        await AssertInviteesAsync(invites, cancellationToken);
 
         // Create content; from version 12 the room ID is its hash, so the room is stored with its create event
         JsonObject create = body["creation_content"]?.DeepClone() as JsonObject ?? [];
@@ -103,6 +104,28 @@ public sealed class RoomService
         foreach (string invitee in invites) await InviteAsync(requester.UserId, roomId, invitee, null, direct, cancellationToken);
         // Return room
         return roomId;
+    }
+
+    /// <summary>Throw before a room is created when an invite of it cannot go: an invalid user ID, a local user that does not exist, or a server that cannot be reached, e.g. a mistyped name; so a failed invite leaves no room behind.</summary>
+    private async Task AssertInviteesAsync(IReadOnlyList<string> invites, CancellationToken cancellationToken)
+    {
+        // Valid IDs, local users known
+        List<string> servers = [];
+        await using (ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken))
+        {
+            foreach (string invite in invites)
+            {
+                if (!UserId.TryParse(invite, out UserId invitee)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid user ID {invite}.");
+                if (invitee.ServerName != ServerName)
+                {
+                    servers.Add(invitee.ServerName);
+                    continue;
+                }
+                if (!await db.Users.AnyAsync(u => u.UserId == invite, cancellationToken)) throw new MatrixException(HttpStatusCode.NotFound, ErrorCodes.NotFound, $"Unknown user {invite}.");
+            }
+        }
+        // Done: each other server answering
+        foreach (string server in servers.Distinct()) await remoteInvites.AssertReachableAsync(server, cancellationToken);
     }
 
     /// <summary>Join a room by ID or alias; already joined users stay joined. Aliases of other servers are asked from them. A room ID that is not here yet is joined through the server that invited the user, <paramref name="via"/> servers and the server in the room ID, in that order. Returns the room ID.</summary>

@@ -9,7 +9,10 @@ using global::Android.Views;
 using Uniform.Matrix.Calls;
 
 /// <summary>The front camera with Android's VP8 encoder, for a call's video: Camera2 renders into the encoder's input surface, and each encoded frame comes in <see cref="FrameEncoded"/>.</summary>
-/// <remarks>The picture is the sensor's, landscape 640x480 at up to 30 frames per second, or 320x240 at 10 when the peer asks for less, as a slow receiver does; the encoder makes a keyframe every two seconds and when asked.</remarks>
+/// <remarks>
+/// The picture is the sensor's, landscape 640x480 at up to 30 frames per second, or 320x240 at 10 when the peer asks for less, as a slow receiver does; the encoder makes a keyframe every two seconds and when asked.
+/// With <see cref="Upright"/>, as through LiveKit, which does not pass the rotation on, Camera2 renders into an image reader instead; each picture is turned upright in C# and written into the encoder's input, and the encoder starts again at the other shape when the phone turns between portrait and landscape.
+/// </remarks>
 /// <param name="context">The application.</param>
 public sealed class AndroidCamera(Context context) : IVideoCamera
 {
@@ -49,6 +52,14 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     private bool switching;
     private bool retried;
     private bool disposed;
+    private ImageReader? frameReader;
+    private readonly Queue<int> freeInputs = new();
+    private int encoderWidth;
+    private int encoderHeight;
+    private readonly long clockStart = System.Diagnostics.Stopwatch.GetTimestamp();
+
+    /// <inheritdoc />
+    public bool Upright { get; set; }
 
     /// <inheritdoc />
     public event Action<byte[]>? FrameEncoded;
@@ -82,8 +93,9 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         thread.Start();
         handler = new Handler(thread.Looper!);
 
-        // The encoder, fed by a surface, and the small preview pictures
+        // The encoder, fed by a surface or turned pictures, and the small preview pictures
         StartEncoder();
+        StartFrameReader();
         previewReader = ImageReader.NewInstance(PreviewWidth, PreviewHeight, global::Android.Graphics.ImageFormatType.Yuv420888, 2);
         previewReader.SetOnImageAvailableListener(new PreviewListener(this), handler);
 
@@ -96,12 +108,15 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         Open();
     }
 
-    /// <summary>Start a new encoder with a new input surface, as a surface that one camera wrote to may not take another on older Android versions.</summary>
+    /// <summary>Start a new encoder with a new input surface, as a surface that one camera wrote to may not take another on older Android versions; when <see cref="Upright"/>, one fed with pictures in the shape the phone is held in.</summary>
     private void StartEncoder()
     {
-        // VP8 at the quality's size, fed by its surface
-        MediaFormat format = MediaFormat.CreateVideoFormat(Vp8, quality.Width, quality.Height);
-        format.SetInteger(MediaFormat.KeyColorFormat, (int)global::Android.Media.MediaCodecCapabilities.Formatsurface);
+        // VP8 at the quality's size, fed by its surface, or at the turned size by pictures
+        bool sideways = Upright && Rotation % 180 != 0;
+        encoderWidth = sideways ? quality.Height : quality.Width;
+        encoderHeight = sideways ? quality.Width : quality.Height;
+        MediaFormat format = MediaFormat.CreateVideoFormat(Vp8, encoderWidth, encoderHeight);
+        format.SetInteger(MediaFormat.KeyColorFormat, (int)(Upright ? global::Android.Media.MediaCodecCapabilities.Formatyuv420flexible : global::Android.Media.MediaCodecCapabilities.Formatsurface));
         format.SetInteger(MediaFormat.KeyBitRate, quality.Bitrate);
         encoderBitrate = quality.Bitrate;
         format.SetInteger(MediaFormat.KeyFrameRate, quality.FrameRate);
@@ -109,9 +124,85 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         encoder = MediaCodec.CreateEncoderByType(Vp8);
         encoder.SetCallback(new EncoderCallback(this), handler);
         encoder.Configure(format, null, null, MediaCodecConfigFlags.Encode);
-        input = encoder.CreateInputSurface();
+        if (!Upright) input = encoder.CreateInputSurface();
         // Done
         encoder.Start();
+    }
+
+    /// <summary>When <see cref="Upright"/>, make the reader the camera renders the pictures to encode into, at the quality's size; else nothing.</summary>
+    private void StartFrameReader()
+    {
+        // Three pictures in flight, so the camera does not wait
+        frameReader?.Close();
+        frameReader = null;
+        if (!Upright) return;
+        frameReader = ImageReader.NewInstance(quality.Width, quality.Height, global::Android.Graphics.ImageFormatType.Yuv420888, 3);
+        // Done
+        frameReader.SetOnImageAvailableListener(new FrameListener(this), handler);
+    }
+
+    /// <summary>The surface the camera renders the pictures to encode into.</summary>
+    private Surface EncodingSurface => Upright ? frameReader!.Surface! : input!;
+
+    /// <summary>Note an input buffer of the encoder that is free, for the next turned picture.</summary>
+    private void OnInputAvailable(MediaCodec codec, int index)
+    {
+        // The current encoder's only
+        if (!ReferenceEquals(codec, encoder)) return;
+        // Done
+        lock (freeInputs) freeInputs.Enqueue(index);
+    }
+
+    /// <summary>Encode the latest picture turned upright: a new encoder when its shape changed, then the picture into a free input buffer; dropped when none is free.</summary>
+    private void OnFrame(ImageReader reader)
+    {
+        // The latest picture, closed in Java when done
+        global::Android.Media.Image? image = null;
+        try
+        {
+            image = reader.AcquireLatestImage();
+            if (image is null || paused || disposed || encoder is null) return;
+            Uniform.Matrix.Video.VideoFrame picture = AndroidImages.ToVideoFrame(image).Rotated(Rotation);
+            if (picture.Width != encoderWidth || picture.Height != encoderHeight)
+            {
+                global::Android.Util.Log.Info("UniformChat", $"Video turns to {picture.Width}x{picture.Height}");
+                StopEncoder();
+                StartEncoder();
+            }
+
+            // A free buffer, filled and queued with the capture time
+            int index;
+            lock (freeInputs)
+            {
+                if (!freeInputs.TryDequeue(out index)) return;
+            }
+            MediaCodec codec = encoder!;
+            global::Android.Media.Image? target = codec.GetInputImage(index);
+            if (target is null) return;
+            AndroidImages.Write(picture, target);
+            long microseconds = (long)System.Diagnostics.Stopwatch.GetElapsedTime(clockStart).TotalMicroseconds;
+            codec.QueueInputBuffer(index, 0, picture.Width * picture.Height * 3 / 2, microseconds, MediaCodecBufferFlags.None);
+        }
+        catch (Exception ex) when (ex is Java.Lang.IllegalStateException or MediaCodec.CodecException)
+        {
+            // On an encoder or reader that stopped meanwhile: this picture is dropped
+            global::Android.Util.Log.Warn("UniformChat", $"Picture not encoded: {ex.Message}");
+        }
+        finally
+        {
+            image?.Close();
+        }
+    }
+
+    /// <summary>Passes pictures to encode on.</summary>
+    private sealed class FrameListener(AndroidCamera owner) : Java.Lang.Object, ImageReader.IOnImageAvailableListener
+    {
+        /// <inheritdoc />
+        public void OnImageAvailable(ImageReader? reader)
+        {
+            // Done
+            if (reader is not null) owner.OnFrame(reader);
+        }
     }
 
     /// <summary>Stop and release the encoder and its surface.</summary>
@@ -123,6 +214,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         encoder?.Release();
         input?.Release();
         encoder = null;
+        lock (freeInputs) freeInputs.Clear();
         // Done
         input = null;
     }
@@ -171,6 +263,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         retried = false;
         StopEncoder();
         StartEncoder();
+        StartFrameReader();
         // Done: a fresh surface for the next camera, as one camera's surface may not take another on older Android versions; the new encoder starts with a keyframe
         Open();
     }
@@ -201,6 +294,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
             // Already closed
         }
         StopEncoder();
+        frameReader?.Close();
         previewReader?.Close();
         thread?.QuitSafely();
         // Done
@@ -223,7 +317,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         try
         {
 #pragma warning disable CA1422 // The surface list form is enough here and works on every version
-            opened.CreateCaptureSession(previewReader is null ? [input!] : [input!, previewReader.Surface!], new SessionCallback(this), handler);
+            opened.CreateCaptureSession(previewReader is null ? [EncodingSurface] : [EncodingSurface, previewReader.Surface!], new SessionCallback(this), handler);
 #pragma warning restore CA1422
         }
         catch (Exception ex) when (ex is CameraAccessException or Java.Lang.IllegalStateException or Java.Lang.IllegalArgumentException)
@@ -266,6 +360,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
             session = null;
             StopEncoder();
             StartEncoder();
+            StartFrameReader();
             // Done: the open camera into the new surface
             if (device is CameraDevice open) OnOpened(open);
         });
@@ -304,7 +399,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     {
         // The recording template keeps the frame rate steady
         CaptureRequest.Builder request = device!.CreateCaptureRequest(CameraTemplate.Record);
-        request.AddTarget(input!);
+        request.AddTarget(EncodingSurface);
         if (previewReader?.Surface is Surface preview) request.AddTarget(preview);
         if (FrameRateRange() is global::Android.Util.Range range) request.Set(CaptureRequest.ControlAeTargetFpsRange!, range);
         // Done
@@ -444,11 +539,11 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         }
     }
 
-    /// <summary>Passes encoded frames on; the input comes from the surface.</summary>
+    /// <summary>Passes encoded frames on, and free input buffers for turned pictures; with a surface, none come.</summary>
     private sealed class EncoderCallback(AndroidCamera owner) : MediaCodec.Callback
     {
         /// <inheritdoc />
-        public override void OnInputBufferAvailable(MediaCodec codec, int index) { }
+        public override void OnInputBufferAvailable(MediaCodec codec, int index) => owner.OnInputAvailable(codec, index);
 
         /// <inheritdoc />
         public override void OnOutputBufferAvailable(MediaCodec codec, int index, MediaCodec.BufferInfo info) => owner.OnEncoded(codec, index, info);

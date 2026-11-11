@@ -221,6 +221,7 @@ public abstract class VoiceCall : IAsyncDisposable
             opened.Previewed += picture => { if (!cameraOff) PreviewReceived?.Invoke(this, picture); };
             connection.KeyframeRequested += opened.RequestKeyframe;
             connection.BitrateRequested += opened.LimitBitrate;
+            opened.Upright = !connection.SendsOrientation;
             opened.Start();
             sending = opened;
         }

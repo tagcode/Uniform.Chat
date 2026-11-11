@@ -45,4 +45,25 @@ public class VideoFrameTests
         // Return it
         return bgra;
     }
+
+    /// <summary>Turn a picture by quarter turns: clockwise, the left column becomes the top row; four turns give the picture back.</summary>
+    [Fact]
+    public void RotatePictures()
+    {
+        // A 4x2 picture, luma numbered, chroma 2x1
+        VideoFrame picture = new(4, 2, [1, 2, 3, 4, 5, 6, 7, 8], [10, 20], [30, 40]) { Rotation = 90 };
+
+        // A quarter turn clockwise: 2x4, the bottom-left pixel on top
+        VideoFrame turned = picture.Rotated(90);
+        Assert.Equal((2, 4), (turned.Width, turned.Height));
+        Assert.Equal([5, 1, 6, 2, 7, 3, 8, 4], turned.Y);
+        Assert.Equal([10, 20], turned.U);
+        Assert.Equal(0, turned.Rotation);
+
+        // Half and three quarters, and all the way round
+        Assert.Equal([8, 7, 6, 5, 4, 3, 2, 1], picture.Rotated(180).Y);
+        Assert.Equal([4, 8, 3, 7, 2, 6, 1, 5], picture.Rotated(270).Y);
+        // Done
+        Assert.Equal(picture.Y, picture.Rotated(90).Rotated(90).Rotated(90).Rotated(90).Y);
+    }
 }

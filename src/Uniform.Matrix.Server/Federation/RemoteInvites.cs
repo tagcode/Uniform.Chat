@@ -116,6 +116,15 @@ public sealed class RemoteInvites
     /// <summary>Return an <c>M_INVALID_PARAM</c> error about a received invite.</summary>
     private static MatrixException Invalid(string message) => new(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, message);
 
+    /// <summary>Throw <c>M_INVALID_PARAM</c> for an invalid server name, and a 502 when <paramref name="serverName"/> does not answer federation, e.g. a mistyped name.</summary>
+    public async Task AssertReachableAsync(string serverName, CancellationToken cancellationToken)
+    {
+        // Its version, which every server answers unsigned
+        if (!ServerNames.TryParse(serverName, out _, out _)) throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"Invalid server name {serverName}.");
+        // Done
+        await federation.SendAsync(HttpMethod.Get, serverName, "/_matrix/federation/v1/version", null, cancellationToken, signed: false);
+    }
+
     /// <summary>Invite <paramref name="target"/> of <paramref name="targetServer"/> to a room here, for the local user <paramref name="inviter"/>.</summary>
     public async Task InviteAsync(string inviter, string roomId, string target, string targetServer, JsonObject content, CancellationToken cancellationToken)
     {
