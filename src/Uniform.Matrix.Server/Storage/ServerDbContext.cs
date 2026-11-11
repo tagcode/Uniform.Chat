@@ -88,12 +88,17 @@ public sealed class ServerDbContext : DbContext
     /// <summary>Registration tokens created by admins.</summary>
     public DbSet<RegistrationTokenRow> RegistrationTokens => Set<RegistrationTokenRow>();
 
+    /// <summary>Delayed events waiting to be sent.</summary>
+    public DbSet<DelayedEventRow> DelayedEvents => Set<DelayedEventRow>();
+
     /// <summary>Keys and indexes.</summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Accounts
         modelBuilder.Entity<UserRow>().HasKey(u => u.UserId);
         modelBuilder.Entity<RegistrationTokenRow>().HasKey(t => t.Token);
+        modelBuilder.Entity<DelayedEventRow>().HasKey(d => d.DelayId);
+        modelBuilder.Entity<DelayedEventRow>().HasIndex(d => d.UserId);
         modelBuilder.Entity<DeviceRow>().HasKey(d => new { d.UserId, d.DeviceId });
         modelBuilder.Entity<AccessTokenRow>().HasKey(t => t.TokenHash);
         modelBuilder.Entity<AccessTokenRow>().HasIndex(t => new { t.UserId, t.DeviceId });

@@ -576,3 +576,26 @@ public sealed class RegistrationTokenRow
     /// <summary>Expiry in milliseconds since the Unix epoch; null for never.</summary>
     public long? ExpiryTs { get; set; }
 }
+
+/// <summary>A delayed event (MSC4140) waiting to be sent, kept so that a restart of the server does not forget it.</summary>
+public sealed class DelayedEventRow
+{
+    /// <summary>The delay ID; primary key, and the secret that restarting, cancelling and sending need.</summary>
+    public required string DelayId { get; set; }
+    /// <summary>The user who scheduled it.</summary>
+    public required string UserId { get; set; }
+    /// <summary>The device it was scheduled from.</summary>
+    public required string DeviceId { get; set; }
+    /// <summary>The room.</summary>
+    public required string RoomId { get; set; }
+    /// <summary>The event type.</summary>
+    public required string Type { get; set; }
+    /// <summary>The state key of a state event; null for a message.</summary>
+    public string? StateKey { get; set; }
+    /// <summary>The content, as JSON.</summary>
+    public required string ContentJson { get; set; }
+    /// <summary>The delay in milliseconds.</summary>
+    public long DelayMs { get; set; }
+    /// <summary>When the delay last started, in milliseconds since the Unix epoch.</summary>
+    public long RunningSinceTs { get; set; }
+}

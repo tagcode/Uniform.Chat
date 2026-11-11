@@ -118,6 +118,53 @@ public class CallTests
         Assert.Equal(HttpStatusCode.NotFound, gone);
     }
 
+    /// <summary>Keep delayed events across restarts: one still pending is listed and can be restarted after a restart, and one whose delay ran out while the server was down is sent as it starts.</summary>
+    [Fact]
+    public async Task KeepDelayedEventsAcrossRestarts()
+    {
+        // Arrange: a data directory kept between the runs, and a clock for each
+        string directory = Directory.CreateTempSubdirectory("matrix-server-delayed-").FullName;
+        Dictionary<string, string?> settings = new() { ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory };
+        DateTimeOffset start = DateTimeOffset.UtcNow;
+        string roomId, token, delayId, userId, deviceId;
+        try
+        {
+            // Act: a topic in 10 seconds, then stopped
+            await using (TestHomeserver first = await TestHomeserver.StartAsync(settings, new FakeTimeProvider(start)))
+            {
+                MatrixClient alice = first.CreateClient();
+                await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+                (token, userId, deviceId) = (alice.AccessToken!, alice.UserId!, alice.DeviceId!);
+                roomId = await alice.CreateRoomAsync(new CreateRoomRequest(), Ct);
+                using HttpClient http = first.CreateHttpClient();
+                http.DefaultRequestHeaders.Authorization = new("Bearer", token);
+                delayId = await DelayAsync(http, Uri.EscapeDataString(roomId), "later");
+            }
+
+            // Five seconds on: still there, and restarted
+            await using (TestHomeserver second = await TestHomeserver.StartAsync(settings, new FakeTimeProvider(start + TimeSpan.FromSeconds(5))))
+            {
+                using HttpClient http = second.CreateHttpClient();
+                http.DefaultRequestHeaders.Authorization = new("Bearer", token);
+                JsonElement listed = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/unstable/org.matrix.msc4140/delayed_events", Ct);
+                Assert.Equal([delayId], listed.GetProperty("delayed_events").EnumerateArray().Select(e => e.GetProperty("delay_id").GetString()));
+                Assert.Equal(HttpStatusCode.OK, (await http.PostAsync($"/_matrix/client/unstable/org.matrix.msc4140/delayed_events/{delayId}/restart", null, Ct)).StatusCode);
+            }
+
+            // Twenty seconds on, past the restarted delay: sent as the server starts
+            await using TestHomeserver third = await TestHomeserver.StartAsync(settings, new FakeTimeProvider(start + TimeSpan.FromSeconds(20)));
+            MatrixClient resumed = new(third.CreateHttpClient(), new MatrixSession { Homeserver = third.BaseAddress, UserId = userId, DeviceId = deviceId, AccessToken = token });
+            // Done
+            Assert.Equal("later", await WaitForTopicAsync(resumed, roomId, "later"));
+        }
+        finally
+        {
+            using (Microsoft.Data.Sqlite.SqliteConnection pooled = new($"Data Source={Path.Combine(directory, "server.db")}")) Microsoft.Data.Sqlite.SqliteConnection.ClearPool(pooled);
+            try { Directory.Delete(directory, recursive: true); }
+            catch (IOException) { }
+        }
+    }
+
     /// <summary>Schedule a topic in 10 seconds; return its delay ID.</summary>
     private static async Task<string> DelayAsync(HttpClient http, string room, string topic)
     {

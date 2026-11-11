@@ -126,6 +126,47 @@ namespace Uniform.Matrix.Server.Storage.Migrations
                     b.ToTable("CurrentState");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Server.Storage.DelayedEventRow", b =>
+                {
+                    b.Property<string>("DelayId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("DelayMs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RoomId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("RunningSinceTs")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StateKey")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("DelayId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DelayedEvents");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Server.Storage.DeviceKeysRow", b =>
                 {
                     b.Property<string>("UserId")

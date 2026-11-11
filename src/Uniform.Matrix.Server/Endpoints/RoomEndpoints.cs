@@ -50,11 +50,11 @@ public static class RoomEndpoints
         // Messages, state, redaction
         client.MapPut("/rooms/{roomId}/send/{eventType}/{txnId}", async (string roomId, string eventType, string txnId, JsonObject body, HttpContext http, RoomService rooms, DelayedEvents delayed, CancellationToken cancellationToken) =>
             CallEndpoints.GetDelay(http) is long delay
-                ? MatrixHttp.Json(new JsonObject { ["delay_id"] = delayed.Schedule(http.GetRequester(), roomId, eventType, null, body, delay) })
+                ? MatrixHttp.Json(new JsonObject { ["delay_id"] = await delayed.ScheduleAsync(http.GetRequester(), roomId, eventType, null, body, delay, cancellationToken) })
                 : MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SendMessageAsync(http.GetRequester(), roomId, eventType, body, txnId, cancellationToken) })).RequireRateLimiting(RateLimits.Writes).RejectSuspended();
         client.MapPut("/rooms/{roomId}/state/{eventType}/{stateKey?}", async (string roomId, string eventType, string? stateKey, JsonObject body, HttpContext http, RoomService rooms, DelayedEvents delayed, CancellationToken cancellationToken) =>
             CallEndpoints.GetDelay(http) is long delay
-                ? MatrixHttp.Json(new JsonObject { ["delay_id"] = delayed.Schedule(http.GetRequester(), roomId, eventType, stateKey ?? "", body, delay) })
+                ? MatrixHttp.Json(new JsonObject { ["delay_id"] = await delayed.ScheduleAsync(http.GetRequester(), roomId, eventType, stateKey ?? "", body, delay, cancellationToken) })
                 : MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.SetStateAsync(http.GetRequester(), roomId, eventType, stateKey ?? "", body, cancellationToken) })).RequireRateLimiting(RateLimits.Writes).RejectSuspended();
         client.MapPut("/rooms/{roomId}/redact/{eventId}/{txnId}", async (string roomId, string eventId, string txnId, JsonObject body, HttpContext http, RoomService rooms, CancellationToken cancellationToken) =>
             MatrixHttp.Json(new JsonObject { ["event_id"] = await rooms.RedactAsync(http.GetRequester(), roomId, eventId, body["reason"]?.GetValue<string>(), txnId, cancellationToken) })).RequireRateLimiting(RateLimits.Writes);

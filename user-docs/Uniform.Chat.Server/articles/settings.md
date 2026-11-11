@@ -53,7 +53,7 @@ Settings come from these places; later ones override earlier ones:
 | `Calls:TurnUris` | not set | TURN server addresses for older 1:1 calls, separated by commas, such as `turn:turn.example.org:3478?transport=udp`. |
 | `Calls:TurnSharedSecret` | not set | Shared secret of the TURN server, such as coturn's `static-auth-secret`. Keep it out of command lines; set it in the settings file or as the environment variable `Calls__TurnSharedSecret`. |
 | `Calls:TurnUserLifetime` | `1.00:00:00` | How long TURN credentials hold. |
-| `Calls:MaxEventDelay` | `1.00:00:00` | Longest delay of a delayed event, which calls use to end the membership of a client that disappears. |
+| `Calls:MaxEventDelay` | `1.00:00:00` | Longest delay of a delayed event, which calls use to end the membership of a client that disappears. Delayed events are kept in the database, so a restart does not lose them; those due while the server was down are sent when it starts. |
 | `Calls:OpenIdTokenLifetime` | `01:00:00` | How long an OpenID token holds; call services use these tokens to check who a user is. |
 | `LiveKit:Enabled` | `false` | Serve the built-in MatrixRTC authorization service at `/livekit/jwt`, which gives Element X and other MatrixRTC clients tokens of your LiveKit server. See [Video calls in Element X](xref:Uniform.Chat.Server.LiveKit.Article). |
 | `LiveKit:Url` | not set | Address of the LiveKit server that clients join, such as `wss://livekit.example.org`. |

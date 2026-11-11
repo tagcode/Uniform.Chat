@@ -160,6 +160,7 @@ public static class ServerServiceExtensions
         builder.Services.AddHttpClient(FederationClient.HttpClientName, http => http.DefaultRequestHeaders.UserAgent.ParseAdd("Uniform.Matrix.Server (federation)")).ConfigurePrimaryHttpMessageHandler(services => FederationClient.CreateHandler(services.GetRequiredService<IOptionsMonitor<FederationOptions>>()));
         builder.Services.AddSingleton<OpenIdTokens>();
         builder.Services.AddSingleton<DelayedEvents>();
+        builder.Services.AddHostedService(services => services.GetRequiredService<DelayedEvents>());
         builder.Services.AddSingleton<DeviceKeyService>();
         builder.Services.AddSingleton<ToDeviceService>();
         builder.Services.AddSingleton<KeyBackupService>();
