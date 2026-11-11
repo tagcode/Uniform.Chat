@@ -17,8 +17,12 @@ public sealed class SpeakerFrames : IDisposable
         // Voice format in; the device converts to its own
         this.speaker = speaker;
         queued = new BufferedWaveProvider(VoiceFormat.WaveFormat, maxBuffered ?? TimeSpan.FromMilliseconds(500)) { DiscardOnBufferOverflow = true };
+        speaker.PlaybackStopped += (_, stopped) => { if (stopped.Exception is Exception e) Failed?.Invoke(e); };
         speaker.Init(queued);
     }
+
+    /// <summary>Raised when the speaker stops on an error while playing, e.g. a device that went away.</summary>
+    public event Action<Exception>? Failed;
 
     /// <summary>Audio queued and not yet played.</summary>
     public TimeSpan Buffered => queued.BufferedDuration;

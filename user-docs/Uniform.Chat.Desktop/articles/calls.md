@@ -12,7 +12,7 @@ Open the direct chat, and press 📞 in its header. A bar at the top of the wind
 
 ## Answering
 
-An incoming call shows the bar at the top, whichever room is open, with **Answer** and **Decline**. When the app is in the background, a notification tells about the call. If you have the app on several devices, they all ring; answering on one stops the others.
+An incoming call rings and shows the bar at the top, whichever room is open, with **Answer** and **Decline**. On Windows and Linux the app plays a ring tone of its own on the system's default speaker. When the app is in the background, a notification tells about the call. If you have the app on several devices, they all ring; answering on one stops the others.
 
 ## Video
 

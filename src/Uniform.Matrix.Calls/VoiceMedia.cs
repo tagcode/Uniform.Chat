@@ -30,9 +30,13 @@ public sealed class VoiceMedia : IAsyncDisposable
         this.connection = connection;
         microphone = new MicrophoneFrames(devices.OpenMicrophone());
         speaker = new SpeakerFrames(devices.OpenSpeaker());
+        speaker.Failed += e => DeviceFailed?.Invoke(e);
         microphone.FrameCaptured += OnFrame;
         connection.AudioReceived += OnPacket;
     }
+
+    /// <summary>Raised when a device fails while the call plays or records, e.g. a speaker that stops.</summary>
+    public event Action<Exception>? DeviceFailed;
 
     /// <summary>Whether the microphone is muted; muted frames are not sent, and the next one sent is marked.</summary>
     public bool Muted { get; set; }

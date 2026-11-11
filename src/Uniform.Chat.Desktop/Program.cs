@@ -13,11 +13,12 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        // Notifications where the platform has them so far; Windows rings with a tone of its own
+        // Notifications where the platform has them so far; a ring tone of our own, as desktops have none for calls
         App.Platform = GuiPlatform.Desktop() with
         {
             Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null,
-            Ring = OperatingSystem.IsWindows() ? _ => Uniform.Matrix.Audio.RingTone.Start(Uniform.Matrix.Audio.AudioDevices.ForThisPlatform()) : null,
+            Ring = OperatingSystem.IsWindows() || OperatingSystem.IsLinux() ? _ => Uniform.Matrix.Audio.RingTone.Start(Uniform.Matrix.Audio.AudioDevices.ForThisPlatform()) : null,
+            RingIsSoundOnly = true,
             Camera = V4l2Camera.Available() ? () => new V4l2Camera() : MediaFoundationCamera.Available() ? () => new MediaFoundationCamera() : null,
         };
         // Return exit code

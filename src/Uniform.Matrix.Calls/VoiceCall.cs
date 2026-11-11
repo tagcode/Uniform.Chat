@@ -201,6 +201,7 @@ public abstract class VoiceCall : IAsyncDisposable
         try
         {
             media = new VoiceMedia(connection, audio) { Muted = muted };
+            media.DeviceFailed += e => logger.LogWarning(e, "Audio device of call {CallId} failed", CallId);
             media.Start();
         }
         catch (Exception e)

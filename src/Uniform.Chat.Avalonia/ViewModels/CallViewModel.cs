@@ -288,7 +288,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Bar, then the notification
         ui.Post(() => Show(call));
-        if (platform.Ring is null && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync(call.IsVideo ? "Incoming video call" : "Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+        if ((platform.Ring is null || platform.RingIsSoundOnly) && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync(call.IsVideo ? "Incoming video call" : "Incoming call", $"{nameOf(call.PeerUserId)} is calling");
     }
 
     /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>

@@ -36,7 +36,11 @@ public sealed class ClientConnection : IAsyncDisposable
         Calls = host.Services.GetRequiredService<CallService>();
         Logger = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Uniform.Chat.Avalonia");
         LogPath = host.Services.GetService<FileLoggerProvider>()?.FilePath;
+        Uniform.Matrix.Audio.RingTone.Failed += OnRingFailed;
     }
+
+    /// <summary>Log why an incoming call does not ring, e.g. a speaker that did not open.</summary>
+    private void OnRingFailed(Exception exception) => Logger.LogWarning("Ring tone failed: {Error}", exception.Describe());
 
     /// <summary>Signed-in user.</summary>
     public string UserId { get; }
@@ -142,6 +146,7 @@ public sealed class ClientConnection : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         // Stop services, then free them without blocking the UI thread, which their asynchronous disposal, e.g. hanging up a call, may need
+        Uniform.Matrix.Audio.RingTone.Failed -= OnRingFailed;
         try
         {
             await host.StopAsync(TimeSpan.FromSeconds(5));

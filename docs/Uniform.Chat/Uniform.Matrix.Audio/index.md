@@ -25,7 +25,7 @@ Concentus would switch to a native libopus where it finds one; both classes turn
 | Windows | [`WasapiAudioDevices`](xref:Uniform.Matrix.Audio.WasapiAudioDevices) | NAudio.Wasapi, in shared mode |
 | Android | `AndroidAudioDevices` in [Uniform.Chat.Android](xref:Uniform.Chat.Android.Article) | Android's `AudioRecord` from the voice communication source, with the phone's echo cancellation and noise suppression, and `AudioTrack` as call audio on the earpiece or the loudspeaker |
 
-Devices record and play in their own formats. [`MicrophoneFrames`](xref:Uniform.Matrix.Audio.MicrophoneFrames) turns any `IWaveIn` into voice frames, mixing channels to mono and resampling to 48 kHz; [`SpeakerFrames`](xref:Uniform.Matrix.Audio.SpeakerFrames) plays frames through any `IWavePlayer`, with a short buffer against uneven arrival and silence in the gaps.
+Devices record and play in their own formats. [`MicrophoneFrames`](xref:Uniform.Matrix.Audio.MicrophoneFrames) turns any `IWaveIn` into voice frames, mixing channels to mono and resampling to 48 kHz; [`SpeakerFrames`](xref:Uniform.Matrix.Audio.SpeakerFrames) plays frames through any `IWavePlayer`, with a short buffer against uneven arrival and silence in the gaps. ALSA's default devices convert formats themselves; WASAPI's shared mode doesn't change sample rates, so on Windows the speaker resamples voice to the device's mix format, such as 44.1 kHz stereo, before handing it over.
 
 ## Hearing yourself
 

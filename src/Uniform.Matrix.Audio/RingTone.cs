@@ -2,46 +2,54 @@ namespace Uniform.Matrix.Audio;
 
 using NAudio.Wave;
 
-/// <summary>A ring tone for an incoming call, played on a speaker until disposed: two bursts of a two-tone chord, then a pause, repeated; for platforms without a ringtone of their own, such as Windows.</summary>
+/// <summary>A ring tone for an incoming call, played on a speaker until disposed: two bursts of a two-tone chord, then a pause, repeated; for platforms without a ringtone of their own, such as desktops.</summary>
+/// <remarks>The speaker opens and closes on a thread-pool thread: WASAPI's objects made on a UI thread, a single-threaded COM apartment on Windows, fail on NAudio's playback thread.</remarks>
 public sealed class RingTone : IDisposable
 {
     /// <summary>The tone's frequencies in hertz, played together.</summary>
     private static readonly double[] Frequencies = [440, 480];
     /// <summary>Peak level of the chord, a little below full scale.</summary>
     private const double Level = 0.3;
-    private readonly IWavePlayer? speaker;
+    private readonly Task<IWavePlayer?> starting;
 
-    /// <summary>Play on <paramref name="speaker"/>; null plays nothing.</summary>
-    private RingTone(IWavePlayer? speaker)
-    {
-        // Looping until disposed
-        this.speaker = speaker;
-        if (speaker is null) return;
-        speaker.Init(new Tone());
-        // Done
-        speaker.Play();
-    }
+    /// <summary>Ring once <paramref name="starting"/> has the speaker playing.</summary>
+    private RingTone(Task<IWavePlayer?> starting) => this.starting = starting;
 
-    /// <summary>Start ringing on the speaker of <paramref name="devices"/>; a speaker that does not open rings silently rather than failing the call.</summary>
-    public static RingTone Start(IAudioDevices? devices)
+    /// <summary>Raised when the speaker fails to open or play, so the app can log why there is no ring.</summary>
+    public static event Action<Exception>? Failed;
+
+    /// <summary>Start ringing on the speaker of <paramref name="devices"/>, without waiting for it to open; a speaker that does not open rings silently rather than failing the call.</summary>
+    public static RingTone Start(IAudioDevices? devices) => new(Task.Run(() => Open(devices)));
+
+    /// <summary>Stop ringing, once the speaker has opened if it is still opening.</summary>
+    public void Dispose() => starting.ContinueWith(task => Close(task.Result), TaskScheduler.Default);
+
+    /// <summary>Open the speaker and play the tone; null on no speaker or one that fails.</summary>
+    private static IWavePlayer? Open(IAudioDevices? devices)
     {
         // The speaker, if any
         IWavePlayer? speaker = null;
         try
         {
             speaker = devices?.OpenSpeaker();
-            return new RingTone(speaker);
+            if (speaker is null) return null;
+            speaker.PlaybackStopped += (_, stopped) => { if (stopped.Exception is Exception e) Failed?.Invoke(e); };
+            speaker.Init(new Tone());
+            speaker.Play();
+            // Return the playing speaker
+            return speaker;
         }
         catch (Exception e) when (e is not OutOfMemoryException)
         {
             // On a speaker that did not open: no sound
+            Failed?.Invoke(e);
             speaker?.Dispose();
-            return new RingTone(null);
+            return null;
         }
     }
 
-    /// <summary>Stop ringing.</summary>
-    public void Dispose()
+    /// <summary>Stop and close the speaker.</summary>
+    private static void Close(IWavePlayer? speaker)
     {
         // Stopped, then closed
         if (speaker is null) return;

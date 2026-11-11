@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.Alsa;
+using NAudio.Wave.SampleProviders;
 
 /// <summary>A microphone or speaker a platform offers.</summary>
 /// <param name="Name">Name to choose it by, e.g. an ALSA device name such as <c>pulse</c> or <c>plughw:CARD=MKII,DEV=0</c>.</param>
@@ -79,8 +80,16 @@ public sealed class WasapiAudioDevices(string? microphone = null, string? speake
     /// <summary>Open the capture device; it records in the system's mix format, which <see cref="MicrophoneFrames"/> converts.</summary>
     public IWaveIn OpenMicrophone() => Find(DataFlow.Capture, microphone) is MMDevice device ? new WasapiCapture(device) : new WasapiCapture();
 
-    /// <summary>Open the playback device.</summary>
-    public IWavePlayer OpenSpeaker() => Find(DataFlow.Render, speaker) is MMDevice device ? new WasapiOut(device, AudioClientShareMode.Shared, true, LatencyMilliseconds) : new WasapiOut(AudioClientShareMode.Shared, LatencyMilliseconds);
+    /// <summary>Open the playback device, fed in its own mix format, as WASAPI's shared mode does not convert sample rates.</summary>
+    public IWavePlayer OpenSpeaker()
+    {
+        // The chosen device, else the default one
+        using MMDeviceEnumerator enumerator = new();
+        MMDevice device = Find(DataFlow.Render, speaker) ?? enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        WaveFormat mix = device.AudioClient.MixFormat;
+        // Return the converting speaker
+        return new MixFormatSpeaker(new WasapiOut(device, AudioClientShareMode.Shared, true, LatencyMilliseconds), mix);
+    }
 
     /// <summary>Return the active capture devices.</summary>
     public IReadOnlyList<AudioDevice> ListMicrophones() => List(DataFlow.Capture);
@@ -108,3 +117,69 @@ public sealed class WasapiAudioDevices(string? microphone = null, string? speake
     }
 }
 #pragma warning restore CS0618
+
+/// <summary>A speaker that converts what it plays to <paramref name="mix"/>, the device's mix format: its sample rate and channels, in 32-bit float, so the device takes the audio as it is.</summary>
+/// <param name="speaker">The device's player.</param>
+/// <param name="mix">The device's mix format.</param>
+internal sealed class MixFormatSpeaker(IWavePlayer speaker, WaveFormat mix) : IWavePlayer
+{
+    /// <summary>The device's volume.</summary>
+    public float Volume { get => speaker.Volume; set => speaker.Volume = value; }
+
+    /// <summary>Whether it plays.</summary>
+    public PlaybackState PlaybackState => speaker.PlaybackState;
+
+    /// <summary>The format the device gets.</summary>
+    public WaveFormat OutputWaveFormat => speaker.OutputWaveFormat;
+
+    /// <summary>Raised when playing stops, with the exception when it failed.</summary>
+    public event EventHandler<StoppedEventArgs>? PlaybackStopped
+    {
+        add => speaker.PlaybackStopped += value;
+        remove => speaker.PlaybackStopped -= value;
+    }
+
+    /// <summary>Play <paramref name="waveProvider"/> resampled, and spread over the device's channels.</summary>
+    public void Init(IWaveProvider waveProvider)
+    {
+        // Rate, then channels
+        ISampleProvider samples = waveProvider.ToSampleProvider();
+        if (samples.WaveFormat.SampleRate != mix.SampleRate) samples = new WdlResamplingSampleProvider(samples, mix.SampleRate);
+        if (samples.WaveFormat.Channels == 1 && mix.Channels > 1) samples = new SpreadSampleProvider(samples, mix.Channels);
+        // Done
+        speaker.Init(new SampleToWaveProvider(samples));
+    }
+
+    /// <summary>Start playing.</summary>
+    public void Play() => speaker.Play();
+
+    /// <summary>Stop playing.</summary>
+    public void Stop() => speaker.Stop();
+
+    /// <summary>Pause playing.</summary>
+    public void Pause() => speaker.Pause();
+
+    /// <summary>Close the device.</summary>
+    public void Dispose() => speaker.Dispose();
+
+    /// <summary>Mono samples copied to every channel.</summary>
+    private sealed class SpreadSampleProvider(ISampleProvider mono, int channels) : ISampleProvider
+    {
+        private float[] buffer = [];
+
+        /// <summary>The mono source's rate over the channels.</summary>
+        public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(mono.WaveFormat.SampleRate, channels);
+
+        /// <summary>Read whole frames of all channels.</summary>
+        public int Read(Span<float> destination)
+        {
+            // Mono samples for the frames that fit
+            int frames = destination.Length / channels;
+            if (buffer.Length < frames) buffer = new float[frames];
+            int read = mono.Read(buffer.AsSpan(0, frames));
+            for (int i = 0; i < read; i++) destination.Slice(i * channels, channels).Fill(buffer[i]);
+            // Return samples written
+            return read * channels;
+        }
+    }
+}

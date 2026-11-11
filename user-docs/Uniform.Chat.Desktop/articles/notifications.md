@@ -8,7 +8,7 @@ On Android and Linux, the app notifies you while it is in the background. *â‹® â
 
 | Setting | Notifies of | Default |
 |---|---|---|
-| Incoming calls | A call: the phone rings and vibrates, also on the lock screen. Off, a call shows only in the open app. Android only. | On |
+| Incoming calls | A call: the phone rings and vibrates, also on the lock screen; on Windows and Linux, a ring tone plays. Off, a call shows only in the open app. | On |
 | Messages in direct chats | Each new message in a one-to-one chat | Off |
 | Messages that mention you | A message that names you, in any room | Off |
 | Invites | An invite to a room or a chat | On |

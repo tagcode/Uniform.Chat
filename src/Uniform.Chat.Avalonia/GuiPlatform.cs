@@ -52,6 +52,9 @@ public sealed record GuiPlatform
     public IPushService? Push { get; init; }
     /// <summary>Ring for an incoming call from the named peer, e.g. the ringtone and a full-screen call notification on Android; dispose the result to stop. Null where the platform only notifies.</summary>
     public Func<string, IDisposable>? Ring { get; init; }
+
+    /// <summary>Whether <see cref="Ring"/> only plays a sound, as on the desktop, so an incoming call still shows a notification; Android's ring shows one of its own.</summary>
+    public bool RingIsSoundOnly { get; init; }
     /// <summary>Turn the screen off while the phone is held to the ear, so that the cheek does not press buttons; dispose the result to stop. Null where there is no proximity sensor.</summary>
     public Func<IDisposable>? ScreenOffNearEar { get; init; }
 
