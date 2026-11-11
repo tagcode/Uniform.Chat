@@ -25,7 +25,7 @@ public sealed class RtcCallTests
     private const string ApiKey = "devkey";
     private const string ApiSecret = "a-secret-for-tests-of-matrixrtc-calls";
 
-    /// <summary>Call over MatrixRTC in an encrypted direct chat: the ring, the answer, both members, encrypted voice both ways, a reconnect as after a network change, and the hangup that ends it on both sides.</summary>
+    /// <summary>Call over MatrixRTC in an encrypted direct chat: the ring on both of the callee's devices, the answer on one, which stops the other's ringing, both members, encrypted voice both ways, a reconnect as after a network change, and the hangup that ends it on both sides.</summary>
     [Fact]
     public async Task CallOverMatrixRtc()
     {
@@ -50,8 +50,11 @@ public sealed class RtcCallTests
             FakeAudio aliceAudio = new(440), bobAudio = new(660);
             using IHost aliceApp = await StartClientAsync(Path.Combine(directory, "alice"), "@alice:test.local", "alice-password", aliceAudio);
             using IHost bobApp = await StartClientAsync(Path.Combine(directory, "bob"), "@bob:test.local", "bob-password", bobAudio);
+            using IHost bobPhone = await StartClientAsync(Path.Combine(directory, "bob-phone"), "@bob:test.local", "bob-password", new FakeAudio(880));
             CallService aliceCalls = aliceApp.Services.GetRequiredService<CallService>(), bobCalls = bobApp.Services.GetRequiredService<CallService>();
-            await WaitForAsync(() => Joined(aliceApp, roomId, 2) && Joined(bobApp, roomId, 2));
+            await WaitForAsync(() => Joined(aliceApp, roomId, 2) && Joined(bobApp, roomId, 2) && Joined(bobPhone, roomId, 2));
+            TaskCompletionSource<VoiceCall> phoneRinging = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            bobPhone.Services.GetRequiredService<CallService>().IncomingCall += call => phoneRinging.TrySetResult(call);
 
             // Alice calls; Bob's rings, and he answers
             TaskCompletionSource<VoiceCall> ringing = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -60,11 +63,17 @@ public sealed class RtcCallTests
             Assert.IsType<RtcCall>(outgoing);
             VoiceCall incoming = await ringing.Task.WaitAsync(TimeSpan.FromSeconds(30), Ct);
             Assert.Equal("@alice:test.local", incoming.PeerUserId);
+            VoiceCall elsewhere = await phoneRinging.Task.WaitAsync(TimeSpan.FromSeconds(30), Ct);
             await incoming.AnswerAsync(Ct);
 
             // Both connected, each hearing the other's voice, decrypted
             await WaitForAsync(() => outgoing.State == CallState.Connected && incoming.State == CallState.Connected);
             await WaitForAsync(() => aliceAudio.Speaker?.Energy > 0 && bobAudio.Speaker?.Energy > 0);
+
+            // Bob's phone stopped ringing, as his other device answered; Alice's call goes on
+            await WaitForAsync(() => elsewhere.State == CallState.Ended);
+            Assert.Equal("answered_elsewhere", elsewhere.EndReason);
+            Assert.Equal(CallState.Connected, outgoing.State);
 
             // Alice's network changes: her call joins the SFU again, and the voice goes on both ways
             await outgoing.RestartIceAsync("test", Ct);
@@ -81,6 +90,7 @@ public sealed class RtcCallTests
             Assert.True(outgoing.EndedByPeer);
             await aliceApp.StopAsync(CancellationToken.None);
             await bobApp.StopAsync(CancellationToken.None);
+            await bobPhone.StopAsync(CancellationToken.None);
         }
         finally
         {

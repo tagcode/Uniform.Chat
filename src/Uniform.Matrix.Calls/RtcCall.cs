@@ -208,7 +208,7 @@ public sealed class RtcCall : VoiceCall
         await EndAsync(reason, byPeer: false);
     }
 
-    /// <summary>Follow the room's call after a sync: the peer's devices that joined get this side's key and are subscribed to, and the call ends when the peer left after joining, or the caller left while ringing.</summary>
+    /// <summary>Follow the room's call after a sync: the peer's devices that joined get this side's key and are subscribed to, and the call ends when the peer left after joining, or the caller left while ringing; a call that rings stops when another device of this user joined it, as one that answered.</summary>
     internal async Task UpdateAsync()
     {
         // The peer's devices in the call now
@@ -216,7 +216,13 @@ public sealed class RtcCall : VoiceCall
         try
         {
             if (State == CallState.Ended) return;
-            List<(string UserId, string DeviceId, CallMemberContent Membership)> peers = [.. context.ReadMembers().Where(m => m.UserId == PeerUserId)];
+            IReadOnlyList<(string UserId, string DeviceId, CallMemberContent Membership)> members = context.ReadMembers();
+            if (State == CallState.Ringing && members.Any(m => m.UserId == context.OwnUserId && m.DeviceId != context.OwnDeviceId))
+            {
+                await EndAsync("answered_elsewhere", byPeer: false);
+                return;
+            }
+            List<(string UserId, string DeviceId, CallMemberContent Membership)> peers = [.. members.Where(m => m.UserId == PeerUserId)];
             if (peers.Count > 0) peerSeen = true;
             if (peers.Count == 0)
             {
@@ -241,12 +247,12 @@ public sealed class RtcCall : VoiceCall
         }
     }
 
-    /// <summary>Take a decline of this side's ring, by the peer or by another of this user's devices.</summary>
+    /// <summary>Take a decline of this side's ring, by the peer before any of its devices answered, or by another of this user's devices; a decline after the peer answered on another device is no longer a decline of the call.</summary>
     internal async Task DeclinedAsync(string sender, string declinedId)
     {
-        // This call's ring, or the ring this side got and declined elsewhere
+        // This call's ring while nobody answered yet, or the ring this side got and declined elsewhere
         if (State == CallState.Ended) return;
-        if (sender == PeerUserId && declinedId == ownNotificationId) await EndAsync("rejected", byPeer: true);
+        if (sender == PeerUserId && declinedId == ownNotificationId && State == CallState.Inviting) await EndAsync("rejected", byPeer: true);
         else if (sender == context.OwnUserId && declinedId == notificationId && State == CallState.Ringing) await EndAsync("rejected_elsewhere", byPeer: false);
     }
 
