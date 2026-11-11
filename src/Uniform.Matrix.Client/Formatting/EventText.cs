@@ -29,6 +29,19 @@ public static class EventText
         return ReferenceEquals(shown, message) ? StripReplyFallback(message.Body) : shown.Body;
     }
 
+    /// <summary>How long a deleted message keeps its "deleted" line in the history; older deletions are not shown, so a room reads better.</summary>
+    public static readonly TimeSpan DeletionShown = TimeSpan.FromMinutes(10);
+
+    /// <summary>Return whether <paramref name="clientEvent"/> is a message deleted more than <see cref="DeletionShown"/> before <paramref name="now"/>: by its deletion's time, or by its own when the server left the deletion out.</summary>
+    public static bool IsOldDeletion(ClientEvent clientEvent, DateTimeOffset now)
+    {
+        // Deleted messages only, then by when
+        if (clientEvent.Type != EventTypes.RoomMessage || (clientEvent.Unsigned?.RedactedBecause is null && GetText(clientEvent) is not null)) return false;
+        long deleted = clientEvent.Unsigned?.RedactedBecause?.OriginServerTs ?? clientEvent.OriginServerTs;
+        // Return verdict
+        return now - DateTimeOffset.FromUnixTimeMilliseconds(deleted) > DeletionShown;
+    }
+
     /// <summary>Return the HTML <c>formatted_body</c> of the content <see cref="GetText"/> shows, or null for messages without formatting.</summary>
     /// <param name="clientEvent">Message event.</param>
     public static string? GetHtml(ClientEvent clientEvent)

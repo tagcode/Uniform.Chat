@@ -124,7 +124,7 @@ public class UiFormattingTests
         // Arrange
         Room room = CreateRoom();
         ClientEvent edit = Event(EventTypes.RoomMessage, Bob, new MessageContent { MessageType = MessageTypes.Text, Body = "* new", NewContent = new MessageContent { Body = "new" }, RelatesTo = new Relation { RelType = RelationTypes.Replace, EventId = "$x" } });
-        ClientEvent deleted = Event(EventTypes.RoomMessage, Bob, new { }) with { Unsigned = new UnsignedData { RedactedBecause = Event(EventTypes.RoomRedaction, Bob, new { }) } };
+        ClientEvent deleted = Event(EventTypes.RoomMessage, Bob, new { }) with { Unsigned = new UnsignedData { RedactedBecause = Event(EventTypes.RoomRedaction, Bob, new { }) with { OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() } } };
         ClientEvent encrypted = Event(EventTypes.RoomEncrypted, Bob, new { algorithm = "m.megolm.v1.aes-sha2" });
 
         // Act and assert
@@ -235,5 +235,20 @@ public class UiFormattingTests
     {
         // Act and assert
         Assert.Equal(expected, MimeTypes.FromPath(path));
+    }
+
+    /// <summary>A message deleted more than ten minutes ago is not shown; one deleted lately shows as deleted, as one deleted while the room is open does.</summary>
+    [Fact]
+    public void HideOldDeletions()
+    {
+        // A deleted message, its deletion recent or old
+        Room room = CreateRoom();
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        ClientEvent Deleted(TimeSpan ago) => Event(EventTypes.RoomMessage, Bob, new { }) with { OriginServerTs = (now - TimeSpan.FromHours(1)).ToUnixTimeMilliseconds(), Unsigned = new UnsignedData { RedactedBecause = Event(EventTypes.RoomRedaction, Bob, new { }) with { OriginServerTs = (now - ago).ToUnixTimeMilliseconds() } } };
+
+        // Done
+        Assert.Contains("[message deleted]", MessageFormatter.Format(room, Deleted(TimeSpan.FromMinutes(2)), Me)!.Text);
+        Assert.Null(MessageFormatter.Format(room, Deleted(TimeSpan.FromMinutes(11)), Me));
+        Assert.False(EventText.IsOldDeletion(Event(EventTypes.RoomMessage, Bob, new MessageContent { MessageType = MessageTypes.Text, Body = "kept" }) with { OriginServerTs = 0 }, now));
     }
 }

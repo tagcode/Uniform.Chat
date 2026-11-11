@@ -8,7 +8,7 @@ uid: Uniform.Chat.Desktop.Messages.Article
 
 Type in the box at the bottom and press Enter to send; Shift+Enter starts a new line. Markdown works: `**bold**`, `*italic*`, `` `code` ``, lists and quotes. `/me waves` sends an action.
 
-Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, deleted ones *Message deleted*, and reactions are counted under the message. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes.
+Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, and reactions are counted under the message. A deleted message shows as *Message deleted* for ten minutes; messages deleted before that are left out, so the room reads better. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes.
 
 Scroll to the top to load older messages.
 

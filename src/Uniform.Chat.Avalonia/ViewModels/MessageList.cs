@@ -134,7 +134,8 @@ public sealed class MessageList
             return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = description };
         }
 
-        // Deleted messages keep their place
+        // Deleted messages keep their place, unless deleted long ago
+        if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
         if (EventText.GetText(clientEvent, room.GetMemberDisplayName) is not string text || !clientEvent.TryGetContent(out MessageContent? content))
             return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = "Message deleted", IsDeleted = true };
 

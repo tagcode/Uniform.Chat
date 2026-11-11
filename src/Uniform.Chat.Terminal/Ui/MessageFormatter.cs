@@ -72,7 +72,8 @@ public static class MessageFormatter
         // Non-message events
         if (clientEvent.Type != EventTypes.RoomMessage) return text is { Length: > 0 } ? new TimelineEntry { Text = $"{time} {text}", Kind = EntryKind.Info, Timestamp = clientEvent.OriginServerTs, EventId = clientEvent.EventId, Indent = 6, Event = clientEvent } : null;
 
-        // Messages
+        // Messages; one deleted long ago is not shown
+        if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
         (string body, EntryKind kind) = FormatMessage(room, clientEvent, nick, ownUserId, findEvent);
         int indent = kind == EntryKind.Emote ? time.Length + 4 : time.Length + TextWrapper.Columns(nick) + 4;
         // Return entry
