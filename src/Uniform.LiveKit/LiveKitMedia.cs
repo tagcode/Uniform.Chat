@@ -113,10 +113,15 @@ public sealed class LiveKitMedia : IMediaConnection
     /// <inheritdoc/>
     public ValueTask SendAudioAsync(byte[] opus, int samples = AudioPeerConnection.FrameSamples, CancellationToken cancellationToken = default)
     {
-        // Encrypted when the call is
+        // Encrypted when the call is; a frame that does not encrypt is dropped, not the microphone's thread
         uint clock = audioClock += (uint)samples;
+        if (Seal(opus, FrameKind.Audio, 1, clock) is not byte[] frame)
+        {
+            publisher.SkipAudio(samples);
+            return ValueTask.CompletedTask;
+        }
         // Done
-        return publisher.SendAudioAsync(Encrypted ? OwnKey.Encrypt(opus, FrameKind.Audio, 1, clock) : opus, samples, cancellationToken);
+        return publisher.SendAudioAsync(frame, samples, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -130,10 +135,32 @@ public sealed class LiveKitMedia : IMediaConnection
     /// <inheritdoc/>
     public ValueTask SendVideoAsync(byte[] frame, CancellationToken cancellationToken = default, int rotation = 0)
     {
-        // Encrypted when the call is
+        // Encrypted when the call is; a frame that does not encrypt is dropped, not the camera's thread
         uint clock = ++videoClock;
+        if (Seal(frame, FrameKind.Vp8, 2, clock) is not byte[] sealedFrame) return ValueTask.CompletedTask;
         // Done
-        return publisher.SendVideoAsync(Encrypted ? OwnKey.Encrypt(frame, FrameKind.Vp8, 2, clock) : frame, cancellationToken, rotation);
+        return publisher.SendVideoAsync(sealedFrame, cancellationToken, rotation);
+    }
+
+    /// <summary>Frames of this side that did not encrypt, and were dropped.</summary>
+    public long EncryptionFailures => Interlocked.Read(ref encryptionFailures);
+    private long encryptionFailures;
+
+    /// <summary>Return a frame to send: encrypted with <see cref="OwnKey"/> when the call is, else as it is; null when it does not encrypt.</summary>
+    private byte[]? Seal(byte[] frame, FrameKind kind, uint ssrc, uint clock)
+    {
+        // As it is, or encrypted
+        if (!Encrypted) return frame;
+        try
+        {
+            return OwnKey.Encrypt(frame, kind, ssrc, clock);
+        }
+        catch (Exception e) when (e is System.Security.Cryptography.CryptographicException or InvalidOperationException)
+        {
+            // On a frame that did not encrypt
+            Interlocked.Increment(ref encryptionFailures);
+            return null;
+        }
     }
 
     /// <inheritdoc/>

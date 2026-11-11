@@ -18,6 +18,7 @@ public enum FrameKind
 /// A frame is <c>header ‖ AES-GCM(ciphertext ‖ tag) ‖ IV(12) ‖ 12 ‖ key index</c>. The header is the frame's first bytes, as <see cref="FrameKind"/> says, and the additional data of AES-GCM.
 /// A raw key, e.g. one a member sent in <c>io.element.call.encryption_keys</c>, becomes an AES-128 key with HKDF-SHA-256, the salt <c>LKFrameEncryptionKey</c> and 128 zero bytes of info.
 /// </remarks>
+/// <remarks>Frames may be encrypted and decrypted on any thread, e.g. the microphone's and the camera's at once; each key is used by one at a time, as <see cref="AesGcm"/> is not thread-safe, and Android's breaks when shared.</remarks>
 /// <see href="https://github.com/livekit/client-sdk-js/blob/main/src/e2ee/worker/FrameCryptor.ts"/>
 public sealed class FrameCryptor
 {
@@ -100,7 +101,7 @@ public sealed class FrameCryptor
         BinaryPrimitives.WriteUInt32BigEndian(iv, ssrc);
         BinaryPrimitives.WriteUInt32BigEndian(iv[4..], timestamp);
         BinaryPrimitives.WriteUInt32BigEndian(iv[8..], count);
-        key.Encrypt(iv, frame[clear..], output.AsSpan(clear, body), output.AsSpan(clear + body, TagLength), frame[..clear]);
+        lock (key) key.Encrypt(iv, frame[clear..], output.AsSpan(clear, body), output.AsSpan(clear + body, TagLength), frame[..clear]);
         output[^2] = IvLength;
         output[^1] = index;
         // Return frame
@@ -124,7 +125,7 @@ public sealed class FrameCryptor
         frame[..clear].CopyTo(output);
         try
         {
-            key.Decrypt(frame.Slice(clear + body + TagLength, IvLength), frame.Slice(clear, body), frame.Slice(clear + body, TagLength), output.AsSpan(clear), frame[..clear]);
+            lock (key) key.Decrypt(frame.Slice(clear + body + TagLength, IvLength), frame.Slice(clear, body), frame.Slice(clear + body, TagLength), output.AsSpan(clear), frame[..clear]);
         }
         catch (AuthenticationTagMismatchException)
         {

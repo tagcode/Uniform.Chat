@@ -52,4 +52,23 @@ public sealed class FrameCryptorTests
         // Done
         Assert.Null(receiver.Decrypt([1, 2, 3, .. receiver.ServerTrailer], FrameKind.Vp8));
     }
+
+    /// <summary>Encrypt and decrypt with one key on many threads at once, as the microphone and the camera do, and get every frame back.</summary>
+    [Fact]
+    public async Task EncryptOnManyThreads()
+    {
+        // One key both ways
+        FrameCryptor cryptor = new();
+        cryptor.SetKey(0, RawKey);
+
+        // Done: each thread's frames come back as they were
+        await Task.WhenAll(Enumerable.Range(0, 8).Select(thread => Task.Run(() =>
+        {
+            for (uint i = 0; i < 2000; i++)
+            {
+                byte[] frame = [0xF8, .. BitConverter.GetBytes(thread), .. BitConverter.GetBytes(i)];
+                Assert.Equal(frame, cryptor.Decrypt(cryptor.Encrypt(frame, FrameKind.Audio, (uint)thread, i), FrameKind.Audio));
+            }
+        }, TestContext.Current.CancellationToken)));
+    }
 }
