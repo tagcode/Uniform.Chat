@@ -33,7 +33,7 @@ internal static class Notifications
         manager.CreateNotificationChannel(new NotificationChannel(OngoingCall, "Ongoing call", NotificationImportance.Low));
     }
 
-    /// <summary>Return a notification of a channel that opens the app when tapped.</summary>
+    /// <summary>Return a notification of a channel that opens the app when tapped; an ongoing one is quiet: silent, alerting at most once, without a time, and on Android 12 and later deferred, so that a service that runs only briefly shows none.</summary>
     public static Notification Build(Context context, string channel, string title, string text, bool ongoing)
     {
         // Tapping brings the app's activity forward
@@ -43,6 +43,14 @@ internal static class Notifications
         Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, channel) : new Notification.Builder(context);
 #pragma warning restore CA1422
         builder.SetSmallIcon(Resource.Drawable.icon).SetContentTitle(title).SetContentText(text).SetContentIntent(tap).SetOngoing(ongoing).SetAutoCancel(!ongoing);
+        if (ongoing)
+        {
+            builder.SetOnlyAlertOnce(true).SetShowWhen(false);
+#pragma warning disable CA1422 // The priority serves Android 7 and older, where channels do not
+            builder.SetPriority((int)NotificationPriority.Min);
+#pragma warning restore CA1422
+            if (OperatingSystem.IsAndroidVersionAtLeast(31)) builder.SetForegroundServiceBehavior((int)NotificationForegroundService.Deferred);
+        }
         // Return notification
         return builder.Build()!;
     }
@@ -172,7 +180,7 @@ public sealed class SyncForegroundService : Service
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
         // Typed as special use where Android asks
-        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Connected, for messages and calls", ongoing: true);
+        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Keeps the connection for messages and calls", ongoing: true);
         if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeSpecialUse);
         else StartForeground(NotificationId, notification);
         // Done

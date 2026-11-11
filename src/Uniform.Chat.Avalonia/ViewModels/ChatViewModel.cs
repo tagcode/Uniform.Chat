@@ -1276,7 +1276,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Return the status line for a connection state; empty when connected.</summary>
     internal static string Describe(ConnectionState state, string? message) => state switch
     {
-        ConnectionState.Connected => "",
+        ConnectionState.Connected => "Online",
         ConnectionState.Connecting => message is null ? "Connecting…" : $"{message}…",
         ConnectionState.Retrying => message is null ? "Connection lost, retrying…" : $"Retrying: {message}",
         ConnectionState.Failed => $"Stopped: {message}",
