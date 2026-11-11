@@ -115,3 +115,6 @@ Developer docs: the WebRtc and calls pages don't yet describe rotation, REMB ada
 
 - Start the desktop app on a Windows machine with a webcam (dotnet run --project src/Uniform.Chat.Desktop, or the Desktop launch configuration) and video call a phone. If the 📹 button is missing, Media Foundation found no camera.
 - Add a Windows job to the release workflow that runs Uniform.Chat.Desktop.Tests. It costs a few CI minutes per release.
+
+# Buges
+- No more ringtone on Android or desktop. Desktop didn't even show incoming call popup, but android shows.

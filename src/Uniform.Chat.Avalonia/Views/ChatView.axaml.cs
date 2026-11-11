@@ -21,6 +21,13 @@ public partial class ChatView : UserControl
     private bool roomHeld;
     private ScrollViewer? scroller;
     private bool followNewest = true;
+    /// <summary>When the user last scrolled by hand: the wheel, a finger, the scroll bar or a key; only such a scroll decides whether to follow the newest message.</summary>
+    private long lastUserScroll;
+    /// <summary>How long after the user's input a moved position counts as theirs.</summary>
+    private static readonly TimeSpan UserScrollWindow = TimeSpan.FromMilliseconds(700);
+    /// <summary>Most scrolls in a row to reach the bottom, as a virtualized list grows while its last rows are measured.</summary>
+    private const int MostScrolls = 8;
+    private int scrollsLeft;
 
     /// <summary>Create the view.</summary>
     public ChatView()
@@ -91,10 +98,42 @@ public partial class ChatView : UserControl
     {
         // Scrolling of the message list, and Android's back button
         base.OnLoaded(e);
-        scroller = MessageList.FindDescendantOfType<ScrollViewer>();
-        if (scroller is not null) scroller.ScrollChanged += OnScrollChanged;
+        MessageList.TemplateApplied += OnMessageListTemplateApplied;
+        Attach(MessageList.FindDescendantOfType<ScrollViewer>());
         if (followNewest) ScrollToNewest();
         if (TopLevel.GetTopLevel(this) is TopLevel top) top.BackRequested += OnBackRequested;
+    }
+
+    /// <summary>Take the message list's scroller once the list builds it, as a list hidden while no room is open builds it only when first shown.</summary>
+    private void OnMessageListTemplateApplied(object? sender, global::Avalonia.Controls.Primitives.TemplateAppliedEventArgs e)
+    {
+        // Its scroller, then the newest message
+        Attach(e.NameScope.Find<ScrollViewer>("PART_ScrollViewer") ?? MessageList.FindDescendantOfType<ScrollViewer>());
+        // Done
+        if (followNewest) ScrollToNewest();
+    }
+
+    /// <summary>Follow <paramref name="viewer"/>'s scrolling and the user's input on it, instead of the scroller followed so far; null follows none.</summary>
+    private void Attach(ScrollViewer? viewer)
+    {
+        // The old one let go, the new one followed
+        if (ReferenceEquals(viewer, scroller)) return;
+        if (scroller is not null)
+        {
+            scroller.ScrollChanged -= OnScrollChanged;
+            scroller.RemoveHandler(PointerWheelChangedEvent, OnUserScroll);
+            scroller.RemoveHandler(PointerPressedEvent, OnUserScroll);
+            scroller.RemoveHandler(PointerMovedEvent, OnUserPointerMoved);
+            scroller.RemoveHandler(KeyDownEvent, OnUserScroll);
+        }
+        scroller = viewer;
+        if (viewer is null) return;
+        viewer.ScrollChanged += OnScrollChanged;
+        viewer.AddHandler(PointerWheelChangedEvent, OnUserScroll, RoutingStrategies.Tunnel, handledEventsToo: true);
+        viewer.AddHandler(PointerPressedEvent, OnUserScroll, RoutingStrategies.Tunnel, handledEventsToo: true);
+        viewer.AddHandler(PointerMovedEvent, OnUserPointerMoved, RoutingStrategies.Tunnel, handledEventsToo: true);
+        // Done
+        viewer.AddHandler(KeyDownEvent, OnUserScroll, RoutingStrategies.Tunnel, handledEventsToo: true);
     }
 
     /// <summary>Unhook scrolling and the back gesture.</summary>
@@ -102,7 +141,8 @@ public partial class ChatView : UserControl
     {
         // Undo OnLoaded
         base.OnUnloaded(e);
-        if (scroller is not null) scroller.ScrollChanged -= OnScrollChanged;
+        MessageList.TemplateApplied -= OnMessageListTemplateApplied;
+        Attach(null);
         if (TopLevel.GetTopLevel(this) is TopLevel top) top.BackRequested -= OnBackRequested;
     }
 
@@ -189,26 +229,58 @@ public partial class ChatView : UserControl
         }
     }
 
-    /// <summary>Keep the newest message in view while at the bottom; a new room starts at the bottom.</summary>
+    /// <summary>Keep the newest message in view while following; a new room starts at the bottom, and so does a message of one's own, as one wants to see it sent.</summary>
     private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Reset is a new room
+        // Reset is a new room; an own message brings the bottom back
         if (e.Action == NotifyCollectionChangedAction.Reset) followNewest = true;
+        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems?.OfType<MessageViewModel>().Any(m => m.IsOwn) == true) followNewest = true;
         if (followNewest) ScrollToNewest();
     }
 
-    /// <summary>Scroll to the newest message once layout is done, unless the user has scrolled up by then.</summary>
-    private void ScrollToNewest() => Dispatcher.UIThread.Post(() => { if (followNewest) scroller?.ScrollToEnd(); }, DispatcherPriority.Background);
+    /// <summary>Scroll to the newest message once layout is done, again while the list grows as its last rows are measured, unless the user scrolled away meanwhile.</summary>
+    private void ScrollToNewest()
+    {
+        // A few tries in a row, each after layout
+        scrollsLeft = MostScrolls;
+        // Done
+        Dispatcher.UIThread.Post(ScrollOnce, DispatcherPriority.Background);
+    }
 
-    /// <summary>Remember whether the user is at the bottom, keep following there when the messages or the view change size, and load older messages at the top.</summary>
+    /// <summary>Scroll to the end once, while following.</summary>
+    private void ScrollOnce()
+    {
+        // The scroller, should the list have built it without telling
+        if (scroller is null) Attach(MessageList.FindDescendantOfType<ScrollViewer>());
+        // Done
+        if (followNewest && scroller is not null && scrollsLeft-- > 0) scroller.ScrollToEnd();
+    }
+
+    /// <summary>Note the user's scrolling input.</summary>
+    private void OnUserScroll(object? sender, RoutedEventArgs e) => lastUserScroll = System.Diagnostics.Stopwatch.GetTimestamp();
+
+    /// <summary>Note a drag with a finger, a pen or a held button, as on the scroll bar.</summary>
+    private void OnUserPointerMoved(object? sender, PointerEventArgs e)
+    {
+        // Pressed only; hovering is no scroll
+        if (e.Pointer.Type == PointerType.Touch || e.GetCurrentPoint(null).Properties.IsLeftButtonPressed) OnUserScroll(sender, e);
+    }
+
+    /// <summary>Follow the newest message from the user's own scrolling: at the bottom, also after a fling, follows; scrolling away from it does not. Other changes, new or taller messages, a measured row or a smaller view, keep the bottom while following. Older messages load at the top.</summary>
     private void OnScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
-        // Only a moved position says whether to follow: the bottom within a few pixels does
+        // The user's scroll decides; else keep at the bottom while following
         if (scroller is null || model is null) return;
-        if (e.OffsetDelta.Y != 0) followNewest = scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 24;
-
-        // New or taller messages, e.g. a loaded picture, or a smaller view, e.g. with the keyboard: back to the bottom
-        else if (followNewest && (e.ExtentDelta.Y != 0 || e.ViewportDelta.Y != 0)) ScrollToNewest();
+        bool atBottom = scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 24;
+        bool byUser = System.Diagnostics.Stopwatch.GetElapsedTime(lastUserScroll) < UserScrollWindow;
+        if (atBottom) followNewest = true;
+        else if (byUser && e.OffsetDelta.Y != 0) followNewest = false;
+        else if (followNewest)
+        {
+            // Grown or shrunk: the tries start over, so a picture loaded later still brings the bottom back
+            if (e.ExtentDelta.Y != 0 || e.ViewportDelta.Y != 0) scrollsLeft = MostScrolls;
+            Dispatcher.UIThread.Post(ScrollOnce, DispatcherPriority.Background);
+        }
 
         // Older messages at the top
         if (scroller.Offset.Y > 0 || e.OffsetDelta.Y >= 0 || !model.HasOpenRoom) return;

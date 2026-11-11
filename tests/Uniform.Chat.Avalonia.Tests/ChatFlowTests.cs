@@ -475,7 +475,7 @@ public class ChatFlowTests
         }
     }
 
-    /// <summary>At the bottom, the room stays at the bottom as messages arrive, also several in a row; scrolled up, it stays where the user is.</summary>
+    /// <summary>At the bottom, the room stays at the bottom as messages of different heights arrive, also several in a row; scrolled up by the user, it stays where the user is, until the user sends a message, which brings the bottom back.</summary>
     [AvaloniaFact]
     public async Task FollowNewestMessages()
     {
@@ -485,14 +485,14 @@ public class ChatFlowTests
         MatrixClient alice = await server.RegisterAsync("alice");
         string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Busy", Preset = RoomPresets.PublicChat });
         await alice.JoinRoomAsync(roomId);
-        for (int i = 0; i < 30; i++) await bob.SendTextAsync(roomId, $"old {i}");
+        for (int i = 0; i < 60; i++) await bob.SendTextAsync(roomId, $"old {i}" + string.Concat(Enumerable.Repeat("\nmore", i % 5)));
         MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
         Window window = new() { Width = 800, Height = 500, Content = new MainView { DataContext = model } };
 
         try
         {
             ChatViewModel chat = await SignInAsync(model, alice.UserId!);
-            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text == "old 29"), "the room's history");
+            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text.StartsWith("old 59")), "the room's history");
             window.Show();
             ScrollViewer scroller = window.GetVisualDescendants().OfType<ListBox>().Single(l => l.Name == "MessageList").FindDescendantOfType<ScrollViewer>()!;
             bool AtBottom() => scroller.Extent.Height > scroller.Viewport.Height && scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 2;
@@ -501,11 +501,13 @@ public class ChatFlowTests
             // Act and assert: new messages, one and then several at once, keep it at the bottom
             await bob.SendTextAsync(roomId, "new 1");
             await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "new 1") && AtBottom(), "the bottom after one message");
-            for (int i = 2; i <= 4; i++) await bob.SendTextAsync(roomId, $"new {i}\nwith a second line");
-            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text.StartsWith("new 4")) && AtBottom(), "the bottom after several messages");
+            for (int i = 2; i <= 6; i++) await bob.SendTextAsync(roomId, $"new {i}" + string.Concat(Enumerable.Repeat("\nwith more lines", i)));
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text.StartsWith("new 6")) && AtBottom(), "the bottom after several messages");
+            await Task.Delay(500);
+            Assert.True(AtBottom(), "The view left the bottom after the messages were laid out.");
 
-            // Act and assert: scrolled up, a new message leaves the view where it is
-            scroller.Offset = new Vector(0, 40);
+            // Act and assert: scrolled up by the user, a new message leaves the view where it is
+            scroller.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.PageUp, Source = scroller });
             await Task.Delay(300);
             Assert.False(AtBottom());
             double offset = scroller.Offset.Y;
@@ -514,6 +516,46 @@ public class ChatFlowTests
             await Task.Delay(300);
             Assert.False(AtBottom());
             Assert.Equal(offset, scroller.Offset.Y, 1);
+
+            // Act and assert: the user's own message brings the bottom back
+            chat.Composer = "mine";
+            chat.SendCommand.Execute(null);
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "mine") && AtBottom(), "the bottom after sending");
+        }
+        finally
+        {
+            window.Close();
+            await model.StopAsync();
+        }
+    }
+
+    /// <summary>A room opened in a window shown before any room was, as the apps start, opens at the bottom and follows new messages there.</summary>
+    [AvaloniaFact]
+    public async Task OpenAtBottomAfterStart()
+    {
+        // Arrange: a long room, and the window shown before signing in
+        await using LocalServer server = await LocalServer.StartAsync();
+        MatrixClient bob = await server.RegisterAsync("bob");
+        MatrixClient alice = await server.RegisterAsync("alice");
+        string roomId = await bob.CreateRoomAsync(new CreateRoomRequest { Name = "Busy", Preset = RoomPresets.PublicChat });
+        await alice.JoinRoomAsync(roomId);
+        for (int i = 0; i < 60; i++) await bob.SendTextAsync(roomId, $"old {i}" + string.Concat(Enumerable.Repeat("\nmore", i % 5)));
+        MainViewModel model = new(server.Platform(Directory.CreateTempSubdirectory("uniform-matrix-gui-data-").FullName), new AvaloniaUiDispatcher());
+        Window window = new() { Width = 800, Height = 500, Content = new MainView { DataContext = model } };
+        window.Show();
+
+        try
+        {
+            // Act: signed in, the room opens
+            ChatViewModel chat = await SignInAsync(model, alice.UserId!);
+            await WaitUntilAsync(() => chat.SelectedRoom?.RoomId == roomId && chat.Messages.Items.Any(m => m.Text.StartsWith("old 59")), "the room's history");
+            bool AtBottom() => window.GetVisualDescendants().OfType<ListBox>().Single(l => l.Name == "MessageList").FindDescendantOfType<ScrollViewer>() is ScrollViewer scroller && scroller.Extent.Height > scroller.Viewport.Height && scroller.Offset.Y + scroller.Viewport.Height >= scroller.Extent.Height - 2;
+
+            // Assert: at the bottom, and following
+            await WaitUntilAsync(AtBottom, "the room to open at the bottom");
+            await bob.SendTextAsync(roomId, "new");
+            // Done
+            await WaitUntilAsync(() => chat.Messages.Items.Any(m => m.Text == "new") && AtBottom(), "the bottom after a message");
         }
         finally
         {
