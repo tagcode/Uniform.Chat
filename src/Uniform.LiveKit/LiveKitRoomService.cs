@@ -42,6 +42,22 @@ public sealed class LiveKitRoomService(HttpClient http, string url, string apiKe
         await CallAsync("CreateRoom", body, new VideoGrant { RoomCreate = true }, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>Return whether participant <paramref name="identity"/> is in room <paramref name="name"/> now; false when either is not there.</summary>
+    public async Task<bool> HasParticipantAsync(string name, string identity, CancellationToken cancellationToken = default)
+    {
+        // Not found is an answer, not a failure
+        try
+        {
+            await CallAsync("GetParticipant", new JsonObject { ["room"] = name, ["identity"] = identity }, new VideoGrant { RoomAdmin = true, Room = name }, cancellationToken).ConfigureAwait(false);
+            return true;
+        }
+        catch (HttpRequestException e) when (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            // Done
+            return false;
+        }
+    }
+
     /// <summary>Call <paramref name="method"/> of the room service with <paramref name="grant"/>; return the answer, or throw <see cref="HttpRequestException"/> with LiveKit's reason.</summary>
     private async Task<JsonNode?> CallAsync(string method, JsonObject body, VideoGrant grant, CancellationToken cancellationToken)
     {

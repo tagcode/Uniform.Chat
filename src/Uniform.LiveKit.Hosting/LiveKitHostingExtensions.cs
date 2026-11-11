@@ -2,6 +2,7 @@ namespace Uniform.LiveKit.Hosting;
 
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -37,23 +38,30 @@ public static class LiveKitHostingExtensions
 
         // Federation verification unless replaced, then the authorizer reading the current options, checking room membership when a host registered it
         builder.Services.TryAddSingleton<IOpenIdVerifier>(services => new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName)));
+        builder.Services.TryAddSingleton<IDelayedEvents>(services => new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName)));
+        builder.Services.AddSingleton(services =>
+        {
+            IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
+            return new DelayedLeaveKeeper(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IDelayedEvents>(), services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName), services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<DelayedLeaveKeeper>>());
+        });
         builder.Services.AddSingleton(services =>
         {
             IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
             HttpClient http = services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName);
-            return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>());
+            return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>(), services.GetRequiredService<DelayedLeaveKeeper>());
         });
         // Return builder
         return builder;
     }
 
-    /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="LiveKitOptions.Enabled"/> is false.</summary>
+    /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c>, <c>/delegate_delayed_leave</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="LiveKitOptions.Enabled"/> is false.</summary>
     public static IEndpointRouteBuilder MapLiveKitAuthorization(this IEndpointRouteBuilder routes, string prefix = "")
     {
         // The two token requests, with CORS for web clients
         RouteGroupBuilder group = routes.MapGroup(prefix);
         group.Map("/sfu/get", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<LegacySfuRequest>(http, options, request => authorizer.AuthorizeLegacyAsync(request, http.RequestAborted)));
         group.Map("/get_token", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<TokenRequest>(http, options, request => authorizer.AuthorizeAsync(request, http.RequestAborted)));
+        group.Map("/delegate_delayed_leave", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<TokenRequest, JsonObject>(http, options, async request => { await authorizer.DelegateAsync(request, http.RequestAborted).ConfigureAwait(false); return []; }));
 
         // Health for load balancers and service managers
         group.MapMethods("/healthz", [HttpMethods.Get, HttpMethods.Head], (IOptionsMonitor<LiveKitOptions> options) => options.CurrentValue.Enabled ? Results.Ok() : Results.NotFound());
@@ -62,7 +70,10 @@ public static class LiveKitHostingExtensions
     }
 
     /// <summary>Answer a token request: preflight with 200, other methods than POST with 405, and the body by <paramref name="authorize"/>.</summary>
-    private static async Task<IResult> HandleAsync<T>(HttpContext http, IOptionsMonitor<LiveKitOptions> options, Func<T, Task<SfuResponse>> authorize) where T : class
+    private static Task<IResult> HandleAsync<T>(HttpContext http, IOptionsMonitor<LiveKitOptions> options, Func<T, Task<SfuResponse>> authorize) where T : class => HandleAsync<T, SfuResponse>(http, options, authorize);
+
+    /// <summary>Answer a request of the service: preflight with 200, other methods than POST with 405, and the body by <paramref name="handle"/>.</summary>
+    private static async Task<IResult> HandleAsync<T, TResult>(HttpContext http, IOptionsMonitor<LiveKitOptions> options, Func<T, Task<TResult>> handle) where T : class
     {
         // Assert enabled; CORS on every answer
         if (!options.CurrentValue.Enabled) return Error(new AuthorizationException(HttpStatusCode.NotFound, AuthorizationError.Unrecognized, "Unrecognized request"));
@@ -85,7 +96,7 @@ public static class LiveKitHostingExtensions
         if (request is null) return Error(new AuthorizationException(HttpStatusCode.BadRequest, AuthorizationError.BadJson, "The request body is empty."));
         try
         {
-            return Results.Json(await authorize(request).ConfigureAwait(false));
+            return Results.Json(await handle(request).ConfigureAwait(false));
         }
         catch (AuthorizationException e)
         {

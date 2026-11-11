@@ -26,8 +26,9 @@ internal static class EmbeddedLiveKit
     /// </remarks>
     public static WebApplicationBuilder AddEmbeddedLiveKit(this WebApplicationBuilder builder)
     {
-        // Own tokens without a round trip, the room's members from its state, then the service
+        // Own tokens and delayed leaves without a round trip, the room's members from its state, then the service
         builder.Services.AddSingleton<IRoomMembership>(services => new JoinedMembers(services.GetRequiredService<RoomService>()));
+        builder.Services.AddSingleton<IDelayedEvents>(services => new LocalDelayedEvents(services.GetRequiredService<DelayedEvents>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(LiveKitHostingExtensions.HttpClientName))));
         builder.Services.AddSingleton<IOpenIdVerifier>(services => new LocalOpenIdVerifier(services.GetRequiredService<OpenIdTokens>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(LiveKitHostingExtensions.HttpClientName))));
         builder.AddLiveKitAuthorization();
 
@@ -71,5 +72,29 @@ internal static class EmbeddedLiveKit
     {
         /// <summary>Return whether the user's current membership is join.</summary>
         public async Task<bool> IsJoinedAsync(string roomId, string userId, CancellationToken cancellationToken) => await rooms.GetMembershipAsync(roomId, userId, cancellationToken) == Memberships.Join;
+    }
+
+    /// <summary>Acts on the delayed events of this homeserver's users in its own store, and on others' at their homeservers.</summary>
+    /// <param name="delayed">The homeserver's delayed events.</param>
+    /// <param name="server">The homeserver's settings, for its name.</param>
+    /// <param name="remote">Acts on other homeservers' delayed events.</param>
+    private sealed class LocalDelayedEvents(DelayedEvents delayed, IOptionsMonitor<ServerOptions> server, IDelayedEvents remote) : IDelayedEvents
+    {
+        /// <summary>Restart or send the delayed event here when it is this homeserver's; return false when it is gone.</summary>
+        public async Task<bool> UpdateAsync(string serverName, string delayId, string action, CancellationToken cancellationToken)
+        {
+            // Others' at their homeservers
+            if (!string.Equals(serverName, server.CurrentValue.ServerName, StringComparison.OrdinalIgnoreCase)) return await remote.UpdateAsync(serverName, delayId, action, cancellationToken);
+            try
+            {
+                await delayed.ActAsync(delayId, action, cancellationToken);
+                return true;
+            }
+            catch (MatrixException e) when (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Done: sent or cancelled already
+                return false;
+            }
+        }
     }
 }

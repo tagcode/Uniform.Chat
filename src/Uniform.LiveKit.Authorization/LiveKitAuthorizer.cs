@@ -12,7 +12,8 @@ using Uniform.LiveKit.Protocol;
 /// <param name="time">Clock of the tokens.</param>
 /// <param name="logger">Logger of the decisions.</param>
 /// <param name="membership">When given, only users joined to the Matrix room get tokens; lk-jwt-service does not check this, as it has no room state.</param>
-public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<LiveKitAuthorizer> logger, IRoomMembership? membership = null)
+/// <param name="keeper">When given, keeps the delayed leaves that full-access members hand over with <c>delay_id</c>; without, they are accepted and left to the members.</param>
+public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<LiveKitAuthorizer> logger, IRoomMembership? membership = null, DelayedLeaveKeeper? keeper = null)
 {
     /// <summary>How long a created room waits for its first participant.</summary>
     public static readonly TimeSpan EmptyTimeout = TimeSpan.FromMinutes(5);
@@ -38,6 +39,25 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
         await AssertJoinedAsync(request.RoomId, userId, cancellationToken).ConfigureAwait(false);
         // Return token
         return await IssueAsync(userId, token, request, MatrixRtcNames.Identity(userId, member.ClaimedDeviceId!, member.Id!), MatrixRtcNames.RoomAlias(request.RoomId, request.SlotId), cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Keep the delayed leave of <paramref name="request"/>'s member, as <c>/delegate_delayed_leave</c> asks: only for full access, and only with its <c>delay_id</c> and <c>delay_timeout</c>; the member is the participant <c>/get_token</c> makes it.</summary>
+    /// <exception cref="AuthorizationException">With M_BAD_JSON for missing fields, M_UNAUTHORIZED for a user that is not verified, and M_FORBIDDEN without full access or a keeper.</exception>
+    public async Task DelegateAsync(TokenRequest request, CancellationToken cancellationToken)
+    {
+        // Assert the fields, then the verified member, in the room
+        if (string.IsNullOrEmpty(request.RoomId) || string.IsNullOrEmpty(request.SlotId)) throw BadJson("The request body is missing `room_id` or `slot_id`");
+        if (request.Member is not { Id.Length: > 0, ClaimedUserId.Length: > 0, ClaimedDeviceId.Length: > 0 } member) throw BadJson("The request body `member` is missing `id`, `claimed_user_id` or `claimed_device_id`");
+        OpenIdToken token = AssertToken(request.OpenIdToken);
+        if (string.IsNullOrEmpty(request.DelayId) || request.DelayTimeout is not > 0) throw BadJson("The request body is missing `delay_id` or `delay_timeout`");
+        string userId = await VerifyAsync(token, cancellationToken).ConfigureAwait(false);
+        if (userId != member.ClaimedUserId) throw Unauthorized();
+        await AssertJoinedAsync(request.RoomId, userId, cancellationToken).ConfigureAwait(false);
+
+        // Full access only
+        if (keeper is null || !options().HasFullAccess(token.MatrixServerName!)) throw new AuthorizationException(HttpStatusCode.Forbidden, AuthorizationError.Forbidden, "Delegation of delayed events is only supported for full access users");
+        // Done
+        keeper.Keep(token.MatrixServerName!, request.DelayId, TimeSpan.FromMilliseconds(request.DelayTimeout.Value), MatrixRtcNames.RoomAlias(request.RoomId, request.SlotId), MatrixRtcNames.Identity(userId, member.ClaimedDeviceId!, member.Id!));
     }
 
     /// <summary>Return a token for the legacy <c>/sfu/get</c> <paramref name="request"/>, to the room's call.</summary>
@@ -126,7 +146,7 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
         LiveKitAuthorizerOptions settings = options();
         if (settings.Url.Length == 0 || settings.ApiKey.Length == 0 || settings.ApiSecret.Length == 0) throw new AuthorizationException(HttpStatusCode.InternalServerError, AuthorizationError.Unknown, "LiveKit is not configured.");
 
-        // Full access creates the room, so that others may join it; delayed leaves are its alone, though this service does not send them yet
+        // Full access creates the room, so that others may join it; delayed leaves are its alone
         bool full = settings.HasFullAccess(token.MatrixServerName!);
         if (!full && !string.IsNullOrEmpty(request.DelayId)) throw BadJson("Delegation of delayed events is only supported for full access users");
         if (full)
@@ -141,6 +161,9 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
                 throw new AuthorizationException(HttpStatusCode.InternalServerError, AuthorizationError.Unknown, "Unable to create the call's room.");
             }
         }
+
+        // The member's delayed leave kept, when handed over
+        if (full && keeper is not null && !string.IsNullOrEmpty(request.DelayId) && request.DelayTimeout is > 0) keeper.Keep(token.MatrixServerName!, request.DelayId, TimeSpan.FromMilliseconds(request.DelayTimeout.Value), room, identity);
 
         // Join, publish only with full access
         VideoGrant grant = new() { RoomJoin = true, RoomCreate = false, Hidden = false, Room = room, CanPublish = full, CanPublishData = full, CanSubscribe = true, CanUpdateOwnMetadata = settings.CanUpdateOwnMetadata };

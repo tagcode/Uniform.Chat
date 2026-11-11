@@ -87,5 +87,23 @@ public class RtpTests
     }
 
     /// <summary>Return a packet with a sequence number.</summary>
-    private static RtpPacket Packet(ushort sequence) => new() { PayloadType = 111, Sequence = sequence, Timestamp = sequence * 960u, Ssrc = 1, Payload = [] };
+    private static RtpPacket Packet(ushort sequence, uint ssrc = 1) => new() { PayloadType = 111, Sequence = sequence, Timestamp = sequence * 960u, Ssrc = ssrc, Payload = [] };
+
+    /// <summary>Start over on another stream, as when the sender reconnects through an SFU with new sequence numbers lower than the old ones: its packets play rather than count as late.</summary>
+    [Fact]
+    public void FollowNewStream()
+    {
+        // Playing a stream at 1000
+        JitterBuffer buffer = new(delayPackets: 2);
+        for (ushort i = 1000; i < 1004; i++) buffer.Add(Packet(i));
+        Assert.Equal(1000, buffer.Next(out _)!.Sequence);
+
+        // Another stream, numbered lower, fills and plays
+        buffer.Add(Packet(10, ssrc: 2));
+        buffer.Add(Packet(11, ssrc: 2));
+        RtpPacket? first = buffer.Next(out bool playing);
+        // Done
+        Assert.True(playing);
+        Assert.Equal((ushort)10, first!.Sequence);
+    }
 }

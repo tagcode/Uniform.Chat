@@ -65,13 +65,18 @@ public sealed class EmbeddedLiveKitTests
             SfuResponse? answer = await response.Content.ReadFromJsonAsync<SfuResponse>(Ct);
             Assert.Equal(HttpStatusCode.Unauthorized, (await RequestTokenAsync(http, mallory, "mallory", roomId)).StatusCode);
 
+            // Delegation: found by Element Call's probe, and a handed-over leave kept
+            Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsync("/livekit/jwt/delegate_delayed_leave", null, Ct)).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await RequestTokenAsync(http, alice, "alice", roomId, "delay1")).StatusCode);
+            Assert.Single(app.Services.GetRequiredService<Uniform.LiveKit.Authorization.DelayedLeaveKeeper>().Members);
+
             // Announced, issued with full access, and the room created
             Assert.Equal("https://matrix.test.local/livekit/jwt", transports.GetProperty("rtc_transports")[0].GetProperty("livekit_service_url").GetString());
             Assert.Equal("wss://livekit.test.local", answer!.Url);
             Assert.True(AccessToken.TryRead(answer.Jwt, "secret", DateTimeOffset.UtcNow, out AccessToken? claims));
             Assert.True(claims!.Video!.CanPublish);
             // Done
-            Assert.Equal(["https://livekit.test.local/twirp/livekit.RoomService/CreateRoom"], livekit.Requests);
+            Assert.Equal("https://livekit.test.local/twirp/livekit.RoomService/CreateRoom", livekit.Requests[0]);
         }
         finally
         {
@@ -91,13 +96,13 @@ public sealed class EmbeddedLiveKitTests
     }
 
     /// <summary>Ask a LiveKit token to <paramref name="roomId"/>'s call with an OpenID token of <paramref name="user"/>, whose localpart is <paramref name="localpart"/>.</summary>
-    private static async Task<HttpResponseMessage> RequestTokenAsync(HttpClient http, MatrixClient user, string localpart, string roomId)
+    private static async Task<HttpResponseMessage> RequestTokenAsync(HttpClient http, MatrixClient user, string localpart, string roomId, string? delayId = null)
     {
         // The user's OpenID token
         using HttpRequestMessage request = new(HttpMethod.Post, $"/_matrix/client/v3/user/%40{localpart}%3Atest.local/openid/request_token") { Headers = { Authorization = new("Bearer", user.AccessToken) }, Content = JsonContent.Create(new { }) };
         JsonElement openId = await (await http.SendAsync(request, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct);
         // Return answer
-        return await http.PostAsJsonAsync("/livekit/jwt/get_token", new { room_id = roomId, slot_id = "m.call#ROOM", openid_token = openId, member = new { id = "m", claimed_user_id = $"@{localpart}:test.local", claimed_device_id = user.DeviceId } }, Ct);
+        return await http.PostAsJsonAsync("/livekit/jwt/get_token", new { room_id = roomId, slot_id = "m.call#ROOM", openid_token = openId, member = new { id = "m", claimed_user_id = $"@{localpart}:test.local", claimed_device_id = user.DeviceId }, delay_id = delayId, delay_timeout = delayId is null ? (long?)null : 3_600_000 }, Ct);
     }
 
     /// <summary>Turn the service on in a running server, as the dashboard's Apply does: the endpoint answers and the homeserver announces it, without a restart.</summary>

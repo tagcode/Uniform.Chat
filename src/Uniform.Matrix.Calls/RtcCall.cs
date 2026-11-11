@@ -58,6 +58,10 @@ public sealed class RtcCall : VoiceCall
     public static readonly TimeSpan LeaveDelay = TimeSpan.FromSeconds(18);
     /// <summary>How often the delayed leave is restarted.</summary>
     public static readonly TimeSpan LeaveRestart = TimeSpan.FromSeconds(4);
+    /// <summary>The delay of a leave handed to the authorization service, which keeps it while this side is on LiveKit, as Element Call has it.</summary>
+    public static readonly TimeSpan HandedLeaveDelay = TimeSpan.FromHours(1);
+    /// <summary>How often a handed-over leave is restarted by this side too.</summary>
+    public static readonly TimeSpan HandedLeaveRestart = TimeSpan.FromMinutes(5);
     /// <summary>How long a membership holds unless renewed.</summary>
     public static readonly TimeSpan MembershipExpiry = TimeSpan.FromHours(4);
     /// <summary>The application and slot of a room's call.</summary>
@@ -77,6 +81,8 @@ public sealed class RtcCall : VoiceCall
     private bool sendsVideo;
     private int reconnecting;
     private CallMemberContent? membership;
+    /// <summary>Whether the authorization service takes delayed leaves, so this side restarts its own seldom.</summary>
+    private bool handsOverLeave;
     /// <summary>How long a lost path may stay down before reconnecting, and between attempts.</summary>
     private static readonly TimeSpan ReconnectDelay = TimeSpan.FromSeconds(2);
     /// <summary>How long a call may try to reconnect before it ends.</summary>
@@ -286,8 +292,9 @@ public sealed class RtcCall : VoiceCall
         StartVideo(opened);
         if (video) StartCamera(opened);
 
-        // The membership, emptied after a delay unless restarted
-        delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, LeaveDelay, cancellationToken);
+        // The membership, emptied after a delay unless restarted, by the service when it takes the leave
+        handsOverLeave = await ServiceKeepsLeavesAsync(cancellationToken);
+        await ArmLeaveAsync(cancellationToken);
         membership = new() { Application = Application, CallId = "", Scope = "m.room", DeviceId = context.OwnDeviceId, FocusActive = new RtcFocusActive(), FociPreferred = [context.Transport with { LivekitAlias = RoomId }], Expires = (long)MembershipExpiry.TotalMilliseconds, CallIntent = IsVideo ? "video" : "audio", MembershipId = OwnIdentity };
         string membershipId = await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership, StateKey, cancellationToken);
         joined = true;
@@ -389,7 +396,9 @@ public sealed class RtcCall : VoiceCall
         {
             Interlocked.Exchange(ref reconnecting, 0);
         }
-        // Done: the others again, and connected
+        // Done: the membership still there, the others again, and connected
+        try { await EnsureMembershipAsync(ending.Token); }
+        catch (Exception e) when (e is HttpRequestException or MatrixException) { logger.LogInformation("Checking the membership after reconnecting failed: {Error}", e.Describe()); }
         if (State == CallState.Reconnecting) SetState(CallState.Connected);
         logger.LogInformation("MatrixRTC call in {RoomId} reconnected", RoomId);
         await UpdateAsync();
@@ -433,29 +442,22 @@ public sealed class RtcCall : VoiceCall
         }
     }
 
-    /// <summary>Restart the delayed leave until the call ends, making a new one when it was sent meanwhile.</summary>
+    /// <summary>Restart the delayed leave until the call ends, every few seconds, or every few minutes when the service keeps it; make a new leave and the membership again when the leave was sent meanwhile.</summary>
     private async Task KeepAliveAsync()
     {
-        // Every few seconds
-        using PeriodicTimer timer = new(LeaveRestart);
+        // Until ended
         try
         {
-            while (await timer.WaitForNextTickAsync(ending.Token))
+            while (!ending.IsCancellationRequested)
             {
+                await Task.Delay(handsOverLeave ? HandedLeaveRestart : LeaveRestart, ending.Token);
                 try
                 {
-                    if (delayId is string id) await context.Client.UpdateDelayedEventAsync(id, "restart", ending.Token);
-                }
-                catch (MatrixException e) when (e.Errcode == ErrorCodes.NotFound)
-                {
-                    // The leave was sent, e.g. while the network was down: a new one, and the membership again
-                    logger.LogWarning("Delayed leave of MatrixRTC call in {RoomId} was sent; joining again", RoomId);
-                    delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, LeaveDelay, ending.Token);
-                    if (membership is not null) await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership with { CreatedTs = null }, StateKey, ending.Token);
+                    await EnsureMembershipAsync(ending.Token);
                 }
                 catch (Exception e) when (e is HttpRequestException or MatrixException)
                 {
-                    // On a network error; the next tick tries again
+                    // On a network error; the next round tries again
                     logger.LogDebug(e, "Restarting delayed leave failed");
                 }
             }
@@ -463,6 +465,64 @@ public sealed class RtcCall : VoiceCall
         catch (OperationCanceledException)
         {
             // Ended
+        }
+    }
+
+    /// <summary>Restart the delayed leave; when it was sent meanwhile, e.g. while the network was down, arm a new one and write the membership again.</summary>
+    private async Task EnsureMembershipAsync(CancellationToken cancellationToken)
+    {
+        // Restarted, else joined again
+        try
+        {
+            if (delayId is string id) await context.Client.UpdateDelayedEventAsync(id, "restart", cancellationToken);
+            return;
+        }
+        catch (MatrixException e) when (e.Errcode == ErrorCodes.NotFound)
+        {
+            logger.LogWarning("Delayed leave of MatrixRTC call in {RoomId} was sent; joining again", RoomId);
+        }
+        await ArmLeaveAsync(cancellationToken);
+        // Done
+        if (membership is not null) await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership with { CreatedTs = null }, StateKey, cancellationToken);
+    }
+
+    /// <summary>Send a new delayed leave, and hand it to the authorization service when it takes them; when the handover fails, a short leave of this side's own instead.</summary>
+    private async Task ArmLeaveAsync(CancellationToken cancellationToken)
+    {
+        // A long leave for the service, else a short one
+        delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, handsOverLeave ? HandedLeaveDelay : LeaveDelay, cancellationToken);
+        if (!handsOverLeave) return;
+        try
+        {
+            // As Element Call does: a publisher's request with the leave, whose token is not needed
+            OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(cancellationToken);
+            await new MatrixRtcAuthorizationClient(context.Http, context.Transport.LivekitServiceUrl!).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn }, DelayId = delayId, DelayTimeout = (long)HandedLeaveDelay.TotalMilliseconds, DelayClientServerApiUrl = context.Client.Homeserver.AbsoluteUri.TrimEnd('/') }, cancellationToken);
+            logger.LogInformation("Delayed leave of MatrixRTC call in {RoomId} handed to the authorization service", RoomId);
+        }
+        catch (Exception e) when (e is HttpRequestException or MatrixException or System.Text.Json.JsonException)
+        {
+            // On a failed handover: this side keeps a short leave itself
+            logger.LogWarning("Handing the delayed leave over failed, keeping it here: {Error}", e.Describe());
+            handsOverLeave = false;
+            try { await context.Client.UpdateDelayedEventAsync(delayId, "cancel", cancellationToken); }
+            catch (MatrixException) { }
+            delayId = await context.Client.SendDelayedStateEventAsync(RoomId, EventTypes.CallMember, new { }, StateKey, LeaveDelay, cancellationToken);
+        }
+    }
+
+    /// <summary>Return whether the homeserver's authorization service keeps delayed leaves: its <c>delegate_delayed_leave</c> is there, as Element Call checks.</summary>
+    private async Task<bool> ServiceKeepsLeavesAsync(CancellationToken cancellationToken)
+    {
+        // Anything but 404 means there
+        try
+        {
+            using HttpResponseMessage response = await context.Http.PostAsync($"{context.Transport.LivekitServiceUrl!.TrimEnd('/')}/delegate_delayed_leave", null, cancellationToken);
+            return response.StatusCode != System.Net.HttpStatusCode.NotFound;
+        }
+        catch (HttpRequestException)
+        {
+            // On a service that cannot be asked
+            return false;
         }
     }
 

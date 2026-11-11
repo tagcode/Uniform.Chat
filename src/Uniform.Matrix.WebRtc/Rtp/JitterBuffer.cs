@@ -1,7 +1,7 @@
 namespace Uniform.Matrix.WebRtc.Rtp;
 
 /// <summary>Puts received RTP packets back in order and evens out their arrival, for a player that takes one frame every packet interval: it holds a few packets before the first one plays, and then gives the next in sequence, or null so that the decoder conceals a frame.</summary>
-/// <remarks>A packet that has not arrived when its turn comes is waited for, as it is usually late rather than lost; only when later packets pile up behind it is it skipped as lost. Waiting adds delay, which <c>capacityPackets</c> bounds.</remarks>
+/// <remarks>A packet that has not arrived when its turn comes is waited for, as it is usually late rather than lost; only when later packets pile up behind it is it skipped as lost. Waiting adds delay, which <c>capacityPackets</c> bounds. A packet of another stream, by its SSRC, starts over, as when the sender reconnects through an SFU and its sequence numbers begin anew.</remarks>
 /// <param name="delayPackets">How many packets to hold before playing; three of 20 ms are 60 ms of delay.</param>
 /// <param name="capacityPackets">How many packets to hold at most; when more come, e.g. after a stall, the oldest are dropped to catch up.</param>
 public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
@@ -12,6 +12,7 @@ public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
     private long highest = -1;
     private bool playing;
     private int missing;
+    private uint? ssrc;
 
     /// <summary>Packets held.</summary>
     public int Count { get { lock (gate) return packets.Count; } }
@@ -28,6 +29,16 @@ public sealed class JitterBuffer(int delayPackets = 3, int capacityPackets = 50)
         // The sequence extended across wraps, relative to the highest seen
         lock (gate)
         {
+            // Another stream: its numbers have nothing to do with the last one's
+            if (ssrc is uint current && current != packet.Ssrc)
+            {
+                packets.Clear();
+                next = -1;
+                highest = -1;
+                playing = false;
+                missing = 0;
+            }
+            ssrc = packet.Ssrc;
             long index = highest < 0 ? packet.Sequence : Extend(packet.Sequence);
             if (next >= 0 && index < next) return;
             packets.TryAdd(index, packet);

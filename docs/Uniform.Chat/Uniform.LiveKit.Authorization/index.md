@@ -16,4 +16,14 @@ A MatrixRTC authorization service that behaves like [lk-jwt-service](https://git
 
 [`FederationOpenIdVerifier`](xref:Uniform.LiveKit.Authorization.FederationOpenIdVerifier) asks `/_matrix/federation/v1/openid/userinfo`. It goes to the server name's `m.server` delegation, or to the name itself, at port 8448 when no port is given.
 
-The delayed leave events of `delay_id` are accepted but not sent yet. That needs LiveKit's webhooks. Clients keep their own delayed events alive meanwhile.
+## Delayed leaves
+
+A full-access member may hand its delayed leave event ([MSC4140](https://github.com/matrix-org/matrix-spec-proposals/pull/4140)) to the service, with `delay_id` and `delay_timeout` in its token request, or at `/delegate_delayed_leave`. Element Call looks for that endpoint first, and hands its leave over when the endpoint answers anything but 404. Its device then restarts the leave only every 5 minutes instead of every 4 seconds.
+
+[`DelayedLeaveKeeper`](xref:Uniform.LiveKit.Authorization.DelayedLeaveKeeper) keeps each handed-over leave:
+
+1. It waits for the member to appear in its LiveKit room, asking LiveKit's room service.
+2. While the member stays, it restarts the delayed event at four fifths of its delay, at most an hour, as lk-jwt-service does.
+3. When LiveKit no longer has the member, checked every 5 seconds, it sends the leave at once, so the call membership ends.
+
+It acts on the delayed events through [`IDelayedEvents`](xref:Uniform.LiveKit.Authorization.IDelayedEvents). [`HomeserverDelayedEvents`](xref:Uniform.LiveKit.Authorization.HomeserverDelayedEvents) finds the member's homeserver by its server name's `/.well-known/matrix/client`, never by the `delay_cs_api_url` the client gives, so the service only calls homeservers. The service inside Uniform Chat Server acts on its own users' delayed events directly. LiveKit needs no webhooks for this. The jobs live in memory: after a restart of the service, a member's homeserver sends the leave when its delay runs out.

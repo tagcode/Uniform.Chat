@@ -19,7 +19,7 @@ public sealed record OpenIdToken
     public long ExpiresIn { get; init; }
 }
 
-/// <summary>Fields of delayed-event cleanup common to both requests: the service may send the member's delayed leave event once LiveKit sees the member go; this service accepts and ignores them.</summary>
+/// <summary>Fields of a delayed leave handed to the service: it keeps the member's delayed leave event (MSC4140) from going off while the member is on LiveKit, and sends it once the member is gone, so the member's device need not restart it often.</summary>
 public abstract record DelayedLeave
 {
     /// <summary>Id of the member's delayed leave event (MSC4140).</summary>
