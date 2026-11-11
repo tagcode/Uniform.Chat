@@ -11,7 +11,8 @@ using Uniform.LiveKit.Protocol;
 /// <param name="http">The client of LiveKit's room service.</param>
 /// <param name="time">Clock of the tokens.</param>
 /// <param name="logger">Logger of the decisions.</param>
-public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<LiveKitAuthorizer> logger)
+/// <param name="membership">When given, only users joined to the Matrix room get tokens; lk-jwt-service does not check this, as it has no room state.</param>
+public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<LiveKitAuthorizer> logger, IRoomMembership? membership = null)
 {
     /// <summary>How long a created room waits for its first participant.</summary>
     public static readonly TimeSpan EmptyTimeout = TimeSpan.FromMinutes(5);
@@ -34,6 +35,7 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
             logger.LogWarning("{User} claimed to be {Claimed}", userId, member.ClaimedUserId);
             throw Unauthorized();
         }
+        await AssertJoinedAsync(request.RoomId, userId, cancellationToken).ConfigureAwait(false);
         // Return token
         return await IssueAsync(userId, token, request, MatrixRtcNames.Identity(userId, member.ClaimedDeviceId!, member.Id!), MatrixRtcNames.RoomAlias(request.RoomId, request.SlotId), cancellationToken).ConfigureAwait(false);
     }
@@ -48,6 +50,7 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
 
         // Done
         string userId = await VerifyAsync(token, cancellationToken).ConfigureAwait(false);
+        await AssertJoinedAsync(request.Room, userId, cancellationToken).ConfigureAwait(false);
         return await IssueAsync(userId, token, request, MatrixRtcNames.LegacyIdentity(userId, request.DeviceId), MatrixRtcNames.RoomAlias(request.Room, MatrixRtcNames.RoomCallSlot), cancellationToken).ConfigureAwait(false);
     }
 
@@ -88,6 +91,17 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
         }
         // Return user
         return userId;
+    }
+
+    /// <summary>Throw M_UNAUTHORIZED when <paramref name="userId"/> is not joined to <paramref name="roomId"/>, if membership is checked at all.</summary>
+    private async Task AssertJoinedAsync(string roomId, string userId, CancellationToken cancellationToken)
+    {
+        // Assert checking
+        if (membership is null) return;
+        if (await membership.IsJoinedAsync(roomId, userId, cancellationToken).ConfigureAwait(false)) return;
+        // On not joined
+        logger.LogWarning("{User} asked for a call in {Room} without being joined to it", userId, roomId);
+        throw Unauthorized();
     }
 
     /// <summary>Return the server name of a user ID <c>@local:server</c>, or null when it is not one.</summary>

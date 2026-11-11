@@ -58,7 +58,7 @@ Turn on the authorization service and point it at LiveKit. Put the secret in the
 }
 ```
 
-The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. No restart is needed. Your users can start calls and send audio and video. Users of other homeservers can join calls that are already going, but only to watch and listen, unless you add their servers to `LiveKit:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
+The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. No restart is needed. Only users joined to the call's room get in. Your users can start calls and send audio and video. Users of other homeservers who are in the room can join calls that are already going, but only to watch and listen, unless you add their servers to `LiveKit:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
 
 To check the service, open `https://example.org/livekit/jwt/healthz`, with your server's address. It answers with an empty page and status 200 when the service is on, and 404 when it is off.
 

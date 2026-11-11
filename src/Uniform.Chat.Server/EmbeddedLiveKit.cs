@@ -6,10 +6,12 @@ using Microsoft.Extensions.Options;
 using Uniform.LiveKit.Authorization;
 using Uniform.LiveKit.Hosting;
 using Uniform.LiveKit.Protocol;
+using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
+using Uniform.Matrix.Server.Rooms;
 
-/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>LiveKit:Enabled</c> is set: it hands out tokens of a LiveKit server, verifying the homeserver's own OpenID tokens directly and those of other servers over federation.</summary>
+/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>LiveKit:Enabled</c> is set: it hands out tokens of a LiveKit server, verifying the homeserver's own OpenID tokens directly and those of other servers over federation, and only to users joined to the call's room.</summary>
 internal static class EmbeddedLiveKit
 {
     /// <summary>Path of the service, as reverse proxies in front of lk-jwt-service commonly have it.</summary>
@@ -24,7 +26,8 @@ internal static class EmbeddedLiveKit
     /// </remarks>
     public static WebApplicationBuilder AddEmbeddedLiveKit(this WebApplicationBuilder builder)
     {
-        // Own tokens without a round trip, then the service
+        // Own tokens without a round trip, the room's members from its state, then the service
+        builder.Services.AddSingleton<IRoomMembership>(services => new JoinedMembers(services.GetRequiredService<RoomService>()));
         builder.Services.AddSingleton<IOpenIdVerifier>(services => new LocalOpenIdVerifier(services.GetRequiredService<OpenIdTokens>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(LiveKitHostingExtensions.HttpClientName))));
         builder.AddLiveKitAuthorization();
 
@@ -60,5 +63,13 @@ internal static class EmbeddedLiveKit
         public Task<string?> VerifyAsync(OpenIdToken token, CancellationToken cancellationToken) => string.Equals(token.MatrixServerName, server.CurrentValue.ServerName, StringComparison.OrdinalIgnoreCase)
             ? Task.FromResult(tokens.Validate(token.AccessToken))
             : federation.VerifyAsync(token, cancellationToken);
+    }
+
+    /// <summary>Tells joined members from the room's current state on this homeserver, which also knows remote users of rooms it is in.</summary>
+    /// <param name="rooms">The homeserver's rooms.</param>
+    private sealed class JoinedMembers(RoomService rooms) : IRoomMembership
+    {
+        /// <summary>Return whether the user's current membership is join.</summary>
+        public async Task<bool> IsJoinedAsync(string roomId, string userId, CancellationToken cancellationToken) => await rooms.GetMembershipAsync(roomId, userId, cancellationToken) == Memberships.Join;
     }
 }

@@ -98,6 +98,36 @@ public sealed class AuthorizerTests
         Assert.Empty(network.LiveKitCalls);
     }
 
+    /// <summary>With membership checked, give tokens to joined users only, on both endpoints, before creating any room.</summary>
+    [Fact]
+    public async Task RequireJoinedMembers()
+    {
+        // Alice joined to the room, Carol not
+        network.Users["alice-token"] = "@alice:example.org";
+        network.Users["carol-token"] = "@carol:example.org";
+        Members members = new() { Joined = { ("!room:example.org", "@alice:example.org") } };
+        LiveKitAuthorizer authorizer = new(() => new LiveKitAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = Secret, FullAccessHomeservers = ["example.org"] }, new FederationOpenIdVerifier(network.CreateClient()), network.CreateClient(), time, NullLogger<LiveKitAuthorizer>.Instance, members);
+
+        // Carol is refused on both endpoints
+        Assert.Equal(HttpStatusCode.Unauthorized, (await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeAsync(Request("carol-token", "example.org", "@carol:example.org"), Ct))).Status);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeLegacyAsync(new LegacySfuRequest { Room = "!room:example.org", DeviceId = "CAROLDEV", OpenIdToken = new OpenIdToken { AccessToken = "carol-token", MatrixServerName = "example.org" } }, Ct))).Status);
+        Assert.Empty(network.LiveKitCalls);
+
+        // Done
+        SfuResponse answer = await authorizer.AuthorizeAsync(Request("alice-token", "example.org", "@alice:example.org"), Ct);
+        Assert.True(AccessToken.TryRead(answer.Jwt, Secret, time.GetUtcNow(), out _));
+    }
+
+    /// <summary>Joined members of rooms, as a homeserver would know them.</summary>
+    private sealed class Members : IRoomMembership
+    {
+        /// <summary>Joined room and user pairs.</summary>
+        public HashSet<(string RoomId, string UserId)> Joined { get; } = [];
+
+        /// <summary>Return whether the pair is in <see cref="Joined"/>.</summary>
+        public Task<bool> IsJoinedAsync(string roomId, string userId, CancellationToken cancellationToken) => Task.FromResult(Joined.Contains((roomId, userId)));
+    }
+
     /// <summary>Tell ports after host names and IPv6 addresses.</summary>
     [Fact]
     public void FindPorts()

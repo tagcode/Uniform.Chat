@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uniform.LiveKit.Hosting;
 using Uniform.LiveKit.Protocol;
+using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Server;
 
@@ -18,7 +19,7 @@ public sealed class EmbeddedLiveKitTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    /// <summary>Announce the service at the homeserver's public URL, and give a local user a token with the homeserver's own OpenID token, creating the room in LiveKit.</summary>
+    /// <summary>Announce the service at the homeserver's public URL, give a member of the room a token with the homeserver's own OpenID token, creating the room in LiveKit, and refuse a user who is not joined.</summary>
     [Fact]
     public async Task IssueTokensToLocalUsers()
     {
@@ -48,19 +49,21 @@ public sealed class EmbeddedLiveKitTests
         await app.StartAsync(Ct);
         try
         {
-            // Alice and her OpenID token
+            // Alice in her room, and Mallory outside it
             Uri address = new(app.Urls.First() + "/");
             MatrixClient alice = new(new HttpClient { BaseAddress = address }, address);
             await alice.RegisterAsync("alice", "password", cancellationToken: Ct);
+            MatrixClient mallory = new(new HttpClient { BaseAddress = address }, address);
+            await mallory.RegisterAsync("mallory", "password", cancellationToken: Ct);
+            string roomId = await alice.CreateRoomAsync(new CreateRoomRequest { Name = "Call" }, Ct);
             using HttpClient http = new() { BaseAddress = address };
-            http.DefaultRequestHeaders.Authorization = new("Bearer", alice.AccessToken);
-            JsonElement transports = await http.GetFromJsonAsync<JsonElement>("/_matrix/client/unstable/org.matrix.msc4143/rtc/transports", Ct);
-            JsonElement openId = await (await http.PostAsJsonAsync("/_matrix/client/v3/user/%40alice%3Atest.local/openid/request_token", new { }, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct);
+            JsonElement transports = await GetAsync(http, alice, "/_matrix/client/unstable/org.matrix.msc4143/rtc/transports");
 
-            // A token for her call
-            HttpResponseMessage response = await http.PostAsJsonAsync("/livekit/jwt/get_token", new { room_id = "!room:test.local", slot_id = "m.call#ROOM", openid_token = openId, member = new { id = "m", claimed_user_id = "@alice:test.local", claimed_device_id = alice.DeviceId } }, Ct);
+            // A token for her call, none for him
+            HttpResponseMessage response = await RequestTokenAsync(http, alice, "alice", roomId);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             SfuResponse? answer = await response.Content.ReadFromJsonAsync<SfuResponse>(Ct);
+            Assert.Equal(HttpStatusCode.Unauthorized, (await RequestTokenAsync(http, mallory, "mallory", roomId)).StatusCode);
 
             // Announced, issued with full access, and the room created
             Assert.Equal("https://matrix.test.local/livekit/jwt", transports.GetProperty("rtc_transports")[0].GetProperty("livekit_service_url").GetString());
@@ -77,6 +80,24 @@ public sealed class EmbeddedLiveKitTests
             try { Directory.Delete(directory, recursive: true); }
             catch (IOException) { }
         }
+    }
+
+    /// <summary>Return the JSON at <paramref name="path"/> as <paramref name="user"/>.</summary>
+    private static async Task<JsonElement> GetAsync(HttpClient http, MatrixClient user, string path)
+    {
+        // Done
+        using HttpRequestMessage request = new(HttpMethod.Get, path) { Headers = { Authorization = new("Bearer", user.AccessToken) } };
+        return await (await http.SendAsync(request, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct);
+    }
+
+    /// <summary>Ask a LiveKit token to <paramref name="roomId"/>'s call with an OpenID token of <paramref name="user"/>, whose localpart is <paramref name="localpart"/>.</summary>
+    private static async Task<HttpResponseMessage> RequestTokenAsync(HttpClient http, MatrixClient user, string localpart, string roomId)
+    {
+        // The user's OpenID token
+        using HttpRequestMessage request = new(HttpMethod.Post, $"/_matrix/client/v3/user/%40{localpart}%3Atest.local/openid/request_token") { Headers = { Authorization = new("Bearer", user.AccessToken) }, Content = JsonContent.Create(new { }) };
+        JsonElement openId = await (await http.SendAsync(request, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct);
+        // Return answer
+        return await http.PostAsJsonAsync("/livekit/jwt/get_token", new { room_id = roomId, slot_id = "m.call#ROOM", openid_token = openId, member = new { id = "m", claimed_user_id = $"@{localpart}:test.local", claimed_device_id = user.DeviceId } }, Ct);
     }
 
     /// <summary>Answers LiveKit's room service, and records the requests.</summary>

@@ -35,13 +35,13 @@ public static class LiveKitHostingExtensions
         builder.Services.AddHttpClient(HttpClientName, http => http.Timeout = TimeSpan.FromSeconds(15));
         builder.Services.TryAddSingleton(TimeProvider.System);
 
-        // Federation verification unless replaced, then the authorizer reading the current options
+        // Federation verification unless replaced, then the authorizer reading the current options, checking room membership when a host registered it
         builder.Services.TryAddSingleton<IOpenIdVerifier>(services => new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName)));
         builder.Services.AddSingleton(services =>
         {
             IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
             HttpClient http = services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName);
-            return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>());
+            return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>());
         });
         // Return builder
         return builder;
