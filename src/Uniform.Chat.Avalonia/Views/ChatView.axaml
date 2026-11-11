@@ -52,14 +52,14 @@
         <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
         <Button Margin="4,2" Content="Switch camera" Command="{Binding SwitchCameraCommand}" IsVisible="{Binding CanSwitchCamera}" />
         <Button Margin="4,2" Classes.warning="{Binding CameraOff}" Content="{Binding CameraText}" Command="{Binding ToggleCameraCommand}" IsVisible="{Binding SendsVideo}" />
-        <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding HasVideo}" />
+        <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding ShowsVideo}" />
         <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
         <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
       <Panel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" HorizontalAlignment="Center">
-        <views:VideoView x:Name="CallVideo" MaxHeight="260" Feed="{Binding RemoteVideo}" IsVisible="{Binding HasVideo}" />
+        <views:VideoView x:Name="CallVideo" MaxHeight="260" Feed="{Binding MainVideo}" IsVisible="{Binding ShowsVideo}" />
         <!-- Own camera in the corner, or a clear sign that it is off -->
-        <views:VideoView Width="96" MaxHeight="128" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Feed="{Binding LocalVideo}" IsVisible="{Binding HasPreview}" />
+        <views:VideoView Width="96" MaxHeight="128" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Feed="{Binding LocalVideo}" IsVisible="{Binding ShowsCornerPreview}" />
         <Border Classes="cameraoff" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsVisible="{Binding CameraOff}">
           <TextBlock Text="Camera is off" />
         </Border>

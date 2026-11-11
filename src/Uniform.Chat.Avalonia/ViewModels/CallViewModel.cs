@@ -75,7 +75,17 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
 
     /// <summary>Whether this side's camera has a preview to show.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsVideo), nameof(ShowsFullScreen), nameof(MainVideo), nameof(ShowsCornerPreview))]
     public partial bool HasPreview { get; set; }
+
+    /// <summary>Whether the call has video to show, the other side's or this side's own camera, as when only this side sends; the switch between video and chat shows then.</summary>
+    public bool ShowsVideo => HasVideo || HasPreview;
+
+    /// <summary>The video shown large: the other side's, or this side's own camera while the other side sends none.</summary>
+    public VideoFeed MainVideo => HasVideo ? RemoteVideo : LocalVideo;
+
+    /// <summary>Whether this side's camera shows small in the corner, over the other side's video.</summary>
+    public bool ShowsCornerPreview => HasVideo && HasPreview;
 
     /// <summary>Whether this side's camera is turned off.</summary>
     [ObservableProperty]
@@ -101,7 +111,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
 
     /// <summary>Whether the other user's video has pictures to show.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowsFullScreen))]
+    [NotifyPropertyChangedFor(nameof(ShowsVideo), nameof(ShowsFullScreen), nameof(MainVideo), nameof(ShowsCornerPreview))]
     public partial bool HasVideo { get; set; }
 
     /// <summary>Whether the video call is wanted on the whole screen rather than as a bar over the rooms; it is when video starts.</summary>
@@ -109,8 +119,8 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     [NotifyPropertyChangedFor(nameof(ShowsFullScreen), nameof(ScreenText))]
     public partial bool FullScreen { get; set; }
 
-    /// <summary>Whether the call fills the screen: video shown and wanted so.</summary>
-    public bool ShowsFullScreen => HasVideo && FullScreen;
+    /// <summary>Whether the call fills the screen: video shown, either side's, and wanted so; only the other side's video asks for it by itself.</summary>
+    public bool ShowsFullScreen => ShowsVideo && FullScreen;
 
     /// <summary>Text of the button that switches between the full video and the chat.</summary>
     public string ScreenText => FullScreen ? "Chat" : "Video";
@@ -308,6 +318,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         CameraOff = false;
         Interlocked.Exchange(ref pictured, 0);
         RemoteVideo.Clear();
+        FullScreen = false;
         // Done
         HasVideo = false;
     }
