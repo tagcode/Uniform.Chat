@@ -46,6 +46,8 @@ public sealed record GuiPlatform
     public Func<string, IDisposable>? KeepCallAlive { get; init; }
     /// <summary>Keep the engine syncing while the app is in the background or the screen is off, e.g. a foreground service on Android, which otherwise cuts the app's network; dispose the result when signed out. Null where nothing is needed.</summary>
     public Func<IDisposable>? KeepConnected { get; init; }
+    /// <summary>Return the image or file on the platform's clipboard, which pasting in the message box sends, e.g. a screenshot copied on Android, whose clipboard holds such things as links Avalonia does not read; null when the clipboard holds none, or where Avalonia's clipboard is enough, as on desktops.</summary>
+    public Func<ClipboardFile?>? ReadClipboardFile { get; init; }
     /// <summary>Push messages through a UnifiedPush distributor, which replace <see cref="KeepConnected"/> while registered; null where the platform has none.</summary>
     public IPushService? Push { get; init; }
     /// <summary>Ring for an incoming call from the named peer, e.g. the ringtone and a full-screen call notification on Android; dispose the result to stop. Null where the platform only notifies.</summary>
@@ -61,3 +63,8 @@ public sealed record GuiPlatform
         Audio = AudioDevices.ForThisPlatform() is null ? null : _ => AudioDevices.ForThisPlatform()!,
     };
 }
+
+/// <summary>An image or file on the clipboard, to send.</summary>
+/// <param name="Content">Its bytes; the receiver disposes it.</param>
+/// <param name="FileName">Its name, e.g. <c>image.png</c>.</param>
+public sealed record ClipboardFile(Stream Content, string FileName);

@@ -33,6 +33,6 @@ Blocking someone hides their messages and invites from you, on all your devices;
 
 ## Files
 
-📎 next to the message box sends files. On the desktop you can also drag files onto the room, or paste copied files or an image, such as a screenshot, into the message box with Ctrl+V. In encrypted rooms files are encrypted before upload.
+📎 next to the message box sends files. On the desktop you can also drag files onto the room, or paste copied files or an image, such as a screenshot, into the message box with Ctrl+V. On Android, paste a copied image or file into the message box: hold it and choose *Paste*. In encrypted rooms files are encrypted before upload.
 
 Images show a preview in the room; click it to open the image. Under a file or image, *Open* opens it in the app your system uses for its type, and *Save…* saves it where you choose. On Android, use *Save…*.

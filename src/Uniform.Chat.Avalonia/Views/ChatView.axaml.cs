@@ -40,6 +40,7 @@ public partial class ChatView : UserControl
 
         // Keys before the text boxes take them: a multi-line box handles Enter and paste itself
         ComposerBox.AddHandler(KeyDownEvent, OnComposerKeyDown, RoutingStrategies.Tunnel);
+        ComposerBox.AddHandler(TextBox.PastingFromClipboardEvent, OnComposerPasting);
         RoomBox.AddHandler(KeyDownEvent, OnRoomBoxKeyDown, RoutingStrategies.Tunnel);
 
         // A touch hold on a room shows its menu; lifting the finger then must not open the room as a tap would
@@ -189,6 +190,32 @@ public partial class ChatView : UserControl
         if (e.Key != Key.Enter || model is null) return;
         e.Handled = true;
         if (model.OpenTargetCommand.CanExecute(null)) model.OpenTargetCommand.Execute(null);
+    }
+
+    /// <summary>Send what the platform's clipboard holds as content, e.g. a screenshot copied on Android, instead of pasting text; the paste goes on as usual when it holds none.</summary>
+    private void OnComposerPasting(object? sender, RoutedEventArgs e)
+    {
+        // The platform's own clipboard content, in a room that takes messages
+        if (model?.SelectedRoom is not { IsInvite: false } || App.Platform.ReadClipboardFile?.Invoke() is not ClipboardFile file) return;
+        e.Handled = true;
+        // Done
+        _ = SendClipboardFileAsync(file);
+    }
+
+    /// <summary>Send a file from the platform's clipboard, and tell when it fails, as nothing awaits this.</summary>
+    private async Task SendClipboardFileAsync(ClipboardFile file)
+    {
+        // Sent, then closed
+        try
+        {
+            await using Stream content = file.Content;
+            await model!.SendFileAsync(content, file.FileName);
+        }
+        catch (Exception exception)
+        {
+            // On error tell
+            model!.Notice = $"Pasting failed: {exception.Message}";
+        }
     }
 
     /// <summary>Send files or an image from the clipboard to the open room, or paste its text into the message box.</summary>

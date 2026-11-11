@@ -67,9 +67,6 @@
 
 Rename to Uniform.Gui.Terminal.
 
-# Room VOIP
-- MSC3401
-
 # IzzyOnDroid
   - github releases should include signed .apk:s.
   - IzzyOnDroid limits APK size to around 30 MB. Our APK is about 80 MB, because it contains the .NET runtime for all four processor types. 
@@ -82,39 +79,12 @@ Rename to Uniform.Gui.Terminal.
 - Admin pages (reports, accounts, tokens)
 
 # Video calls
-
-- Motion search in the encoder: today moving parts cost residual bits. Motion vectors would cut the desktop's bitrate further when there's movement.
-- Sender reports and lip sync. We send no RTCP sender reports for our video, so the other side can't line up picture and sound, and video frames are shown as soon as they're decoded. On a good network it isn't noticeable; on a jittery one, sound and picture can drift apart.
-- Faster C# decoder: SIMD in the loop filter and the inverse transform, for slow devices where hardware decoding isn't available.
-- Windows camera. The desktop can send video on Linux only; Windows would need Media Foundation, a native COM API.
-Developer docs: the WebRtc and calls pages don't yet describe rotation, REMB adaptation, the preview, or turning the camera off.
-
-- Hardware decoding on Android. Phones can decode VP8 with MediaCodec, which is Java, not P/Invoke. That would make slow phones like the Xperia decode at full quality, with the C# decoder kept as the fallback. It would also save battery on every phone.
 - Android's camera API (Camera2) and its built-in VP8 hardware encoder (MediaCodec), through Java bindings rather than native code
   - the call adding a send-and-receive video section and sending the encoded frames
 
 # MatrixRTC calls
-
-- Room events announce and join a call. 
-- Getting a LiveKit token from the JWT service your server advertises;
-- LiveKit's own signalling, over a WebSocket with protobuf messages, on top of the WebRTC code we have;
-- Element X's end-to-end media encryption: each participant encrypts their audio and video frames with keys sent to the others in encrypted messages. 
-- Without it, Element X won't accept our media in encrypted rooms.
-
-- Room Signaling
-- LiveKit token
-- LiveKit signaling
-- Media encryption
-- Calls and UI
-- Tests
-
-- Later:
   - Element Call's "Matrix 2.0" mode, with sticky memberships (MSC4354), once Element makes it the default; data channels for reactions and raised hands;
 
-# Windows Desktop client video calls
 
-- Start the desktop app on a Windows machine with a webcam (dotnet run --project src/Uniform.Chat.Desktop, or the Desktop launch configuration) and video call a phone. If the 📹 button is missing, Media Foundation found no camera.
-- Add a Windows job to the release workflow that runs Uniform.Chat.Desktop.Tests. It costs a few CI minutes per release.
-
-# Buges
-- No more ringtone on Android or desktop. Desktop didn't even show incoming call popup, but android shows.
+# Room VOIP
+- MSC3401
