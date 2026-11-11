@@ -18,4 +18,6 @@ On phones, the switch chooses the loudspeaker or the earpiece; with the earpiece
 
 ## Licences
 
+The bottom of the settings shows the app's version, such as *Uniform Chat 0.1.36 (6078a19)*, with the code it was built from in brackets. Mention it when you report a problem.
+
 *Licences…* at the bottom of the settings shows the license of Uniform Chat and of everything the app includes: the .NET runtime and each library, with its copyright notice. Choose one in the list to read it; *‹* goes back to the settings, as does the back button on Android.

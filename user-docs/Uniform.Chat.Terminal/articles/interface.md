@@ -18,7 +18,7 @@ uid: Uniform.Chat.Terminal.Interface.Article
  F1 Help │ Ctrl+N Rooms │ Ctrl+O Join │ Ctrl+Q Quit │ Connected as @you:matrix.org   bob typing…
 ```
 
-- **Menu bar** (F10 or the mouse) has everything the client can do: File, Room, View and Help.
+- **Menu bar** (F10 or the mouse) has everything the client can do: File, Room, View and Help. Help → About shows the client's version.
 - **Rooms** lists invites (`+`), favourites, other rooms and low-priority rooms. Direct chats are marked `@`. The number is the Alt key for the room; unread counts are in brackets, and rooms that mention you are yellow.
 - **Message log** shows the selected room, with its name and topic in the frame. Long lines wrap under the text, own messages are cyan, and messages still being sent say `[sending…]`. A day change is marked with a line.
 - **Members** lists who is in the room, admins (`@`) and moderators (`%`) first, as in irssi; invited users are marked `+`. F2 hides it.

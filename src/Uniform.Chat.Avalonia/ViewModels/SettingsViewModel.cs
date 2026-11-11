@@ -168,6 +168,9 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private void ShowLicenses() => Licenses = new LicensesViewModel();
 
+    /// <summary>The app's version, e.g. <c>Uniform Chat 0.1.36 (6078a19)</c>, the same on the desktop and Android.</summary>
+    public static string VersionText { get; } = $"Uniform Chat {AppVersion.Of(typeof(SettingsViewModel).Assembly)}";
+
     /// <summary>Go back from the licenses to the settings.</summary>
     [RelayCommand]
     private void CloseLicenses() => Licenses = null;

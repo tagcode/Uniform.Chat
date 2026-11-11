@@ -196,7 +196,7 @@ public sealed partial class MainWindow : Window
         ]),
         new MenuBarItem("_Help", [
             new MenuItem { Title = "_Commands and keys", Key = Key.F1, Action = ShowHelp },
-            new MenuItem { Title = "_About", Action = () => Dialogs.Info(app, "About", "Uniform.Chat.Terminal\nA Matrix chat client for the terminal.\n\nhttps://spec.matrix.org") },
+            new MenuItem { Title = "_About", Action = () => Dialogs.Info(app, "About", $"Uniform Chat Terminal {Uniform.Matrix.Hosting.AppVersion.Of(typeof(MainWindow).Assembly)}\nA Matrix chat client for the terminal.\n\nhttps://spec.matrix.org") },
         ]),
     ]);
 

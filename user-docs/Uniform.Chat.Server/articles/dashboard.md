@@ -43,6 +43,7 @@ The dashboard refreshes every second. The server keeps serving while menus and w
 | Server → Users… | Create users, reset passwords, give admin rights, deactivate accounts |
 | Server → Rooms… | See rooms and list them in the public room directory |
 | Server → Reports… | Review what users reported |
+| Help → About | The server's version, also in the window's title |
 | Ctrl+Q or File → Quit | Stop the server |
 
 ## Settings window

@@ -51,6 +51,7 @@
       <Button Content="Logs…" Command="{Binding ShowLogsCommand}" IsVisible="{Binding CanShowLogs}" />
       <Button Content="Licences…" Command="{Binding ShowLicensesCommand}" />
     </StackPanel>
+    <TextBlock Classes="hint" Text="{x:Static vm:SettingsViewModel.VersionText}" />
   </StackPanel>
 
   <!-- Audio test in place of the settings -->

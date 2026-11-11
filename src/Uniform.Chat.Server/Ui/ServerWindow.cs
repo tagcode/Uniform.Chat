@@ -50,7 +50,7 @@ public sealed class ServerWindow : Window
         this.time = time;
 
         // Menu and dashboard; settings and logs only where they can be reached
-        Title = "Matrix server";
+        Title = $"Uniform Chat Server {AppVersion.Of(typeof(ServerWindow).Assembly)}";
         List<View> file = [];
         if (dashboard.OpenSettings is not null) file.Add(new MenuItem { Title = "_Settings…", HelpText = "View and change options", Action = ShowSettings });
         file.Add(new MenuItem { Title = "_Logs…", HelpText = "This and earlier sessions", Action = ShowLogs });
@@ -62,6 +62,9 @@ public sealed class ServerWindow : Window
                 new MenuItem { Title = "_Users…", HelpText = "Create users, reset passwords, admins", Action = ShowUsers },
                 new MenuItem { Title = "_Rooms…", HelpText = "Rooms and the public directory", Action = ShowRooms },
                 new MenuItem { Title = "Re_ports…", HelpText = "Review what users reported", Action = ShowReports },
+            ]),
+            new MenuBarItem("_Help", [
+                new MenuItem { Title = "_About", HelpText = "Version of the server", Action = () => Dialogs.Info(app, "About", $"Uniform Chat Server {AppVersion.Of(typeof(ServerWindow).Assembly)}\nA Matrix homeserver.\n\nhttps://spec.matrix.org") },
             ]),
         ]);
         Add(menu, summary);
