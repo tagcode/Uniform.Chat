@@ -172,8 +172,8 @@ public class ActivityTests
         Assert.Equal(2, last);
         Assert.Equal(last, restarted);
 
-        // Release the pooled connection, then the file
-        SqliteConnection.ClearAllPools();
+        // Release the pooled connection of this database only, as other tests run beside, then the file
+        using (SqliteConnection pooled = new($"Data Source={path}")) SqliteConnection.ClearPool(pooled);
         Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
     }
 

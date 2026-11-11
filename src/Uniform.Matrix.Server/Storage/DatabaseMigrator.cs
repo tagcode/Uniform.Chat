@@ -50,13 +50,15 @@ public sealed class DatabaseMigrator : IHostedService
         }
     }
 
-    /// <summary>Write the write-ahead log into the database and close every connection, so that the files are complete when the process ends.</summary>
+    /// <summary>Write the write-ahead log into the database and close its pooled connections, so that the files are complete when the process ends; other databases of the process, e.g. of other servers in tests, keep theirs.</summary>
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        // Checkpoint, then close the pooled connections
+        // Checkpoint, then close this database's pooled connections
+        string? connectionString = null;
         try
         {
             await using ServerDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+            connectionString = db.Database.GetConnectionString();
             await db.Database.ExecuteSqlRawAsync("PRAGMA wal_checkpoint(TRUNCATE);", cancellationToken);
         }
         catch (Exception ex) when (ex is SqliteException or OperationCanceledException or InvalidOperationException)
@@ -65,7 +67,9 @@ public sealed class DatabaseMigrator : IHostedService
             logger.LogWarning("Checkpointing the database at stop failed: {Error}", ex.Describe());
         }
         // Done
-        SqliteConnection.ClearAllPools();
+        if (connectionString is null) return;
+        using SqliteConnection pooled = new(connectionString);
+        SqliteConnection.ClearPool(pooled);
     }
 
     /// <summary>Delete rows of EF Core's migration lock, which only a process that died while migrating leaves, and warn.</summary>

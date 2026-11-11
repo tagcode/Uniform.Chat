@@ -88,7 +88,8 @@ public class LifecycleTests
         }
         finally
         {
-            SqliteConnection.ClearAllPools();
+            // This database's pooled connections only, as other tests run beside
+            using (SqliteConnection pooled = new($"Data Source={Path.Combine(directory, "server.db")}")) SqliteConnection.ClearPool(pooled);
             Directory.Delete(directory, recursive: true);
         }
     }
