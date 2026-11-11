@@ -286,7 +286,9 @@ public class BrowserTests
         JsonNode stats = (await chromium.EvaluateAsync("""
             const report = await pc.getStats();
             const outbound = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'video');
-            return { frames: outbound?.framesEncoded ?? 0, nacks: outbound?.nackCount ?? 0, resent: outbound?.retransmittedPacketsSent ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0 };
+            const audio = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'audio');
+            const pair = [...report.values()].find(s => s.type === 'candidate-pair' && s.nominated);
+            return { frames: outbound?.framesEncoded ?? 0, nacks: outbound?.nackCount ?? 0, resent: outbound?.retransmittedPacketsSent ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0, sent: outbound?.packetsSent, bytes: outbound?.bytesSent, target: outbound?.targetBitrate, limit: outbound?.qualityLimitationReason, audioSent: audio?.packetsSent, pairSent: pair?.packetsSent, available: pair?.availableOutgoingBitrate, state: pair?.state, agent: navigator.userAgent };
             """, cancellationToken))!;
 
         // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
