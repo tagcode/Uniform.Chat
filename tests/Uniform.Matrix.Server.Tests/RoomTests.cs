@@ -453,8 +453,8 @@ public class RoomTests
 
         // Act
         MatrixException unknown = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@nobody:test.local"] }, Ct));
-        MatrixException invalid = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@toni:matrix..invalid"] }, Ct));
-        MatrixException unreachable = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@toni:nowhere.invalid"] }, Ct));
+        MatrixException invalid = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@bob:matrix..invalid"] }, Ct));
+        MatrixException unreachable = await Assert.ThrowsAsync<MatrixException>(() => alice.CreateRoomAsync(new CreateRoomRequest { Invite = ["@bob:nowhere.invalid"] }, Ct));
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
