@@ -4,7 +4,7 @@ uid: Uniform.Matrix.Testing.Article
 ---
 # Testing
 
-The tests use xUnit v3 on Microsoft.Testing.Platform, enabled in `global.json`. The same file pins the .NET 10 SDK, its newest release but no previews, as a preview SDK on a build machine would otherwise run instead: .NET 11's `dotnet test` asks which device to run the Android app on, and stops.
+The tests use xUnit v3 on Microsoft.Testing.Platform, enabled in `global.json`. The same file pins the .NET 10 SDK, its newest release, as a newer SDK on a build machine, such as .NET 11 on GitHub's runners, would otherwise run instead: .NET 11's `dotnet test` asks which device to run the Android app on, and stops.
 
 ```bash
 dotnet test                                         # all tests
