@@ -94,3 +94,7 @@ Rename to Uniform.Gui.Terminal.
 # Room VOIP
 - MSC3401
 
+# .NET 11
+- Codebase refactor
+  - .NET 11 improvements
+  - Remove residual AOT code and replace with JIT decision.
