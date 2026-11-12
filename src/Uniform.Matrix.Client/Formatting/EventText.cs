@@ -32,11 +32,19 @@ public static class EventText
     /// <summary>How long a deleted message keeps its "deleted" line in the history; older deletions are not shown, so a room reads better.</summary>
     public static readonly TimeSpan DeletionShown = TimeSpan.FromMinutes(10);
 
-    /// <summary>Return whether <paramref name="clientEvent"/> is a message deleted more than <see cref="DeletionShown"/> before <paramref name="now"/>: by its deletion's time, or by its own when the server left the deletion out.</summary>
+    /// <summary>Return whether <paramref name="clientEvent"/> is a deleted message, plain or encrypted, as the server sends deleted encrypted ones.</summary>
+    public static bool IsDeletion(ClientEvent clientEvent) => clientEvent.Type switch
+    {
+        EventTypes.RoomMessage => clientEvent.Unsigned?.RedactedBecause is not null || GetText(clientEvent) is null,
+        EventTypes.RoomEncrypted => clientEvent.Unsigned?.RedactedBecause is not null,
+        _ => false,
+    };
+
+    /// <summary>Return whether <paramref name="clientEvent"/> is a message, plain or encrypted, deleted more than <see cref="DeletionShown"/> before <paramref name="now"/>: by its deletion's time, or by its own when the server left the deletion out.</summary>
     public static bool IsOldDeletion(ClientEvent clientEvent, DateTimeOffset now)
     {
         // Deleted messages only, then by when
-        if (clientEvent.Type != EventTypes.RoomMessage || (clientEvent.Unsigned?.RedactedBecause is null && GetText(clientEvent) is not null)) return false;
+        if (!IsDeletion(clientEvent)) return false;
         long deleted = clientEvent.Unsigned?.RedactedBecause?.OriginServerTs ?? clientEvent.OriginServerTs;
         // Return verdict
         return now - DateTimeOffset.FromUnixTimeMilliseconds(deleted) > DeletionShown;

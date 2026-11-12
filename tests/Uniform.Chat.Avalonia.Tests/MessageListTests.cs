@@ -75,7 +75,7 @@ public class MessageListTests
             Event(EventTypes.RoomMessage, Bob, edit),
             Event(EventTypes.Reaction, Me, new ReactionContent { RelatesTo = new Relation { RelType = "m.annotation", EventId = original.EventId, Key = "👍" } }),
             Event(EventTypes.Reaction, Bob, new ReactionContent { RelatesTo = new Relation { RelType = "m.annotation", EventId = original.EventId, Key = "👍" } }),
-            Event(EventTypes.RoomRedaction, Bob, new { redacts = other.EventId }),
+            Event(EventTypes.RoomRedaction, Bob, new { redacts = other.EventId }) with { OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() },
         ]);
 
         // Assert
@@ -170,5 +170,47 @@ public class MessageListTests
         // Assert
         Assert.Equal(["first", "on my way"], list.Items.Select(i => i.Text));
         Assert.DoesNotContain(list.Items, i => i.OutboxId is not null);
+    }
+
+    /// <summary>Return an event as the server sends a deleted one, at <paramref name="sent"/>, deleted at <paramref name="deleted"/>, with no content left.</summary>
+    private static ClientEvent Deleted(string type, DateTimeOffset sent, DateTimeOffset deleted) => Event(type, Bob, new { }) with
+    {
+        OriginServerTs = sent.ToUnixTimeMilliseconds(),
+        Unsigned = new UnsignedData { RedactedBecause = Event(EventTypes.RoomRedaction, Bob, new { }) with { OriginServerTs = deleted.ToUnixTimeMilliseconds() } },
+    };
+
+    /// <summary>Encrypted messages deleted long ago are left out, as plain ones are; one deleted just now shows as deleted, not as waiting for its key.</summary>
+    [Fact]
+    public void HideOldEncryptedDeletions()
+    {
+        // One deleted yesterday, one a minute ago
+        Room room = CreateRoom();
+        MessageList list = new(Me);
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        list.Reset(room, [Deleted(EventTypes.RoomEncrypted, now.AddDays(-1), now.AddDays(-1).AddHours(2)), Deleted(EventTypes.RoomEncrypted, now.AddMinutes(-5), now.AddMinutes(-1))]);
+
+        // Done: only the new deletion, as deleted
+        MessageViewModel item = Assert.Single(list.Items);
+        Assert.True(item.IsDeleted);
+        Assert.Equal("Message deleted", item.Text);
+    }
+
+    /// <summary>A sync that brings history again, e.g. the first one after a start: older messages go by time before newer ones, and messages it deletes long ago go away.</summary>
+    [Fact]
+    public void PlaceSyncedHistoryByTime()
+    {
+        // Shown: a message of ten minutes ago
+        Room room = CreateRoom();
+        MessageList list = new(Me);
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        list.Reset(room, [Text(Bob, "recent") with { OriginServerTs = now.AddMinutes(-10).ToUnixTimeMilliseconds() }]);
+
+        // The sync: a message of yesterday, and an encrypted one with its deletion of yesterday
+        ClientEvent encrypted = Event(EventTypes.RoomEncrypted, Bob, new { algorithm = "m.megolm.v1.aes-sha2" }) with { OriginServerTs = now.AddDays(-1).ToUnixTimeMilliseconds() };
+        ClientEvent deletion = Event(EventTypes.RoomRedaction, Bob, new { redacts = encrypted.EventId }) with { OriginServerTs = now.AddDays(-1).AddMinutes(1).ToUnixTimeMilliseconds() };
+        list.Append(room, [Text(Bob, "yesterday") with { OriginServerTs = now.AddDays(-1).ToUnixTimeMilliseconds() }, encrypted, deletion]);
+
+        // Done: yesterday's message first, no deleted line
+        Assert.Equal(["yesterday", "recent"], list.Items.Select(i => i.Text));
     }
 }

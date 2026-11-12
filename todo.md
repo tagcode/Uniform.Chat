@@ -85,6 +85,12 @@ Rename to Uniform.Gui.Terminal.
 # MatrixRTC calls
   - Element Call's "Matrix 2.0" mode, with sticky memberships (MSC4354), once Element makes it the default; data channels for reactions and raised hands;
 
+# Database connections
+- Support all the database connections EF supports
+
+# Video player
+- Embedded video player
 
 # Room VOIP
 - MSC3401
+

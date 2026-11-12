@@ -40,7 +40,7 @@ public sealed class MessageList
         Append(room, events);
     }
 
-    /// <summary>Add newer events, oldest first, before the unsent messages; an edit, reaction or deletion of a message not shown changes nothing, as it loads with that message's line.</summary>
+    /// <summary>Add newer events, oldest first, before the unsent messages, each by its time among those shown; an edit, reaction or deletion of a message not shown changes nothing, as it loads with that message's line.</summary>
     public void Append(Room room, IEnumerable<ClientEvent> events)
     {
         // Each event becomes an item or changes one
@@ -55,7 +55,11 @@ public sealed class MessageList
                 continue;
             }
             if (Create(room, clientEvent) is not MessageViewModel message) continue;
-            Items.Insert(insertAt++, message);
+            // By time, as a sync may bring events older than the newest shown, e.g. its first one after a start
+            int at = insertAt;
+            while (at > 0 && Items[at - 1].Timestamp > message.Timestamp) at--;
+            Items.Insert(at, message);
+            insertAt++;
             byEventId[clientEvent.EventId!] = message;
         }
         UpdateHeaders();
@@ -128,14 +132,18 @@ public sealed class MessageList
         if (clientEvent.StateKey is null && clientEvent.Sender != ownUserId && IsBlocked?.Invoke(clientEvent.Sender) == true) return null;
         string sender = room.GetMemberDisplayName(clientEvent.Sender);
         bool own = clientEvent.Sender == ownUserId;
+
+        // Deleted messages, plain or encrypted, keep their place, unless deleted long ago
+        if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
+        if (EventText.IsDeletion(clientEvent) || (clientEvent.Type == EventTypes.RoomMessage && !clientEvent.TryGetContent(out MessageContent? _)))
+            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = "Message deleted", IsDeleted = true };
         if (clientEvent.Type != EventTypes.RoomMessage)
         {
             if (EventText.Describe(room, clientEvent) is not string description) return null;
             return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = description };
         }
 
-        // Deleted messages keep their place, unless deleted long ago
-        if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
+        // A message's text
         if (EventText.GetText(clientEvent, room.GetMemberDisplayName) is not string text || !clientEvent.TryGetContent(out MessageContent? content))
             return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = "Message deleted", IsDeleted = true };
 
@@ -182,6 +190,12 @@ public sealed class MessageList
             string? target = clientEvent.Redacts ?? (clientEvent.Content.ValueKind == JsonValueKind.Object && clientEvent.Content.TryGetProperty("redacts", out JsonElement redacts) ? redacts.GetString() : null);
             if (target is not null && byEventId.TryGetValue(target, out MessageViewModel? deleted))
             {
+                // Deleted long ago, e.g. history a sync brought again: gone, as when loaded with its deletion
+                if (DateTimeOffset.UtcNow - clientEvent.Timestamp > EventText.DeletionShown)
+                {
+                    Items.Remove(deleted);
+                    return true;
+                }
                 deleted.Html = null;
                 deleted.Text = "Message deleted";
                 deleted.IsDeleted = true;
