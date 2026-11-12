@@ -10,6 +10,7 @@
         }
       ],
       "dest": "api",
+      "properties": { "UseRazorSourceGenerator": "false" },
       "namespaceLayout": "flattened",
       "enumSortOrder": "declaringOrder"
     }
