@@ -274,6 +274,8 @@ public class BrowserTests
             for (const candidate of {{JsonSerializer.Serialize(candidates)}}) await pc.addIceCandidate({ candidate, sdpMid: '0', sdpMLineIndex: 0 });
             """, cancellationToken);
         Assert.True(await peer.ConnectAsync(cancellationToken).WaitAsync(TimeSpan.FromSeconds(30), cancellationToken));
+        System.Collections.Concurrent.ConcurrentDictionary<string, int> arrived = new();
+        peer.Ice.DataReceived += datagram => arrived.AddOrUpdate(datagram.Length < 2 ? "short" : RtpPacket.IsRtcp(datagram) ? $"rtcp{datagram[1]}" : $"pt{datagram[1] & 0x7F}", 1, (_, n) => n + 1);
 
         // Video until ten packets are lost, as slow machines send fewer, then a second for their resending
         DateTime until = DateTime.UtcNow.AddSeconds(15);
@@ -287,14 +289,17 @@ public class BrowserTests
             const report = await pc.getStats();
             const outbound = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'video');
             const audio = [...report.values()].find(s => s.type === 'outbound-rtp' && s.kind === 'audio');
-            const pair = [...report.values()].find(s => s.type === 'candidate-pair' && s.nominated);
-            return { frames: outbound?.framesEncoded ?? 0, nacks: outbound?.nackCount ?? 0, resent: outbound?.retransmittedPacketsSent ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0, sent: outbound?.packetsSent, bytes: outbound?.bytesSent, target: outbound?.targetBitrate, limit: outbound?.qualityLimitationReason, audioSent: audio?.packetsSent, pairSent: pair?.packetsSent, available: pair?.availableOutgoingBitrate, state: pair?.state, agent: navigator.userAgent };
+            const transport = [...report.values()].find(s => s.type === 'transport');
+            const pair = report.get(transport?.selectedCandidatePairId);
+            const kind = id => { const c = report.get(id); return c ? `${c.candidateType}:${c.address}:${c.port}/${c.protocol}` : id; };
+            const pairs = [...report.values()].filter(s => s.type === 'candidate-pair').map(p => `${kind(p.localCandidateId)}>${kind(p.remoteCandidateId)} ${p.state}${p.nominated ? ' nominated' : ''} sent ${p.packetsSent ?? 0} received ${p.packetsReceived ?? 0}`);
+            return { ice: pc.iceConnectionState, connection: pc.connectionState, selected: pair ? `${kind(pair.localCandidateId)}>${kind(pair.remoteCandidateId)}` : null, pairs, frames: outbound?.framesEncoded ?? 0, nacks: outbound?.nackCount ?? 0, resent: outbound?.retransmittedPacketsSent ?? 0, keyframes: outbound?.keyFramesEncoded ?? 0, pli: outbound?.pliCount ?? 0, sent: outbound?.packetsSent, bytes: outbound?.bytesSent, target: outbound?.targetBitrate, limit: outbound?.qualityLimitationReason, audioSent: audio?.packetsSent, pairSent: pair?.packetsSent, available: pair?.availableOutgoingBitrate, state: pair?.state, agent: navigator.userAgent };
             """, cancellationToken))!;
 
         // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
         int lost;
         lock (dropped) lost = dropped.Count;
-        Assert.True(lost >= 10, $"{lost} dropped of {Volatile.Read(ref seen)} video packets, {Volatile.Read(ref pictures)} pictures; Chromium: {stats.ToJsonString()}");
+        Assert.True(lost >= 10, $"{lost} dropped of {Volatile.Read(ref seen)} video packets, {Volatile.Read(ref pictures)} pictures; arrived {string.Join(", ", arrived.OrderBy(a => a.Key).Select(a => $"{a.Key} {a.Value}"))}; our candidates {string.Join(" ", candidates)}; Chromium: {stats.ToJsonString()}");
         Assert.True(peer.VideoPacketsNacked >= lost / 2, $"{peer.VideoPacketsNacked} asked for {lost} dropped; Chromium: {stats.ToJsonString()}");
         Assert.True(stats["resent"]!.GetValue<int>() > 0, stats.ToJsonString());
         Assert.True(pictures > stats["frames"]!.GetValue<int>() / 2, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");
