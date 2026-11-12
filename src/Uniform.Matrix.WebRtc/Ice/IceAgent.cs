@@ -167,6 +167,9 @@ public sealed class IceAgent : IAsyncDisposable
     /// <summary>Raised on the read loop for each datagram from the peer that is not STUN, e.g. DTLS or SRTP.</summary>
     public event Action<byte[]>? DataReceived;
 
+    /// <summary>Raised when handling a received datagram throws, e.g. in a <see cref="DataReceived"/> handler; the socket reads on.</summary>
+    public event Action<Exception>? DispatchFailed;
+
     /// <summary>Gather host candidates, then reflexive and relayed ones from the servers; return when all servers answered or timed out.</summary>
     public async Task GatherAsync(CancellationToken cancellationToken = default)
     {
@@ -571,8 +574,9 @@ public sealed class IceAgent : IAsyncDisposable
             }
             if (local == hostBase && relaysNow.Any(r => r.Turn!.Server.Equals(from))) continue;
             if (local == hostBase && options.RelayOnly) continue;
-            // Done
-            Dispatch(local, from, datagram);
+            // Done: a failing handler must not stop the socket, or the peer's checks go unanswered and the connection dies
+            try { Dispatch(local, from, datagram); }
+            catch (Exception e) when (e is not OutOfMemoryException) { DispatchFailed?.Invoke(e); }
         }
     }
 

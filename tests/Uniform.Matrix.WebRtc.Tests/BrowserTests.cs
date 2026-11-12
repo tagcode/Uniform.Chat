@@ -245,6 +245,8 @@ public class BrowserTests
         Video.Vp8.Vp8Decoder decoder = new();
         int pictures = 0;
         peer.VideoReceived += frame => { if (decoder.Decode(frame.Data) is not null) Interlocked.Increment(ref pictures); };
+        System.Collections.Concurrent.ConcurrentQueue<string> failures = new();
+        peer.ReceiveFailed += e => failures.Enqueue($"{e.GetType().Name}: {e.Message} at {e.StackTrace?.Split('\n').FirstOrDefault()?.Trim()}");
 
         // Chromium's offer of a moving canvas; our answer; connect
         string offer = (await chromium.EvaluateAsync("""
@@ -299,7 +301,7 @@ public class BrowserTests
         // Assert: losses asked for and sent again; pictures all along; no keyframes beyond the first few
         int lost;
         lock (dropped) lost = dropped.Count;
-        Assert.True(lost >= 10, $"{lost} dropped of {Volatile.Read(ref seen)} video packets, {Volatile.Read(ref pictures)} pictures; arrived {string.Join(", ", arrived.OrderBy(a => a.Key).Select(a => $"{a.Key} {a.Value}"))}; our candidates {string.Join(" ", candidates)}; Chromium: {stats.ToJsonString()}");
+        Assert.True(lost >= 10, $"{lost} dropped of {Volatile.Read(ref seen)} video packets, {Volatile.Read(ref pictures)} pictures; {failures.Count} receive failures, first {failures.FirstOrDefault()}; arrived {string.Join(", ", arrived.OrderBy(a => a.Key).Select(a => $"{a.Key} {a.Value}"))}; our candidates {string.Join(" ", candidates)}; Chromium: {stats.ToJsonString()}");
         Assert.True(peer.VideoPacketsNacked >= lost / 2, $"{peer.VideoPacketsNacked} asked for {lost} dropped; Chromium: {stats.ToJsonString()}");
         Assert.True(stats["resent"]!.GetValue<int>() > 0, stats.ToJsonString());
         Assert.True(pictures > stats["frames"]!.GetValue<int>() / 2, $"{pictures} pictures; Chromium: {stats.ToJsonString()}");

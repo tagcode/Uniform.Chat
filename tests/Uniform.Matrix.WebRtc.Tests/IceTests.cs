@@ -55,6 +55,28 @@ public class IceTests
         await AssertExchangeAsync(caller, callee, cancellationToken);
     }
 
+    /// <summary>A data handler that throws is reported, and the agent reads on: later datagrams arrive, so the peer's checks keep being answered.</summary>
+    [Fact]
+    public async Task ReadOnAfterFailingHandler()
+    {
+        // Connected; the callee's handler fails on the first datagram
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        await using IceAgent caller = new(new IceOptions { Controlling = true, IncludeLoopback = true });
+        await using IceAgent callee = new(new IceOptions { IncludeLoopback = true });
+        await ConnectAsync(caller, callee, cancellationToken);
+        Channel<byte[]> received = Channel.CreateUnbounded<byte[]>();
+        TaskCompletionSource<Exception> failed = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        callee.DispatchFailed += e => failed.TrySetResult(e);
+        callee.DataReceived += data => { if (data[1] == 1) throw new InvalidOperationException("handler failed"); received.Writer.TryWrite(data); };
+
+        // The failure reported, then the next datagram received
+        await caller.SendAsync(new byte[] { 22, 1 }, cancellationToken);
+        Assert.Equal("handler failed", (await failed.Task.WaitAsync(TimeSpan.FromSeconds(5), cancellationToken)).Message);
+        await caller.SendAsync(new byte[] { 22, 2 }, cancellationToken);
+        // Done
+        Assert.Equal(new byte[] { 22, 2 }, await received.Reader.ReadAsync(cancellationToken).AsTask().WaitAsync(TimeSpan.FromSeconds(5), cancellationToken));
+    }
+
     /// <summary>Connect two agents over IPv6 only, their IPv4 candidates withheld; skipped where the system has no IPv6.</summary>
     [Fact]
     public async Task ConnectOverIPv6()

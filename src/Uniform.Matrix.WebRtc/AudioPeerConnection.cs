@@ -137,6 +137,9 @@ public sealed class AudioPeerConnection : IMediaConnection, IAsyncDisposable
     /// <summary>Raised for each whole VP8 frame received, in order, on the socket's read loop; after lost packets, from the next keyframe.</summary>
     public event Action<Vp8EncodedFrame>? VideoReceived;
 
+    /// <summary>Raised when handling received media throws, e.g. in a <see cref="VideoReceived"/> handler; receiving goes on.</summary>
+    public event Action<Exception>? ReceiveFailed;
+
     /// <summary>The media ID of the first section this side accepted, which carries the bundled transport, e.g. for the <c>sdpMid</c> of trickled candidates; null before any.</summary>
     public string? BundleMid => lastLocal?.Media.FirstOrDefault(m => m.Port != 0)?.Get("mid") ?? lastLocal?.Media.FirstOrDefault()?.Get("mid");
 
@@ -513,6 +516,7 @@ public sealed class AudioPeerConnection : IMediaConnection, IAsyncDisposable
         IceAgent agent = new(new IceOptions { Controlling = controlling, Servers = options.Servers, IncludeLoopback = options.IncludeLoopback, RelayOnly = options.RelayOnly });
         agent.CandidateGathered += candidate => CandidateGathered?.Invoke(candidate);
         agent.DataReceived += OnData;
+        agent.DispatchFailed += e => ReceiveFailed?.Invoke(e);
         agent.StateChanged += state => { if (agent == ice) OnIceState(state); };
         Task previous = gathering ?? Task.CompletedTask;
         gathering = Task.WhenAll(previous, GatherAsync(agent));
