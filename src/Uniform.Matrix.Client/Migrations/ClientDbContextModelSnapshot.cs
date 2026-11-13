@@ -220,6 +220,9 @@ namespace Uniform.Matrix.Client.Migrations
                     b.Property<string>("NextBatch")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("RoomsJson")
+                        .HasColumnType("TEXT");
+
                     b.Property<long>("UpdatedAt")
                         .HasColumnType("INTEGER");
 

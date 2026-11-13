@@ -48,6 +48,9 @@ public sealed record GuiPlatform
     public Func<IDisposable>? KeepConnected { get; init; }
     /// <summary>Return the image or file on the platform's clipboard, which pasting in the message box sends, e.g. a screenshot copied on Android, whose clipboard holds such things as links Avalonia does not read; null when the clipboard holds none, or where Avalonia's clipboard is enough, as on desktops.</summary>
     public Func<ClipboardFile?>? ReadClipboardFile { get; init; }
+
+    /// <summary>Put the image file at a path on the clipboard under a file name, where Avalonia's clipboard takes no images, as on Android; null where it does.</summary>
+    public Action<string, string>? WriteClipboardImage { get; init; }
     /// <summary>Push messages through a UnifiedPush distributor, which replace <see cref="KeepConnected"/> while registered; null where the platform has none.</summary>
     public IPushService? Push { get; init; }
     /// <summary>Ring for an incoming call from the named peer, e.g. the ringtone and a full-screen call notification on Android; dispose the result to stop. Null where the platform only notifies.</summary>

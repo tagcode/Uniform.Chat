@@ -8,7 +8,7 @@ uid: Uniform.Chat.Desktop.Messages.Article
 
 Type in the box at the bottom and press Enter to send; Shift+Enter starts a new line. Markdown works: `**bold**`, `*italic*`, `` `code` ``, lists and quotes. `/me waves` sends an action.
 
-Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, and reactions are counted under the message. A deleted message shows as *Message deleted* for ten minutes; messages deleted before that are left out, so the room reads better. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes.
+Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, and reactions are counted under the message. A deleted message shows as *Message deleted* for ten minutes; messages deleted before that are left out, so the room reads better. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes. Without a network, the app still lists your rooms as they were when it was last connected, so you can read stored messages and write new ones, which are sent once the network is back.
 
 Scroll to the top to load older messages.
 
@@ -19,6 +19,7 @@ Right-click a message for a menu of its actions. On a phone, press and hold it: 
 - *Reply* answers it; the reply shows a quote of the message. Esc or ✕ above the message box stops replying.
 - *React* adds 👍, ❤️, 😂, 🎉, 😮 or 😢.
 - *Edit* puts your own message back in the message box; Enter sends the new text.
+- *Copy image*, on an image, copies the picture, to paste it into another app or another room.
 - *Copy text* copies it.
 - *Copy link* copies a `matrix.to` link to the message, for sharing with people in the room.
 - *Delete* removes your own message for everyone.

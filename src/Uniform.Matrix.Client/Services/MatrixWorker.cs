@@ -78,6 +78,7 @@ public sealed class MatrixWorker : BackgroundService
         // Rebuild state from stored position
         status.Set(ConnectionState.Connecting, "Syncing");
         string userId = client.UserId!;
+        if (await processor.RestoreRoomsAsync(userId, cancellationToken)) logger.LogInformation("Rooms listed from the last session until the first sync");
         StoredAccount? account = await store.LoadAccountAsync(cancellationToken);
         string filter = new Filter { Room = new RoomFilter { Timeline = new RoomEventFilter { Limit = options.TimelineLimit, LazyLoadMembers = true }, State = new RoomEventFilter { LazyLoadMembers = true } } }.ToJson();
         SyncResponse first = await client.RetryTransientAsync(token => client.SyncAsync(account?.NextBatch, filter: filter, fullState: true, cancellationToken: token), OnSyncRetry, cancellationToken);

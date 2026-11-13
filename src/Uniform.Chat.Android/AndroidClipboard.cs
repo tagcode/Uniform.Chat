@@ -34,6 +34,21 @@ internal static class AndroidClipboard
         return null;
     }
 
+    /// <summary>Put an image on the clipboard: a copy of <paramref name="path"/> named <paramref name="fileName"/>, linked through the app's FileProvider, which Android lets the pasting app read.</summary>
+    public static void WriteImage(Context context, string path, string fileName)
+    {
+        // One copy at a time, named for its type, which the provider tells from the extension
+        string directory = Path.Combine(context.CacheDir!.AbsolutePath, "clipboard");
+        if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
+        Directory.CreateDirectory(directory);
+        string name = string.Concat(fileName.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c));
+        string copy = Path.Combine(directory, Path.HasExtension(name) ? name : name + ".png");
+        File.Copy(path, copy);
+        global::Android.Net.Uri uri = AndroidX.Core.Content.FileProvider.GetUriForFile(context, "rip.uniform.chat.files", new Java.IO.File(copy))!;
+        // Done
+        if (context.GetSystemService(Context.ClipboardService) is ClipboardManager clipboard) clipboard.PrimaryClip = ClipData.NewUri(context.ContentResolver, fileName, uri);
+    }
+
     /// <summary>Return the content's display name, else a name from its type, e.g. <c>image-20261111-191500.png</c>.</summary>
     internal static string NameOf(ContentResolver resolver, global::Android.Net.Uri uri, string type)
     {

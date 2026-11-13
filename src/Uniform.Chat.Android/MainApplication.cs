@@ -41,6 +41,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             KeepCallAlive = peer => CallForegroundService.Start(this, peer),
             KeepConnected = () => SyncForegroundService.Start(this),
             ReadClipboardFile = () => AndroidClipboard.ReadFile(this),
+            WriteClipboardImage = (path, fileName) => AndroidClipboard.WriteImage(this, path, fileName),
             Push = new AndroidPushService(this),
             Ring = peer => new Ringer(this, peer),
             ScreenOffNearEar = () => new NearEarScreenOff(this),

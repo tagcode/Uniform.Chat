@@ -59,6 +59,12 @@ public sealed class Room
     private int? summaryJoined;
     private int? summaryInvited;
 
+    /// <summary>Current state events, for <see cref="RoomStore.Snapshot"/>.</summary>
+    internal IEnumerable<MatrixEvent> StateEvents => state.Values;
+
+    /// <summary>The summary as the server last told it, for <see cref="RoomStore.Snapshot"/>.</summary>
+    internal RoomSummary Summary => new() { Heroes = Heroes, JoinedMemberCount = summaryJoined, InvitedMemberCount = summaryInvited };
+
     /// <summary>Known members keyed by user ID; partial when the server lazy-loads members, see <see cref="RoomStore.LoadMembersAsync"/>.</summary>
     public IReadOnlyDictionary<string, RoomMemberInfo> Members => members;
     /// <summary>Recent events in chronological order, at most <see cref="RoomStore.MaxTimelineLength"/> plus backfilled ones.</summary>

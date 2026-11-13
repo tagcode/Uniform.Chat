@@ -180,7 +180,7 @@ public sealed class SyncForegroundService : Service
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
         // Typed as special use where Android asks
-        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Keeps the connection for messages and calls", ongoing: true);
+        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe right to release.", ongoing: true);
         if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeSpecialUse);
         else StartForeground(NotificationId, notification);
         // Done

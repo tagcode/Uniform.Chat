@@ -15,6 +15,8 @@ public sealed class StoredAccount
     public string? AccessToken { get; set; }
     /// <summary>Last applied <c>next_batch</c>; syncs resumes from here.</summary>
     public string? NextBatch { get; set; }
+    /// <summary>The rooms as a sync response from <see cref="State.RoomStore.Snapshot"/>, to list them at a start without network; null until the first sync.</summary>
+    public string? RoomsJson { get; set; }
     /// <summary>Last change time.</summary>
     public DateTimeOffset UpdatedAt { get; set; }
 }

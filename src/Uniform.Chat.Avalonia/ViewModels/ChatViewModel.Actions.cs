@@ -18,6 +18,9 @@ public sealed partial class ChatViewModel
     /// <summary>Copies text to the clipboard; set by the view, which has the clipboard.</summary>
     public Func<string, Task>? CopyToClipboard { get; set; }
 
+    /// <summary>Copy the image file at a path, under a file name, to the clipboard; set by the view.</summary>
+    public Func<string, string, Task>? CopyImageToClipboard { get; set; }
+
     /// <summary>Raised when an action wants the message box focused, such as Reply and Edit.</summary>
     public event Action? ComposerFocusRequested;
 
@@ -38,6 +41,7 @@ public sealed partial class ChatViewModel
         List<SheetAction> actions = [];
         if (message.CanAnswer) actions.Add(new("Reply", () => { StartReply(message); ComposerFocusRequested?.Invoke(); }));
         if (message.CanEdit) actions.Add(new("Edit", () => { StartEdit(message); ComposerFocusRequested?.Invoke(); }));
+        if (message.ImageUri is not null) actions.Add(new("Copy image", () => _ = CopyImageAsync(message)));
         if (message.Text.Length > 0) actions.Add(new("Copy text", () => Copy(message.Text)));
         if (room is not null && message.EventId is not null && !message.IsPending) actions.Add(new("Copy link", () => Copy(Link(room.RoomId, message.EventId))));
         if (message.CanDelete) actions.Add(new("Delete", () => _ = DeleteAsync(message), IsDanger: true));
@@ -120,6 +124,24 @@ public sealed partial class ChatViewModel
         // Through the view
         if (CopyToClipboard is not Func<string, Task> copy) return;
         _ = copy(text);
+    }
+
+    /// <summary>Copy an image message's picture to the clipboard, downloaded and decrypted first when needed.</summary>
+    private async Task CopyImageAsync(MessageViewModel message)
+    {
+        // The picture's file, through the view
+        if (CopyImageToClipboard is not Func<string, string, Task> copy) return;
+        try
+        {
+            if (await DownloadAsync(message) is not string path) return;
+            await copy(path, message.FileName ?? "image.png");
+            Notice = "Image copied";
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            // On a picture that could not be loaded or copied
+            Notice = $"Copying the image failed: {exception.Message}";
+        }
     }
 
     /// <summary>Return a matrix.to link to <paramref name="target"/>, a room's alias or ID, and to its event <paramref name="eventId"/>; an ID gets the user's server to join through.</summary>

@@ -110,6 +110,33 @@ public sealed class RoomStore
         return new SyncChanges { Joined = joined, Invited = invited, Left = left, Timeline = timelines, TypingChanged = typing, UnreadChanged = unread };
     }
 
+    /// <summary>Return the joined and invited rooms as one sync response, to save and <see cref="Apply"/> again at a start without network: global and room account data, state, summaries, unread counts and the newest <paramref name="timelineEvents"/> events of each room.</summary>
+    public SyncResponse Snapshot(int timelineEvents = 20)
+    {
+        // Rooms by membership; left ones are not listed
+        Dictionary<string, JoinedRoom> joined = [];
+        Dictionary<string, InvitedRoom> invited = [];
+        foreach (Room room in rooms.Values)
+        {
+            if (room.Membership == Memberships.Invite)
+            {
+                invited[room.RoomId] = new InvitedRoom { InviteState = new EventList<StrippedStateEvent> { Events = [.. room.StateEvents.OfType<StrippedStateEvent>()] } };
+                continue;
+            }
+            if (room.Membership != Memberships.Join) continue;
+            joined[room.RoomId] = new JoinedRoom
+            {
+                Summary = room.Summary,
+                State = new EventList<ClientEvent> { Events = [.. room.StateEvents.OfType<ClientEvent>()] },
+                Timeline = new Timeline { Events = [.. room.Timeline.TakeLast(timelineEvents)], Limited = true, PrevBatch = room.HistoryToken },
+                AccountData = new EventList<MatrixEvent> { Events = [.. room.AccountData.Values] },
+                UnreadNotifications = new UnreadNotificationCounts { NotificationCount = room.NotificationCount, HighlightCount = room.HighlightCount },
+            };
+        }
+        // Return as a sync
+        return new SyncResponse { NextBatch = NextBatch ?? "", Rooms = new SyncRooms { Join = joined, Invite = invited }, AccountData = new EventList<MatrixEvent> { Events = [.. accountData.Values] } };
+    }
+
     /// <summary>Load up to <paramref name="limit"/> events older than <see cref="Room.Timeline"/> and prepend them; return them oldest first.</summary>
     /// <remarks>Fetches and applies in one call; when other threads apply syncs, fetch with <see cref="MatrixClient.GetMessagesAsync"/> and apply with <see cref="ApplyHistory"/> under their lock instead.</remarks>
     public async Task<IReadOnlyList<ClientEvent>> BackfillAsync(MatrixClient client, Room room, int limit = 50, CancellationToken cancellationToken = default)

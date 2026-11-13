@@ -1,5 +1,6 @@
 namespace Uniform.Matrix.Client.Services;
 
+using System.Text.Json;
 using System.Threading.Channels;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
@@ -15,6 +16,10 @@ public sealed class SyncProcessor
     private readonly Channel<SyncChanges> changes = Channel.CreateUnbounded<SyncChanges>(new UnboundedChannelOptions { SingleReader = true });
     private readonly Lock gate = new();
     private RoomStore? rooms;
+    private DateTimeOffset roomsSavedAt = DateTimeOffset.MinValue;
+
+    /// <summary>How often at most the rooms are saved for a start without network; the first sync saves them at once.</summary>
+    public static readonly TimeSpan RoomsSaveInterval = TimeSpan.FromSeconds(30);
 
     /// <summary>Create a processor persisting to <paramref name="store"/>, decrypting with <paramref name="crypto"/> when given.</summary>
     public SyncProcessor(ClientStore store, CryptoService? crypto = null)
@@ -50,6 +55,41 @@ public sealed class SyncProcessor
         Applied?.Invoke(applied);
         await changes.Writer.WriteAsync(applied, cancellationToken);
         await DecryptWithReceivedKeysAsync(cancellationToken);
+        if (DateTimeOffset.UtcNow - roomsSavedAt >= RoomsSaveInterval) await SaveRoomsAsync(cancellationToken);
+    }
+
+    /// <summary>Save the rooms, to list them at the next start before the first sync, e.g. without network.</summary>
+    public async Task SaveRoomsAsync(CancellationToken cancellationToken = default)
+    {
+        // Snapshot under the lock, serialized and saved outside it
+        SyncResponse? snapshot;
+        lock (gate) snapshot = rooms?.Snapshot();
+        if (snapshot is null) return;
+        roomsSavedAt = DateTimeOffset.UtcNow;
+        // Done
+        await store.SaveRoomsAsync(JsonSerializer.Serialize(snapshot, MatrixJson.Options), cancellationToken);
+    }
+
+    /// <summary>List the rooms saved by <see cref="SaveRoomsAsync"/> before the first sync, so they can be read and written to without network; return whether there were any.</summary>
+    /// <remarks>Publishes the rooms on <see cref="Changes"/> without their events, which are history, and without raising <see cref="Applied"/>, as nothing happened; the first sync then applies on top.</remarks>
+    public async Task<bool> RestoreRoomsAsync(string ownUserId, CancellationToken cancellationToken = default)
+    {
+        // Saved rooms, unless a sync came first
+        if (Read(r => r is not null) || await store.LoadRoomsAsync(cancellationToken) is not string json) return false;
+        SyncResponse? saved;
+        try { saved = JsonSerializer.Deserialize<SyncResponse>(json, MatrixJson.Options); }
+        catch (JsonException) { return false; }
+        if (saved is null) return false;
+        SyncChanges restored;
+        lock (gate)
+        {
+            if (rooms is not null) return false;
+            rooms = new RoomStore(ownUserId);
+            restored = rooms.Apply(saved);
+        }
+        // Done
+        await changes.Writer.WriteAsync(restored with { Timeline = [], Invited = [] }, cancellationToken);
+        return true;
     }
 
     /// <summary>Decrypt stored events whose room keys arrived since the last call, e.g. in this sync or from a backup restore, and announces their rooms.</summary>

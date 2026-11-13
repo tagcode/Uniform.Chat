@@ -17,6 +17,7 @@ public partial class ChatView : UserControl
 {
     private const double NarrowWidth = 720;
     private ChatViewModel? model;
+    private Bitmap? copiedImage;
     private bool touchingRoom;
     private bool roomHeld;
     private ScrollViewer? scroller;
@@ -58,6 +59,7 @@ public partial class ChatView : UserControl
             model.Messages.Items.CollectionChanged -= OnMessagesChanged;
             model.ComposerFocusRequested -= FocusComposer;
             model.CopyToClipboard = null;
+            model.CopyImageToClipboard = null;
         }
         model = DataContext as ChatViewModel;
         if (model is null) return;
@@ -66,6 +68,7 @@ public partial class ChatView : UserControl
         if (model.Call is { } call) call.PropertyChanged += (_, change) => { if (change.PropertyName == nameof(CallViewModel.ShowsFullScreen)) SizeVideo(); };
         // Done
         model.CopyToClipboard = text => TopLevel.GetTopLevel(this)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask;
+        model.CopyImageToClipboard = CopyImageAsync;
     }
 
     /// <summary>Give the call's video the rest of the screen below the call bar when it fills the screen, else a third of the height, so the room stays usable.</summary>
@@ -200,6 +203,23 @@ public partial class ChatView : UserControl
         e.Handled = true;
         // Done
         _ = SendClipboardFileAsync(file);
+    }
+
+    /// <summary>Copy the image file at <paramref name="path"/> to the clipboard: through the platform where Avalonia takes no images, else as a bitmap, kept until the next copy as the system may read it only when pasted.</summary>
+    private async Task CopyImageAsync(string path, string fileName)
+    {
+        // The platform's own way
+        if (App.Platform.WriteClipboardImage is Action<string, string> write)
+        {
+            write(path, fileName);
+            return;
+        }
+        if (TopLevel.GetTopLevel(this)?.Clipboard is not IClipboard clipboard) return;
+        Bitmap bitmap = new(path);
+        await clipboard.SetBitmapAsync(bitmap);
+        // Done: the bitmap stays until replaced
+        copiedImage?.Dispose();
+        copiedImage = bitmap;
     }
 
     /// <summary>Send a file from the platform's clipboard, and tell when it fails, as nothing awaits this.</summary>

@@ -63,6 +63,23 @@ public sealed class ClientStore
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    /// <summary>Save the rooms as JSON from <see cref="State.RoomStore.Snapshot"/>, to list them at a start without network.</summary>
+    public async Task SaveRoomsAsync(string json, CancellationToken cancellationToken = default)
+    {
+        // On the one account
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        await db.Accounts.ExecuteUpdateAsync(s => s.SetProperty(a => a.RoomsJson, json), cancellationToken);
+    }
+
+    /// <summary>Return the rooms saved by <see cref="SaveRoomsAsync"/>; null when none are.</summary>
+    public async Task<string?> LoadRoomsAsync(CancellationToken cancellationToken = default)
+    {
+        // Of the one account
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        // Return JSON
+        return await db.Accounts.Select(a => a.RoomsJson).FirstOrDefaultAsync(cancellationToken);
+    }
+
     /// <summary>Forget the access token, e.g. after the server rejected it; history is kept.</summary>
     public async Task ClearAccessTokenAsync(CancellationToken cancellationToken = default)
     {
