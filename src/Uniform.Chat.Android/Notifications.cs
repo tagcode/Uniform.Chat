@@ -42,7 +42,7 @@ internal static class Notifications
 #pragma warning disable CA1422 // The builder without a channel serves Android 7 and older
         Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, channel) : new Notification.Builder(context);
 #pragma warning restore CA1422
-        builder.SetSmallIcon(Resource.Drawable.icon).SetContentTitle(title).SetContentText(text).SetContentIntent(tap).SetOngoing(ongoing).SetAutoCancel(!ongoing);
+        builder.SetSmallIcon(Resource.Drawable.notification_icon).SetContentTitle(title).SetContentText(text).SetContentIntent(tap).SetOngoing(ongoing).SetAutoCancel(!ongoing);
         if (ongoing)
         {
             builder.SetOnlyAlertOnce(true).SetShowWhen(false);
@@ -64,7 +64,7 @@ internal static class Notifications
 #pragma warning disable CA1422 // The builder without a channel serves Android 7 and older
         Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, IncomingCall) : new Notification.Builder(context);
 #pragma warning restore CA1422
-        builder.SetSmallIcon(Resource.Drawable.icon).SetContentTitle("Incoming call").SetContentText($"{peer} is calling").SetContentIntent(screen).SetFullScreenIntent(screen, true).SetCategory(Notification.CategoryCall).SetOngoing(true);
+        builder.SetSmallIcon(Resource.Drawable.notification_icon).SetContentTitle("Incoming call").SetContentText($"{peer} is calling").SetContentIntent(screen).SetFullScreenIntent(screen, true).SetCategory(Notification.CategoryCall).SetOngoing(true);
         // Return notification
         return builder.Build()!;
     }
@@ -160,6 +160,19 @@ public sealed class CallForegroundService : Service
 public sealed class SyncForegroundService : Service
 {
     private const int NotificationId = 4;
+    private static volatile bool running;
+
+    /// <summary>Post the connection notification again while the service runs, e.g. when the app comes back on screen: Android 14 and later let it be swiped away, and do not bring it back themselves.</summary>
+    public static void ShowAgain(Context context)
+    {
+        // Only while keeping connected
+        if (!running || context.GetSystemService(NotificationService) is not NotificationManager manager) return;
+        // Done: same ID, so it replaces one still shown
+        manager.Notify(NotificationId, Build(context));
+    }
+
+    /// <summary>Return the quiet connection notification.</summary>
+    private static Notification Build(Context context) => Notifications.Build(context, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe to release.", ongoing: true);
 
     /// <summary>Start the service; return what stops it.</summary>
     public static IDisposable Start(Context context)
@@ -180,11 +193,20 @@ public sealed class SyncForegroundService : Service
     public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
     {
         // Typed as special use where Android asks
-        Notification notification = Notifications.Build(this, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe right to release.", ongoing: true);
+        Notification notification = Build(this);
+        running = true;
         if (OperatingSystem.IsAndroidVersionAtLeast(34)) StartForeground(NotificationId, notification, ForegroundService.TypeSpecialUse);
         else StartForeground(NotificationId, notification);
         // Done
         return StartCommandResult.NotSticky;
+    }
+
+    /// <summary>No longer keeping connected.</summary>
+    public override void OnDestroy()
+    {
+        // Nothing to show again
+        running = false;
+        base.OnDestroy();
     }
 
     /// <summary>Stops the service once.</summary>

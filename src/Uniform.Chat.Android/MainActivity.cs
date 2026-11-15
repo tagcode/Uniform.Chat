@@ -46,13 +46,14 @@ public sealed class MainActivity : AvaloniaMainActivity
         ApplyShownWhenLocked();
     }
 
-    /// <summary>On screen: a ringing call's notification would cover the call bar's buttons, so remove it.</summary>
+    /// <summary>On screen: a ringing call's notification would cover the call bar's buttons, so remove it; a swiped-away connection notification comes back.</summary>
     protected override void OnResume()
     {
-        // Foreground, without the notification
+        // Foreground, without the call notification, with the connection one
         base.OnResume();
         IsInForeground = true;
         Ringer.HideNotification(this);
+        SyncForegroundService.ShowAgain(this);
     }
 
     /// <summary>Off screen.</summary>
