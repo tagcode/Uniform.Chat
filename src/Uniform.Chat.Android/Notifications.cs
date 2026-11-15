@@ -172,7 +172,7 @@ public sealed class SyncForegroundService : Service
     }
 
     /// <summary>Return the quiet connection notification.</summary>
-    private static Notification Build(Context context) => Notifications.Build(context, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe to release.", ongoing: true);
+    private static Notification Build(Context context) => Notifications.Build(context, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe to dismiss.", ongoing: true);
 
     /// <summary>Start the service; return what stops it.</summary>
     public static IDisposable Start(Context context)

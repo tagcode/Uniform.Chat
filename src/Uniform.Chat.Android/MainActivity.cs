@@ -11,7 +11,7 @@ using global::Android.Views;
 [Activity(
     Label = "Uniform Chat",
     Theme = "@style/MyTheme.NoActionBar",
-    Icon = "@drawable/icon",
+    Icon = "@mipmap/icon",
     MainLauncher = true,
     WindowSoftInputMode = SoftInput.AdjustResize,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]

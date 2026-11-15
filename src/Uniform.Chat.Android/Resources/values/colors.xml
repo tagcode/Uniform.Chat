@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="splash_background">#357DC7</color>
+  <!-- The app icon's blue, behind the wheat -->
+  <color name="icon_background">#357DC7</color>
 </resources>
