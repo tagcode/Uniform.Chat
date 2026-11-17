@@ -296,9 +296,45 @@ pre { /*line-height:1.3;*/
    color: #bfc6c6;
 }
 
-/* Attributes, such as JSON keys: the github.css blue is too dark here */
+/* Attributes, literals, numbers, operators, selectors and variables: shades around #00a0e0 */
 .hljs-attr {
-   color: #bfc6c6;
+   color: #0a9ad8;
+}
+
+.hljs-attribute {
+   color: #12a8e6;
+}
+
+.hljs-literal {
+   color: #0596f0;
+}
+
+.hljs-meta {
+   color: #1aa0d0;
+}
+
+.hljs-number {
+   color: #00b0e8;
+}
+
+.hljs-operator {
+   color: #20a4dc;
+}
+
+.hljs-selector-attr {
+   color: #0890f8;
+}
+
+.hljs-selector-class {
+   color: #14b4d4;
+}
+
+.hljs-selector-id {
+   color: #0c98ec;
+}
+
+.hljs-variable {
+   color: #18aae2;
 }
 
 /* Sections, such as headings in Markdown and INI */
@@ -318,13 +354,25 @@ pre { /*line-height:1.3;*/
    color: #5198cf;
 }
 
-.hljs-string {
+/* Strings, also inside attributes, which highlight.js marks as .hljs-meta; github.css colors those with the more specific ".hljs-meta .hljs-string" */
+.hljs-string,
+.hljs-meta .hljs-string {
    color: #d4997e;
+}
+
+.hljs-regexp {
+   color: #ff694e;
 }
 
 .hljs-tag {
    color: #eee;
 }
+
+/* Built-in types, such as int and string */
+.hljs-built_in {
+    color: #60bfff;
+}
+
 
 /* Background of side panel */
 body .toc {
@@ -690,4 +738,9 @@ html.index {
   position: fixed;
   top: -1000px;
   opacity: 0;
+}
+
+/* Tags in documentation comments, such as <summary> */
+.hljs-doctag {
+    color: #137813;
 }
