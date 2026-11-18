@@ -8,7 +8,7 @@ uid: Uniform.Chat.Desktop.Messages.Article
 
 Type in the box at the bottom and press Enter to send; Shift+Enter starts a new line. Markdown works: `**bold**`, `*italic*`, `` `code` ``, lists and quotes. `/me waves` sends an action.
 
-Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, and reactions are counted under the message. A deleted message shows as *Message deleted* for ten minutes; messages deleted before that are left out, so the room reads better. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes. Without a network, the app still lists your rooms as they were when it was last connected, so you can read stored messages and write new ones, which are sent once the network is back.
+Messages from the same person within a few minutes are grouped under one name. Edited messages say *(edited)*, and reactions are counted under the message. A deleted message shows as *Message deleted* for ten minutes; messages deleted before that are left out, so the room reads better. A message waits as *Sending…* until the server has it; it is kept on the device, so it is sent later even if the connection drops or the app closes. Without a network, the app still lists your rooms as they were when it was last connected, so you can read stored messages and write new ones, which are sent once the network is back. Until it is sent, a message's menu has *Edit*, to change its text, and *Cancel sending*, so it is never sent.
 
 Scroll to the top to load older messages.
 
@@ -34,7 +34,7 @@ Blocking someone hides their messages and invites from you, on all your devices;
 
 ## Files
 
-📎 next to the message box sends files. On the desktop you can also drag files onto the room, or paste copied files or an image, such as a screenshot, into the message box with Ctrl+V. On Android, paste a copied image or file into the message box: hold it and choose *Paste*. In encrypted rooms files are encrypted before upload.
+📎 next to the message box sends files. On the desktop you can also drag files onto the room, or paste copied files or an image, such as a screenshot, into the message box with Ctrl+V. On Android, paste a copied image or file into the message box: hold it and choose *Paste*. Files wait the same way: without a network, the app keeps a copy and uploads it once online; until then the room shows it by its name, and *Cancel sending* drops it. In encrypted rooms files are encrypted before upload.
 
 Images show a preview in the room; click it to open the image. Under a file or image, *Open* opens it in the app your system uses for its type, and *Save…* saves it where you choose. On Android, use *Save…*.
 

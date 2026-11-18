@@ -40,7 +40,8 @@ public sealed partial class ChatViewModel
         // What applies to this message
         List<SheetAction> actions = [];
         if (message.CanAnswer) actions.Add(new("Reply", () => { StartReply(message); ComposerFocusRequested?.Invoke(); }));
-        if (message.CanEdit) actions.Add(new("Edit", () => { StartEdit(message); ComposerFocusRequested?.Invoke(); }));
+        if (message.CanEdit || message.CanEditUnsent) actions.Add(new("Edit", () => { StartEdit(message); ComposerFocusRequested?.Invoke(); }));
+        if (message.CanCancelSending) actions.Add(new("Cancel sending", () => _ = CancelSendingAsync(message), IsDanger: true));
         if (message.ImageUri is not null) actions.Add(new("Copy image", () => _ = CopyImageAsync(message)));
         if (message.Text.Length > 0) actions.Add(new("Copy text", () => Copy(message.Text)));
         if (room is not null && message.EventId is not null && !message.IsPending) actions.Add(new("Copy link", () => Copy(Link(room.RoomId, message.EventId))));
@@ -124,6 +125,17 @@ public sealed partial class ChatViewModel
         // Through the view
         if (CopyToClipboard is not Func<string, Task> copy) return;
         _ = copy(text);
+    }
+
+    /// <summary>Take an unsent message out of the outbox, so it is never sent; one sent meanwhile stays.</summary>
+    private async Task CancelSendingAsync(MessageViewModel message)
+    {
+        // Gone from the outbox, then from the room
+        if (message.OutboxId is not long id || SelectedRoom is not RoomItemViewModel room) return;
+        if (!await connection.Outbox.CancelAsync(id)) Notice = "The message was sent already.";
+        Messages.Items.Remove(message);
+        // Done
+        await RefreshPendingAsync(room.RoomId);
     }
 
     /// <summary>Copy an image message's picture to the clipboard, downloaded and decrypted first when needed.</summary>

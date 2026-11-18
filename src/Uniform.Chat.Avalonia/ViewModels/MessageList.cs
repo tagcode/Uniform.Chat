@@ -98,7 +98,9 @@ public sealed class MessageList
             if (message.EventType != EventTypes.RoomMessage || shown.Contains(message.Id)) continue;
             MessageContent? content = JsonSerializer.Deserialize<MessageContent>(message.ContentJson, MatrixJson.Options);
             if (content?.RelatesTo?.RelType == RelationTypes.Replace) continue;
-            Items.Add(new MessageViewModel { SenderId = ownUserId, SenderName = ownName, Timestamp = message.CreatedAt, Kind = content?.MessageType == MessageTypes.Emote ? MessageKind.Emote : MessageKind.Message, IsOwn = true, OutboxId = message.Id, TransactionId = message.TransactionId, Text = content?.Body ?? "", SendState = DescribeState(message) });
+            bool file = content?.MessageType is MessageTypes.Image or MessageTypes.File or MessageTypes.Audio or MessageTypes.Video;
+            string text = file ? $"📎 {content!.Filename ?? content.Body}{(content.Info?.Size is long size ? $" · {EventText.FormatSize(size)}" : "")}" : EventText.StripReplyFallback(content?.Body ?? "");
+            Items.Add(new MessageViewModel { SenderId = ownUserId, SenderName = ownName, Timestamp = message.CreatedAt, Kind = content?.MessageType == MessageTypes.Emote ? MessageKind.Emote : MessageKind.Message, IsOwn = true, OutboxId = message.Id, TransactionId = message.TransactionId, Text = text, Source = file ? "" : text, IsUnsentFile = file, SendState = DescribeState(message) });
         }
         UpdateHeaders();
     }

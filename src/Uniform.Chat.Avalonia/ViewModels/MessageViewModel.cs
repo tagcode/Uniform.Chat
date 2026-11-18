@@ -77,6 +77,12 @@ public sealed partial class MessageViewModel : ViewModelBase
     internal bool CanEdit => CanAnswer && IsOwn && Kind is MessageKind.Message or MessageKind.Emote;
     /// <summary>Whether it is an own sent message that can be deleted.</summary>
     internal bool CanDelete => CanAnswer && IsOwn;
+    /// <summary>Whether it is a file waiting in the outbox, shown by its name until sent.</summary>
+    internal bool IsUnsentFile { get; init; }
+    /// <summary>Whether it waits in the outbox, unsent or failed, so it can be cancelled.</summary>
+    internal bool CanCancelSending => IsOutbox && IsPending;
+    /// <summary>Whether it is unsent text, which can be changed before it goes.</summary>
+    internal bool CanEditUnsent => CanCancelSending && !IsUnsentFile && Kind is MessageKind.Message or MessageKind.Emote;
 
     /// <summary>Text as shown; changes when the message is edited or deleted.</summary>
     [ObservableProperty]

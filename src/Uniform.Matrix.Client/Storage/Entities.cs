@@ -68,6 +68,8 @@ public sealed class OutboxMessage
     public required string EventType { get; set; }
     /// <summary>Event content as JSON.</summary>
     public required string ContentJson { get; set; }
+    /// <summary>A local copy of a file to upload before sending, whose upload the content then refers to; null once uploaded, and for other events.</summary>
+    public string? FilePath { get; set; }
     /// <summary>Transaction ID fixed at enqueue, so resends after a crash are deduplicated by the server.</summary>
     public required string TransactionId { get; set; }
     /// <summary>Delivery state.</summary>

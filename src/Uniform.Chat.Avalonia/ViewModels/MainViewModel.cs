@@ -12,6 +12,9 @@ public sealed partial class MainViewModel : ViewModelBase
     private readonly IUiDispatcher ui;
     private readonly AccountMemory memory;
     private ClientConnection? connection;
+
+    /// <summary>The engine of the signed-in account, for tests to look into its storage; null while signed out.</summary>
+    internal ClientConnection? Connection => connection;
     private ChatViewModel? chat;
     private IDisposable? keptConnected;
     private PushRegistration? pushRegistration;

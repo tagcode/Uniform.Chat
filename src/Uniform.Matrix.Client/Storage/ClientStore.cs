@@ -225,8 +225,8 @@ public sealed class ClientStore
         return rows.AsEnumerable().Reverse().Select(FromStored).ToList();
     }
 
-    /// <summary>Queue an event for sending with a fixed transaction ID.</summary>
-    public async Task<OutboxMessage> EnqueueAsync(string roomId, string eventType, object content, CancellationToken cancellationToken = default)
+    /// <summary>Queue an event for sending with a fixed transaction ID; with <paramref name="filePath"/>, a file message whose file is uploaded first.</summary>
+    public async Task<OutboxMessage> EnqueueAsync(string roomId, string eventType, object content, CancellationToken cancellationToken = default, string? filePath = null)
     {
         // Add pending row
         await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
@@ -236,6 +236,7 @@ public sealed class ClientStore
             EventType = eventType,
             ContentJson = JsonSerializer.Serialize(content, content.GetType(), MatrixJson.Options),
             TransactionId = $"terminal.{Guid.NewGuid():N}",
+            FilePath = filePath,
             State = OutboxState.Pending,
             CreatedAt = time.GetUtcNow(),
         };
@@ -243,6 +244,47 @@ public sealed class ClientStore
         await db.SaveChangesAsync(cancellationToken);
         // Return queued message
         return message;
+    }
+
+    /// <summary>Return an outbox row by its ID; null when it is gone, e.g. cancelled.</summary>
+    public async Task<OutboxMessage?> GetOutboxAsync(long id, CancellationToken cancellationToken = default)
+    {
+        // By key
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        // Return row
+        return await db.Outbox.AsNoTracking().SingleOrDefaultAsync(m => m.Id == id, cancellationToken);
+    }
+
+    /// <summary>Delete a message not sent yet, so it is never sent; return its row, for its file, or null when it was sent already or is gone.</summary>
+    public async Task<OutboxMessage?> DeleteUnsentAsync(long id, CancellationToken cancellationToken = default)
+    {
+        // Unsent only
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        OutboxMessage? row = await db.Outbox.SingleOrDefaultAsync(m => m.Id == id && m.State != OutboxState.Sent, cancellationToken);
+        if (row is null) return null;
+        db.Outbox.Remove(row);
+        await db.SaveChangesAsync(cancellationToken);
+        // Return the deleted row
+        return row;
+    }
+
+    /// <summary>Replace the content of a message not sent yet, and send it again if it had failed; return whether it was still unsent.</summary>
+    public async Task<bool> UpdateUnsentAsync(long id, object content, CancellationToken cancellationToken = default)
+    {
+        // Unsent only, pending again
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        string json = JsonSerializer.Serialize(content, content.GetType(), MatrixJson.Options);
+        int updated = await db.Outbox.Where(m => m.Id == id && m.State != OutboxState.Sent).ExecuteUpdateAsync(s => s.SetProperty(m => m.ContentJson, json).SetProperty(m => m.State, OutboxState.Pending).SetProperty(m => m.LastError, (string?)null), cancellationToken);
+        // Return whether it was there
+        return updated > 0;
+    }
+
+    /// <summary>Record that a message's file is uploaded: its content now refers to the upload, and the local copy is no longer needed.</summary>
+    public async Task MarkUploadedAsync(long id, string contentJson, CancellationToken cancellationToken = default)
+    {
+        // Content with the upload, no file left
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        await db.Outbox.Where(m => m.Id == id).ExecuteUpdateAsync(s => s.SetProperty(m => m.ContentJson, contentJson).SetProperty(m => m.FilePath, (string?)null), cancellationToken);
     }
 
     /// <summary>Return messages waiting to be sent, oldest first.</summary>

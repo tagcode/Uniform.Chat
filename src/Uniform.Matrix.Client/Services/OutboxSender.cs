@@ -20,6 +20,8 @@ public sealed class OutboxSender
     private readonly MatrixOptions options;
     private readonly ILogger<OutboxSender> logger;
     private readonly SemaphoreSlim signal = new(0);
+    private readonly SemaphoreSlim sending = new(1, 1);
+    private readonly string fileDirectory;
 
     /// <summary>Raised with the room ID when a message of that room is queued, sent or failed; fires on the sending thread.</summary>
     public event Action<string>? RoomChanged;
@@ -30,8 +32,12 @@ public sealed class OutboxSender
     /// <param name="logger">Logger.</param>
     /// <param name="crypto">Encryption for encrypted rooms; without it, messages to encrypted rooms are refused.</param>
     /// <param name="processor">Room state, to know which rooms are encrypted and who is in them.</param>
-    public OutboxSender(ClientStore store, IOptions<MatrixOptions> options, ILogger<OutboxSender> logger, CryptoService? crypto = null, SyncProcessor? processor = null)
+    /// <param name="paths">The account's folders, where files wait to be uploaded; a temporary folder without them.</param>
+    public OutboxSender(ClientStore store, IOptions<MatrixOptions> options, ILogger<OutboxSender> logger, CryptoService? crypto = null, SyncProcessor? processor = null, AccountPaths? paths = null)
     {
+        // Files wait in the account's folder
+        fileDirectory = Path.Combine(paths?.Directory ?? Path.Combine(Path.GetTempPath(), "uniform-matrix-outbox"), "outbox");
+
         // Encryption dependencies; in-room verification answers through the outbox, which encrypts
         this.crypto = crypto;
         this.processor = processor;
@@ -71,6 +77,69 @@ public sealed class OutboxSender
         return message;
     }
 
+    /// <summary>Queue a file message to <paramref name="roomId"/>: the file is copied now, so it can be sent without network, and uploaded, encrypted where the room is, before the message is sent.</summary>
+    /// <param name="roomId">The room.</param>
+    /// <param name="content">The file's bytes, read to the end.</param>
+    /// <param name="fileName">Its name, e.g. <c>photo.jpg</c>.</param>
+    /// <param name="contentType">Its MIME type, e.g. <c>image/jpeg</c>.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    public async Task<OutboxMessage> EnqueueFileAsync(string roomId, Stream content, string fileName, string contentType, CancellationToken cancellationToken = default)
+    {
+        // A copy of its own, then the message without its upload yet
+        Directory.CreateDirectory(fileDirectory);
+        string path = Path.Combine(fileDirectory, Guid.NewGuid().ToString("N"));
+        long size;
+        await using (FileStream copy = File.Create(path))
+        {
+            await content.CopyToAsync(copy, cancellationToken);
+            size = copy.Length;
+        }
+        MessageContent message = MatrixClient.CreateFileContent(new MxcUri("localhost", "pending"), fileName, contentType, size) with { Url = null };
+        // Return queued message
+        OutboxMessage queued = await store.EnqueueAsync(roomId, EventTypes.RoomMessage, message, cancellationToken, path);
+        RoomChanged?.Invoke(roomId);
+        signal.Release();
+        return queued;
+    }
+
+    /// <summary>Cancel a message not sent yet, so it is never sent, waiting for a send under way; return whether it was still unsent.</summary>
+    public async Task<bool> CancelAsync(long id, CancellationToken cancellationToken = default)
+    {
+        // Not while it may be sending
+        await sending.WaitAsync(cancellationToken);
+        try
+        {
+            if (await store.DeleteUnsentAsync(id, cancellationToken) is not OutboxMessage removed) return false;
+            if (removed.FilePath is string path) File.Delete(path);
+            RoomChanged?.Invoke(removed.RoomId);
+            // Done
+            return true;
+        }
+        finally
+        {
+            sending.Release();
+        }
+    }
+
+    /// <summary>Replace the content of a message not sent yet, waiting for a send under way; a failed one is tried again. Return whether it was still unsent.</summary>
+    public async Task<bool> EditAsync(long id, object content, CancellationToken cancellationToken = default)
+    {
+        // Not while it may be sending
+        await sending.WaitAsync(cancellationToken);
+        try
+        {
+            if (await store.GetOutboxAsync(id, cancellationToken) is not OutboxMessage message || !await store.UpdateUnsentAsync(id, content, cancellationToken)) return false;
+            RoomChanged?.Invoke(message.RoomId);
+            signal.Release();
+            // Done
+            return true;
+        }
+        finally
+        {
+            sending.Release();
+        }
+    }
+
     /// <summary>Try the pending messages again now, e.g. after the network changed, instead of after the retry interval.</summary>
     public void Wake() => signal.Release();
 
@@ -90,10 +159,20 @@ public sealed class OutboxSender
     {
         // Send oldest first
         int sent = 0;
-        foreach (OutboxMessage message in await store.GetPendingAsync(cancellationToken))
+        foreach (OutboxMessage listed in await store.GetPendingAsync(cancellationToken))
         {
-            if (!await TrySendAsync(client, message, cancellationToken)) break;
-            sent++;
+            // As stored now, as it may have been cancelled or edited meanwhile, and not while that happens
+            await sending.WaitAsync(cancellationToken);
+            try
+            {
+                if (await store.GetOutboxAsync(listed.Id, cancellationToken) is not { State: OutboxState.Pending } message) continue;
+                if (!await TrySendAsync(client, message, cancellationToken)) break;
+                sent++;
+            }
+            finally
+            {
+                sending.Release();
+            }
         }
         // Return count
         return sent;
@@ -105,6 +184,7 @@ public sealed class OutboxSender
         // Send with the stored transaction ID
         try
         {
+            if (message.FilePath is not null) message = await UploadAsync(client, message, cancellationToken);
             JsonElement content = JsonDocument.Parse(message.ContentJson).RootElement;
             (string eventType, object body) = await EncryptIfNeededAsync(client, message.RoomId, message.EventType, content, cancellationToken);
             string eventId = await client.SendEventAsync(message.RoomId, eventType, body, message.TransactionId, cancellationToken);
@@ -117,6 +197,13 @@ public sealed class OutboxSender
         {
             logger.LogWarning("Outbox message {Id} to encrypted room {RoomId} not sent: {Error}", message.Id, message.RoomId, ex.Describe());
             await store.MarkAttemptFailedAsync(message.Id, $"encryption unavailable: {ex.Message}", permanent: true, cancellationToken);
+            RoomChanged?.Invoke(message.RoomId);
+            return true;
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+            logger.LogWarning("Outbox message {Id} to {RoomId} not sent: its file is gone", message.Id, message.RoomId);
+            await store.MarkAttemptFailedAsync(message.Id, "the file is gone", permanent: true, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
             return true;
         }
@@ -133,6 +220,40 @@ public sealed class OutboxSender
             await store.MarkAttemptFailedAsync(message.Id, ex.Message, permanent: false, cancellationToken);
             return false;
         }
+    }
+
+    /// <summary>Upload a message's file, encrypted where the room is, record the content that refers to the upload, and delete the copy; return the message as it is now.</summary>
+    /// <exception cref="FileNotFoundException">When the copy is gone, which fails the message.</exception>
+    private async Task<OutboxMessage> UploadAsync(MatrixClient client, OutboxMessage message, CancellationToken cancellationToken)
+    {
+        // The copy and the content waiting for it
+        string path = message.FilePath!;
+        MessageContent content = JsonSerializer.Deserialize<MessageContent>(message.ContentJson, MatrixJson.Options)!;
+        string contentType = content.Info?.Mimetype ?? "application/octet-stream";
+        bool encrypted = processor?.Read(r => r?.TryGetRoom(message.RoomId, out Room? room) == true && room.IsEncrypted) == true;
+
+        // Encrypted rooms get an encrypted upload, others the file as it is
+        if (encrypted)
+        {
+            EncryptedFile file = await client.UploadEncryptedAsync(await File.ReadAllBytesAsync(path, cancellationToken), cancellationToken);
+            content = content with { File = file, Url = null };
+        }
+        else
+        {
+            await using FileStream stream = File.OpenRead(path);
+            MxcUri uri = await client.UploadMediaAsync(stream, contentType, content.Filename ?? content.Body, cancellationToken);
+            content = content with { Url = uri.ToString() };
+        }
+
+        // Recorded before the copy goes, so a retry sends rather than uploads again
+        string json = JsonSerializer.Serialize(content, MatrixJson.Options);
+        await store.MarkUploadedAsync(message.Id, json, cancellationToken);
+        File.Delete(path);
+        logger.LogInformation("Uploaded the file of outbox message {Id}", message.Id);
+        // Return the message as stored
+        message.ContentJson = json;
+        message.FilePath = null;
+        return message;
     }
 
     /// <summary>Return the event to send: encrypted for encrypted rooms, after loading the full member list so every device gets the key; unchanged otherwise.</summary>

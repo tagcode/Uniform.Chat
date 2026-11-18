@@ -174,6 +174,9 @@ namespace Uniform.Matrix.Client.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("FilePath")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LastError")
                         .HasColumnType("TEXT");
 

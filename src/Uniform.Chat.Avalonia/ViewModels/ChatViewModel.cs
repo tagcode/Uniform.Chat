@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Avalonia.ViewModels;
 
+using System.Text.Json;
 using System.Collections.ObjectModel;
 using global::Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -328,6 +329,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         bool emote = text.StartsWith("/me ", StringComparison.Ordinal);
         if (emote) text = text[4..];
         string? html = MarkdownComposer.ToHtml(text);
+        if (Editing is { OutboxId: long unsent })
+        {
+            Editing = null;
+            await EditUnsentAsync(room.RoomId, unsent, text, html, emote);
+            return;
+        }
         MessageContent content = Editing is { EventId: string edited } ? MatrixClient.CreateEditContent(edited, text, html)
             : ReplyingTo is { Event: ClientEvent parent } ? MatrixClient.CreateReplyContent(parent, text, connection.UserId, html: html)
             : new() { MessageType = emote ? MessageTypes.Emote : MessageTypes.Text, Body = text, Format = html is null ? null : MessageFormats.Html, FormattedBody = html };
@@ -337,6 +344,26 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         typingSentAt = DateTimeOffset.MinValue;
         _ = RunAsync("Typing", client => client.SetTypingAsync(room.RoomId, false), report: false);
         await RefreshPendingAsync(room.RoomId);
+    }
+
+    /// <summary>Change the text of a message still in the outbox, keeping what it answers; one sent meanwhile stays as it went.</summary>
+    private async Task EditUnsentAsync(string roomId, long id, string text, string? html, bool emote)
+    {
+        // The stored content with the new text
+        if (await connection.Store.GetOutboxAsync(id) is not OutboxMessage stored || JsonSerializer.Deserialize<MessageContent>(stored.ContentJson, MatrixJson.Options) is not MessageContent content) return;
+        MessageContent edited = content with { MessageType = emote ? MessageTypes.Emote : MessageTypes.Text, Body = text, Format = html is null ? null : MessageFormats.Html, FormattedBody = html };
+        if (!await connection.Outbox.EditAsync(id, edited))
+        {
+            Notice = "The message was sent already, so the change was not made.";
+            return;
+        }
+        // Done: shown with its new text, in its place
+        if (Messages.Items.FirstOrDefault(m => m.OutboxId == id) is MessageViewModel shown)
+        {
+            shown.Text = text;
+            shown.Source = text;
+        }
+        await RefreshPendingAsync(roomId);
     }
 
     /// <summary>Follow a matrix.to link or <c>matrix:</c> URI inside the app: open a room already joined, or put a room, a room ID with the servers to join through, or a person in the room box to join or chat with; return false for other links.</summary>
@@ -372,8 +399,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Edit own <paramref name="message"/>: its text goes to the composer.</summary>
     public void StartEdit(MessageViewModel message)
     {
-        // Replace any reply
-        if (!message.CanEdit) return;
+        // Replace any reply; sent text, or text still in the outbox
+        if (!message.CanEdit && !message.CanEditUnsent) return;
         ReplyingTo = null;
         Editing = message;
         Composer = message.Kind == MessageKind.Emote ? $"/me {message.Source}" : message.Source;
@@ -463,23 +490,19 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             return;
         }
 
-        // Encrypted rooms: encrypt and upload, then send through the outbox, which encrypts the message
-        string mimeType = MimeTypes.FromPath(fileName);
-        Notice = $"Sending {fileName}…";
-        bool sent = await RunAsync($"Sending {fileName}", async client =>
+        // Copied into the outbox, which uploads it, encrypted where the room is, and sends it once online
+        try
         {
-            if (!room.IsEncrypted)
-            {
-                await client.SendFileAsync(room.RoomId, content, fileName, mimeType);
-                return;
-            }
-            using MemoryStream buffer = new();
-            await content.CopyToAsync(buffer);
-            byte[] bytes = buffer.ToArray();
-            EncryptedFile file = await client.UploadEncryptedAsync(bytes);
-            await connection.Outbox.EnqueueAsync(room.RoomId, EventTypes.RoomMessage, MatrixClient.CreateFileContent(file, fileName, mimeType, bytes.Length));
-        });
-        if (sent) Notice = "";
+            await connection.Outbox.EnqueueFileAsync(room.RoomId, content, fileName, MimeTypes.FromPath(fileName));
+        }
+        catch (IOException exception)
+        {
+            // On a file that cannot be read or copied
+            Notice = $"Sending {fileName} failed: {exception.Message}";
+            return;
+        }
+        // Done: shown as waiting
+        await RefreshPendingAsync(room.RoomId);
     }
 
     /// <summary>Download an attachment into the media cache, decrypting it when needed; return its local path, or null when it failed.</summary>

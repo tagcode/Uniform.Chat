@@ -48,6 +48,59 @@ public class ServiceTests
         Assert.Empty(await store.GetPendingAsync(Ct));
     }
 
+    /// <summary>Unsent messages can be cancelled and edited without network; the edited one is sent as edited, the cancelled one never, and a sent one can no longer be changed.</summary>
+    [Fact]
+    public async Task CancelAndEditUnsent()
+    {
+        // Three queued while offline
+        await using TestDatabase db = new();
+        ClientStore store = await db.CreateStoreAsync();
+        OutboxSender sender = CreateSender(store);
+        OutboxMessage kept = await sender.EnqueueTextAsync(RoomId, "typo", Ct);
+        OutboxMessage cancelled = await sender.EnqueueTextAsync(RoomId, "never mind", Ct);
+        OutboxMessage plain = await sender.EnqueueTextAsync(RoomId, "plain", Ct);
+
+        // Act: edit one, cancel one, then the network comes back
+        Assert.True(await sender.EditAsync(kept.Id, new MessageContent { MessageType = MessageTypes.Text, Body = "fixed" }, Ct));
+        Assert.True(await sender.CancelAsync(cancelled.Id, Ct));
+        StubHandler handler = new(_ => StubHandler.Json(HttpStatusCode.OK, """{"event_id":"$sent"}"""));
+        int sent = await sender.SendPendingAsync(new MatrixClient(new HttpClient(handler), Session), Ct);
+
+        // Assert: the edit sent, the cancelled one not; once sent, nothing changes them
+        Assert.Equal(2, sent);
+        Assert.Equal(["""{"msgtype":"m.text","body":"fixed"}""", """{"msgtype":"m.text","body":"plain"}"""], handler.Requests.Select(r => r.Body));
+        Assert.False(await sender.CancelAsync(plain.Id, Ct));
+        // Done
+        Assert.False(await sender.EditAsync(kept.Id, new MessageContent { MessageType = MessageTypes.Text, Body = "late" }, Ct));
+    }
+
+    /// <summary>A file queued without network is copied at once, uploaded before its message when the network is back, and its copy deleted; the message refers to the upload.</summary>
+    [Fact]
+    public async Task SendFileQueuedOffline()
+    {
+        // Queued offline, from a stream that is gone afterwards
+        await using TestDatabase db = new();
+        ClientStore store = await db.CreateStoreAsync();
+        OutboxSender sender = CreateSender(store);
+        OutboxMessage queued;
+        using (MemoryStream picture = new([1, 2, 3, 4])) queued = await sender.EnqueueFileAsync(RoomId, picture, "photo.png", "image/png", Ct);
+        string copy = (await store.GetOutboxAsync(queued.Id, Ct))!.FilePath!;
+        Assert.True(File.Exists(copy));
+
+        // Act: back online, the upload then the message
+        StubHandler handler = new(request => request.RequestUri!.AbsolutePath.Contains("/upload")
+            ? StubHandler.Json(HttpStatusCode.OK, """{"content_uri":"mxc://hs.example/abc"}""")
+            : StubHandler.Json(HttpStatusCode.OK, """{"event_id":"$file"}"""));
+        Assert.Equal(1, await sender.SendPendingAsync(new MatrixClient(new HttpClient(handler), Session), Ct));
+
+        // Done: uploaded, sent with its URI and size, and the copy gone
+        Assert.Contains("/upload", handler.Requests[0].Request.RequestUri!.AbsolutePath);
+        Assert.Contains("\"url\":\"mxc://hs.example/abc\"", handler.Requests[1].Body);
+        Assert.Contains("\"msgtype\":\"m.image\"", handler.Requests[1].Body);
+        Assert.Contains("\"size\":4", handler.Requests[1].Body);
+        Assert.False(File.Exists(copy));
+    }
+
     /// <summary>Transient failure keeps the message and stops the pass so later messages do not overtake it.</summary>
     [Fact]
     public async Task CanKeepOrderOnTransientFailure()
