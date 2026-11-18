@@ -5,12 +5,12 @@ using global::LiveKit.Proto;
 using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Rtp;
 
-/// <summary>The media of a call through LiveKit, as one <see cref="IMediaConnection"/>: this side's frames encrypted and sent on the room it publishes to, and the others' received on the rooms it subscribes to, decrypted with each sender's key.</summary>
+/// <summary>The media of a call through the SFU, as one <see cref="IMediaConnection"/>: this side's frames encrypted and sent on the room it publishes to, and the others' received on the rooms it subscribes to, decrypted with each sender's key.</summary>
 /// <remarks>With MatrixRTC's many SFUs, each member publishes on its own homeserver's SFU, and the others subscribe there; a call has one room to publish to and a room for each SFU the others publish on, the same one when they share it. Without encryption, frames go and come as they are.</remarks>
-public sealed class LiveKitMedia : IMediaConnection
+public sealed class SfuMedia : IMediaConnection
 {
     private readonly ConcurrentDictionary<string, FrameCryptor> keys = new();
-    private readonly List<LiveKitRoom> subscribed = [];
+    private readonly List<SfuRoom> subscribed = [];
     private readonly Lock gate = new();
     private AudioPeerConnection publisher;
     private uint audioClock;
@@ -18,7 +18,7 @@ public sealed class LiveKitMedia : IMediaConnection
 
     /// <summary>Send on <paramref name="room"/>'s publisher connection, encrypting with <see cref="OwnKey"/> when <paramref name="encrypted"/>.</summary>
     /// <exception cref="InvalidOperationException">When the room has not published.</exception>
-    public LiveKitMedia(LiveKitRoom room, bool encrypted)
+    public SfuMedia(SfuRoom room, bool encrypted)
     {
         // The publisher and its feedback
         publisher = room.Publisher ?? throw new InvalidOperationException("Publish first.");
@@ -30,7 +30,7 @@ public sealed class LiveKitMedia : IMediaConnection
 
     /// <summary>Move the media from <paramref name="old"/> to <paramref name="replacement"/>, a room joined again, e.g. after the network changed: publishing there when <paramref name="old"/> published, and receiving there; the voice and video pipelines stay as they are.</summary>
     /// <exception cref="InvalidOperationException">When <paramref name="old"/> published and <paramref name="replacement"/> has not.</exception>
-    public void Replace(LiveKitRoom old, LiveKitRoom replacement)
+    public void Replace(SfuRoom old, SfuRoom replacement)
     {
         // The publisher, then the subscription
         if (ReferenceEquals(old.Publisher, publisher))
@@ -44,7 +44,7 @@ public sealed class LiveKitMedia : IMediaConnection
     }
 
     /// <summary>Stop receiving on <paramref name="room"/>, e.g. one that is left.</summary>
-    public void Unsubscribe(LiveKitRoom room)
+    public void Unsubscribe(SfuRoom room)
     {
         // Done
         lock (gate) subscribed.Remove(room);
@@ -97,7 +97,7 @@ public sealed class LiveKitMedia : IMediaConnection
     public void SetKey(string identity, byte index, ReadOnlySpan<byte> rawKey) => keys.GetOrAdd(identity, _ => new FrameCryptor()).SetKey(index, rawKey);
 
     /// <summary>Receive the others' media on <paramref name="room"/>, e.g. another member's SFU.</summary>
-    public void Subscribe(LiveKitRoom room)
+    public void Subscribe(SfuRoom room)
     {
         // Once each; its subscriber now or when the server offers it
         lock (gate)
@@ -171,7 +171,7 @@ public sealed class LiveKitMedia : IMediaConnection
     {
         // The layer, low, medium or high, as the senders' simulcast has them
         VideoQuality quality = bitsPerSecond < 400_000 ? VideoQuality.Low : bitsPerSecond < 1_000_000 ? VideoQuality.Medium : VideoQuality.High;
-        LiveKitRoom[] rooms;
+        SfuRoom[] rooms;
         lock (gate) rooms = [.. subscribed];
         // Done
         return Task.WhenAll([.. rooms.Select(r => r.SetVideoQualityAsync(quality)), .. Subscribers().Select(s => s.RequestBitrateAsync(bitsPerSecond))]);
@@ -185,7 +185,7 @@ public sealed class LiveKitMedia : IMediaConnection
     }
 
     /// <summary>Take the media of a room's subscriber connection.</summary>
-    private void Listen(LiveKitRoom room, AudioPeerConnection subscriber)
+    private void Listen(SfuRoom room, AudioPeerConnection subscriber)
     {
         // Each kind, decrypted by its sender's key, while the room is subscribed
         subscriber.AudioReceived += packet =>
@@ -200,10 +200,10 @@ public sealed class LiveKitMedia : IMediaConnection
     }
 
     /// <summary>Return whether <paramref name="room"/> is received on.</summary>
-    private bool IsSubscribed(LiveKitRoom room) { lock (gate) return subscribed.Contains(room); }
+    private bool IsSubscribed(SfuRoom room) { lock (gate) return subscribed.Contains(room); }
 
     /// <summary>Return a received frame as its sender sent it: decrypted with the sender's key when encrypted; null when it does not decrypt.</summary>
-    private byte[]? Open(LiveKitRoom room, uint ssrc, byte[] frame, FrameKind kind)
+    private byte[]? Open(SfuRoom room, uint ssrc, byte[] frame, FrameKind kind)
     {
         // Unencrypted calls as they are
         if (!Encrypted) return frame;

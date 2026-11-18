@@ -19,23 +19,23 @@ public sealed class HostingTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    /// <summary>Start a host of the service under <c>/livekit/jwt</c>, reaching homeservers and LiveKit through <paramref name="network"/>.</summary>
+    /// <summary>Start a host of the service under <c>/livekit/jwt</c>, reaching homeservers and the SFU through <paramref name="network"/>.</summary>
     private static async Task<WebApplication> StartAsync(FakeNetwork network, bool enabled = true)
     {
         // Settings, and the fake network under the HTTP client
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.MatrixRtc.Tests", EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["MatrixRtc:Enabled"] = enabled.ToString(), ["MatrixRtc:Url"] = "wss://livekit.example.org", ["MatrixRtc:ApiKey"] = "key", ["MatrixRtc:ApiSecret"] = "secret", ["MatrixRtc:FullAccessHomeservers"] = "example.org" });
-        builder.AddLiveKitAuthorization();
+        builder.AddMatrixRtcAuthorization();
         builder.Services.AddHttpClient(MatrixRtcHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
         WebApplication app = builder.Build();
-        app.MapLiveKitAuthorization("/livekit/jwt");
+        app.MapMatrixRtcAuthorization("/livekit/jwt");
         await app.StartAsync(Ct);
         // Return host
         return app;
     }
 
-    /// <summary>Answer <c>/get_token</c> and <c>/sfu/get</c> with LiveKit's URL and a token, preflights with CORS, and failures in Matrix style.</summary>
+    /// <summary>Answer <c>/get_token</c> and <c>/sfu/get</c> with the SFU's URL and a token, preflights with CORS, and failures in Matrix style.</summary>
     [Fact]
     public async Task ServeTokens()
     {

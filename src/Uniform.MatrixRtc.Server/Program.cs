@@ -15,7 +15,7 @@ builder.AddSettings();
 IConfigurationBuilder sources = builder.Configuration;
 int above = sources.Sources.ToList().FindLastIndex(source => source is JsonConfigurationSource) + 1;
 sources.Sources.Insert(above, new MemoryConfigurationSource { InitialData = CompatibleEnvironment.Read(Environment.GetEnvironmentVariable) });
-builder.AddLiveKitAuthorization();
+builder.AddMatrixRtcAuthorization();
 
 // One log file per session, and the console
 builder.AddSessionLogging(Path.Combine(AppDirectories.Data(ApplicationName), "logs"), 20, "livekit");
@@ -32,7 +32,7 @@ if (CompatibleEnvironment.Missing(options) is string missing)
 
 // Serve at the root, as lk-jwt-service does, until stopped with Ctrl+C or SIGTERM
 WebApplication app = builder.Build();
-app.MapLiveKitAuthorization();
+app.MapMatrixRtcAuthorization();
 await app.RunAsync();
 // Done
 return 0;

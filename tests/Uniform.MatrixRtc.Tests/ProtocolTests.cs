@@ -26,7 +26,7 @@ public sealed class ProtocolTests
         Assert.False(AccessToken.TryRead(forged, "secret", now, out _));
     }
 
-    /// <summary>Write the claims with LiveKit's names, and leave unset permissions out.</summary>
+    /// <summary>Write the claims with the SFU's names, and leave unset permissions out.</summary>
     [Fact]
     public void WriteClaimNames()
     {

@@ -5,11 +5,11 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-/// <summary>The claims of a LiveKit access token: a JWT signed with HS256 by an API secret, whose issuer is the API key.</summary>
+/// <summary>The claims of an SFU access token: a JWT signed with HS256 by an API secret, whose issuer is the API key.</summary>
 /// <see href="https://docs.livekit.io/home/get-started/authentication/"/>
 public sealed record AccessToken
 {
-    /// <summary>The API key, which tells LiveKit which secret signed the token.</summary>
+    /// <summary>The API key, which tells the SFU which secret signed the token.</summary>
     [JsonPropertyName("iss")]
     public string Issuer { get; init; } = "";
     /// <summary>The participant's identity, unique in a room.</summary>

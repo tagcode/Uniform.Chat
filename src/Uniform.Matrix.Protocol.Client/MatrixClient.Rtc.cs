@@ -25,7 +25,7 @@ public sealed partial class MatrixClient
         }
     }
 
-    /// <summary>Return an <see href="https://spec.matrix.org/latest/client-server-api/#openid">OpenID token</see> of the logged-in user, which another service, e.g. a LiveKit authorization service, verifies with the homeserver.</summary>
+    /// <summary>Return an <see href="https://spec.matrix.org/latest/client-server-api/#openid">OpenID token</see> of the logged-in user, which another service, e.g. an SFU authorization service, verifies with the homeserver.</summary>
     public Task<OpenIdTokenResponse> RequestOpenIdTokenAsync(CancellationToken cancellationToken = default) =>
         SendAsync<OpenIdTokenResponse>(HttpMethod.Post, $"_matrix/client/v3/user/{Escape(UserId ?? throw new InvalidOperationException("Not logged in."))}/openid/request_token", new { }, authenticated: true, cancellationToken);
 

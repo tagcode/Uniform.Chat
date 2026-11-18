@@ -26,7 +26,7 @@ sudo apt install uniform-matrixrtc-server
 Give the service LiveKit's address, its API key and secret, and your homeserver. Put the secret in the settings file or an environment variable, not on the command line, where other users of the computer can see it:
 
 ```bash
-export LiveKit__ApiSecret='a-long-random-secret-of-at-least-32-characters'
+export MatrixRtc__ApiSecret='a-long-random-secret-of-at-least-32-characters'
 ./uniform-matrixrtc-server --MatrixRtc:Url=wss://livekit.example.org --MatrixRtc:ApiKey=homeserver --MatrixRtc:FullAccessHomeservers=example.org
 ```
 
@@ -49,7 +49,7 @@ Settings come from, later ones overriding earlier ones:
 1. `appsettings.json` next to the program
 2. `~/.config/uniform-matrixrtc-server/settings.json`
 3. The service's environment variables, such as `MATRIXRTC_SECRET`
-4. Environment variables, with `__` between parts: `LiveKit__ApiSecret`
+4. Environment variables, with `__` between parts: `MatrixRtc__ApiSecret`
 5. The command line: `--MatrixRtc:Url=wss://livekit.example.org`
 
 Its log files are in `~/.local/share/uniform-matrixrtc-server/logs`, one per start.

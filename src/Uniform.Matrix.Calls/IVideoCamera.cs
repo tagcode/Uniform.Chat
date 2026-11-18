@@ -15,7 +15,7 @@ public interface IVideoCamera : IAsyncDisposable
     /// <summary>Clockwise rotation in degrees that shows the camera's pictures upright, 0, 90, 180 or 270, as the device is held now.</summary>
     int Rotation => 0;
 
-    /// <summary>Whether to turn the pictures upright before encoding, as the connection cannot tell the receiver their <see cref="Rotation"/>, e.g. through LiveKit; set before <see cref="Start"/>. Cameras whose pictures are upright already ignore it.</summary>
+    /// <summary>Whether to turn the pictures upright before encoding, as the connection cannot tell the receiver their <see cref="Rotation"/>, e.g. through the SFU; set before <see cref="Start"/>. Cameras whose pictures are upright already ignore it.</summary>
     bool Upright { get => false; set { } }
 
     /// <summary>Start capturing and encoding.</summary>

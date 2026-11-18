@@ -152,7 +152,7 @@ public sealed class AudioPeerConnection : IMediaConnection, IAsyncDisposable
     /// <summary>Whether the answer sends video to the peer, with <see cref="SendVideoAsync"/>.</summary>
     public bool SendsVideo => videoSendPayloadType is not null;
 
-    /// <summary>Whether sent frames carry their rotation, as both sides took the video orientation extension; an SFU such as LiveKit does not.</summary>
+    /// <summary>Whether sent frames carry their rotation, as both sides took the video orientation extension; an SFU such as the SFU does not.</summary>
     public bool SendsOrientation => videoSendPayloadType is not null && orientationId is not null;
 
     /// <summary>Video packets sent again because the peer asked, with a NACK.</summary>

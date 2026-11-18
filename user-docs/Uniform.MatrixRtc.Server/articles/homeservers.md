@@ -21,12 +21,12 @@ Apps read the focus from `/.well-known/matrix/client` of your domain, which your
 
 ## Uniform Chat Server
 
-Uniform Chat Server has this service built in, see its guide. To use a separate one instead, set `Calls:LiveKitServiceUrl`:
+Uniform Chat Server has this service built in, see its guide. To use a separate one instead, set `Calls:MatrixRtcServiceUrl`:
 
 ```json
 {
   "Calls": {
-    "LiveKitServiceUrl": "https://example.org/livekit/jwt"
+    "MatrixRtcServiceUrl": "https://example.org/livekit/jwt"
   }
 }
 ```
@@ -39,6 +39,6 @@ This service doesn't know who is in which room, so it gives a token to any verif
 
 ## Leaving calls
 
-When a call app disappears without hanging up, for example when its phone loses the network, its homeserver ends the app's call membership after a delay. Apps such as Element X hand that delayed leave to this service. The service then ends the membership as soon as LiveKit no longer sees the app, and the apps renew it far less often, which saves their battery.
+When a call app disappears without hanging up, for example when its phone loses the network, its homeserver ends the app's call membership after a delay. Apps such as Element X hand that delayed leave to this service. The service then ends the membership as soon as the SFU no longer sees the app, and the apps renew it far less often, which saves their battery.
 
 For this the service calls the homeserver of each member who handed over their leave, at `https://` and the address the homeserver's `/.well-known/matrix/client` names. Let it reach your homeservers on port 443.

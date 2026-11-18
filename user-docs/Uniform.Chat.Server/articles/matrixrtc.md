@@ -1,12 +1,12 @@
 ---
 title: Video calls in Element X
-uid: Uniform.Chat.Server.LiveKit.Article
+uid: Uniform.Chat.Server.MatrixRtc.Article
 ---
 # Video calls in Element X
 
-Element X, Element Call and other MatrixRTC apps don't call each other directly. They all join a room on a LiveKit server, a media server that forwards everyone's audio and video. Before joining, an app asks the homeserver's authorization service for a LiveKit token, proving who it is with a Matrix OpenID token.
+Element X, Element Call and other MatrixRTC apps don't call each other directly. They all join a room on a LiveKit server, a media server that forwards everyone's audio and video. Before joining, an app asks the homeserver's authorization service for a SFU token, proving who it is with a Matrix OpenID token.
 
-The homeserver has that authorization service built in. You run the LiveKit server next to it. Uniform Chat's apps call this way too when the homeserver has LiveKit, so that Element X users can answer. Without it, they call each other directly; see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article).
+The homeserver has that authorization service built in. You run the LiveKit server next to it. Uniform Chat's apps call this way too when the homeserver has an SFU, so that Element X users can answer. Without it, they call each other directly; see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article).
 
 ## LiveKit server
 
@@ -74,4 +74,4 @@ To check the service, open `https://example.org/livekit/jwt/healthz`, with your 
 
 ## Using another service
 
-If you already run lk-jwt-service or a separate `uniform-matrixrtc-server`, leave `MatrixRtc:Enabled` off. Set `Calls:LiveKitServiceUrl` to that service's address, such as `https://example.org/livekit/jwt`, and the homeserver announces it instead.
+If you already run lk-jwt-service or a separate `uniform-matrixrtc-server`, leave `MatrixRtc:Enabled` off. Set `Calls:MatrixRtcServiceUrl` to that service's address, such as `https://example.org/livekit/jwt`, and the homeserver announces it instead.

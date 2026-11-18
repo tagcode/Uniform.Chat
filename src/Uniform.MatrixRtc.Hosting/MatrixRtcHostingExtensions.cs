@@ -18,18 +18,18 @@ using Uniform.Matrix.Hosting;
 /// <summary>Adds the MatrixRTC authorization service, compatible with lk-jwt-service, to an ASP.NET host.</summary>
 /// <example><code><![CDATA[
 /// WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-/// builder.AddLiveKitAuthorization(); // serves when MatrixRtc:Enabled is true
+/// builder.AddMatrixRtcAuthorization(); // serves when MatrixRtc:Enabled is true
 /// WebApplication app = builder.Build();
-/// app.MapLiveKitAuthorization();
+/// app.MapMatrixRtcAuthorization();
 /// await app.RunAsync();
 /// ]]></code></example>
 public static class MatrixRtcHostingExtensions
 {
-    /// <summary>Name of the HTTP client of OpenID verification and LiveKit's room service.</summary>
+    /// <summary>Name of the HTTP client of OpenID verification and the SFU's room service.</summary>
     public const string HttpClientName = "Uniform.MatrixRtc";
 
-    /// <summary>Bind section <see cref="MatrixRtcOptions.Section"/>, list it among the settings, and register a <see cref="LiveKitAuthorizer"/>; register an <see cref="IOpenIdVerifier"/> before this to verify tokens otherwise than over federation.</summary>
-    public static IHostApplicationBuilder AddLiveKitAuthorization(this IHostApplicationBuilder builder)
+    /// <summary>Bind section <see cref="MatrixRtcOptions.Section"/>, list it among the settings, and register a <see cref="MatrixRtcAuthorizer"/>; register an <see cref="IOpenIdVerifier"/> before this to verify tokens otherwise than over federation.</summary>
+    public static IHostApplicationBuilder AddMatrixRtcAuthorization(this IHostApplicationBuilder builder)
     {
         // Options and an HTTP client
         builder.Services.AddOptionSection<MatrixRtcOptions>(builder.Configuration, MatrixRtcOptions.Section);
@@ -48,20 +48,20 @@ public static class MatrixRtcHostingExtensions
         {
             IOptionsMonitor<MatrixRtcOptions> options = services.GetRequiredService<IOptionsMonitor<MatrixRtcOptions>>();
             HttpClient http = services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName);
-            return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>(), services.GetRequiredService<DelayedLeaveKeeper>());
+            return new MatrixRtcAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<MatrixRtcAuthorizer>>(), services.GetService<IRoomMembership>(), services.GetRequiredService<DelayedLeaveKeeper>());
         });
         // Return builder
         return builder;
     }
 
     /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c>, <c>/delegate_delayed_leave</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="MatrixRtcOptions.Enabled"/> is false.</summary>
-    public static IEndpointRouteBuilder MapLiveKitAuthorization(this IEndpointRouteBuilder routes, string prefix = "")
+    public static IEndpointRouteBuilder MapMatrixRtcAuthorization(this IEndpointRouteBuilder routes, string prefix = "")
     {
         // The two token requests, with CORS for web clients
         RouteGroupBuilder group = routes.MapGroup(prefix);
-        group.Map("/sfu/get", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<LegacySfuRequest>(http, options, request => authorizer.AuthorizeLegacyAsync(request, http.RequestAborted)));
-        group.Map("/get_token", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest>(http, options, request => authorizer.AuthorizeAsync(request, http.RequestAborted)));
-        group.Map("/delegate_delayed_leave", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest, JsonObject>(http, options, async request => { await authorizer.DelegateAsync(request, http.RequestAborted).ConfigureAwait(false); return []; }));
+        group.Map("/sfu/get", (HttpContext http, MatrixRtcAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<LegacySfuRequest>(http, options, request => authorizer.AuthorizeLegacyAsync(request, http.RequestAborted)));
+        group.Map("/get_token", (HttpContext http, MatrixRtcAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest>(http, options, request => authorizer.AuthorizeAsync(request, http.RequestAborted)));
+        group.Map("/delegate_delayed_leave", (HttpContext http, MatrixRtcAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest, JsonObject>(http, options, async request => { await authorizer.DelegateAsync(request, http.RequestAborted).ConfigureAwait(false); return []; }));
 
         // Health for load balancers and service managers
         group.MapMethods("/healthz", [HttpMethods.Get, HttpMethods.Head], (IOptionsMonitor<MatrixRtcOptions> options) => options.CurrentValue.Enabled ? Results.Ok() : Results.NotFound());

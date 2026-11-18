@@ -18,7 +18,7 @@ using Uniform.Matrix.WebRtc.Ice;
 /// <summary>Matrix 1:1 calls of the logged-in user: places calls, raises incoming ones, and routes the events of the synced timelines to their <see cref="VoiceCall"/>; sends through the outbox, which encrypts in encrypted rooms.</summary>
 /// <remarks>
 /// Register it as a singleton beside the client engine; it follows <see cref="SyncProcessor.Applied"/> from construction. TURN credentials come from the homeserver, and are kept until shortly before they expire.
-/// Calls go over MatrixRTC, as <see cref="RtcCall"/>, when the homeserver has a LiveKit transport, as Element X can only take those; else as <see cref="LegacyCall"/> of <c>m.call.*</c> events. Both kinds of incoming call ring.
+/// Calls go over MatrixRTC, as <see cref="RtcCall"/>, when the homeserver has an SFU transport, as Element X can only take those; else as <see cref="LegacyCall"/> of <c>m.call.*</c> events. Both kinds of incoming call ring.
 /// </remarks>
 public sealed class CallService : IAsyncDisposable
 {
@@ -52,7 +52,7 @@ public sealed class CallService : IAsyncDisposable
         if (crypto is not null) crypto.ToDeviceReceived += OnToDevice;
     }
 
-    /// <summary>Whether to place calls over MatrixRTC when the homeserver has a LiveKit transport; on by default. Off places <c>m.call.*</c> calls only.</summary>
+    /// <summary>Whether to place calls over MatrixRTC when the homeserver has an SFU transport; on by default. Off places <c>m.call.*</c> calls only.</summary>
     public bool UseMatrixRtc { get; set; } = true;
 
     /// <summary>Open the microphone and speaker of a call; the platform's devices by default, which Android replaces.</summary>
@@ -107,7 +107,7 @@ public sealed class CallService : IAsyncDisposable
             return existing;
         }
 
-        // A MatrixRTC call when the homeserver has LiveKit
+        // A MatrixRTC call when the homeserver has the SFU
         if (await RtcTransportAsync(client, cancellationToken) is RtcTransport transport)
         {
             RtcCall rtc = CreateRtc(client, roomId, others[0], transport, null, video, await OptionsAsync(client, cancellationToken));
@@ -133,7 +133,7 @@ public sealed class CallService : IAsyncDisposable
         return call;
     }
 
-    /// <summary>Return the homeserver's LiveKit transport, fetched again every few minutes; null without one, or when <see cref="UseMatrixRtc"/> is off.</summary>
+    /// <summary>Return the homeserver's the SFU transport, fetched again every few minutes; null without one, or when <see cref="UseMatrixRtc"/> is off.</summary>
     private async Task<RtcTransport?> RtcTransportAsync(MatrixClient client, CancellationToken cancellationToken)
     {
         // Cached for a while
@@ -151,8 +151,8 @@ public sealed class CallService : IAsyncDisposable
                 transports ??= [];
             }
         }
-        // Return the first LiveKit one
-        return transports.FirstOrDefault(t => t.Type == RtcTransport.LiveKit && t.LivekitServiceUrl is not null);
+        // Return the first SFU one
+        return transports.FirstOrDefault(t => t.Type == RtcTransport.Sfu && t.ServiceUrl is not null);
     }
 
     /// <summary>Hang up all calls, and stop following the timelines; a server that does not answer holds each hangup for a few seconds at most.</summary>
@@ -264,7 +264,7 @@ public sealed class CallService : IAsyncDisposable
         }
         if (await RtcTransportAsync(client, CancellationToken.None) is not RtcTransport transport)
         {
-            logger.LogWarning("MatrixRTC ring {EventId} ignored: the homeserver has no LiveKit transport", ev.EventId);
+            logger.LogWarning("MatrixRTC ring {EventId} ignored: the homeserver has no the SFU transport", ev.EventId);
             return;
         }
 
@@ -292,7 +292,7 @@ public sealed class CallService : IAsyncDisposable
     /// <summary>Create and register a MatrixRTC call.</summary>
     private RtcCall CreateRtc(MatrixClient client, string roomId, string peerUserId, RtcTransport transport, string? notificationId, bool video, PeerConnectionOptions options)
     {
-        // Its context: the client, the room's encryption, and LiveKit's options
+        // Its context: the client, the room's encryption, and the SFU's options
         bool encrypted = processor.Read(rooms => rooms?.TryGetRoom(roomId, out Room? room) == true && room.IsEncrypted);
         RtcContext context = new()
         {
@@ -303,7 +303,7 @@ public sealed class CallService : IAsyncDisposable
             SendEvent = (type, content, token) => outbox.SendNowAsync(client, roomId, type, content, token),
             SendToDevices = (type, content, devices, token) => crypto?.SendEncryptedToDevicesAsync(type, content, devices, token) ?? Task.FromResult(0),
             Encrypted = encrypted,
-            RoomOptions = new LiveKitRoomOptions { Servers = options.Servers, RelayOnly = options.RelayOnly, ReceiveVideo = options.ReceiveVideo },
+            RoomOptions = new SfuRoomOptions { Servers = options.Servers, RelayOnly = options.RelayOnly, ReceiveVideo = options.ReceiveVideo },
             Http = AuthorizationHttp,
             ReadMembers = () => ReadMembers(roomId),
         };

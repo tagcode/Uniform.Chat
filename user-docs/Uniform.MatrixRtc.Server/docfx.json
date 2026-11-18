@@ -7,9 +7,9 @@
     "output": "_site",
     "template": [ "statictoc", "../../theme" ],
     "globalMetadata": {
-      "_appFooter": "<span>Uniform LiveKit Authorization Server</span>",
-      "_appTitle": "Uniform LiveKit Authorization Server",
-      "_appName": "Uniform LiveKit Authorization Server",
+      "_appFooter": "<span>Uniform MatrixRTC Authorization Server</span>",
+      "_appTitle": "Uniform MatrixRTC Authorization Server",
+      "_appName": "Uniform MatrixRTC Authorization Server",
       "_enableSearch": true
     }
   }

@@ -22,9 +22,9 @@ internal static class CompatibleEnvironment
 
     /// <summary>Return the first setting the service lacks, or null when it can run.</summary>
     public static string? Missing(MatrixRtcOptions options) =>
-        string.IsNullOrWhiteSpace(options.Url) ? "LiveKit's URL"
-        : string.IsNullOrWhiteSpace(options.ApiKey) ? "LiveKit's API key"
-        : string.IsNullOrWhiteSpace(options.ApiSecret) ? "LiveKit's API secret"
+        string.IsNullOrWhiteSpace(options.Url) ? "the SFU's URL"
+        : string.IsNullOrWhiteSpace(options.ApiKey) ? "the SFU's API key"
+        : string.IsNullOrWhiteSpace(options.ApiSecret) ? "the SFU's API secret"
         : string.IsNullOrWhiteSpace(options.FullAccessHomeservers) ? "the homeservers whose users may start calls, MatrixRtc:FullAccessHomeservers or MATRIXRTC_FULL_ACCESS_HOMESERVERS, e.g. example.org, or * for all"
         : null;
 

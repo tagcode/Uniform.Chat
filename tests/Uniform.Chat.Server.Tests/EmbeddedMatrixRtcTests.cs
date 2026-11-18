@@ -15,17 +15,17 @@ using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Server;
 
 /// <summary>Tests of the MatrixRTC authorization service inside the homeserver.</summary>
-public sealed class EmbeddedLiveKitTests
+public sealed class EmbeddedMatrixRtcTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
 
-    /// <summary>Announce the service at the homeserver's public URL, give a member of the room a token with the homeserver's own OpenID token, creating the room in LiveKit, and refuse a user who is not joined.</summary>
+    /// <summary>Announce the service at the homeserver's public URL, give a member of the room a token with the homeserver's own OpenID token, creating the room in the SFU, and refuse a user who is not joined.</summary>
     [Fact]
     public async Task IssueTokensToLocalUsers()
     {
-        // A homeserver with LiveKit, whose room service is faked
+        // A homeserver with the SFU, whose room service is faked
         string directory = Directory.CreateTempSubdirectory("uniform-chat-matrixrtc-").FullName;
-        FakeLiveKit livekit = new();
+        FakeSfu livekit = new();
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
@@ -41,11 +41,11 @@ public sealed class EmbeddedLiveKitTests
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Logging.ClearProviders();
         builder.AddMatrixServer();
-        builder.AddEmbeddedLiveKit();
+        builder.AddEmbeddedMatrixRtc();
         builder.Services.AddHttpClient(MatrixRtcHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => livekit);
         WebApplication app = builder.Build();
         app.MapMatrixServer();
-        app.MapEmbeddedLiveKit();
+        app.MapEmbeddedMatrixRtc();
         await app.StartAsync(Ct);
         try
         {
@@ -95,7 +95,7 @@ public sealed class EmbeddedLiveKitTests
         return await (await http.SendAsync(request, Ct)).Content.ReadFromJsonAsync<JsonElement>(Ct);
     }
 
-    /// <summary>Ask a LiveKit token to <paramref name="roomId"/>'s call with an OpenID token of <paramref name="user"/>, whose localpart is <paramref name="localpart"/>.</summary>
+    /// <summary>Ask an SFU token to <paramref name="roomId"/>'s call with an OpenID token of <paramref name="user"/>, whose localpart is <paramref name="localpart"/>.</summary>
     private static async Task<HttpResponseMessage> RequestTokenAsync(HttpClient http, MatrixClient user, string localpart, string roomId, string? delayId = null)
     {
         // The user's OpenID token
@@ -109,17 +109,17 @@ public sealed class EmbeddedLiveKitTests
     [Fact]
     public async Task ApplyWithoutRestart()
     {
-        // A homeserver with LiveKit off
+        // A homeserver with the SFU off
         string directory = Directory.CreateTempSubdirectory("uniform-chat-matrixrtc-").FullName;
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Server:ServerName"] = "test.local", ["Server:PublicBaseUrl"] = "https://matrix.test.local/", ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Logging.ClearProviders();
         builder.AddMatrixServer();
-        builder.AddEmbeddedLiveKit();
+        builder.AddEmbeddedMatrixRtc();
         WebApplication app = builder.Build();
         app.MapMatrixServer();
-        app.MapEmbeddedLiveKit();
+        app.MapEmbeddedMatrixRtc();
         await app.StartAsync(Ct);
         try
         {
@@ -154,8 +154,8 @@ public sealed class EmbeddedLiveKitTests
         }
     }
 
-    /// <summary>Answers LiveKit's room service, and records the requests.</summary>
-    private sealed class FakeLiveKit : HttpMessageHandler
+    /// <summary>Answers the SFU's room service, and records the requests.</summary>
+    private sealed class FakeSfu : HttpMessageHandler
     {
         /// <summary>Request URLs in order.</summary>
         public List<string> Requests { get; } = [];

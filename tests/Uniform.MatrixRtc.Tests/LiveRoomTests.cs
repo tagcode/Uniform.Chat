@@ -10,7 +10,7 @@ using Uniform.Matrix.Video.Vp8;
 using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Rtp;
 
-/// <summary>Tests of <see cref="LiveKitRoom"/> against LiveKit's own server, run when <c>LIVEKIT_SERVER</c> names its program; skipped otherwise.</summary>
+/// <summary>Tests of <see cref="SfuRoom"/> against the official livekit-server, run when <c>LIVEKIT_SERVER</c> names its program; skipped otherwise.</summary>
 public sealed class LiveRoomTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -23,11 +23,11 @@ public sealed class LiveRoomTests
     [Fact]
     public async Task PublishAndSubscribe()
     {
-        // LiveKit, and the call's room
-        await using LiveKitServer server = await LiveKitServer.StartAsync();
+        // The SFU, and the call's room
+        await using SfuServer server = await SfuServer.StartAsync();
         string room = MatrixRtcNames.RoomAlias("!room:example.org", MatrixRtcNames.RoomCallSlot);
-        await new LiveKitRoomService(new HttpClient(), Url, ApiKey, ApiSecret, TimeProvider.System).CreateRoomAsync(room, TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(5), 0, Ct);
-        LiveKitRoomOptions options = new() { IncludeLoopback = true };
+        await new SfuRoomService(new HttpClient(), Url, ApiKey, ApiSecret, TimeProvider.System).CreateRoomAsync(room, TimeSpan.FromMinutes(1), TimeSpan.FromSeconds(5), 0, Ct);
+        SfuRoomOptions options = new() { IncludeLoopback = true };
 
         // Alice publishes, encrypting with her key; Bob knows it
         byte[] aliceKey = RandomNumberGenerator.GetBytes(16);
@@ -35,9 +35,9 @@ public sealed class LiveRoomTests
         encrypting.SetKey(0, aliceKey);
         FrameCryptor decrypting = new();
         decrypting.SetKey(0, aliceKey);
-        await using LiveKitRoom alice = await LiveKitRoom.ConnectAsync(Url, Token("@alice:example.org:ALICE", room, publish: true), options, new TestLogger(), Ct);
+        await using SfuRoom alice = await SfuRoom.ConnectAsync(Url, Token("@alice:example.org:ALICE", room, publish: true), options, new TestLogger(), Ct);
         AudioPeerConnection publisher = await alice.PublishAsync(video: true, Encryption.Types.Type.Gcm, 64, 48, Ct);
-        await using LiveKitRoom bob = await LiveKitRoom.ConnectAsync(Url, Token("@bob:example.org:BOB", room, publish: false), options, new TestLogger(), Ct);
+        await using SfuRoom bob = await SfuRoom.ConnectAsync(Url, Token("@bob:example.org:BOB", room, publish: false), options, new TestLogger(), Ct);
         Assert.Contains(bob.Participants, p => p.Identity == "@alice:example.org:ALICE");
 
         // What Bob decrypts, and from whom
@@ -78,20 +78,20 @@ public sealed class LiveRoomTests
         Assert.Contains("@alice:example.org:ALICE", senders);
     }
 
-    /// <summary>Return a LiveKit token of <paramref name="identity"/> to <paramref name="room"/>.</summary>
+    /// <summary>Return an SFU token of <paramref name="identity"/> to <paramref name="room"/>.</summary>
     private static string Token(string identity, string room, bool publish) => AccessToken.Create(ApiKey, identity, new VideoGrant { RoomJoin = true, Room = room, CanPublish = publish, CanSubscribe = true, CanPublishData = publish }, DateTimeOffset.UtcNow, TimeSpan.FromMinutes(10)).Sign(ApiSecret);
 
     /// <summary>Return a small picture of one shade.</summary>
     private static VideoFrame Picture(byte shade) => new(64, 48, Enumerable.Repeat(shade, 64 * 48).ToArray(), Enumerable.Repeat((byte)128, 32 * 24).ToArray(), Enumerable.Repeat((byte)128, 32 * 24).ToArray());
 
-    /// <summary>LiveKit's server on this machine, on loopback, for one test.</summary>
-    private sealed class LiveKitServer : IAsyncDisposable
+    /// <summary>The SFU's server on this machine, on loopback, for one test.</summary>
+    private sealed class SfuServer : IAsyncDisposable
     {
         private readonly Process process;
         private readonly string directory;
 
         /// <summary>Wrap a started server.</summary>
-        private LiveKitServer(Process process, string directory)
+        private SfuServer(Process process, string directory)
         {
             // Done
             this.process = process;
@@ -99,7 +99,7 @@ public sealed class LiveRoomTests
         }
 
         /// <summary>Start the server <c>LIVEKIT_SERVER</c> names, and return once it answers; skip the test without one.</summary>
-        public static async Task<LiveKitServer> StartAsync()
+        public static async Task<SfuServer> StartAsync()
         {
             // The program, and a configuration of its own
             string? program = Environment.GetEnvironmentVariable("LIVEKIT_SERVER");
@@ -113,7 +113,7 @@ public sealed class LiveRoomTests
             process.ErrorDataReceived += (_, line) => { lock (process) log?.WriteLine(line.Data); };
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
-            LiveKitServer server = new(process, directory);
+            SfuServer server = new(process, directory);
 
             // Answering
             using HttpClient http = new();

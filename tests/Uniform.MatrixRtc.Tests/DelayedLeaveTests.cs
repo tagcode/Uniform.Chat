@@ -12,17 +12,17 @@ public sealed class DelayedLeaveTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
     private readonly FakeTimeProvider time = new(new DateTimeOffset(2026, 11, 11, 12, 0, 0, TimeSpan.Zero));
-    private readonly FakeLiveKit livekit = new();
+    private readonly FakeSfu livekit = new();
     private readonly FakeHomeservers homeservers = new();
 
     /// <summary>Return a keeper over the fakes.</summary>
-    private DelayedLeaveKeeper CreateKeeper() => new(() => new LiveKitAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = "a-secret-long-enough-for-livekit" }, homeservers, new HttpClient(livekit), time, NullLogger<DelayedLeaveKeeper>.Instance);
+    private DelayedLeaveKeeper CreateKeeper() => new(() => new MatrixRtcAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = "a-secret-long-enough-for-livekit" }, homeservers, new HttpClient(livekit), time, NullLogger<DelayedLeaveKeeper>.Instance);
 
-    /// <summary>Keep a member's leave: restarted before it goes off while the member is on LiveKit, and sent once the member is gone.</summary>
+    /// <summary>Keep a member's leave: restarted before it goes off while the member is on the SFU, and sent once the member is gone.</summary>
     [Fact]
     public async Task KeepUntilTheMemberLeaves()
     {
-        // A member on LiveKit, its leave of a minute kept
+        // A member on the SFU, its leave of a minute kept
         await using DelayedLeaveKeeper keeper = CreateKeeper();
         livekit.Present.Add(("room", "alice"));
         keeper.Keep("example.org", "delay1", TimeSpan.FromMinutes(1), "room", "alice");
@@ -32,7 +32,7 @@ public sealed class DelayedLeaveTests
         Assert.Contains(("example.org", "delay1", "restart"), homeservers.Updates);
         Assert.DoesNotContain(homeservers.Updates, u => u.Action == "send");
 
-        // Gone from LiveKit: sent, and the job ends
+        // Gone from the SFU: sent, and the job ends
         livekit.Present.Clear();
         await AdvanceAsync(TimeSpan.FromSeconds(10));
         Assert.Contains(("example.org", "delay1", "send"), homeservers.Updates);
@@ -40,18 +40,18 @@ public sealed class DelayedLeaveTests
         Assert.Empty(keeper.Members);
     }
 
-    /// <summary>Leave a member that never joins LiveKit to its homeserver's delay, and stop when the homeserver no longer has the leave.</summary>
+    /// <summary>Leave a member that never joins the SFU to its homeserver's delay, and stop when the homeserver no longer has the leave.</summary>
     [Fact]
     public async Task StopWithoutTheMember()
     {
-        // Never on LiveKit
+        // Never on the SFU
         await using DelayedLeaveKeeper keeper = CreateKeeper();
         keeper.Keep("example.org", "never", TimeSpan.FromSeconds(30), "room", "bob");
         await AdvanceAsync(TimeSpan.FromSeconds(40));
         Assert.DoesNotContain(homeservers.Updates, u => u.DelayId == "never" && u.Action == "send");
         Assert.Empty(keeper.Members);
 
-        // On LiveKit, but the leave was sent meanwhile
+        // On the SFU, but the leave was sent meanwhile
         livekit.Present.Add(("room", "carol"));
         homeservers.Gone.Add("sent");
         keeper.Keep("example.org", "sent", TimeSpan.FromSeconds(30), "room", "carol");
@@ -71,10 +71,10 @@ public sealed class DelayedLeaveTests
         }
     }
 
-    /// <summary>LiveKit's room service, answering GetParticipant from <see cref="Present"/>.</summary>
-    private sealed class FakeLiveKit : HttpMessageHandler
+    /// <summary>The SFU's room service, answering GetParticipant from <see cref="Present"/>.</summary>
+    private sealed class FakeSfu : HttpMessageHandler
     {
-        /// <summary>Room and identity pairs on LiveKit.</summary>
+        /// <summary>Room and identity pairs on the SFU.</summary>
         public ConcurrentBag<(string Room, string Identity)> Present { get; } = [];
 
         /// <summary>Answer 200 for a present participant, else Twirp's not found.</summary>

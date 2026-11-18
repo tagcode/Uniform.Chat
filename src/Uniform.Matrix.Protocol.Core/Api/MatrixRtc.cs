@@ -2,17 +2,19 @@ namespace Uniform.Matrix.Protocol.Core;
 
 using System.Text.Json.Serialization;
 
-/// <summary>A <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4143">MatrixRTC</see> transport: how media goes, e.g. a LiveKit SFU behind its authorization service.</summary>
+/// <summary>A <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4143">MatrixRTC</see> transport: how media goes, e.g. an SFU behind its authorization service.</summary>
 public sealed record RtcTransport
 {
-    /// <summary>The LiveKit transport's type.</summary>
-    public const string LiveKit = "livekit";
-    /// <summary>Kind, e.g. <see cref="LiveKit"/>.</summary>
+    /// <summary>The type of an SFU transport, <c>livekit</c> on the wire, after the SFU that MatrixRTC calls use.</summary>
+    public const string Sfu = "livekit";
+    /// <summary>Kind, e.g. <see cref="Sfu"/>.</summary>
     public required string Type { get; init; }
-    /// <summary>The LiveKit authorization service, which exchanges an OpenID token for a LiveKit token, e.g. <c>https://example.org/livekit/jwt</c>.</summary>
-    public string? LivekitServiceUrl { get; init; }
-    /// <summary>The LiveKit room, the Matrix room's ID; still read by some clients, though services derive the room themselves.</summary>
-    public string? LivekitAlias { get; init; }
+    /// <summary>The SFU authorization service, which exchanges an OpenID token for an SFU token, e.g. <c>https://example.org/livekit/jwt</c>.</summary>
+    [JsonPropertyName("livekit_service_url")]
+    public string? ServiceUrl { get; init; }
+    /// <summary>The SFU room, the Matrix room's ID; still read by some clients, though services derive the room themselves.</summary>
+    [JsonPropertyName("livekit_alias")]
+    public string? Alias { get; init; }
 }
 
 /// <summary>Response of <c>GET /_matrix/client/unstable/org.matrix.msc4143/rtc/transports</c>: the homeserver's transports, preferred first.</summary>
@@ -22,11 +24,11 @@ public sealed record RtcTransportsResponse
     public IReadOnlyList<RtcTransport> RtcTransports { get; init; } = [];
 }
 
-/// <summary>The focus a member uses, in <see cref="CallMemberContent.FocusActive"/>: LiveKit, each member on the SFU of its own homeserver.</summary>
+/// <summary>The focus a member uses, in <see cref="CallMemberContent.FocusActive"/>: The SFU, each member on the SFU of its own homeserver.</summary>
 public sealed record RtcFocusActive
 {
-    /// <summary>Kind, <see cref="RtcTransport.LiveKit"/>.</summary>
-    public string Type { get; init; } = RtcTransport.LiveKit;
+    /// <summary>Kind, <see cref="RtcTransport.Sfu"/>.</summary>
+    public string Type { get; init; } = RtcTransport.Sfu;
     /// <summary>How the SFU is chosen; <c>multi_sfu</c>: each publishes on its own, and subscribes on each other's.</summary>
     public string FocusSelection { get; init; } = "multi_sfu";
 }

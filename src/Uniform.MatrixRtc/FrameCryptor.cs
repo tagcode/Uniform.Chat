@@ -13,7 +13,7 @@ public enum FrameKind
     Vp8,
 }
 
-/// <summary>LiveKit's end-to-end encryption of media frames, as its clients and Element Call do it: AES-GCM with a key derived by HKDF, the first bytes of each frame in the clear and authenticated, and the IV and the key's index after the frame.</summary>
+/// <summary>The SFU's end-to-end encryption of media frames, as its clients and Element Call do it: AES-GCM with a key derived by HKDF, the first bytes of each frame in the clear and authenticated, and the IV and the key's index after the frame.</summary>
 /// <remarks>
 /// A frame is <c>header ‖ AES-GCM(ciphertext ‖ tag) ‖ IV(12) ‖ 12 ‖ key index</c>. The header is the frame's first bytes, as <see cref="FrameKind"/> says, and the additional data of AES-GCM.
 /// A raw key, e.g. one a member sent in <c>io.element.call.encryption_keys</c>, becomes an AES-128 key with HKDF-SHA-256, the salt <c>LKFrameEncryptionKey</c> and 128 zero bytes of info.
@@ -42,7 +42,7 @@ public sealed class FrameCryptor
     public long Failures => Interlocked.Read(ref failures);
     private long failures;
 
-    /// <summary>Return the AES-128 key of a raw key, as LiveKit derives it.</summary>
+    /// <summary>Return the AES-128 key of a raw key, as the SFU derives it.</summary>
     public static byte[] DeriveKey(ReadOnlySpan<byte> rawKey)
     {
         // HKDF-SHA-256 to 16 bytes

@@ -62,8 +62,8 @@ public static class CallEndpoints
         return routes;
     }
 
-    /// <summary>Return the MatrixRTC transports of <paramref name="options"/>: the LiveKit service, or none.</summary>
-    public static JsonArray Transports(CallOptions options) => options.LiveKitServiceUrl is string url ? new JsonArray(new JsonObject { ["type"] = "livekit", ["livekit_service_url"] = url }) : [];
+    /// <summary>Return the MatrixRTC transports of <paramref name="options"/>: the SFU service, or none.</summary>
+    public static JsonArray Transports(CallOptions options) => options.MatrixRtcServiceUrl is string url ? new JsonArray(new JsonObject { ["type"] = "livekit", ["livekit_service_url"] = url }) : [];
 
     /// <summary>Return the delay of a send or state request in milliseconds, or null when it is not delayed; throw <c>M_INVALID_PARAM</c> for a bad value.</summary>
     public static long? GetDelay(HttpContext http) => http.Request.Query[DelayParameter] is [string text]

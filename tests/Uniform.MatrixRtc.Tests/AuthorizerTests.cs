@@ -7,7 +7,7 @@ using Microsoft.Extensions.Time.Testing;
 using Uniform.MatrixRtc.Authorization;
 using Uniform.MatrixRtc.Protocol;
 
-/// <summary>Tests of <see cref="LiveKitAuthorizer"/> and <see cref="FederationOpenIdVerifier"/>.</summary>
+/// <summary>Tests of <see cref="MatrixRtcAuthorizer"/> and <see cref="FederationOpenIdVerifier"/>.</summary>
 public sealed class AuthorizerTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -16,7 +16,7 @@ public sealed class AuthorizerTests
     private const string Secret = "a-secret-long-enough-for-livekit";
 
     /// <summary>Return an authorizer over the fake network, where example.org has full access.</summary>
-    private LiveKitAuthorizer CreateAuthorizer() => new(() => new LiveKitAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = Secret, FullAccessHomeservers = ["example.org"] }, new FederationOpenIdVerifier(network.CreateClient()), network.CreateClient(), time, NullLogger<LiveKitAuthorizer>.Instance);
+    private MatrixRtcAuthorizer CreateAuthorizer() => new(() => new MatrixRtcAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = Secret, FullAccessHomeservers = ["example.org"] }, new FederationOpenIdVerifier(network.CreateClient()), network.CreateClient(), time, NullLogger<MatrixRtcAuthorizer>.Instance);
 
     /// <summary>Return a request of <paramref name="token"/> from <paramref name="server"/> claiming <paramref name="user"/>.</summary>
     private static TokenRequest Request(string token, string server, string user, string? delayId = null) => new()
@@ -28,7 +28,7 @@ public sealed class AuthorizerTests
         DelayId = delayId,
     };
 
-    /// <summary>Give a full-access user a publishing token, after creating the room in LiveKit.</summary>
+    /// <summary>Give a full-access user a publishing token, after creating the room in the SFU.</summary>
     [Fact]
     public async Task AuthorizeFullAccess()
     {
@@ -47,7 +47,7 @@ public sealed class AuthorizerTests
         // The room was created over HTTPS with a token that may create rooms
         Assert.Contains("https://example.org:8448/_matrix/federation/v1/openid/userinfo?access_token=alice-token", network.Requests);
         Assert.Contains("https://livekit.example.org/twirp/livekit.RoomService/CreateRoom", network.Requests);
-        (string body, string? authorization) = Assert.Single(network.LiveKitCalls);
+        (string body, string? authorization) = Assert.Single(network.SfuCalls);
         using JsonDocument created = JsonDocument.Parse(body);
         Assert.Equal(room, created.RootElement.GetProperty("name").GetString());
         Assert.Equal(300, created.RootElement.GetProperty("empty_timeout").GetInt32());
@@ -73,7 +73,7 @@ public sealed class AuthorizerTests
         Assert.False(claims.Video.CanPublishData);
         Assert.True(claims.Video.CanSubscribe);
         Assert.Contains("https://matrix.other.org:8443/_matrix/federation/v1/openid/userinfo?access_token=bob-token", network.Requests);
-        Assert.Empty(network.LiveKitCalls);
+        Assert.Empty(network.SfuCalls);
     }
 
     /// <summary>Refuse unknown tokens, another user's claim, a server vouching for others' users, delayed leaves of restricted users and missing fields.</summary>
@@ -84,7 +84,7 @@ public sealed class AuthorizerTests
         network.Users["alice-token"] = "@alice:example.org";
         network.Users["rogue-token"] = "@alice:example.org";
         network.Users["bob-token"] = "@bob:other.org";
-        LiveKitAuthorizer authorizer = CreateAuthorizer();
+        MatrixRtcAuthorizer authorizer = CreateAuthorizer();
 
         // Each refused with its status
         Assert.Equal(HttpStatusCode.Unauthorized, (await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeAsync(Request("nope", "example.org", "@alice:example.org"), Ct))).Status);
@@ -95,7 +95,7 @@ public sealed class AuthorizerTests
         AuthorizationException missing = await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeAsync(Request("alice-token", "example.org", "@alice:example.org") with { SlotId = "" }, Ct));
         Assert.Equal(HttpStatusCode.BadRequest, missing.Status);
         // Done
-        Assert.Empty(network.LiveKitCalls);
+        Assert.Empty(network.SfuCalls);
     }
 
     /// <summary>With membership checked, give tokens to joined users only, on both endpoints, before creating any room.</summary>
@@ -106,12 +106,12 @@ public sealed class AuthorizerTests
         network.Users["alice-token"] = "@alice:example.org";
         network.Users["carol-token"] = "@carol:example.org";
         Members members = new() { Joined = { ("!room:example.org", "@alice:example.org") } };
-        LiveKitAuthorizer authorizer = new(() => new LiveKitAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = Secret, FullAccessHomeservers = ["example.org"] }, new FederationOpenIdVerifier(network.CreateClient()), network.CreateClient(), time, NullLogger<LiveKitAuthorizer>.Instance, members);
+        MatrixRtcAuthorizer authorizer = new(() => new MatrixRtcAuthorizerOptions { Url = "wss://livekit.example.org", ApiKey = "key", ApiSecret = Secret, FullAccessHomeservers = ["example.org"] }, new FederationOpenIdVerifier(network.CreateClient()), network.CreateClient(), time, NullLogger<MatrixRtcAuthorizer>.Instance, members);
 
         // Carol is refused on both endpoints
         Assert.Equal(HttpStatusCode.Unauthorized, (await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeAsync(Request("carol-token", "example.org", "@carol:example.org"), Ct))).Status);
         Assert.Equal(HttpStatusCode.Unauthorized, (await Assert.ThrowsAsync<AuthorizationException>(() => authorizer.AuthorizeLegacyAsync(new LegacySfuRequest { Room = "!room:example.org", DeviceId = "CAROLDEV", OpenIdToken = new OpenIdToken { AccessToken = "carol-token", MatrixServerName = "example.org" } }, Ct))).Status);
-        Assert.Empty(network.LiveKitCalls);
+        Assert.Empty(network.SfuCalls);
 
         // Done
         SfuResponse answer = await authorizer.AuthorizeAsync(Request("alice-token", "example.org", "@alice:example.org"), Ct);
@@ -137,7 +137,7 @@ public sealed class AuthorizerTests
         Assert.True(FederationOpenIdVerifier.HasPort("example.org:8448"));
         Assert.False(FederationOpenIdVerifier.HasPort("[2001:db8::1]"));
         Assert.True(FederationOpenIdVerifier.HasPort("[2001:db8::1]:443"));
-        Assert.Equal("https://example.org:8448", LiveKitRoomService.HttpUrl("wss://example.org:8448/"));
-        Assert.Equal("http://localhost:7880", LiveKitRoomService.HttpUrl("ws://localhost:7880"));
+        Assert.Equal("https://example.org:8448", SfuRoomService.HttpUrl("wss://example.org:8448/"));
+        Assert.Equal("http://localhost:7880", SfuRoomService.HttpUrl("ws://localhost:7880"));
     }
 }

@@ -19,7 +19,7 @@ public sealed record OpenIdToken
     public long ExpiresIn { get; init; }
 }
 
-/// <summary>Fields of a delayed leave handed to the service: it keeps the member's delayed leave event (MSC4140) from going off while the member is on LiveKit, and sends it once the member is gone, so the member's device need not restart it often.</summary>
+/// <summary>Fields of a delayed leave handed to the service: it keeps the member's delayed leave event (MSC4140) from going off while the member is on the SFU, and sends it once the member is gone, so the member's device need not restart it often.</summary>
 public abstract record DelayedLeave
 {
     /// <summary>Id of the member's delayed leave event (MSC4140).</summary>
@@ -78,13 +78,13 @@ public sealed record TokenRequest : DelayedLeave
     public CallMember? Member { get; init; }
 }
 
-/// <summary>Answer of both requests: where LiveKit is and the token to join with.</summary>
+/// <summary>Answer of both requests: where the SFU is and the token to join with.</summary>
 public sealed record SfuResponse
 {
-    /// <summary>LiveKit's WebSocket URL, e.g. <c>wss://livekit.example.org</c>.</summary>
+    /// <summary>The SFU's WebSocket URL, e.g. <c>wss://livekit.example.org</c>.</summary>
     [JsonPropertyName("url")]
     public string Url { get; init; } = "";
-    /// <summary>The LiveKit access token.</summary>
+    /// <summary>The SFU access token.</summary>
     [JsonPropertyName("jwt")]
     public string Jwt { get; init; } = "";
 }
@@ -105,7 +105,7 @@ public sealed record AuthorizationError
     public const string Forbidden = "M_FORBIDDEN";
     /// <summary>The OpenID token did not verify, or the claimed user is not its user.</summary>
     public const string Unauthorized = "M_UNAUTHORIZED";
-    /// <summary>Another failure, e.g. LiveKit could not be reached.</summary>
+    /// <summary>Another failure, e.g. The SFU could not be reached.</summary>
     public const string Unknown = "M_UNKNOWN";
     /// <summary>No such endpoint.</summary>
     public const string Unrecognized = "M_UNRECOGNIZED";

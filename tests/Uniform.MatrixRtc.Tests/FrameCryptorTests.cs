@@ -2,12 +2,12 @@ namespace Uniform.MatrixRtc.Tests;
 
 using System.Text;
 
-/// <summary>Tests of <see cref="FrameCryptor"/>; the expected values come from Python's <c>cryptography</c>, laid out as LiveKit's FrameCryptor.ts does.</summary>
+/// <summary>Tests of <see cref="FrameCryptor"/>; the expected values come from Python's <c>cryptography</c>, laid out as the SFU's FrameCryptor.ts does.</summary>
 public sealed class FrameCryptorTests
 {
     private static readonly byte[] RawKey = [.. Enumerable.Range(0, 16).Select(i => (byte)i)];
 
-    /// <summary>Derive the AES key of a raw key with HKDF, as LiveKit does.</summary>
+    /// <summary>Derive the AES key of a raw key with HKDF, as the SFU does.</summary>
     [Fact]
     public void DeriveKeys()
     {
@@ -17,7 +17,7 @@ public sealed class FrameCryptorTests
 
     /// <summary>Decrypt frames that WebCrypto's algorithms encrypted, with the clear bytes of each kind and the key index of the trailer.</summary>
     [Fact]
-    public void DecryptLiveKitFrames()
+    public void DecryptFrames()
     {
         // The key at index 5
         FrameCryptor cryptor = new();

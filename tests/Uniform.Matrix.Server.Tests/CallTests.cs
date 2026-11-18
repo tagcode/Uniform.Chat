@@ -23,7 +23,7 @@ public class CallTests
         {
             ["Server:Registration"] = "Open",
             ["Federation:Enabled"] = "true",
-            ["Calls:LiveKitServiceUrl"] = "https://rtc.example.org/livekit/jwt",
+            ["Calls:MatrixRtcServiceUrl"] = "https://rtc.example.org/livekit/jwt",
             ["Calls:TurnUris"] = "turn:turn.example.org:3478?transport=udp, turns:turn.example.org:5349",
             ["Calls:TurnSharedSecret"] = Secret,
         }, time);
@@ -61,7 +61,7 @@ public class CallTests
         Assert.Equal([HttpStatusCode.Unauthorized, HttpStatusCode.Unauthorized, HttpStatusCode.Forbidden], [unknown, expired, otherUser]);
     }
 
-    /// <summary>Clients find the LiveKit service through rtc/transports and the well-known, and get TURN credentials coturn accepts.</summary>
+    /// <summary>Clients find the SFU service through rtc/transports and the well-known, and get TURN credentials coturn accepts.</summary>
     [Fact]
     public async Task AnnounceServices()
     {

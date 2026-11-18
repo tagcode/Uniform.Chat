@@ -1122,7 +1122,7 @@ public class FederationTests
     public async Task ServeWellKnown()
     {
         // Arrange: one server with delegation and a public address, one without
-        await using TestHomeserver set = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Federation:WellKnownServer"] = "example.org:443", ["Server:PublicBaseUrl"] = "https://example.org", ["Calls:LiveKitServiceUrl"] = "https://rtc.example.org/jwt" });
+        await using TestHomeserver set = await TestHomeserver.StartAsync(new Dictionary<string, string?> { ["Federation:WellKnownServer"] = "example.org:443", ["Server:PublicBaseUrl"] = "https://example.org", ["Calls:MatrixRtcServiceUrl"] = "https://rtc.example.org/jwt" });
         await using TestHomeserver unset = await TestHomeserver.StartAsync();
         using HttpClient http = set.CreateHttpClient();
         using HttpClient plain = unset.CreateHttpClient();

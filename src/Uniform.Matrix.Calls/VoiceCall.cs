@@ -23,7 +23,7 @@ public enum CallState
     Ended,
 }
 
-/// <summary>A 1:1 call with another user, as the apps show it: its state, mute and camera, and the other's pictures; a <see cref="LegacyCall"/> of <c>m.call.*</c> events, or a <see cref="RtcCall"/> of MatrixRTC through a LiveKit SFU.</summary>
+/// <summary>A 1:1 call with another user, as the apps show it: its state, mute and camera, and the other's pictures; a <see cref="LegacyCall"/> of <c>m.call.*</c> events, or a <see cref="RtcCall"/> of MatrixRTC through an SFU.</summary>
 /// <remarks>The voice and video go over an <see cref="IMediaConnection"/>: <see cref="VoiceMedia"/> records and plays, a <see cref="VideoReceiver"/> decodes, and the camera's frames are sent. A call's actions and events run one at a time under <see cref="gate"/>.</remarks>
 public abstract class VoiceCall : IAsyncDisposable
 {

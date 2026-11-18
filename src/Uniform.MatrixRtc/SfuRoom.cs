@@ -11,12 +11,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Uniform.Matrix.WebRtc;
 using Uniform.Matrix.WebRtc.Ice;
 
-/// <summary>Options of a <see cref="LiveKitRoom"/>.</summary>
-public sealed record LiveKitRoomOptions
+/// <summary>Options of a <see cref="SfuRoom"/>.</summary>
+public sealed record SfuRoomOptions
 {
-    /// <summary>STUN and TURN servers besides those LiveKit gives, e.g. the homeserver's.</summary>
+    /// <summary>STUN and TURN servers besides those the SFU gives, e.g. the homeserver's.</summary>
     public IReadOnlyList<IceServer> Servers { get; init; } = [];
-    /// <summary>Whether to use loopback addresses, e.g. for a LiveKit server on this machine.</summary>
+    /// <summary>Whether to use loopback addresses, e.g. for an SFU on this machine.</summary>
     public bool IncludeLoopback { get; init; }
     /// <summary>Whether to use relayed candidates only.</summary>
     public bool RelayOnly { get; init; }
@@ -26,12 +26,12 @@ public sealed record LiveKitRoomOptions
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(20);
 }
 
-/// <summary>A participant's connection to a LiveKit room: the signalling, the subscriber peer connection the server offers with the others' tracks, and the publisher peer connection this side offers with its own.</summary>
+/// <summary>A participant's connection to an SFU room: the signalling, the subscriber peer connection the server offers with the others' tracks, and the publisher peer connection this side offers with its own.</summary>
 /// <remarks>The server subscribes this participant to every track, and offers each anew on the subscriber connection. <see cref="IdentityOf"/> tells whose a received stream is, by the <c>msid</c> of its section, <c>PA_…|TR_…</c>.</remarks>
-public sealed class LiveKitRoom : IAsyncDisposable
+public sealed class SfuRoom : IAsyncDisposable
 {
-    private readonly LiveKitSignalClient signal;
-    private readonly LiveKitRoomOptions options;
+    private readonly SfuSignalClient signal;
+    private readonly SfuRoomOptions options;
     private readonly ILogger logger;
     private readonly IReadOnlyList<IceServer> servers;
     private readonly Channel<SignalResponse> inbox = Channel.CreateUnbounded<SignalResponse>(new UnboundedChannelOptions { SingleReader = true });
@@ -47,7 +47,7 @@ public sealed class LiveKitRoom : IAsyncDisposable
     private Task? publisherConnecting;
 
     /// <summary>Create a room over a joined signalling client.</summary>
-    private LiveKitRoom(LiveKitSignalClient signal, LiveKitRoomOptions options, ILogger logger)
+    private SfuRoom(SfuSignalClient signal, SfuRoomOptions options, ILogger logger)
     {
         // The join's participants and ICE servers, then the messages in order
         this.signal = signal;
@@ -90,17 +90,17 @@ public sealed class LiveKitRoom : IAsyncDisposable
 
     /// <summary>Join the room at <paramref name="url"/> with <paramref name="token"/>.</summary>
     /// <exception cref="System.Net.WebSockets.WebSocketException">When the server cannot be reached or refuses the token.</exception>
-    public static async Task<LiveKitRoom> ConnectAsync(string url, string token, LiveKitRoomOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+    public static async Task<SfuRoom> ConnectAsync(string url, string token, SfuRoomOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
     {
         // Signalling, joined
-        options ??= new LiveKitRoomOptions();
+        options ??= new SfuRoomOptions();
         logger ??= NullLogger.Instance;
         using CancellationTokenSource timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(options.Timeout);
-        LiveKitSignalClient signal = await LiveKitSignalClient.ConnectAsync(url, token, logger, cancellationToken: timeout.Token);
-        logger.LogInformation("Joined LiveKit room {Room} as {Identity} ({Sid}), with {Others} others, server {Version}", signal.Join.Room.Name, signal.Join.Participant.Identity, signal.Join.Participant.Sid, signal.Join.OtherParticipants.Count, signal.Join.ServerVersion);
+        SfuSignalClient signal = await SfuSignalClient.ConnectAsync(url, token, logger, cancellationToken: timeout.Token);
+        logger.LogInformation("Joined the SFU room {Room} as {Identity} ({Sid}), with {Others} others, server {Version}", signal.Join.Room.Name, signal.Join.Participant.Identity, signal.Join.Participant.Sid, signal.Join.OtherParticipants.Count, signal.Join.ServerVersion);
         // Return room
-        return new LiveKitRoom(signal, options, logger);
+        return new SfuRoom(signal, options, logger);
     }
 
     /// <summary>Return the identity of the participant whose stream <paramref name="ssrc"/> is, as the subscriber's offers said; null when unknown.</summary>
@@ -143,7 +143,7 @@ public sealed class LiveKitRoom : IAsyncDisposable
         publisher.AcceptAnswer(await publisherAnswer.Task.WaitAsync(timeout.Token));
         publisherConnecting = publisher.ConnectAsync(stopping.Token);
         if (!await (Task<bool>)publisherConnecting) throw new TimeoutException("The publisher connection did not connect.");
-        logger.LogInformation("Published to LiveKit room {Room}: audio {Audio}, video {Video}", Name, AudioTrackSid, VideoTrackSid);
+        logger.LogInformation("Published to the SFU room {Room}: audio {Audio}, video {Video}", Name, AudioTrackSid, VideoTrackSid);
         // Return publisher
         return publisher;
     }
@@ -208,7 +208,7 @@ public sealed class LiveKitRoom : IAsyncDisposable
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                logger.LogWarning(e, "LiveKit message {Message} failed", message.MessageCase);
+                logger.LogWarning(e, "SFU message {Message} failed", message.MessageCase);
             }
         }
     }
@@ -235,7 +235,7 @@ public sealed class LiveKitRoom : IAsyncDisposable
                 foreach (ParticipantInfo participant in message.Update.Participants) OnParticipant(participant);
                 break;
             case SignalResponse.MessageOneofCase.Leave:
-                logger.LogInformation("LiveKit asked to leave room {Room}: {Reason}", Name, message.Leave.Reason);
+                logger.LogInformation("SFU asked to leave room {Room}: {Reason}", Name, message.Leave.Reason);
                 Closed?.Invoke();
                 break;
         }

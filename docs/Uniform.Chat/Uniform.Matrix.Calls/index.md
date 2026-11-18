@@ -6,14 +6,14 @@ title: Uniform.Matrix.Calls
 
 Matrix 1:1 voice and video calls for the [client engine](xref:Uniform.Matrix.Client.Article), of two kinds:
 
-- [`RtcCall`](xref:Uniform.Matrix.Calls.RtcCall): [MatrixRTC](https://github.com/matrix-org/matrix-spec-proposals/pull/4143) through a LiveKit SFU, as Element X and Element Call make calls, over [Uniform.MatrixRtc](xref:Uniform.MatrixRtc.Article).
+- [`RtcCall`](xref:Uniform.Matrix.Calls.RtcCall): [MatrixRTC](https://github.com/matrix-org/matrix-spec-proposals/pull/4143) through an SFU, as Element X and Element Call make calls, over [Uniform.MatrixRtc](xref:Uniform.MatrixRtc.Article).
 - [`LegacyCall`](xref:Uniform.Matrix.Calls.LegacyCall): the [`m.call.*` events](https://spec.matrix.org/latest/client-server-api/#voice-over-ip) of version 1, directly between the apps, as Element on the desktop and Element Classic make calls.
 
 Both are a [`VoiceCall`](xref:Uniform.Matrix.Calls.VoiceCall), which the apps show the same way. Media goes over [Uniform.Matrix.WebRtc](xref:Uniform.Matrix.WebRtc.Article), voice through [Uniform.Matrix.Audio](xref:Uniform.Matrix.Audio.Article), and video is decoded with [Uniform.Matrix.Video](xref:Uniform.Matrix.Video.Article).
 
 ## Service
 
-[`CallService`](xref:Uniform.Matrix.Calls.CallService) is a singleton beside the client engine. It follows [`SyncProcessor.Applied`](xref:Uniform.Matrix.Client.Services.SyncProcessor.Applied), routes each call event to its call, and raises [`IncomingCall`](xref:Uniform.Matrix.Calls.CallService.IncomingCall) for a fresh invite or ring to this user. It places MatrixRTC calls when the homeserver has a LiveKit transport, unless [`UseMatrixRtc`](xref:Uniform.Matrix.Calls.CallService.UseMatrixRtc) is off, and legacy calls otherwise. Events go out through the [`OutboxSender`](xref:Uniform.Matrix.Client.Services.OutboxSender), which encrypts them in encrypted rooms, as Element does. TURN credentials come from the homeserver's `/voip/turnServer`, and are kept until shortly before they expire.
+[`CallService`](xref:Uniform.Matrix.Calls.CallService) is a singleton beside the client engine. It follows [`SyncProcessor.Applied`](xref:Uniform.Matrix.Client.Services.SyncProcessor.Applied), routes each call event to its call, and raises [`IncomingCall`](xref:Uniform.Matrix.Calls.CallService.IncomingCall) for a fresh invite or ring to this user. It places MatrixRTC calls when the homeserver has an SFU transport, unless [`UseMatrixRtc`](xref:Uniform.Matrix.Calls.CallService.UseMatrixRtc) is off, and legacy calls otherwise. Events go out through the [`OutboxSender`](xref:Uniform.Matrix.Client.Services.OutboxSender), which encrypts them in encrypted rooms, as Element does. TURN credentials come from the homeserver's `/voip/turnServer`, and are kept until shortly before they expire.
 
 To add calls to an app, register the service, and set the devices when the app chooses them:
 
@@ -27,12 +27,12 @@ VoiceCall call = await calls.PlaceCallAsync(roomId);
 
 ## A MatrixRTC call
 
-1. **Joining.** An OpenID token buys a LiveKit token from the homeserver's authorization service at `/sfu/get`, so this side's identity on the SFU is `@user:server:DEVICE`. The call publishes on the SFU and writes its membership, the state event `org.matrix.msc3401.call.member` with state key `_@user:server_DEVICE_m.call`. A delayed event of empty content ([MSC4140](https://github.com/matrix-org/matrix-spec-proposals/pull/4140)) ends the membership 18 seconds after the device stops restarting it, every 4 seconds.
+1. **Joining.** An OpenID token buys a SFU token from the homeserver's authorization service at `/sfu/get`, so this side's identity on the SFU is `@user:server:DEVICE`. The call publishes on the SFU and writes its membership, the state event `org.matrix.msc3401.call.member` with state key `_@user:server_DEVICE_m.call`. A delayed event of empty content ([MSC4140](https://github.com/matrix-org/matrix-spec-proposals/pull/4140)) ends the membership 18 seconds after the device stops restarting it, every 4 seconds.
 2. **Ringing.** The caller sends `org.matrix.msc4075.rtc.notification` with `ring`, referring to its membership. The callee rings while the caller is in the call, until it answers by joining, or declines with `org.matrix.msc4310.rtc.decline`.
 3. **Connected.** Once the peer's membership is there, each side sends its media key in `io.element.call.encryption_keys` to the peer's call devices over Olm, through [`CryptoService.SendEncryptedToDevicesAsync`](xref:Uniform.Matrix.Client.Services.CryptoService.SendEncryptedToDevicesAsync*). Keys come back in [`ToDeviceReceived`](xref:Uniform.Matrix.Client.Services.CryptoService.ToDeviceReceived). In encrypted rooms, frames are encrypted as Element Call encrypts them. A peer on another homeserver is subscribed to on its own SFU, with a token of its service's `/get_token`.
 4. **Reconnecting.** After a network change, a lost signalling connection, or a media path down for 2 seconds, the call joins its SFU again with a new token. It publishes again and moves the media there, and the others' SFUs are joined again. The membership, the keys and the identity on the SFU stay, so the peer goes on decrypting. The call ends after 45 seconds without success. When the delayed leave was sent meanwhile, the membership is written again.
-   LiveKit does not pass on the video orientation, so the camera is told to make its pictures [`Upright`](xref:Uniform.Matrix.Calls.IVideoCamera.Upright) before encoding.
-   When the homeserver's authorization service takes delayed leaves, as its `delegate_delayed_leave` tells, the call hands its leave over with a delay of an hour and restarts it itself only every 5 minutes, as Element Call does. The service sends it when this side drops off LiveKit. When the handover fails, the call keeps a short leave of its own. After reconnecting, a leave the service sent meanwhile is armed again, and the membership written again.
+   The SFU does not pass on the video orientation, so the camera is told to make its pictures [`Upright`](xref:Uniform.Matrix.Calls.IVideoCamera.Upright) before encoding.
+   When the homeserver's authorization service takes delayed leaves, as its `delegate_delayed_leave` tells, the call hands its leave over with a delay of an hour and restarts it itself only every 5 minutes, as Element Call does. The service sends it when this side drops off the SFU. When the handover fails, the call keeps a short leave of its own. After reconnecting, a leave the service sent meanwhile is armed again, and the membership written again.
 5. **Ended.** Hanging up sends the delayed leave at once and leaves the SFUs. The call ends when the peer's membership goes, or on a decline or a timeout.
 
 ## A legacy call
@@ -47,6 +47,6 @@ A [`LegacyCall`](xref:Uniform.Matrix.Calls.LegacyCall):
 
 ## Tests
 
-Uniform.Chat.Server.Tests calls over MatrixRTC between two client engines of a homeserver with LiveKit on, when `LIVEKIT_SERVER` names LiveKit's server program. It checks the ring, the answer, encrypted voice both ways, and a hangup that ends the call on both sides.
+Uniform.Chat.Server.Tests calls over MatrixRTC between two client engines of a homeserver with MatrixRTC on, when `LIVEKIT_SERVER` names LiveKit's server program. It checks the ring, the answer, encrypted voice both ways, and a hangup that ends the call on both sides.
 
 Uniform.Matrix.Calls.Tests runs two legacy calls against each other in memory, with fake devices that record and play tones in real time: a call that each side must hear and then hang up, and a rejected call. Where Chromium is installed, it calls with a canvas as its camera, and the call must decode its pictures.

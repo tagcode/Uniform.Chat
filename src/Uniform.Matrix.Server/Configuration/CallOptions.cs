@@ -8,8 +8,8 @@ public sealed record CallOptions
     /// <summary>Configuration section name.</summary>
     public const string Section = "Calls";
 
-    /// <summary>URL of the MatrixRTC authorization service (lk-jwt-service) in front of a LiveKit SFU, e.g. <c>https://example.org/livekit/jwt</c>; announced to clients, none when unset.</summary>
-    public string? LiveKitServiceUrl { get; set; }
+    /// <summary>URL of the MatrixRTC authorization service (lk-jwt-service) in front of an SFU, e.g. <c>https://example.org/livekit/jwt</c>; announced to clients, none when unset.</summary>
+    public string? MatrixRtcServiceUrl { get; set; }
     /// <summary>TURN server URIs for older 1:1 calls, separated by commas, e.g. <c>turn:turn.example.org:3478?transport=udp</c>.</summary>
     public string? TurnUris { get; set; }
     /// <summary>Shared secret of the TURN server, e.g. coturn's <c>static-auth-secret</c>.</summary>

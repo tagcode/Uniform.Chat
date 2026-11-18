@@ -2,7 +2,7 @@ namespace Uniform.MatrixRtc.Protocol;
 
 using System.Text.Json.Serialization;
 
-/// <summary>What an access token lets its holder do in LiveKit rooms, the <c>video</c> claim; unset permissions are left out of the token, and LiveKit reads a missing publish or subscribe permission as allowed.</summary>
+/// <summary>What an access token lets its holder do in the SFU rooms, the <c>video</c> claim; unset permissions are left out of the token, and the SFU reads a missing publish or subscribe permission as allowed.</summary>
 /// <see href="https://docs.livekit.io/home/get-started/authentication/"/>
 public sealed record VideoGrant
 {

@@ -11,8 +11,8 @@ using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Rooms;
 
-/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>MatrixRtc:Enabled</c> is set: it hands out tokens of a LiveKit server, verifying the homeserver's own OpenID tokens directly and those of other servers over federation, and only to users joined to the call's room.</summary>
-internal static class EmbeddedLiveKit
+/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>MatrixRtc:Enabled</c> is set: it hands out tokens of an SFU, verifying the homeserver's own OpenID tokens directly and those of other servers over federation, and only to users joined to the call's room.</summary>
+internal static class EmbeddedMatrixRtc
 {
     /// <summary>Path of the service, as reverse proxies in front of lk-jwt-service commonly have it.</summary>
     public const string Prefix = "/livekit/jwt";
@@ -21,33 +21,33 @@ internal static class EmbeddedLiveKit
     /// <remarks>
     /// <list type="bullet">
     /// <item><description><c>MatrixRtc:FullAccessHomeservers</c>: <c>Server:ServerName</c>, so that the homeserver's users start calls and others join them.</description></item>
-    /// <item><description><c>Calls:LiveKitServiceUrl</c>: <see cref="Prefix"/> at <c>Server:PublicBaseUrl</c>, else at <c>https://</c> and <c>Server:ServerName</c>.</description></item>
+    /// <item><description><c>Calls:MatrixRtcServiceUrl</c>: <see cref="Prefix"/> at <c>Server:PublicBaseUrl</c>, else at <c>https://</c> and <c>Server:ServerName</c>.</description></item>
     /// </list>
     /// </remarks>
-    public static WebApplicationBuilder AddEmbeddedLiveKit(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddEmbeddedMatrixRtc(this WebApplicationBuilder builder)
     {
         // Own tokens and delayed leaves without a round trip, the room's members from its state, then the service
         builder.Services.AddSingleton<IRoomMembership>(services => new JoinedMembers(services.GetRequiredService<RoomService>()));
         builder.Services.AddSingleton<IDelayedEvents>(services => new LocalDelayedEvents(services.GetRequiredService<DelayedEvents>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(MatrixRtcHostingExtensions.HttpClientName))));
         builder.Services.AddSingleton<IOpenIdVerifier>(services => new LocalOpenIdVerifier(services.GetRequiredService<OpenIdTokens>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(MatrixRtcHostingExtensions.HttpClientName))));
-        builder.AddLiveKitAuthorization();
+        builder.AddMatrixRtcAuthorization();
 
         // Defaults from the homeserver
         builder.Services.AddOptions<MatrixRtcOptions>().PostConfigure<IOptions<ServerOptions>>((livekit, server) => livekit.FullAccessHomeservers ??= server.Value.ServerName);
         builder.Services.AddOptions<CallOptions>().PostConfigure<IOptionsMonitor<MatrixRtcOptions>, IOptions<ServerOptions>>((calls, livekit, server) =>
         {
             if (!livekit.CurrentValue.Enabled) return;
-            calls.LiveKitServiceUrl ??= ServiceUrl(server.Value);
+            calls.MatrixRtcServiceUrl ??= ServiceUrl(server.Value);
         });
         // Return builder
         return builder;
     }
 
     /// <summary>Serve the service at <see cref="Prefix"/>.</summary>
-    public static WebApplication MapEmbeddedLiveKit(this WebApplication app)
+    public static WebApplication MapEmbeddedMatrixRtc(this WebApplication app)
     {
         // Done
-        app.MapLiveKitAuthorization(Prefix);
+        app.MapMatrixRtcAuthorization(Prefix);
         return app;
     }
 

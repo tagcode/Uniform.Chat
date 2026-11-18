@@ -16,11 +16,11 @@ using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server;
 
-/// <summary>A MatrixRTC call between two clients of the homeserver, through its LiveKit authorization service and LiveKit's own server; run when <c>LIVEKIT_SERVER</c> names its program, skipped otherwise.</summary>
+/// <summary>A MatrixRTC call between two clients of the homeserver, through its SFU authorization service and the official livekit-server; run when <c>LIVEKIT_SERVER</c> names its program, skipped otherwise.</summary>
 public sealed class RtcCallTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
-    private const int LiveKitPort = 17890;
+    private const int SfuPort = 17890;
     private const int HomeserverPort = 18028;
     private const string ApiKey = "devkey";
     private const string ApiSecret = "a-secret-for-tests-of-matrixrtc-calls";
@@ -29,11 +29,11 @@ public sealed class RtcCallTests
     [Fact]
     public async Task CallOverMatrixRtc()
     {
-        // LiveKit, and the homeserver with its authorization service
+        // The SFU, and the homeserver with its authorization service
         string program = Environment.GetEnvironmentVariable("LIVEKIT_SERVER") ?? "";
         if (!File.Exists(program)) Assert.Skip("Set LIVEKIT_SERVER to the livekit-server program to run this test.");
         string directory = Directory.CreateTempSubdirectory("uniform-rtc-call-").FullName;
-        using Process livekit = await StartLiveKitAsync(program, directory);
+        using Process livekit = await StartSfuAsync(program, directory);
         WebApplication server = await StartHomeserverAsync(directory);
         try
         {
@@ -142,10 +142,10 @@ public sealed class RtcCallTests
         return app;
     }
 
-    /// <summary>Start the homeserver on a fixed port, its public URL known before it starts, with LiveKit on.</summary>
+    /// <summary>Start the homeserver on a fixed port, its public URL known before it starts, with the SFU on.</summary>
     private static async Task<WebApplication> StartHomeserverAsync(string directory)
     {
-        // Open registration, LiveKit at the test's server
+        // Open registration, the SFU at the test's server
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
@@ -154,7 +154,7 @@ public sealed class RtcCallTests
             ["Server:Registration"] = "Open",
             ["Storage:DataDirectory"] = Path.Combine(directory, "server"),
             ["MatrixRtc:Enabled"] = "true",
-            ["MatrixRtc:Url"] = $"ws://127.0.0.1:{LiveKitPort}",
+            ["MatrixRtc:Url"] = $"ws://127.0.0.1:{SfuPort}",
             ["MatrixRtc:ApiKey"] = ApiKey,
             ["MatrixRtc:ApiSecret"] = ApiSecret,
         });
@@ -162,21 +162,21 @@ public sealed class RtcCallTests
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(new TestLoggerProvider("server"));
         builder.AddMatrixServer();
-        builder.AddEmbeddedLiveKit();
+        builder.AddEmbeddedMatrixRtc();
         WebApplication app = builder.Build();
         app.MapMatrixServer();
-        app.MapEmbeddedLiveKit();
+        app.MapEmbeddedMatrixRtc();
         await app.StartAsync(Ct);
         // Return server
         return app;
     }
 
-    /// <summary>Start LiveKit's server on loopback, and return once it answers.</summary>
-    private static async Task<Process> StartLiveKitAsync(string program, string directory)
+    /// <summary>Start the SFU's server on loopback, and return once it answers.</summary>
+    private static async Task<Process> StartSfuAsync(string program, string directory)
     {
         // Its configuration
         string config = Path.Combine(directory, "livekit.yaml");
-        await File.WriteAllTextAsync(config, $"port: {LiveKitPort}\nbind_addresses: [\"127.0.0.1\"]\nrtc:\n  tcp_port: {LiveKitPort + 1}\n  udp_port: {LiveKitPort + 2}\n  use_external_ip: false\nkeys:\n  {ApiKey}: {ApiSecret}\nroom:\n  auto_create: false\n", Ct);
+        await File.WriteAllTextAsync(config, $"port: {SfuPort}\nbind_addresses: [\"127.0.0.1\"]\nrtc:\n  tcp_port: {SfuPort + 1}\n  udp_port: {SfuPort + 2}\n  use_external_ip: false\nkeys:\n  {ApiKey}: {ApiSecret}\nroom:\n  auto_create: false\n", Ct);
         Process process = Process.Start(new ProcessStartInfo(program, ["--config", config]) { RedirectStandardOutput = true, RedirectStandardError = true }) ?? throw new InvalidOperationException("livekit-server did not start.");
         process.OutputDataReceived += (_, _) => { };
         process.ErrorDataReceived += (_, _) => { };
@@ -189,7 +189,7 @@ public sealed class RtcCallTests
         {
             try
             {
-                await http.GetAsync($"http://127.0.0.1:{LiveKitPort}/", Ct);
+                await http.GetAsync($"http://127.0.0.1:{SfuPort}/", Ct);
                 return process;
             }
             catch (HttpRequestException)

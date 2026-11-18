@@ -42,7 +42,7 @@ public partial class SettingsTableTests
             builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Storage:DataDirectory"] = directory });
             builder.AddMatrixServer();
             builder.AddTurnServer();
-            builder.AddLiveKitAuthorization();
+            builder.AddMatrixRtcAuthorization();
             builder.Services.AddOptionSection<ServerHostOptions>(builder.Configuration, ServerHostOptions.Section);
 
             // Act and assert
@@ -68,11 +68,11 @@ public partial class SettingsTableTests
 
     /// <summary>The MatrixRTC authorization service's settings table lists its settings and their defaults.</summary>
     [Fact]
-    public void MatchLiveKitServerSettings()
+    public void MatchMatrixRtcServerSettings()
     {
         // Arrange: the sections the program registers
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings { ApplicationName = "Uniform.Matrix.Docs.Tests", DisableDefaults = true });
-        builder.AddLiveKitAuthorization();
+        builder.AddMatrixRtcAuthorization();
 
         // Act and assert
         AssertTable("user-docs/Uniform.MatrixRtc.Server/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));

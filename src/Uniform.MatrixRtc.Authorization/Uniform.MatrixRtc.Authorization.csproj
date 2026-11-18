@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>A MatrixRTC authorization service compatible with lk-jwt-service: verifies Matrix OpenID tokens over federation and issues LiveKit access tokens for the calls' rooms.</Description>
+    <Description>A MatrixRTC authorization service compatible with lk-jwt-service: verifies Matrix OpenID tokens over federation and issues the SFU access tokens for the calls' rooms.</Description>
     <PackageTags>livekit;matrixrtc;matrix;jwt;openid</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

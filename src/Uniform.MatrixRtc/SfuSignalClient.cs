@@ -6,10 +6,10 @@ using global::LiveKit.Proto;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-/// <summary>LiveKit's signalling: a WebSocket to the server's <c>/rtc</c>, with protobuf <see cref="SignalRequest"/> messages out and <see cref="SignalResponse"/> messages in, and the pings that keep it open.</summary>
-/// <remarks>It joins with two peer connections, as LiveKit's clients did before the single one: the server offers the subscriber's, and this side offers the publisher's.</remarks>
+/// <summary>The SFU's signalling: a WebSocket to the server's <c>/rtc</c>, with protobuf <see cref="SignalRequest"/> messages out and <see cref="SignalResponse"/> messages in, and the pings that keep it open.</summary>
+/// <remarks>It joins with two peer connections, as the SFU's clients did before the single one: the server offers the subscriber's, and this side offers the publisher's.</remarks>
 /// <see href="https://docs.livekit.io/reference/internals/client-protocol/"/>
-public sealed class LiveKitSignalClient : IAsyncDisposable
+public sealed class SfuSignalClient : IAsyncDisposable
 {
     /// <summary>The signalling protocol this client speaks: the server's offers and answers, and trickled candidates, of two peer connections.</summary>
     public const int ProtocolVersion = 16;
@@ -21,7 +21,7 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
     private Task? pinging;
 
     /// <summary>Create a client over an open socket.</summary>
-    private LiveKitSignalClient(ClientWebSocket socket, JoinResponse join, ILogger logger)
+    private SfuSignalClient(ClientWebSocket socket, JoinResponse join, ILogger logger)
     {
         // The socket and what the server said
         this.socket = socket;
@@ -57,7 +57,7 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
     /// <summary>Connect to the server at <paramref name="url"/> with <paramref name="token"/>, and return the client once the server answered the join; it reads the messages after it from <see cref="Start"/> on, so that none is missed.</summary>
     /// <exception cref="WebSocketException">When the server cannot be reached, or refuses the token.</exception>
     /// <exception cref="InvalidDataException">When the server's first message is not a join, e.g. a leave.</exception>
-    public static async Task<LiveKitSignalClient> ConnectAsync(string url, string token, ILogger? logger = null, bool autoSubscribe = true, CancellationToken cancellationToken = default)
+    public static async Task<SfuSignalClient> ConnectAsync(string url, string token, ILogger? logger = null, bool autoSubscribe = true, CancellationToken cancellationToken = default)
     {
         // The socket, and the join as its first message
         ClientWebSocket socket = new();
@@ -65,10 +65,10 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
         try
         {
             await socket.ConnectAsync(RtcUrl(url, token, autoSubscribe), cancellationToken);
-            SignalResponse first = await ReceiveAsync(socket, cancellationToken) ?? throw new InvalidDataException("LiveKit closed before joining.");
-            if (first.MessageCase != SignalResponse.MessageOneofCase.Join) throw new InvalidDataException($"LiveKit answered the join with {first.MessageCase}.");
+            SignalResponse first = await ReceiveAsync(socket, cancellationToken) ?? throw new InvalidDataException("SFU closed before joining.");
+            if (first.MessageCase != SignalResponse.MessageOneofCase.Join) throw new InvalidDataException($"SFU answered the join with {first.MessageCase}.");
             // Return client
-            return new LiveKitSignalClient(socket, first.Join, logger ?? NullLogger.Instance);
+            return new SfuSignalClient(socket, first.Join, logger ?? NullLogger.Instance);
         }
         catch
         {
@@ -102,7 +102,7 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
         catch (Exception e) when (e is WebSocketException or ObjectDisposedException)
         {
             // On a socket that closed meanwhile
-            logger.LogDebug(e, "LiveKit signal message not sent");
+            logger.LogDebug(e, "SFU signal message not sent");
         }
         finally
         {
@@ -142,13 +142,13 @@ public sealed class LiveKitSignalClient : IAsyncDisposable
             {
                 if (response.MessageCase == SignalResponse.MessageOneofCase.PongResp) RoundTrip = TimeSpan.FromMilliseconds(Math.Max(0, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - response.PongResp.LastPingTimestamp));
                 try { MessageReceived?.Invoke(response); }
-                catch (Exception e) { logger.LogWarning(e, "LiveKit signal message {Message} failed", response.MessageCase); }
+                catch (Exception e) { logger.LogWarning(e, "SFU signal message {Message} failed", response.MessageCase); }
             }
         }
         catch (Exception e) when (e is WebSocketException or OperationCanceledException or InvalidProtocolBufferException or ObjectDisposedException)
         {
             // On a socket that broke or closed
-            if (!stopping.IsCancellationRequested) logger.LogInformation("LiveKit signalling ended: {Error}", Describe(e));
+            if (!stopping.IsCancellationRequested) logger.LogInformation("SFU signalling ended: {Error}", Describe(e));
         }
         // Done
         Closed?.Invoke();

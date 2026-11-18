@@ -4,16 +4,16 @@ using System.Net;
 using Microsoft.Extensions.Logging;
 using Uniform.MatrixRtc.Protocol;
 
-/// <summary>Exchanges Matrix OpenID tokens for LiveKit access tokens to a call's room, as lk-jwt-service does: the user is verified with their homeserver; users of full-access homeservers may publish and get the room created, others only join rooms that exist.</summary>
+/// <summary>Exchanges Matrix OpenID tokens for the SFU access tokens to a call's room, as lk-jwt-service does: the user is verified with their homeserver; users of full-access homeservers may publish and get the room created, others only join rooms that exist.</summary>
 /// <see href="https://github.com/element-hq/lk-jwt-service"/>
 /// <param name="options">The current settings, read at each request, so changes apply at once.</param>
 /// <param name="verifier">Verifies OpenID tokens.</param>
-/// <param name="http">The client of LiveKit's room service.</param>
+/// <param name="http">The client of the SFU's room service.</param>
 /// <param name="time">Clock of the tokens.</param>
 /// <param name="logger">Logger of the decisions.</param>
 /// <param name="membership">When given, only users joined to the Matrix room get tokens; lk-jwt-service does not check this, as it has no room state.</param>
 /// <param name="keeper">When given, keeps the delayed leaves that full-access members hand over with <c>delay_id</c>; without, they are accepted and left to the members.</param>
-public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<LiveKitAuthorizer> logger, IRoomMembership? membership = null, DelayedLeaveKeeper? keeper = null)
+public sealed class MatrixRtcAuthorizer(Func<MatrixRtcAuthorizerOptions> options, IOpenIdVerifier verifier, HttpClient http, TimeProvider time, ILogger<MatrixRtcAuthorizer> logger, IRoomMembership? membership = null, DelayedLeaveKeeper? keeper = null)
 {
     /// <summary>How long a created room waits for its first participant.</summary>
     public static readonly TimeSpan EmptyTimeout = TimeSpan.FromMinutes(5);
@@ -137,14 +137,14 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
     /// <param name="userId">The verified user.</param>
     /// <param name="token">The user's OpenID token, whose homeserver decides the access.</param>
     /// <param name="request">The request, whose delayed leave only full access may hand over.</param>
-    /// <param name="identity">The LiveKit identity.</param>
-    /// <param name="room">The LiveKit room.</param>
+    /// <param name="identity">The SFU identity.</param>
+    /// <param name="room">The SFU room.</param>
     /// <param name="cancellationToken">Cancels creating the room.</param>
     private async Task<SfuResponse> IssueAsync(string userId, OpenIdToken token, DelayedLeave request, string identity, string room, CancellationToken cancellationToken)
     {
-        // Assert a configured LiveKit
-        LiveKitAuthorizerOptions settings = options();
-        if (settings.Url.Length == 0 || settings.ApiKey.Length == 0 || settings.ApiSecret.Length == 0) throw new AuthorizationException(HttpStatusCode.InternalServerError, AuthorizationError.Unknown, "LiveKit is not configured.");
+        // Assert a configured SFU
+        MatrixRtcAuthorizerOptions settings = options();
+        if (settings.Url.Length == 0 || settings.ApiKey.Length == 0 || settings.ApiSecret.Length == 0) throw new AuthorizationException(HttpStatusCode.InternalServerError, AuthorizationError.Unknown, "SFU is not configured.");
 
         // Full access creates the room, so that others may join it; delayed leaves are its alone
         bool full = settings.HasFullAccess(token.MatrixServerName!);
@@ -153,11 +153,11 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
         {
             try
             {
-                await new LiveKitRoomService(http, settings.Url, settings.ApiKey, settings.ApiSecret, time).CreateRoomAsync(room, EmptyTimeout, DepartureTimeout, 0, cancellationToken).ConfigureAwait(false);
+                await new SfuRoomService(http, settings.Url, settings.ApiKey, settings.ApiSecret, time).CreateRoomAsync(room, EmptyTimeout, DepartureTimeout, 0, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e) when (e is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
             {
-                logger.LogError(e, "Could not create LiveKit room {Room}", room);
+                logger.LogError(e, "Could not create the SFU room {Room}", room);
                 throw new AuthorizationException(HttpStatusCode.InternalServerError, AuthorizationError.Unknown, "Unable to create the call's room.");
             }
         }
@@ -168,7 +168,7 @@ public sealed class LiveKitAuthorizer(Func<LiveKitAuthorizerOptions> options, IO
         // Join, publish only with full access
         VideoGrant grant = new() { RoomJoin = true, RoomCreate = false, Hidden = false, Room = room, CanPublish = full, CanPublishData = full, CanSubscribe = true, CanUpdateOwnMetadata = settings.CanUpdateOwnMetadata };
         string jwt = AccessToken.Create(settings.ApiKey, identity, grant, time.GetUtcNow(), settings.TokenLifetime).Sign(settings.ApiSecret);
-        logger.LogInformation("Issued a LiveKit token for {User} to room {Room}, {Access} access", userId, room, full ? "full" : "restricted");
+        logger.LogInformation("Issued an SFU token for {User} to room {Room}, {Access} access", userId, room, full ? "full" : "restricted");
         // Return answer
         return new SfuResponse { Url = settings.Url, Jwt = jwt };
     }

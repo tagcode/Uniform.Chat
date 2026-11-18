@@ -4,28 +4,28 @@ using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Uniform.MatrixRtc;
 
-/// <summary>Keeps the delayed leaves (MSC4140) that members handed over: while a member is on LiveKit, its delayed leave is restarted before it goes off; once LiveKit no longer has the member, the leave is sent at once, so the member's call membership ends.</summary>
+/// <summary>Keeps the delayed leaves (MSC4140) that members handed over: while a member is on the SFU, its delayed leave is restarted before it goes off; once the SFU no longer has the member, the leave is sent at once, so the member's call membership ends.</summary>
 /// <remarks>
-/// A job waits for the member to appear in its LiveKit room, up to the delay, then looks every <see cref="CheckInterval"/> whether it is still there; it restarts the delayed event at four fifths of its delay, as lk-jwt-service does. A job of the same member in the same room replaces the earlier one. Jobs live in memory: after a restart of the service, the homeserver sends a member's leave when its delay runs out.
+/// A job waits for the member to appear in its SFU room, up to the delay, then looks every <see cref="CheckInterval"/> whether it is still there; it restarts the delayed event at four fifths of its delay, as lk-jwt-service does. A job of the same member in the same room replaces the earlier one. Jobs live in memory: after a restart of the service, the homeserver sends a member's leave when its delay runs out.
 /// </remarks>
-/// <param name="options">The current settings, for LiveKit's URL and keys.</param>
+/// <param name="options">The current settings, for the SFU's URL and keys.</param>
 /// <param name="events">Acts on the delayed events at the members' homeservers.</param>
-/// <param name="http">The client of LiveKit's room service.</param>
+/// <param name="http">The client of the SFU's room service.</param>
 /// <param name="time">The clock.</param>
 /// <param name="logger">Logger of the jobs.</param>
-public sealed class DelayedLeaveKeeper(Func<LiveKitAuthorizerOptions> options, IDelayedEvents events, HttpClient http, TimeProvider time, ILogger<DelayedLeaveKeeper> logger) : IAsyncDisposable
+public sealed class DelayedLeaveKeeper(Func<MatrixRtcAuthorizerOptions> options, IDelayedEvents events, HttpClient http, TimeProvider time, ILogger<DelayedLeaveKeeper> logger) : IAsyncDisposable
 {
-    /// <summary>How often a job looks whether its member is still on LiveKit.</summary>
+    /// <summary>How often a job looks whether its member is still on the SFU.</summary>
     public static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(5);
     /// <summary>The longest delay taken, as lk-jwt-service takes.</summary>
     public static readonly TimeSpan MostDelay = TimeSpan.FromHours(1);
     private readonly ConcurrentDictionary<(string Room, string Identity), Job> jobs = new();
     private readonly CancellationTokenSource stopping = new();
 
-    /// <summary>The members whose leaves are kept now, by LiveKit room and identity.</summary>
+    /// <summary>The members whose leaves are kept now, by the SFU room and identity.</summary>
     public IReadOnlyCollection<(string Room, string Identity)> Members => [.. jobs.Keys];
 
-    /// <summary>Keep the delayed leave <paramref name="delayId"/> of a user of <paramref name="serverName"/>, whose participant is <paramref name="identity"/> in LiveKit room <paramref name="room"/>, with a delay of <paramref name="delay"/>.</summary>
+    /// <summary>Keep the delayed leave <paramref name="delayId"/> of a user of <paramref name="serverName"/>, whose participant is <paramref name="identity"/> in the SFU room <paramref name="room"/>, with a delay of <paramref name="delay"/>.</summary>
     public void Keep(string serverName, string delayId, TimeSpan delay, string room, string identity)
     {
         // A new job, replacing the member's earlier one
@@ -64,7 +64,7 @@ public sealed class DelayedLeaveKeeper(Func<LiveKitAuthorizerOptions> options, I
                 await Task.Delay(CheckInterval, time, cancellationToken);
                 if (await IsPresentAsync(job, cancellationToken) == false)
                 {
-                    logger.LogInformation("{Identity} left LiveKit room {Room}; sending its delayed leave", job.Identity, job.Room);
+                    logger.LogInformation("{Identity} left the SFU room {Room}; sending its delayed leave", job.Identity, job.Room);
                     await UpdateAsync(job, "send", cancellationToken);
                     return;
                 }
@@ -89,7 +89,7 @@ public sealed class DelayedLeaveKeeper(Func<LiveKitAuthorizerOptions> options, I
         }
     }
 
-    /// <summary>Return true once the member is on LiveKit, restarting its delayed leave meanwhile; false when it never came within the delay, or the leave is gone.</summary>
+    /// <summary>Return true once the member is on the SFU, restarting its delayed leave meanwhile; false when it never came within the delay, or the leave is gone.</summary>
     private async Task<bool> WaitForMemberAsync(Job job, CancellationToken cancellationToken)
     {
         // Looked for at each check
@@ -106,23 +106,23 @@ public sealed class DelayedLeaveKeeper(Func<LiveKitAuthorizerOptions> options, I
             await Task.Delay(CheckInterval, time, cancellationToken);
         }
         // On a member that never came
-        logger.LogInformation("{Identity} never joined LiveKit room {Room}; its delayed leave goes off by itself", job.Identity, job.Room);
+        logger.LogInformation("{Identity} never joined the SFU room {Room}; its delayed leave goes off by itself", job.Identity, job.Room);
         return false;
     }
 
-    /// <summary>Return whether the member is in its LiveKit room; null when LiveKit could not be asked, which keeps the leave as it is.</summary>
+    /// <summary>Return whether the member is in its SFU room; null when the SFU could not be asked, which keeps the leave as it is.</summary>
     private async Task<bool?> IsPresentAsync(Job job, CancellationToken cancellationToken)
     {
-        // LiveKit's room service with the current keys
-        LiveKitAuthorizerOptions settings = options();
+        // The SFU's room service with the current keys
+        MatrixRtcAuthorizerOptions settings = options();
         try
         {
-            return await new LiveKitRoomService(http, settings.Url, settings.ApiKey, settings.ApiSecret, time).HasParticipantAsync(job.Room, job.Identity, cancellationToken).ConfigureAwait(false);
+            return await new SfuRoomService(http, settings.Url, settings.ApiKey, settings.ApiSecret, time).HasParticipantAsync(job.Room, job.Identity, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception e) when (e is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
         {
-            // On LiveKit not answering: no verdict
-            logger.LogDebug(e, "Asking LiveKit for {Identity} failed", job.Identity);
+            // On the SFU not answering: no verdict
+            logger.LogDebug(e, "Asking the SFU for {Identity} failed", job.Identity);
             return null;
         }
     }
@@ -149,7 +149,7 @@ public sealed class DelayedLeaveKeeper(Func<LiveKitAuthorizerOptions> options, I
     /// <param name="ServerName">The member's homeserver.</param>
     /// <param name="DelayId">The delayed event's ID.</param>
     /// <param name="Delay">Its delay.</param>
-    /// <param name="Room">The LiveKit room.</param>
+    /// <param name="Room">The SFU room.</param>
     /// <param name="Identity">The member's participant identity.</param>
     /// <param name="Stopping">Ends the job.</param>
     private sealed record Job(string ServerName, string DelayId, TimeSpan Delay, string Room, string Identity, CancellationTokenSource Stopping)

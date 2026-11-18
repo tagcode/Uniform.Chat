@@ -13,7 +13,7 @@
 - name: Calls through firewalls
   uid: Uniform.Chat.Server.Turn.Article
 - name: Video calls in Element X
-  uid: Uniform.Chat.Server.LiveKit.Article
+  uid: Uniform.Chat.Server.MatrixRtc.Article
 - name: Connecting clients
   uid: Uniform.Chat.Server.Clients.Article
 - name: Files

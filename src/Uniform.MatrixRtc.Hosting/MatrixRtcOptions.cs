@@ -12,10 +12,10 @@ public sealed class MatrixRtcOptions
     /// <summary>Whether to serve the authorization service.</summary>
     public bool Enabled { get; set; }
 
-    /// <summary>LiveKit's WebSocket URL that clients join, e.g. <c>wss://livekit.example.org</c>.</summary>
+    /// <summary>The SFU's WebSocket URL that clients join, e.g. <c>wss://livekit.example.org</c>.</summary>
     public string? Url { get; set; }
 
-    /// <summary>The API key of LiveKit, a key of its <c>keys</c> setting.</summary>
+    /// <summary>The API key of the SFU, a key of its <c>keys</c> setting.</summary>
     public string? ApiKey { get; set; }
 
     /// <summary>The API secret of the key.</summary>
@@ -32,7 +32,7 @@ public sealed class MatrixRtcOptions
     public bool CanUpdateOwnMetadata { get; set; }
 
     /// <summary>Return what the authorizer needs.</summary>
-    public LiveKitAuthorizerOptions ToAuthorizer() => new()
+    public MatrixRtcAuthorizerOptions ToAuthorizer() => new()
     {
         Url = Url ?? "",
         ApiKey = ApiKey ?? "",

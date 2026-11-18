@@ -25,7 +25,7 @@ internal sealed record RtcContext
     public required string OwnUserId { get; init; }
     /// <summary>This device.</summary>
     public required string OwnDeviceId { get; init; }
-    /// <summary>The homeserver's LiveKit transport, that this side publishes on.</summary>
+    /// <summary>The homeserver's the SFU transport, that this side publishes on.</summary>
     public required RtcTransport Transport { get; init; }
     /// <summary>Sends a room event at once, encrypted in encrypted rooms, and returns its ID.</summary>
     public required Func<string, object, CancellationToken, Task<string>> SendEvent { get; init; }
@@ -33,18 +33,18 @@ internal sealed record RtcContext
     public required Func<string, JsonObject, IReadOnlyCollection<(string UserId, string DeviceId)>, CancellationToken, Task<int>> SendToDevices { get; init; }
     /// <summary>Whether the room is encrypted, so the media are too.</summary>
     public required bool Encrypted { get; init; }
-    /// <summary>Options of the LiveKit connections, with the homeserver's TURN servers.</summary>
-    public required LiveKitRoomOptions RoomOptions { get; init; }
+    /// <summary>Options of the SFU connections, with the homeserver's TURN servers.</summary>
+    public required SfuRoomOptions RoomOptions { get; init; }
     /// <summary>Client of the authorization services.</summary>
     public required HttpClient Http { get; init; }
     /// <summary>Returns the members' devices of the room's call now, from the synced state.</summary>
     public required Func<IReadOnlyList<(string UserId, string DeviceId, CallMemberContent Membership)>> ReadMembers { get; init; }
 }
 
-/// <summary>A 1:1 call over <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4143">MatrixRTC</see>, as Element X and Element Call make them: each side's membership in the room's call as a state event, a ring notification, the media through LiveKit SFUs, and the frames encrypted with keys sent to each member's device.</summary>
+/// <summary>A 1:1 call over <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4143">MatrixRTC</see>, as Element X and Element Call make them: each side's membership in the room's call as a state event, a ring notification, the media through SFUs, and the frames encrypted with keys sent to each member's device.</summary>
 /// <remarks>
 /// <list type="bullet">
-/// <item><description>Joining: an OpenID token buys a LiveKit token from the homeserver's authorization service, this side publishes on its SFU, and writes its membership, <c>_{user}_{device}_m.call</c>, with a delayed event that empties it unless restarted every few seconds.</description></item>
+/// <item><description>Joining: an OpenID token buys an SFU token from the homeserver's authorization service, this side publishes on its SFU, and writes its membership, <c>_{user}_{device}_m.call</c>, with a delayed event that empties it unless restarted every few seconds.</description></item>
 /// <item><description>The caller rings the room with <c>rtc.notification</c>; the callee declines with <c>rtc.decline</c>, or answers by joining.</description></item>
 /// <item><description>Each side sends its media key in <c>io.element.call.encryption_keys</c> to the other's call devices over Olm, and subscribes to the other on its SFU, the same one when they share a homeserver.</description></item>
 /// <item><description>The call ends when the peer's membership goes, empty or expired.</description></item>
@@ -58,7 +58,7 @@ public sealed class RtcCall : VoiceCall
     public static readonly TimeSpan LeaveDelay = TimeSpan.FromSeconds(18);
     /// <summary>How often the delayed leave is restarted.</summary>
     public static readonly TimeSpan LeaveRestart = TimeSpan.FromSeconds(4);
-    /// <summary>The delay of a leave handed to the authorization service, which keeps it while this side is on LiveKit, as Element Call has it.</summary>
+    /// <summary>The delay of a leave handed to the authorization service, which keeps it while this side is on the SFU, as Element Call has it.</summary>
     public static readonly TimeSpan HandedLeaveDelay = TimeSpan.FromHours(1);
     /// <summary>How often a handed-over leave is restarted by this side too.</summary>
     public static readonly TimeSpan HandedLeaveRestart = TimeSpan.FromMinutes(5);
@@ -70,10 +70,10 @@ public sealed class RtcCall : VoiceCall
     private readonly string? notificationId;
     private readonly HashSet<string> keyedDevices = [];
     private readonly Dictionary<string, (byte Index, byte[] Key)> earlyKeys = [];
-    private readonly Dictionary<string, LiveKitRoom> otherSfus = [];
+    private readonly Dictionary<string, SfuRoom> otherSfus = [];
     private readonly byte[] ownKey = RandomNumberGenerator.GetBytes(32);
-    private LiveKitRoom? room;
-    private LiveKitMedia? media;
+    private SfuRoom? room;
+    private SfuMedia? media;
     private string? delayId;
     private string? ownNotificationId;
     private bool peerSeen;
@@ -279,13 +279,13 @@ public sealed class RtcCall : VoiceCall
         media.SetKey(identity, (byte)key.Index, raw);
     }
 
-    /// <summary>Join the call: a LiveKit token, publish on the SFU, the membership with its delayed leave, and the media; return the membership's event ID.</summary>
+    /// <summary>Join the call: an SFU token, publish on the SFU, the membership with its delayed leave, and the media; return the membership's event ID.</summary>
     private async Task<string> JoinAsync(bool video, CancellationToken cancellationToken)
     {
         // Published, with the media on it
         sendsVideo = video;
         room = await ConnectRoomAsync(cancellationToken);
-        LiveKitMedia opened = new(room, context.Encrypted);
+        SfuMedia opened = new(room, context.Encrypted);
         opened.OwnKey.SetKey(0, ownKey);
         opened.DecryptionFailed += identity => logger.LogDebug("MatrixRTC frame of {Identity} did not decrypt", identity);
         lock (earlyKeys)
@@ -301,7 +301,7 @@ public sealed class RtcCall : VoiceCall
         // The membership, emptied after a delay unless restarted, by the service when it takes the leave
         handsOverLeave = await ServiceKeepsLeavesAsync(cancellationToken);
         await ArmLeaveAsync(cancellationToken);
-        membership = new() { Application = Application, CallId = "", Scope = "m.room", DeviceId = context.OwnDeviceId, FocusActive = new RtcFocusActive(), FociPreferred = [context.Transport with { LivekitAlias = RoomId }], Expires = (long)MembershipExpiry.TotalMilliseconds, CallIntent = IsVideo ? "video" : "audio", MembershipId = OwnIdentity };
+        membership = new() { Application = Application, CallId = "", Scope = "m.room", DeviceId = context.OwnDeviceId, FocusActive = new RtcFocusActive(), FociPreferred = [context.Transport with { Alias = RoomId }], Expires = (long)MembershipExpiry.TotalMilliseconds, CallIntent = IsVideo ? "video" : "audio", MembershipId = OwnIdentity };
         string membershipId = await context.Client.SendStateEventAsync(RoomId, EventTypes.CallMember, membership, StateKey, cancellationToken);
         joined = true;
         _ = KeepAliveAsync();
@@ -311,15 +311,15 @@ public sealed class RtcCall : VoiceCall
     }
 
     /// <summary>Connect to this side's SFU with a new publisher's token, publish, and follow the connection: its loss reconnects.</summary>
-    private async Task<LiveKitRoom> ConnectRoomAsync(CancellationToken cancellationToken)
+    private async Task<SfuRoom> ConnectRoomAsync(CancellationToken cancellationToken)
     {
         // A publisher's token from the homeserver's service
-        string serviceUrl = context.Transport.LivekitServiceUrl ?? throw new InvalidOperationException("The homeserver's transport has no LiveKit service.");
+        string serviceUrl = context.Transport.ServiceUrl ?? throw new InvalidOperationException("The homeserver's transport has no SFU service.");
         OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(cancellationToken);
         SfuResponse sfu = await new MatrixRtcAuthorizationClient(context.Http, serviceUrl).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn } }, cancellationToken);
 
         // Joined and published; a lost signalling or media path reconnects, while this is the current room
-        LiveKitRoom connected = await LiveKitRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, cancellationToken);
+        SfuRoom connected = await SfuRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, cancellationToken);
         try
         {
             connected.Closed += () => { if (ReferenceEquals(connected, room)) _ = ReconnectAsync("signalling closed"); };
@@ -367,12 +367,12 @@ public sealed class RtcCall : VoiceCall
                 try
                 {
                     // A new room, the media moved to it, then the old one left
-                    LiveKitRoom replacement = await ConnectRoomAsync(ending.Token);
-                    LiveKitRoom? old = room;
+                    SfuRoom replacement = await ConnectRoomAsync(ending.Token);
+                    SfuRoom? old = room;
                     room = replacement;
                     if (old is not null) media!.Replace(old, replacement);
                     if (old is not null) await old.DisposeAsync();
-                    foreach (LiveKitRoom other in otherSfus.Values)
+                    foreach (SfuRoom other in otherSfus.Values)
                     {
                         media!.Unsubscribe(other);
                         await other.DisposeAsync();
@@ -429,13 +429,13 @@ public sealed class RtcCall : VoiceCall
     private async Task SubscribeAsync(CallMemberContent membership)
     {
         // Another service than this side's
-        if (membership.FociPreferred?.FirstOrDefault(f => f.Type == RtcTransport.LiveKit) is not { LivekitServiceUrl: string serviceUrl } || serviceUrl.TrimEnd('/') == context.Transport.LivekitServiceUrl?.TrimEnd('/') || otherSfus.ContainsKey(serviceUrl) || media is null) return;
+        if (membership.FociPreferred?.FirstOrDefault(f => f.Type == RtcTransport.Sfu) is not { ServiceUrl: string serviceUrl } || serviceUrl.TrimEnd('/') == context.Transport.ServiceUrl?.TrimEnd('/') || otherSfus.ContainsKey(serviceUrl) || media is null) return;
         try
         {
             // A subscriber's token there, then its media
             OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(ending.Token);
             SfuResponse sfu = await new MatrixRtcAuthorizationClient(context.Http, serviceUrl).GetTokenAsync(new TokenRequest { RoomId = RoomId, SlotId = MatrixRtcNames.RoomCallSlot, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn }, Member = new CallMember { Id = Guid.NewGuid().ToString(), ClaimedUserId = context.OwnUserId, ClaimedDeviceId = context.OwnDeviceId } }, ending.Token);
-            LiveKitRoom other = await LiveKitRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, ending.Token);
+            SfuRoom other = await SfuRoom.ConnectAsync(sfu.Url, sfu.Jwt, context.RoomOptions, logger, ending.Token);
             otherSfus[serviceUrl] = other;
             media.Subscribe(other);
             // Done
@@ -502,7 +502,7 @@ public sealed class RtcCall : VoiceCall
         {
             // As Element Call does: a publisher's request with the leave, whose token is not needed
             OpenIdTokenResponse openId = await context.Client.RequestOpenIdTokenAsync(cancellationToken);
-            await new MatrixRtcAuthorizationClient(context.Http, context.Transport.LivekitServiceUrl!).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn }, DelayId = delayId, DelayTimeout = (long)HandedLeaveDelay.TotalMilliseconds, DelayClientServerApiUrl = context.Client.Homeserver.AbsoluteUri.TrimEnd('/') }, cancellationToken);
+            await new MatrixRtcAuthorizationClient(context.Http, context.Transport.ServiceUrl!).GetLegacyAsync(new LegacySfuRequest { Room = RoomId, DeviceId = context.OwnDeviceId, OpenIdToken = new OpenIdToken { AccessToken = openId.AccessToken, TokenType = openId.TokenType, MatrixServerName = openId.MatrixServerName, ExpiresIn = openId.ExpiresIn }, DelayId = delayId, DelayTimeout = (long)HandedLeaveDelay.TotalMilliseconds, DelayClientServerApiUrl = context.Client.Homeserver.AbsoluteUri.TrimEnd('/') }, cancellationToken);
             logger.LogInformation("Delayed leave of MatrixRTC call in {RoomId} handed to the authorization service", RoomId);
         }
         catch (Exception e) when (e is HttpRequestException or MatrixException or System.Text.Json.JsonException)
@@ -522,7 +522,7 @@ public sealed class RtcCall : VoiceCall
         // Anything but 404 means there
         try
         {
-            using HttpResponseMessage response = await context.Http.PostAsync($"{context.Transport.LivekitServiceUrl!.TrimEnd('/')}/delegate_delayed_leave", null, cancellationToken);
+            using HttpResponseMessage response = await context.Http.PostAsync($"{context.Transport.ServiceUrl!.TrimEnd('/')}/delegate_delayed_leave", null, cancellationToken);
             return response.StatusCode != System.Net.HttpStatusCode.NotFound;
         }
         catch (HttpRequestException)
@@ -567,7 +567,7 @@ public sealed class RtcCall : VoiceCall
                 logger.LogInformation("Leaving MatrixRTC call in {RoomId} now failed: {Error}", RoomId, e.Describe());
             }
         }
-        foreach (LiveKitRoom other in otherSfus.Values) await other.DisposeAsync();
+        foreach (SfuRoom other in otherSfus.Values) await other.DisposeAsync();
         // Done
         if (room is not null) await room.DisposeAsync();
     }

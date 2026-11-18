@@ -3,7 +3,7 @@ namespace Uniform.MatrixRtc.Tests;
 using System.Net;
 using System.Text;
 
-/// <summary>Answers HTTP requests by URL as homeservers and LiveKit would, and records them: OpenID tokens of <see cref="Users"/>, <c>.well-known</c> delegations of <see cref="Delegations"/>, and LiveKit's CreateRoom.</summary>
+/// <summary>Answers HTTP requests by URL as homeservers and the SFU would, and records them: OpenID tokens of <see cref="Users"/>, <c>.well-known</c> delegations of <see cref="Delegations"/>, and the SFU's CreateRoom.</summary>
 internal sealed class FakeNetwork : HttpMessageHandler
 {
     /// <summary>Users by OpenID token, answered at any homeserver's <c>userinfo</c>.</summary>
@@ -12,8 +12,8 @@ internal sealed class FakeNetwork : HttpMessageHandler
     public Dictionary<string, string> Delegations { get; } = [];
     /// <summary>Request URLs in order.</summary>
     public List<string> Requests { get; } = [];
-    /// <summary>Bodies of LiveKit calls, with their authorization.</summary>
-    public List<(string Body, string? Authorization)> LiveKitCalls { get; } = [];
+    /// <summary>Bodies of the SFU calls, with their authorization.</summary>
+    public List<(string Body, string? Authorization)> SfuCalls { get; } = [];
 
     /// <summary>Return a client over this network.</summary>
     public HttpClient CreateClient() => new(this);
@@ -32,7 +32,7 @@ internal sealed class FakeNetwork : HttpMessageHandler
         }
         if (url.AbsolutePath.StartsWith("/twirp/livekit.RoomService/", StringComparison.Ordinal))
         {
-            LiveKitCalls.Add((await request.Content!.ReadAsStringAsync(cancellationToken), request.Headers.Authorization?.Parameter));
+            SfuCalls.Add((await request.Content!.ReadAsStringAsync(cancellationToken), request.Headers.Authorization?.Parameter));
             return Json("""{"name":"room"}""");
         }
         // Return none

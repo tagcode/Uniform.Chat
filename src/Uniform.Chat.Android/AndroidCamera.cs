@@ -11,7 +11,7 @@ using Uniform.Matrix.Calls;
 /// <summary>The front camera with Android's VP8 encoder, for a call's video: Camera2 renders into the encoder's input surface, and each encoded frame comes in <see cref="FrameEncoded"/>.</summary>
 /// <remarks>
 /// The picture is the sensor's, landscape 640x480 at up to 30 frames per second, or 320x240 at 10 when the peer asks for less, as a slow receiver does; the encoder makes a keyframe every two seconds and when asked.
-/// With <see cref="Upright"/>, as through LiveKit, which does not pass the rotation on, Camera2 renders into an image reader instead; each picture is turned upright in C# and written into the encoder's input, and the encoder starts again at the other shape when the phone turns between portrait and landscape.
+/// With <see cref="Upright"/>, as through the SFU, which does not pass the rotation on, Camera2 renders into an image reader instead; each picture is turned upright in C# and written into the encoder's input, and the encoder starts again at the other shape when the phone turns between portrait and landscape.
 /// </remarks>
 /// <param name="context">The application.</param>
 public sealed class AndroidCamera(Context context) : IVideoCamera
