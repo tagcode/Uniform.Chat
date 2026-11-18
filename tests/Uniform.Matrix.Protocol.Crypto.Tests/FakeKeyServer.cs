@@ -15,7 +15,11 @@ internal sealed class FakeKeyServer
     private readonly Dictionary<(string User, string Usage), JsonObject> crossSigningKeys = [];
     private readonly Dictionary<(string User, string Type), JsonObject> accountData = [];
     private readonly Dictionary<string, (KeyBackupVersion Version, KeysBackup Keys)> backups = [];
+    private readonly Dictionary<(string User, string Device, string Id), string> uploadedOneTimeKeys = [];
     private int backupVersions;
+
+    /// <summary>Store the next key upload, then fail as if its answer was lost on the way back.</summary>
+    public bool LoseNextUploadAnswer { get; set; }
 
     /// <summary>Times cross-signing keys were uploaded.</summary>
     public int CrossSigningUploads { get; private set; }
@@ -64,9 +68,25 @@ internal sealed class FakeKeyServer
                 devices[device] = (JsonObject)keys.DeepClone();
             }
 
-            // One-time and fallback keys
+            // One-time keys, refused as Synapse does when an ID was uploaded before with other content, and taken once when the same
+            foreach ((string id, JsonNode? key) in oneTime ?? [])
+            {
+                if (server.uploadedOneTimeKeys.TryGetValue((user, device, id), out string? earlier) && earlier != key!["key"]!.GetValue<string>())
+                    throw new MatrixException(HttpStatusCode.BadRequest, ErrorCodes.InvalidParam, $"One-time key {id} already exists with other content.");
+            }
             if (!server.oneTimeKeys.TryGetValue((user, device), out Queue<(string, JsonObject)>? queue)) server.oneTimeKeys[(user, device)] = queue = new();
-            foreach ((string id, JsonNode? key) in oneTime ?? []) queue.Enqueue((id, (JsonObject)key!.DeepClone()));
+            foreach ((string id, JsonNode? key) in oneTime ?? [])
+            {
+                if (!server.uploadedOneTimeKeys.TryAdd((user, device, id), key!["key"]!.GetValue<string>())) continue;
+                queue.Enqueue((id, (JsonObject)key.DeepClone()));
+            }
+
+            // Fallback keys; the answer lost after storing, when asked
+            if (server.LoseNextUploadAnswer)
+            {
+                server.LoseNextUploadAnswer = false;
+                throw new HttpRequestException("The answer was lost.");
+            }
             foreach ((string id, JsonNode? key) in fallback ?? []) server.fallbackKeys[(user, device)] = (id, (JsonObject)key!.DeepClone());
             // Return counts
             return Task.FromResult(new KeysUploadResponse { OneTimeKeyCounts = new Dictionary<string, int> { [EncryptionAlgorithms.SignedCurve25519] = queue.Count } });

@@ -58,7 +58,7 @@ public sealed class MatrixWorker : BackgroundService
                 outbox.Wake();
             }
             network.Changed += OnNetworkChanged;
-            try { await Task.WhenAll(SyncAsync(client, stoppingToken), outbox.RunAsync(client, stoppingToken)); }
+            try { await Task.WhenAll(SyncUntilStoppedAsync(client, stoppingToken), outbox.RunAsync(client, stoppingToken)); }
             finally { network.Changed -= OnNetworkChanged; }
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
@@ -69,6 +69,29 @@ public sealed class MatrixWorker : BackgroundService
         {
             logger.LogCritical(ex, "Matrix worker failed");
             status.Set(ConnectionState.Failed, ex.Message);
+        }
+    }
+
+    /// <summary>Sync until stopped; a sync that fails to be processed, e.g. when the server refuses encryption keys, is logged and synced again from the stored position after a wait, rather than ending syncing for the session. A rejected login still ends it.</summary>
+    private async Task SyncUntilStoppedAsync(MatrixClient client, CancellationToken cancellationToken)
+    {
+        // Waits doubling from 5 s to 5 min while failures repeat
+        TimeSpan wait = TimeSpan.FromSeconds(5);
+        while (true)
+        {
+            try
+            {
+                await SyncAsync(client, cancellationToken);
+                return;
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException && !(exception is MatrixException { Errcode: ErrorCodes.UnknownToken or ErrorCodes.MissingToken }))
+            {
+                // Logged, shown as retrying, then again
+                logger.LogError(exception, "Processing a sync failed; syncing again in {Wait}", wait);
+                status.Set(ConnectionState.Retrying, $"{exception.Message}; retrying in {wait.TotalSeconds:F0} s");
+                await Task.Delay(wait, cancellationToken);
+                wait = TimeSpan.FromTicks(Math.Min(wait.Ticks * 2, TimeSpan.FromMinutes(5).Ticks));
+            }
         }
     }
 

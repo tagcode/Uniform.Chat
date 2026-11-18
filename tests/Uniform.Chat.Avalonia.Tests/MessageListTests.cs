@@ -213,4 +213,24 @@ public class MessageListTests
         // Done: yesterday's message first, no deleted line
         Assert.Equal(["yesterday", "recent"], list.Items.Select(i => i.Text));
     }
+
+    /// <summary>A sync that deletes a shown message long ago, then brings a new one: the deleted row goes, and the new message follows the rest, as removing the row must not leave a place past the end.</summary>
+    [Fact]
+    public void AddAfterRemovingOldDeletion()
+    {
+        // Two shown messages of yesterday
+        Room room = CreateRoom();
+        MessageList list = new(Me);
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        ClientEvent first = Text(Bob, "first") with { OriginServerTs = now.AddDays(-1).ToUnixTimeMilliseconds() };
+        ClientEvent second = Text(Bob, "second") with { OriginServerTs = now.AddDays(-1).AddMinutes(1).ToUnixTimeMilliseconds() };
+        list.Reset(room, [first, second]);
+
+        // The second deleted yesterday, then a new message
+        ClientEvent deletion = Event(EventTypes.RoomRedaction, Bob, new { redacts = second.EventId }) with { OriginServerTs = now.AddDays(-1).AddMinutes(2).ToUnixTimeMilliseconds() };
+        list.Append(room, [deletion, Text(Bob, "new") with { OriginServerTs = now.ToUnixTimeMilliseconds() }]);
+
+        // Done
+        Assert.Equal(["first", "new"], list.Items.Select(i => i.Text));
+    }
 }

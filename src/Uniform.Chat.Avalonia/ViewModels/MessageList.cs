@@ -43,8 +43,7 @@ public sealed class MessageList
     /// <summary>Add newer events, oldest first, before the unsent messages, each by its time among those shown; an edit, reaction or deletion of a message not shown changes nothing, as it loads with that message's line.</summary>
     public void Append(Room room, IEnumerable<ClientEvent> events)
     {
-        // Each event becomes an item or changes one
-        int insertAt = Items.TakeWhile(m => !m.IsOutbox).Count();
+        // Each event becomes an item or changes one, which may remove one, so the end of the timeline is counted each time
         foreach (ClientEvent clientEvent in events)
         {
             if (clientEvent.EventId is not null && byEventId.ContainsKey(clientEvent.EventId)) continue;
@@ -56,10 +55,9 @@ public sealed class MessageList
             }
             if (Create(room, clientEvent) is not MessageViewModel message) continue;
             // By time, as a sync may bring events older than the newest shown, e.g. its first one after a start
-            int at = insertAt;
+            int at = Items.TakeWhile(m => !m.IsOutbox).Count();
             while (at > 0 && Items[at - 1].Timestamp > message.Timestamp) at--;
             Items.Insert(at, message);
-            insertAt++;
             byEventId[clientEvent.EventId!] = message;
         }
         UpdateHeaders();
@@ -194,6 +192,7 @@ public sealed class MessageList
                 if (DateTimeOffset.UtcNow - clientEvent.Timestamp > EventText.DeletionShown)
                 {
                     Items.Remove(deleted);
+                    byEventId.Remove(target);
                     return true;
                 }
                 deleted.Html = null;

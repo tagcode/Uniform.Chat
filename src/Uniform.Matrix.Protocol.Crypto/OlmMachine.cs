@@ -92,6 +92,9 @@ public sealed partial class OlmMachine : IDisposable
     /// <summary>Raised with room and session ID when a room key arrives, so events that failed to decrypt can be retried.</summary>
     public event Action<string, string>? RoomKeyReceived;
 
+    /// <summary>Raised with the server's reason when it refused one-time keys, as it holds other keys under their IDs from state this device lost, and new keys were uploaded instead.</summary>
+    public event Action<string>? KeysReplaced;
+
     /// <summary>Process the encryption parts of a sync: device list changes, to-device messages and the one-time key count; return decrypted to-device events.</summary>
     public async Task<IReadOnlyList<DecryptedToDeviceEvent>> ReceiveSyncAsync(SyncResponse sync, CancellationToken cancellationToken = default)
     {
@@ -163,15 +166,38 @@ public sealed partial class OlmMachine : IDisposable
         bool newFallback = !deviceKeysUploaded || fallbackUsed;
         if (deviceKeysUploaded && missing == 0 && !newFallback) return;
 
-        // Generate and sign
+        // Generate, beyond keys still waiting from an upload that did not finish, and save before uploading: a server that stored keys whose answer was lost gets the same keys again, not new ones under their IDs
+        missing -= account.OneTimeKeys.Count;
         if (missing > 0) account.GenerateOneTimeKeys(missing);
         if (newFallback) account.GenerateFallbackKey();
+        await SaveAccountAsync(cancellationToken);
+
+        // Upload; keys the server has under these IDs with other content, from state lost earlier, are skipped and new ones uploaded once
+        try
+        {
+            await UploadPendingKeysAsync(cancellationToken);
+        }
+        catch (MatrixException exception) when (exception.Errcode == ErrorCodes.InvalidParam && exception.Error?.Contains("already exists", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            KeysReplaced?.Invoke(exception.Error!);
+            int skipped = account.OneTimeKeys.Count;
+            account.MarkKeysAsPublished();
+            account.GenerateOneTimeKeys(skipped);
+            account.GenerateFallbackKey();
+            await SaveAccountAsync(cancellationToken);
+            await UploadPendingKeysAsync(cancellationToken);
+        }
+    }
+
+    /// <summary>Upload the device keys when not yet uploaded and the keys waiting to be published, then mark them published.</summary>
+    private async Task UploadPendingKeysAsync(CancellationToken cancellationToken)
+    {
+        // Signed, then uploaded
         JsonObject? deviceKeys = deviceKeysUploaded ? null : CreateDeviceKeys();
         JsonObject oneTimeKeys = SignKeys(account.OneTimeKeys, fallback: false);
         JsonObject fallbackKeys = SignKeys(account.FallbackKey, fallback: true);
-
-        // Upload, then mark published
         await transport.UploadKeysAsync(deviceKeys, oneTimeKeys.Count > 0 ? oneTimeKeys : null, fallbackKeys.Count > 0 ? fallbackKeys : null, cancellationToken);
+        // Done
         account.MarkKeysAsPublished();
         deviceKeysUploaded = true;
         await SaveAccountAsync(cancellationToken);

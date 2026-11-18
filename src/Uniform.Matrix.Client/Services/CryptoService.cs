@@ -73,6 +73,7 @@ public sealed class CryptoService : IDisposable
             };
             machine.SecretReceived += name => logger.LogInformation("Received secret {Name} from another device", name);
             machine.ToDeviceDecryptionFailed += (sender, senderKey, reason) => logger.LogWarning("To-device message from {Sender} ({SenderKey}) not decrypted: {Reason}", sender, senderKey, reason);
+            machine.KeysReplaced += reason => logger.LogWarning("One-time keys refused by the server ({Reason}); new keys uploaded instead", reason);
             machine.WedgedSessionRecovered += (sender, deviceId, sent) => logger.LogWarning("Started a new Olm session with {Sender} {DeviceId} after an undecryptable message; {Result}", sender, deviceId, sent ? "sent m.dummy over it" : "no one-time key could be claimed");
             await machine.UploadInitialKeysAsync(cancellationToken);
             UnavailableReason = null;

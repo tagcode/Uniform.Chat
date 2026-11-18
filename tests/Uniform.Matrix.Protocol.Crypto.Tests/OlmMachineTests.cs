@@ -261,6 +261,48 @@ public class OlmMachineTests
         Assert.Equal("persisted", Body(await restored.DecryptRoomEventAsync(RoomId, ev, Ct)));
     }
 
+    /// <summary>A key upload whose answer was lost after the server stored the keys: the next start uploads the same keys, which the server takes, not new keys under their IDs, which it would refuse.</summary>
+    [Fact]
+    public async Task UploadAgainAfterLostAnswer()
+    {
+        // The first upload stored, its answer lost
+        InMemoryCryptoStore store = new();
+        byte[] pickleKey = RandomNumberGenerator.GetBytes(32);
+        OlmMachine first = await OlmMachine.CreateAsync(server.For(Bob, "B1"), store, Bob, "B1", pickleKey, cancellationToken: Ct);
+        server.LoseNextUploadAnswer = true;
+        await Assert.ThrowsAsync<HttpRequestException>(() => first.UploadInitialKeysAsync(Ct));
+        int stored = server.OneTimeKeyCount(Bob, "B1");
+        first.Dispose();
+
+        // The next start
+        using OlmMachine next = await OlmMachine.CreateAsync(server.For(Bob, "B1"), store, Bob, "B1", pickleKey, cancellationToken: Ct);
+        await next.UploadInitialKeysAsync(Ct);
+
+        // Done: the same keys, taken once
+        Assert.True(stored > 0);
+        Assert.Equal(stored, server.OneTimeKeyCount(Bob, "B1"));
+    }
+
+    /// <summary>A device that lost its keys, e.g. restored from an old copy, makes new keys under IDs the server holds with other content: the server refuses them, and new keys are uploaded instead, which others can start sessions with.</summary>
+    [Fact]
+    public async Task ReplaceKeysTheServerHolds()
+    {
+        // Keys uploaded, then the device's state lost
+        byte[] pickleKey = RandomNumberGenerator.GetBytes(32);
+        (await CreateDeviceAsync(Bob, "B1", new InMemoryCryptoStore(), pickleKey)).Dispose();
+        int before = server.OneTimeKeyCount(Bob, "B1");
+        using OlmMachine bob = await OlmMachine.CreateAsync(server.For(Bob, "B1"), new InMemoryCryptoStore(), Bob, "B1", pickleKey, cancellationToken: Ct);
+        string? replaced = null;
+        bob.KeysReplaced += reason => replaced = reason;
+
+        // Act: the refused upload, then new keys
+        await bob.UploadInitialKeysAsync(Ct);
+
+        // Done: reported, and new keys beside the old ones
+        Assert.Contains("already exists", replaced);
+        Assert.True(server.OneTimeKeyCount(Bob, "B1") > before);
+    }
+
     /// <summary>Claimed one-time keys are replaced when sync reports the server running low.</summary>
     [Fact]
     public async Task CanTopUpOneTimeKeys()
