@@ -521,12 +521,13 @@ public partial class ChatView : UserControl
         if ((sender as Control)?.DataContext is MessageViewModel message) _ = OpenAttachmentAsync(message);
     }
 
-    /// <summary>Open an image by clicking its preview.</summary>
-    private void OnImageReleased(object? sender, PointerReleasedEventArgs e)
+    /// <summary>Open an image by tapping or clicking its preview: pressed and released on it, so a finger lifted over it after a press elsewhere, as when the tap on the room list opened the room under it, or after a scroll, does not open it.</summary>
+    private void OnImageTapped(object? sender, TappedEventArgs e)
     {
-        // Left click or tap only
-        if (e.InitialPressMouseButton != MouseButton.Left || (sender as Control)?.DataContext is not MessageViewModel message) return;
+        // The preview's message
+        if ((sender as Control)?.DataContext is not MessageViewModel message) return;
         e.Handled = true;
+        // Done
         _ = OpenAttachmentAsync(message);
     }
 
