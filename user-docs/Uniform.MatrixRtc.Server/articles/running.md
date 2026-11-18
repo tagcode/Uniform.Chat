@@ -48,7 +48,7 @@ Settings come from, later ones overriding earlier ones:
 
 1. `appsettings.json` next to the program
 2. `~/.config/uniform-matrixrtc-server/settings.json`
-3. lk-jwt-service's variables, such as `LIVEKIT_SECRET`
+3. The service's environment variables, such as `MATRIXRTC_SECRET`
 4. Environment variables, with `__` between parts: `LiveKit__ApiSecret`
 5. The command line: `--MatrixRtc:Url=wss://livekit.example.org`
 

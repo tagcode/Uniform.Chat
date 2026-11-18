@@ -3,8 +3,6 @@ namespace Uniform.MatrixRtc.Hosting;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -25,18 +23,16 @@ using Uniform.Matrix.Hosting;
 /// app.MapLiveKitAuthorization();
 /// await app.RunAsync();
 /// ]]></code></example>
-public static class LiveKitHostingExtensions
+public static class MatrixRtcHostingExtensions
 {
     /// <summary>Name of the HTTP client of OpenID verification and LiveKit's room service.</summary>
     public const string HttpClientName = "Uniform.MatrixRtc";
 
-    /// <summary>Bind section <see cref="LiveKitOptions.Section"/>, list it among the settings, and register a <see cref="LiveKitAuthorizer"/>; register an <see cref="IOpenIdVerifier"/> before this to verify tokens otherwise than over federation.</summary>
-    /// <remarks>Settings still under the old section <see cref="LiveKitOptions.OldSection"/> are read as the new one's, where it does not set them, and a warning tells to rename them.</remarks>
+    /// <summary>Bind section <see cref="MatrixRtcOptions.Section"/>, list it among the settings, and register a <see cref="LiveKitAuthorizer"/>; register an <see cref="IOpenIdVerifier"/> before this to verify tokens otherwise than over federation.</summary>
     public static IHostApplicationBuilder AddLiveKitAuthorization(this IHostApplicationBuilder builder)
     {
-        // Settings of the old name copied under the new, then options and an HTTP client
-        IReadOnlyList<string> renamed = CopyOldSection(builder.Configuration);
-        builder.Services.AddOptionSection<LiveKitOptions>(builder.Configuration, LiveKitOptions.Section);
+        // Options and an HTTP client
+        builder.Services.AddOptionSection<MatrixRtcOptions>(builder.Configuration, MatrixRtcOptions.Section);
         builder.Services.AddHttpClient(HttpClientName, http => http.Timeout = TimeSpan.FromSeconds(15));
         builder.Services.TryAddSingleton(TimeProvider.System);
 
@@ -45,58 +41,39 @@ public static class LiveKitHostingExtensions
         builder.Services.TryAddSingleton<IDelayedEvents>(services => new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName)));
         builder.Services.AddSingleton(services =>
         {
-            IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
+            IOptionsMonitor<MatrixRtcOptions> options = services.GetRequiredService<IOptionsMonitor<MatrixRtcOptions>>();
             return new DelayedLeaveKeeper(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IDelayedEvents>(), services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName), services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<DelayedLeaveKeeper>>());
         });
         builder.Services.AddSingleton(services =>
         {
-            IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
+            IOptionsMonitor<MatrixRtcOptions> options = services.GetRequiredService<IOptionsMonitor<MatrixRtcOptions>>();
             HttpClient http = services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName);
-            if (renamed.Count > 0) services.GetRequiredService<ILogger<LiveKitAuthorizer>>().LogWarning("Settings section {Old} is now {New}; rename {Keys}", LiveKitOptions.OldSection, LiveKitOptions.Section, string.Join(", ", renamed));
             return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>(), services.GetRequiredService<DelayedLeaveKeeper>());
         });
         // Return builder
         return builder;
     }
 
-    /// <summary>Copy settings of the old section <see cref="LiveKitOptions.OldSection"/> under <see cref="LiveKitOptions.Section"/> where that does not set them; return the old keys copied.</summary>
-    private static IReadOnlyList<string> CopyOldSection(IConfigurationManager configuration)
-    {
-        // Values set under the old name only
-        string oldPrefix = LiveKitOptions.OldSection + ":";
-        Dictionary<string, string?> copied = [];
-        foreach ((string key, string? value) in configuration.GetSection(LiveKitOptions.OldSection).AsEnumerable())
-        {
-            if (value is null || !key.StartsWith(oldPrefix, StringComparison.OrdinalIgnoreCase)) continue;
-            string newKey = LiveKitOptions.Section + ":" + key[oldPrefix.Length..];
-            if (configuration[newKey] is null) copied[newKey] = value;
-        }
-        // Under every other source, so that a setting of the new name, also one written later, wins
-        if (copied.Count > 0) ((IConfigurationBuilder)configuration).Sources.Insert(0, new MemoryConfigurationSource { InitialData = copied });
-        // Return the old keys
-        return [.. copied.Keys.Select(k => LiveKitOptions.OldSection + k[LiveKitOptions.Section.Length..]).Order()];
-    }
-
-    /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c>, <c>/delegate_delayed_leave</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="LiveKitOptions.Enabled"/> is false.</summary>
+    /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c>, <c>/delegate_delayed_leave</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="MatrixRtcOptions.Enabled"/> is false.</summary>
     public static IEndpointRouteBuilder MapLiveKitAuthorization(this IEndpointRouteBuilder routes, string prefix = "")
     {
         // The two token requests, with CORS for web clients
         RouteGroupBuilder group = routes.MapGroup(prefix);
-        group.Map("/sfu/get", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<LegacySfuRequest>(http, options, request => authorizer.AuthorizeLegacyAsync(request, http.RequestAborted)));
-        group.Map("/get_token", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<TokenRequest>(http, options, request => authorizer.AuthorizeAsync(request, http.RequestAborted)));
-        group.Map("/delegate_delayed_leave", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<LiveKitOptions> options) => HandleAsync<TokenRequest, JsonObject>(http, options, async request => { await authorizer.DelegateAsync(request, http.RequestAborted).ConfigureAwait(false); return []; }));
+        group.Map("/sfu/get", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<LegacySfuRequest>(http, options, request => authorizer.AuthorizeLegacyAsync(request, http.RequestAborted)));
+        group.Map("/get_token", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest>(http, options, request => authorizer.AuthorizeAsync(request, http.RequestAborted)));
+        group.Map("/delegate_delayed_leave", (HttpContext http, LiveKitAuthorizer authorizer, IOptionsMonitor<MatrixRtcOptions> options) => HandleAsync<TokenRequest, JsonObject>(http, options, async request => { await authorizer.DelegateAsync(request, http.RequestAborted).ConfigureAwait(false); return []; }));
 
         // Health for load balancers and service managers
-        group.MapMethods("/healthz", [HttpMethods.Get, HttpMethods.Head], (IOptionsMonitor<LiveKitOptions> options) => options.CurrentValue.Enabled ? Results.Ok() : Results.NotFound());
+        group.MapMethods("/healthz", [HttpMethods.Get, HttpMethods.Head], (IOptionsMonitor<MatrixRtcOptions> options) => options.CurrentValue.Enabled ? Results.Ok() : Results.NotFound());
         // Return routes
         return routes;
     }
 
     /// <summary>Answer a token request: preflight with 200, other methods than POST with 405, and the body by <paramref name="authorize"/>.</summary>
-    private static Task<IResult> HandleAsync<T>(HttpContext http, IOptionsMonitor<LiveKitOptions> options, Func<T, Task<SfuResponse>> authorize) where T : class => HandleAsync<T, SfuResponse>(http, options, authorize);
+    private static Task<IResult> HandleAsync<T>(HttpContext http, IOptionsMonitor<MatrixRtcOptions> options, Func<T, Task<SfuResponse>> authorize) where T : class => HandleAsync<T, SfuResponse>(http, options, authorize);
 
     /// <summary>Answer a request of the service: preflight with 200, other methods than POST with 405, and the body by <paramref name="handle"/>.</summary>
-    private static async Task<IResult> HandleAsync<T, TResult>(HttpContext http, IOptionsMonitor<LiveKitOptions> options, Func<T, Task<TResult>> handle) where T : class
+    private static async Task<IResult> HandleAsync<T, TResult>(HttpContext http, IOptionsMonitor<MatrixRtcOptions> options, Func<T, Task<TResult>> handle) where T : class
     {
         // Assert enabled; CORS on every answer
         if (!options.CurrentValue.Enabled) return Error(new AuthorizationException(HttpStatusCode.NotFound, AuthorizationError.Unrecognized, "Unrecognized request"));

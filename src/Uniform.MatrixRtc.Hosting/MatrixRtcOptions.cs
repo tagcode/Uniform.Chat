@@ -4,13 +4,10 @@ using Uniform.MatrixRtc.Authorization;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Settings of the MatrixRTC authorization service in section <c>MatrixRtc</c>, e.g. <c>--MatrixRtc:Enabled=true --MatrixRtc:Url=wss://livekit.example.org</c>; changes apply at the next request.</summary>
-public sealed class LiveKitOptions
+public sealed class MatrixRtcOptions
 {
     /// <summary>Configuration section.</summary>
     public const string Section = "MatrixRtc";
-
-    /// <summary>The section's earlier name, read where the settings still use it; see <see cref="LiveKitHostingExtensions.AddLiveKitAuthorization"/>.</summary>
-    public const string OldSection = "LiveKit";
 
     /// <summary>Whether to serve the authorization service.</summary>
     public bool Enabled { get; set; }

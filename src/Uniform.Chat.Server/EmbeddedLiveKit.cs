@@ -28,13 +28,13 @@ internal static class EmbeddedLiveKit
     {
         // Own tokens and delayed leaves without a round trip, the room's members from its state, then the service
         builder.Services.AddSingleton<IRoomMembership>(services => new JoinedMembers(services.GetRequiredService<RoomService>()));
-        builder.Services.AddSingleton<IDelayedEvents>(services => new LocalDelayedEvents(services.GetRequiredService<DelayedEvents>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(LiveKitHostingExtensions.HttpClientName))));
-        builder.Services.AddSingleton<IOpenIdVerifier>(services => new LocalOpenIdVerifier(services.GetRequiredService<OpenIdTokens>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(LiveKitHostingExtensions.HttpClientName))));
+        builder.Services.AddSingleton<IDelayedEvents>(services => new LocalDelayedEvents(services.GetRequiredService<DelayedEvents>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new HomeserverDelayedEvents(services.GetRequiredService<IHttpClientFactory>().CreateClient(MatrixRtcHostingExtensions.HttpClientName))));
+        builder.Services.AddSingleton<IOpenIdVerifier>(services => new LocalOpenIdVerifier(services.GetRequiredService<OpenIdTokens>(), services.GetRequiredService<IOptionsMonitor<ServerOptions>>(), new FederationOpenIdVerifier(services.GetRequiredService<IHttpClientFactory>().CreateClient(MatrixRtcHostingExtensions.HttpClientName))));
         builder.AddLiveKitAuthorization();
 
         // Defaults from the homeserver
-        builder.Services.AddOptions<LiveKitOptions>().PostConfigure<IOptions<ServerOptions>>((livekit, server) => livekit.FullAccessHomeservers ??= server.Value.ServerName);
-        builder.Services.AddOptions<CallOptions>().PostConfigure<IOptionsMonitor<LiveKitOptions>, IOptions<ServerOptions>>((calls, livekit, server) =>
+        builder.Services.AddOptions<MatrixRtcOptions>().PostConfigure<IOptions<ServerOptions>>((livekit, server) => livekit.FullAccessHomeservers ??= server.Value.ServerName);
+        builder.Services.AddOptions<CallOptions>().PostConfigure<IOptionsMonitor<MatrixRtcOptions>, IOptions<ServerOptions>>((calls, livekit, server) =>
         {
             if (!livekit.CurrentValue.Enabled) return;
             calls.LiveKitServiceUrl ??= ServiceUrl(server.Value);

@@ -42,7 +42,7 @@ public sealed class EmbeddedLiveKitTests
         builder.Logging.ClearProviders();
         builder.AddMatrixServer();
         builder.AddEmbeddedLiveKit();
-        builder.Services.AddHttpClient(LiveKitHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => livekit);
+        builder.Services.AddHttpClient(MatrixRtcHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => livekit);
         WebApplication app = builder.Build();
         app.MapMatrixServer();
         app.MapEmbeddedLiveKit();

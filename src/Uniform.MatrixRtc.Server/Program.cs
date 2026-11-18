@@ -10,7 +10,7 @@ using Uniform.Matrix.Hosting;
 // Read appsettings.json next to the executable; the application name names the folders
 WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = args, ContentRootPath = AppContext.BaseDirectory, ApplicationName = ApplicationName });
 
-// Settings file, then lk-jwt-service's environment variables above it and below the own environment and command line
+// Settings file, then the MATRIXRTC_ environment variables above it and below the own environment and command line
 builder.AddSettings();
 IConfigurationBuilder sources = builder.Configuration;
 int above = sources.Sources.ToList().FindLastIndex(source => source is JsonConfigurationSource) + 1;
@@ -22,11 +22,11 @@ builder.AddSessionLogging(Path.Combine(AppDirectories.Data(ApplicationName), "lo
 builder.Logging.AddSimpleConsole(console => console.SingleLine = true);
 
 // Settings that cannot work end the program with their reason
-LiveKitOptions options = builder.Configuration.GetSection(LiveKitOptions.Section).Get<LiveKitOptions>() ?? new LiveKitOptions();
+MatrixRtcOptions options = builder.Configuration.GetSection(MatrixRtcOptions.Section).Get<MatrixRtcOptions>() ?? new MatrixRtcOptions();
 if (CompatibleEnvironment.Missing(options) is string missing)
 {
     Console.Error.WriteLine($"The MatrixRTC authorization service needs {missing}.");
-    Console.Error.WriteLine($"Settings are in {SettingsStore.DefaultPath(ApplicationName)}, or set MatrixRtc:Url, MatrixRtc:ApiKey and MatrixRtc:ApiSecret there, or LIVEKIT_URL, LIVEKIT_KEY and LIVEKIT_SECRET in the environment.");
+    Console.Error.WriteLine($"Settings are in {SettingsStore.DefaultPath(ApplicationName)}, or set MatrixRtc:Url, MatrixRtc:ApiKey and MatrixRtc:ApiSecret there, or MATRIXRTC_URL, MATRIXRTC_KEY and MATRIXRTC_SECRET in the environment.");
     return 1;
 }
 

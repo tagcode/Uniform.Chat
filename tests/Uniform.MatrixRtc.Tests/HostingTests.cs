@@ -27,7 +27,7 @@ public sealed class HostingTests
         builder.WebHost.UseTestServer();
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["MatrixRtc:Enabled"] = enabled.ToString(), ["MatrixRtc:Url"] = "wss://livekit.example.org", ["MatrixRtc:ApiKey"] = "key", ["MatrixRtc:ApiSecret"] = "secret", ["MatrixRtc:FullAccessHomeservers"] = "example.org" });
         builder.AddLiveKitAuthorization();
-        builder.Services.AddHttpClient(LiveKitHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
+        builder.Services.AddHttpClient(MatrixRtcHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
         WebApplication app = builder.Build();
         app.MapLiveKitAuthorization("/livekit/jwt");
         await app.StartAsync(Ct);
@@ -85,34 +85,16 @@ public sealed class HostingTests
     public void ReadCompatibleEnvironment()
     {
         // Variables of a container
-        Dictionary<string, string> environment = new() { ["LIVEKIT_URL"] = "wss://livekit.example.org", ["LIVEKIT_KEY"] = "key", ["LIVEKIT_SECRET"] = "secret", ["LIVEKIT_FULL_ACCESS_HOMESERVERS"] = "example.org,other.org", ["LIVEKIT_JWT_BIND"] = ":8081" };
+        Dictionary<string, string> environment = new() { ["MATRIXRTC_URL"] = "wss://livekit.example.org", ["MATRIXRTC_KEY"] = "key", ["MATRIXRTC_SECRET"] = "secret", ["MATRIXRTC_FULL_ACCESS_HOMESERVERS"] = "example.org,other.org", ["MATRIXRTC_JWT_BIND"] = ":8081" };
         Dictionary<string, string?> settings = CompatibleEnvironment.Read(name => environment.GetValueOrDefault(name));
 
         // Done
         Assert.Equal("wss://livekit.example.org", settings["MatrixRtc:Url"]);
         Assert.Equal("secret", settings["MatrixRtc:ApiSecret"]);
         Assert.Equal("http://0.0.0.0:8081", settings["Urls"]);
-        LiveKitOptions options = new ConfigurationBuilder().AddInMemoryCollection(settings).Build().GetSection(LiveKitOptions.Section).Get<LiveKitOptions>()!;
+        MatrixRtcOptions options = new ConfigurationBuilder().AddInMemoryCollection(settings).Build().GetSection(MatrixRtcOptions.Section).Get<MatrixRtcOptions>()!;
         Assert.Null(CompatibleEnvironment.Missing(options));
         Assert.Equal(["example.org", "other.org"], options.ToAuthorizer().FullAccessHomeservers);
-        Assert.Contains("secret", CompatibleEnvironment.Missing(new LiveKitOptions { Url = "wss://x", ApiKey = "k" }));
-    }
-
-    /// <summary>Settings under the old section name <c>LiveKit</c> still apply where <c>MatrixRtc</c> does not set them; a setting of the new name wins, also one written after the start.</summary>
-    [Fact]
-    public void ReadOldSection()
-    {
-        // The old section in one source, one key of the new name in a later one
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.MatrixRtc.Tests", EnvironmentName = "Development" });
-        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["LiveKit:Enabled"] = "true", ["LiveKit:Url"] = "wss://old.example.org", ["LiveKit:ApiKey"] = "old-key" });
-        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["MatrixRtc:ApiKey"] = "new-key" });
-        builder.AddLiveKitAuthorization();
-        builder.Configuration["MatrixRtc:Url"] = "wss://new.example.org";
-
-        // Done: old values where the new name is unset; the new name everywhere else
-        LiveKitOptions options = builder.Configuration.GetSection(LiveKitOptions.Section).Get<LiveKitOptions>()!;
-        Assert.True(options.Enabled);
-        Assert.Equal("new-key", options.ApiKey);
-        Assert.Equal("wss://new.example.org", options.Url);
+        Assert.Contains("secret", CompatibleEnvironment.Missing(new MatrixRtcOptions { Url = "wss://x", ApiKey = "k" }));
     }
 }
