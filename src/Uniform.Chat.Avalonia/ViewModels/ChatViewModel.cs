@@ -288,9 +288,14 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         stopping.Dispose();
     }
 
+    /// <summary>Whether the room list is reordering, when its selection changes are not the user's.</summary>
+    private bool reordering;
+
     /// <summary>Show the selected room.</summary>
     partial void OnSelectedRoomChanged(RoomItemViewModel? value)
     {
+        // Not while the list reorders; the open room is put back after
+        if (reordering) return;
         // Opening clears the composer state of the previous room; whether it takes messages depends on the room
         OnPropertyChanged(nameof(CanCompose));
         SendCommand.NotifyCanExecuteChanged();
@@ -1066,15 +1071,25 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             .Select(entry => entry.Item)
             .ToList());
 
-        // Move items into place without losing the selection
-        for (int i = 0; i < ordered.Count; i++)
+        // Move items into place without losing the selection: the list drops or shifts its selection as items move, which must not open or leave a room
+        RoomItemViewModel? open = SelectedRoom;
+        reordering = true;
+        try
         {
-            int current = Rooms.IndexOf(ordered[i]);
-            if (current == i) continue;
-            if (current < 0) Rooms.Insert(i, ordered[i]);
-            else Rooms.Move(current, i);
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                int current = Rooms.IndexOf(ordered[i]);
+                if (current == i) continue;
+                if (current < 0) Rooms.Insert(i, ordered[i]);
+                else Rooms.Move(current, i);
+            }
+            while (Rooms.Count > ordered.Count) Rooms.RemoveAt(Rooms.Count - 1);
+            if (SelectedRoom != open) SelectedRoom = open;
         }
-        while (Rooms.Count > ordered.Count) Rooms.RemoveAt(Rooms.Count - 1);
+        finally
+        {
+            reordering = false;
+        }
         UnreadRooms = Rooms.Count(r => r.HasUnread || r.IsInvite);
         foreach (RoomItemViewModel item in ordered.Where(i => i.AvatarUri is not null && i.Avatar is null && avatarsLoading.Add(i.RoomId))) _ = LoadAvatarAsync(item, item.AvatarUri!);
         if (SelectedRoom is not null && !Rooms.Contains(SelectedRoom)) SelectedRoom = null;
