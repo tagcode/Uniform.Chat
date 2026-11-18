@@ -5,11 +5,11 @@ using global::Android.Media;
 using NAudio.Wave;
 using Uniform.Matrix.Audio;
 
-/// <summary>The phone's earpiece or loudspeaker through <see cref="AudioTrack"/>, as an NAudio <see cref="IWavePlayer"/> playing the voice format as call audio.</summary>
-/// <remarks>Plays in <see cref="CommunicationMode"/>, so call audio goes to the earpiece and the phone's echo cancellation hears it; for the loudspeaker, the built-in speaker becomes the communication device.</remarks>
+/// <summary>The phone's earpiece, loudspeaker or an attached speaker through <see cref="AudioTrack"/>, as an NAudio <see cref="IWavePlayer"/> playing the voice format as call audio.</summary>
+/// <remarks>Plays in <see cref="CommunicationMode"/>, so call audio goes to the earpiece and the phone's echo cancellation hears it. A chosen device that can take calls, such as the loudspeaker or a Bluetooth headset, becomes the communication device; one connected for music only, such as many Bluetooth speakers, gets the audio as media instead.</remarks>
 /// <param name="context">Context for the audio service.</param>
-/// <param name="loudspeaker">Whether to play through the loudspeaker rather than the earpiece.</param>
-public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePlayer
+/// <param name="speaker">The chosen output's name from <see cref="AudioRoutes.Speakers"/>; null for the phone's default, the earpiece or a headset for calls.</param>
+public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlayer
 {
     private const int ChunkBytes = VoiceFormat.FrameSamples * 2;
     private readonly AudioManager? audio = context.GetSystemService(Context.AudioService) as AudioManager;
@@ -45,12 +45,13 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         if (source is null) throw new InvalidOperationException("Init first.");
         if (playing) return;
         CommunicationMode.Enter(context);
-        RouteToLoudspeaker(loudspeaker);
-        AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(AudioUsageKind.VoiceCommunication)!.SetContentType(AudioContentType.Speech)!.Build()!;
+        AudioDeviceInfo? media = Route();
+        AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(media is null ? AudioUsageKind.VoiceCommunication : AudioUsageKind.Media)!.SetContentType(AudioContentType.Speech)!.Build()!;
         AudioFormat format = new AudioFormat.Builder().SetEncoding(Encoding.Pcm16bit)!.SetSampleRate(VoiceFormat.SampleRate)!.SetChannelMask(ChannelOut.Mono)!.Build()!;
         int minimum = AudioTrack.GetMinBufferSize(VoiceFormat.SampleRate, ChannelOut.Mono, Encoding.Pcm16bit);
         track = new AudioTrack.Builder().SetAudioAttributes(attributes)!.SetAudioFormat(format)!.SetTransferMode(AudioTrackMode.Stream)!.SetBufferSizeInBytes(Math.Max(minimum, ChunkBytes * 4))!.Build()!;
         track.SetVolume(Volume);
+        if (media is not null) track.SetPreferredDevice(media);
 
         // Write until stopped
         playing = true;
@@ -106,7 +107,6 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         finally
         {
             track?.Stop();
-            RouteToLoudspeaker(false);
             CommunicationMode.Exit(context);
             playing = false;
             PlaybackState = PlaybackState.Stopped;
@@ -115,25 +115,26 @@ public sealed class AndroidSpeaker(Context context, bool loudspeaker) : IWavePla
         PlaybackStopped?.Invoke(this, new StoppedEventArgs(error));
     }
 
-    /// <summary>Route call audio to the loudspeaker, or back to the default; the mode is <see cref="CommunicationMode"/>'s.</summary>
-    private void RouteToLoudspeaker(bool on)
+    /// <summary>Route call audio to the chosen output: as the communication device where it can be one, else return it, a device for music only, to play to as media; null when the communication route serves.</summary>
+    private AudioDeviceInfo? Route()
     {
-        // Only when asked for, and back
-        if (audio is null || !loudspeaker) return;
-        if (OperatingSystem.IsAndroidVersionAtLeast(31))
+        // The default stays
+        if (audio is null || speaker is null) return null;
+        if (AudioRoutes.CommunicationDevice(audio, speaker) is AudioDeviceInfo device)
         {
-            if (!on)
-            {
-                audio.ClearCommunicationDevice();
-                return;
-            }
-            AudioDeviceInfo? builtIn = audio.AvailableCommunicationDevices.FirstOrDefault(d => d.Type == AudioDeviceType.BuiltinSpeaker);
-            if (builtIn is not null) audio.SetCommunicationDevice(builtIn);
-            return;
+            if (OperatingSystem.IsAndroidVersionAtLeast(31)) audio.SetCommunicationDevice(device);
+            return null;
         }
-        // Older versions switch the speakerphone
+        // Older versions switch the speakerphone; an attached device is asked for directly
+        if (!OperatingSystem.IsAndroidVersionAtLeast(31) && speaker is AudioChoice.Earpiece or AudioChoice.Loudspeaker)
+        {
 #pragma warning disable CA1422
-        audio.SpeakerphoneOn = on;
+            audio.SpeakerphoneOn = speaker == AudioChoice.Loudspeaker;
 #pragma warning restore CA1422
+            return null;
+        }
+        AudioDeviceInfo? output = AudioRoutes.Find(context, GetDevicesTargets.Outputs, speaker);
+        // Return a device to play to as media, or none
+        return output is not null && (AudioRoutes.IsMusicOnly(output) || !OperatingSystem.IsAndroidVersionAtLeast(31)) ? output : null;
     }
 }

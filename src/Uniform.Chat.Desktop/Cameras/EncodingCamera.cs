@@ -34,6 +34,15 @@ public abstract class EncodingCamera : IVideoCamera
     public abstract void SwitchCamera();
 
     /// <inheritdoc />
+    public virtual IReadOnlyList<CameraChoice> Cameras => [];
+
+    /// <inheritdoc />
+    public virtual string? CameraId => null;
+
+    /// <inheritdoc />
+    public virtual void SelectCamera(string id) { }
+
+    /// <inheritdoc />
     public abstract ValueTask DisposeAsync();
 
     /// <summary>Make the next frame a keyframe.</summary>

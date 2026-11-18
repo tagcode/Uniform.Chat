@@ -1,33 +1,23 @@
 namespace Uniform.Chat.Android.Audio;
 
 using global::Android.Content;
-using global::Android.Media;
 using NAudio.Wave;
 using Uniform.Matrix.Audio;
 
-/// <summary>The phone's microphone and earpiece or loudspeaker, as the shared audio code expects them.</summary>
+/// <summary>The phone's microphones and speakers as the shared audio code expects them: built in, Bluetooth, wired and USB, opened as <paramref name="choice"/> names them.</summary>
 /// <param name="context">Context for the audio service.</param>
-/// <param name="loudspeaker">Whether to play through the loudspeaker rather than the earpiece.</param>
-public sealed class AndroidAudioDevices(Context context, bool loudspeaker) : IAudioDevices
+/// <param name="choice">The microphone and speaker to open, by the names <see cref="ListMicrophones"/> and <see cref="ListSpeakers"/> give; null ones are the phone's defaults.</param>
+public sealed class AndroidAudioDevices(Context context, AudioChoice choice) : IAudioDevices
 {
-    /// <summary>Open the microphone.</summary>
-    public IWaveIn OpenMicrophone() => new AndroidMicrophone(context);
+    /// <summary>Open the chosen microphone.</summary>
+    public IWaveIn OpenMicrophone() => new AndroidMicrophone(context, choice.Microphone);
 
-    /// <summary>Open the earpiece or loudspeaker.</summary>
-    public IWavePlayer OpenSpeaker() => new AndroidSpeaker(context, loudspeaker);
+    /// <summary>Open the chosen speaker.</summary>
+    public IWavePlayer OpenSpeaker() => new AndroidSpeaker(context, choice.Speaker);
 
-    /// <summary>Return the phone's inputs, by product name and kind.</summary>
-    public IReadOnlyList<AudioDevice> ListMicrophones() => List(GetDevicesTargets.Inputs);
+    /// <summary>Return the microphones: the phone's, then attached headsets'.</summary>
+    public IReadOnlyList<AudioDevice> ListMicrophones() => AudioRoutes.Microphones(context);
 
-    /// <summary>Return the phone's outputs, by product name and kind.</summary>
-    public IReadOnlyList<AudioDevice> ListSpeakers() => List(GetDevicesTargets.Outputs);
-
-    /// <summary>Return the devices of a direction.</summary>
-    private IReadOnlyList<AudioDevice> List(GetDevicesTargets direction)
-    {
-        // From the audio service
-        if (context.GetSystemService(Context.AudioService) is not AudioManager audio) return [];
-        // Return names
-        return [.. (audio.GetDevices(direction) ?? []).Select(d => new AudioDevice($"{d.ProductName} ({d.Type})", $"{d.ProductName} ({d.Type})"))];
-    }
+    /// <summary>Return the speakers: earpiece, loudspeaker, then attached devices.</summary>
+    public IReadOnlyList<AudioDevice> ListSpeakers() => AudioRoutes.Speakers(context);
 }

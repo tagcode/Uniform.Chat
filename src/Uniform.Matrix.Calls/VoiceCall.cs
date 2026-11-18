@@ -87,6 +87,20 @@ public abstract class VoiceCall : IAsyncDisposable
     /// <summary>Switch the camera sent, e.g. from the front to the back.</summary>
     public void SwitchCamera() => sending?.SwitchCamera();
 
+    /// <summary>The cameras this side may send, empty without video or where the camera cannot tell.</summary>
+    public IReadOnlyList<CameraChoice> Cameras => sending?.Cameras ?? [];
+
+    /// <summary>The id of the camera sent, or null.</summary>
+    public string? CameraId => sending?.CameraId;
+
+    /// <summary>Send the camera of <paramref name="id"/> instead, one of <see cref="Cameras"/>.</summary>
+    public void SelectCamera(string id)
+    {
+        // The camera switches; the shown choice follows
+        sending?.SelectCamera(id);
+        Changed?.Invoke(this);
+    }
+
     /// <summary>Whether this side's camera is turned off: nothing is captured or sent until it is turned on.</summary>
     public bool CameraOff
     {

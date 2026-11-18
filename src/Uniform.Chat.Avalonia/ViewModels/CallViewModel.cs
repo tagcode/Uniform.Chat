@@ -8,7 +8,8 @@ using Uniform.Matrix.Video;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.WebRtc.Ice;
 
-/// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the loudspeaker, and the caller's video when they send it; it tells about a call for a while after it ends.</summary>
+/// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the choice of camera, microphone and speaker, and the caller's video when they send it; it tells about a call for a while after it ends.</summary>
+/// <remarks>Partial files: CallViewModel.cs, and CallViewModel.Devices.cs for the camera, microphone and speaker menus.</remarks>
 public sealed partial class CallViewModel : ViewModelBase, IDisposable
 {
     /// <summary>How long the bar stays after a call ends.</summary>
@@ -16,7 +17,8 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     private readonly CallService calls;
     private readonly IUiDispatcher ui;
     private readonly GuiPlatform platform;
-    private readonly Func<bool, IAudioDevices>? audio;
+    private readonly Func<AudioChoice, IAudioDevices>? audio;
+    private readonly SettingsViewModel? settings;
     private readonly Func<string, string> nameOf;
     private readonly Timer clock;
     private IDisposable? keptAlive;
@@ -31,7 +33,8 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <param name="platform">The platform's audio, permissions, notifications, ringing and keeping calls alive.</param>
     /// <param name="nameOf">Returns a user's display name.</param>
     /// <param name="mayRing">Returns whether incoming calls ring and notify, as the settings choose; null always rings.</param>
-    public CallViewModel(CallService calls, IUiDispatcher ui, GuiPlatform platform, Func<string, string> nameOf, Func<bool>? mayRing = null)
+    /// <param name="settings">Where the chosen camera, microphone and speaker are kept for the next call; null keeps them for this run.</param>
+    public CallViewModel(CallService calls, IUiDispatcher ui, GuiPlatform platform, Func<string, string> nameOf, Func<bool>? mayRing = null, SettingsViewModel? settings = null)
     {
         // Devices as chosen when voice starts, and the call events
         this.calls = calls;
@@ -41,8 +44,10 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         HasEarpiece = platform.HasEarpiece;
         this.nameOf = nameOf;
         this.mayRing = mayRing ?? (() => true);
-        calls.Devices = () => audio?.Invoke(HasEarpiece && Loudspeaker);
-        if (platform.Camera is { } camera) calls.Camera = () => camera();
+        this.settings = settings;
+        StartWithPreferences();
+        calls.Devices = () => audio?.Invoke(new AudioChoice(MicrophoneId, SpeakerId));
+        if (platform.Camera is { } camera) calls.Camera = () => OpenPreferredCamera(camera());
         if (platform.VideoDecoder is { } decoder) calls.VideoDecoder = () => decoder();
         calls.IncomingCall += OnIncoming;
         calls.CallChanged += OnChanged;
@@ -160,13 +165,6 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>Text of the mute button.</summary>
     public string MuteText => IsMuted ? "Unmute" : "Mute";
 
-    /// <summary>Whether to play through the loudspeaker rather than the earpiece; only where <see cref="HasEarpiece"/>.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SpeakerText))]
-    public partial bool Loudspeaker { get; set; }
-
-    /// <summary>Text of the speaker button.</summary>
-    public string SpeakerText => Loudspeaker ? "Earpiece" : "Speaker";
 
     /// <summary>A failure to show, e.g. a missing microphone permission; empty for none.</summary>
     [ObservableProperty]
@@ -241,16 +239,6 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         call.Muted = !call.Muted;
     }
 
-    /// <summary>Switch between the earpiece and the loudspeaker, reopening the devices of a running call.</summary>
-    [RelayCommand]
-    private async Task ToggleSpeakerAsync()
-    {
-        // The choice, then the devices
-        Loudspeaker = !Loudspeaker;
-        HoldPlatform(IsRinging, IsActive);
-        if (Current is VoiceCall call) await RunAsync("Switching the speaker", () => call.RestartAudioAsync());
-    }
-
     /// <summary>Stop following the calls.</summary>
     public void Dispose()
     {
@@ -269,7 +257,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         Hold(ref keptAlive, active, platform.KeepCallAlive is { } keep ? () => keep(PeerName) : null);
         Hold(ref ringing, ringingNow && mayRing(), platform.Ring is { } ring ? () => ring(PeerName) : null);
         bool video = HasVideo || Current?.SendsVideo == true || Current?.IsVideo == true;
-        Hold(ref nearEar, active && !video && !(HasEarpiece && Loudspeaker), platform.ScreenOffNearEar);
+        Hold(ref nearEar, active && !video && HasEarpiece && SpeakerId is null or AudioChoice.Earpiece, platform.ScreenOffNearEar);
     }
 
     /// <summary>Start a platform action when wanted and not held, or stop it when held and no longer wanted.</summary>

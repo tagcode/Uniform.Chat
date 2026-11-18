@@ -2,6 +2,8 @@ namespace Uniform.Chat.Desktop.Cameras;
 
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
+using System.Text;
+using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
 
 /// <summary>A Linux webcam through <see href="https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/v4l2.html">Video4Linux2</see>: YUYV pictures of 640x480 from memory-mapped buffers, converted to I420 and encoded by <see cref="EncodingCamera"/>; 320x240 when the peer asks for less.</summary>
@@ -19,6 +21,7 @@ public sealed class V4l2Camera : EncodingCamera
     private int width;
     private int height;
     private int captureCount;
+    private int wanted = -1;
 
     /// <summary>Return whether this machine has a video device that captures, e.g. <c>/dev/video0</c>.</summary>
     public static bool Available() => OperatingSystem.IsLinux() && CaptureDevices().Any();
@@ -26,13 +29,47 @@ public sealed class V4l2Camera : EncodingCamera
     /// <summary>Whether another device captures, as counted at start; a webcam's metadata node does not.</summary>
     public override bool CanSwitch => captureCount > 1;
 
-    /// <summary>Open the first capture device and start capturing on a thread of its own.</summary>
+    /// <summary>The capture devices by path, named by their drivers' card names, with the node where two share a name.</summary>
+    public override IReadOnlyList<CameraChoice> Cameras
+    {
+        get
+        {
+            // Each capturing node and its card's name
+            List<(int Number, string Name)> found = [.. Devices().Select(n => (Number: n, Name: CardName(n))).Where(d => d.Name is not null).Select(d => (d.Number, d.Name!))];
+            // Return choices, told apart by node where names repeat
+            return [.. found.Select(d => new CameraChoice($"/dev/video{d.Number}", found.Count(o => o.Name == d.Name) > 1 ? $"{d.Name} (video{d.Number})" : d.Name))];
+        }
+    }
+
+    /// <summary>The path of the device capturing, or of the one to start with.</summary>
+    public override string? CameraId => device >= 0 ? $"/dev/video{index}" : wanted >= 0 ? $"/dev/video{wanted}" : null;
+
+    /// <summary>Start with, or switch to, the device at path <paramref name="id"/>, e.g. <c>/dev/video2</c>; the current one stays when it does not open.</summary>
+    public override void SelectCamera(string id)
+    {
+        // A device number, before or after the start
+        if (!id.StartsWith("/dev/video", StringComparison.Ordinal) || !int.TryParse(id["/dev/video".Length..], out int number)) return;
+        if (device < 0)
+        {
+            wanted = number;
+            return;
+        }
+        if (number == index) return;
+        int previous = index;
+        Stop();
+        if (Open(number)) index = number;
+        else if (Open(previous)) index = previous;
+        // Done
+        if (device >= 0) Run();
+    }
+
+    /// <summary>Open the wanted capture device, else the first that works, and start capturing on a thread of its own.</summary>
     public override void Start()
     {
-        // The first device that captures, and how many do
+        // The wanted device first, then those that capture, and how many do
         int[] capturing = [.. CaptureDevices()];
         captureCount = capturing.Length;
-        foreach (int candidate in capturing)
+        foreach (int candidate in capturing.Where(c => c == wanted).Concat(capturing.Where(c => c != wanted)))
         {
             if (!Open(candidate)) continue;
             index = candidate;
@@ -87,6 +124,23 @@ public sealed class V4l2Camera : EncodingCamera
         close(fd);
         // Return answer
         return captures;
+    }
+
+    /// <summary>Return the card name of device <paramref name="number"/> when it captures video, e.g. <c>HD Webcam</c>; null when it does not, or cannot be asked.</summary>
+    private static string? CardName(int number)
+    {
+        // Its capabilities, then closed
+        int fd = open($"/dev/video{number}", ReadWrite);
+        if (fd < 0) return null;
+        byte[] capability = new byte[104];
+        bool captures = ioctl(fd, QueryCapability, capability) >= 0 && (NodeCapabilities(capability) & CaptureCapability) != 0;
+        close(fd);
+        if (!captures) return null;
+        // Return the card field, 32 bytes after the driver's 16, up to its terminator
+        ReadOnlySpan<byte> card = capability.AsSpan(16, 32);
+        int end = card.IndexOf((byte)0);
+        string name = Encoding.UTF8.GetString(end < 0 ? card : card[..end]).Trim();
+        return name.Length > 0 ? name : $"video{number}";
     }
 
     /// <summary>Return the capabilities of the device node: its own when the kernel tells them, else the device's.</summary>

@@ -32,4 +32,18 @@ public interface IVideoCamera : IAsyncDisposable
 
     /// <summary>Switch to the device's next camera, e.g. from the front to the back; nothing with one camera.</summary>
     void SwitchCamera() { }
+
+    /// <summary>The device's cameras to choose from, e.g. the front and the back camera; empty where it cannot tell.</summary>
+    IReadOnlyList<CameraChoice> Cameras => [];
+
+    /// <summary>The <see cref="CameraChoice.Id"/> of the camera in use, or wanted before <see cref="Start"/>; null where the camera cannot tell.</summary>
+    string? CameraId => null;
+
+    /// <summary>Use the camera of <paramref name="id"/>: before <see cref="Start"/> the one to start with, after it a switch; nothing for an unknown id.</summary>
+    void SelectCamera(string id) { }
 }
+
+/// <summary>A camera of the device, as people choose it.</summary>
+/// <param name="Id">What tells it apart and stays the same across runs, e.g. Camera2's camera id or <c>/dev/video0</c>.</param>
+/// <param name="Name">Its name for people, e.g. <c>Front camera</c>.</param>
+public sealed record CameraChoice(string Id, string Name);

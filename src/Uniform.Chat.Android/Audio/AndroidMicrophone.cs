@@ -9,7 +9,8 @@ using Uniform.Matrix.Audio;
 /// <summary>The phone's microphone through <see cref="AudioRecord"/>, as an NAudio <see cref="IWaveIn"/> recording the voice format in 20 ms pieces.</summary>
 /// <remarks>Records in <see cref="CommunicationMode"/> from Android's voice communication source, which applies the phone's own echo cancellation and noise suppression where it has them; those effects are also turned on explicitly when available, and kept for the recording, as a collected effect is released.</remarks>
 /// <param name="context">Context for the audio service.</param>
-public sealed class AndroidMicrophone(Context context) : IWaveIn
+/// <param name="microphone">The chosen input's name from <see cref="AudioRoutes.Microphones"/>; null for the phone's default, the headset of a call when one is connected.</param>
+public sealed class AndroidMicrophone(Context context, string? microphone = null) : IWaveIn
 {
     private const int ChunkBytes = VoiceFormat.FrameSamples * 2;
     private AudioRecord? record;
@@ -38,6 +39,7 @@ public sealed class AndroidMicrophone(Context context) : IWaveIn
         int minimum = AudioRecord.GetMinBufferSize(VoiceFormat.SampleRate, ChannelIn.Mono, Encoding.Pcm16bit);
         record = new AudioRecord(AudioSource.VoiceCommunication, VoiceFormat.SampleRate, ChannelIn.Mono, Encoding.Pcm16bit, Math.Max(minimum, ChunkBytes * 4));
         if (record.State != State.Initialized) throw new InvalidOperationException("The microphone could not be opened; is the microphone permission granted?");
+        if (microphone is not null && AudioRoutes.Find(context, GetDevicesTargets.Inputs, microphone) is AudioDeviceInfo chosen) record.SetPreferredDevice(chosen);
         echoCanceler ??= AcousticEchoCanceler.IsAvailable ? AcousticEchoCanceler.Create(record.AudioSessionId) : null;
         echoCanceler?.SetEnabled(true);
         noiseSuppressor ??= NoiseSuppressor.IsAvailable ? NoiseSuppressor.Create(record.AudioSessionId) : null;

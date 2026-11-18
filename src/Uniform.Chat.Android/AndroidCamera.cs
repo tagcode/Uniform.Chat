@@ -49,6 +49,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
     private string[] cameras = [];
     private int current;
     private CameraManager? manager;
+    private string? wanted;
     private bool switching;
     private bool retried;
     private bool disposed;
@@ -69,6 +70,43 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
 
     /// <inheritdoc />
     public bool CanSwitch => cameras.Length > 1;
+
+    /// <summary>The phone's cameras by Camera2 id, named by the way they face: front, back, external, numbered when several face one way.</summary>
+    public IReadOnlyList<CameraChoice> Cameras
+    {
+        get
+        {
+            // Names by facing, numbered after the first of a kind
+            CameraManager cameraManager = manager ?? (CameraManager)context.GetSystemService(Context.CameraService)!;
+            List<CameraChoice> choices = [];
+            Dictionary<string, int> seen = [];
+            foreach (string id in cameraManager.GetCameraIdList())
+            {
+                int facing = cameraManager.GetCameraCharacteristics(id).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer value ? value.IntValue() : -1;
+                string kind = facing == (int)LensFacing.Front ? "Front camera" : facing == (int)LensFacing.Back ? "Back camera" : "External camera";
+                int count = seen[kind] = seen.GetValueOrDefault(kind) + 1;
+                choices.Add(new CameraChoice(id, count == 1 ? kind : $"{kind} {count}"));
+            }
+            // Return choices
+            return choices;
+        }
+    }
+
+    /// <summary>The Camera2 id of the camera in use, or of the one to start with.</summary>
+    public string? CameraId => cameras.Length > 0 ? cameras[current] : wanted;
+
+    /// <summary>Start with, or switch to, the camera of Camera2 id <paramref name="id"/>.</summary>
+    public void SelectCamera(string id)
+    {
+        // Before the start, the one to open; after it, a switch to it
+        if (handler is null)
+        {
+            wanted = id;
+            return;
+        }
+        int index = Array.IndexOf(cameras, id);
+        if (index >= 0) SwitchTo(index);
+    }
 
     /// <summary>The rotation that shows the pictures upright: the camera's mounting against how the screen is turned now, the other way round for the front camera, as Android's image orientation is computed.</summary>
     public int Rotation
@@ -103,7 +141,8 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         CameraManager cameraManager = (CameraManager)context.GetSystemService(Context.CameraService)!;
         manager = cameraManager;
         cameras = cameraManager.GetCameraIdList();
-        current = Math.Max(0, Array.FindIndex(cameras, i => cameraManager.GetCameraCharacteristics(i).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer facing && facing.IntValue() == (int)LensFacing.Front));
+        int chosen = wanted is null ? -1 : Array.IndexOf(cameras, wanted);
+        current = chosen >= 0 ? chosen : Math.Max(0, Array.FindIndex(cameras, i => cameraManager.GetCameraCharacteristics(i).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer facing && facing.IntValue() == (int)LensFacing.Front));
         // Done: the session starts when it opens
         Open();
     }
@@ -219,15 +258,18 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
         input = null;
     }
 
-    /// <summary>Close the camera, and once it is closed open the next one into a new encoder, on the camera thread; presses during a switch are ignored, as slow cameras take a while to close.</summary>
-    public void SwitchCamera()
+    /// <summary>Switch to the next camera.</summary>
+    public void SwitchCamera() => SwitchTo(cameras.Length == 0 ? 0 : (current + 1) % cameras.Length);
+
+    /// <summary>Close the camera, and once it is closed open the one at <paramref name="index"/> into a new encoder, on the camera thread; presses during a switch are ignored, as slow cameras take a while to close.</summary>
+    private void SwitchTo(int index)
     {
-        // More than one camera, one switch at a time
+        // Another camera, one switch at a time
         if (cameras.Length < 2 || handler is null) return;
         handler.Post(() =>
         {
-            if (switching || disposed) return;
-            current = (current + 1) % cameras.Length;
+            if (switching || disposed || index == current) return;
+            current = index;
             if (device is not CameraDevice open)
             {
                 Open();

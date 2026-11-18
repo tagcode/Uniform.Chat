@@ -15,7 +15,7 @@ public class AudioTestTests
         bool granted = false;
         List<bool> opened = [];
         FakeMicrophone microphone = new();
-        AudioTestViewModel test = new(loudspeaker => { opened.Add(loudspeaker); return new FakeDevices(microphone); }, hasEarpiece: true, () => Task.FromResult(granted));
+        AudioTestViewModel test = new(choice => { opened.Add(choice.Speaker == AudioChoice.Loudspeaker); return new FakeDevices(microphone); }, hasEarpiece: true, () => Task.FromResult(granted));
 
         // Act: refused, then allowed on the earpiece
         await test.ToggleCommand.ExecuteAsync(null);

@@ -42,6 +42,9 @@ public sealed partial class SettingsViewModel : ViewModelBase
         NotifyMentions = ReadBool(ui, nameof(NotifyMentions), NotifyMentions);
         NotifyInvites = ReadBool(ui, nameof(NotifyInvites), NotifyInvites);
         NotifyCalls = ReadBool(ui, nameof(NotifyCalls), NotifyCalls);
+        CallCamera = ReadString(ui, nameof(CallCamera));
+        CallMicrophone = ReadString(ui, nameof(CallMicrophone));
+        CallSpeaker = ReadString(ui, nameof(CallSpeaker));
         loading = false;
 
         // Push choices follow the distributor's answers
@@ -153,7 +156,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
 
     /// <summary>Show the audio test.</summary>
     [RelayCommand]
-    private void ShowAudioTest() => AudioTest = platform?.Audio is Func<bool, IAudioDevices> audio ? new AudioTestViewModel(audio, platform.HasEarpiece, platform.RequestMicrophoneAsync) : null;
+    private void ShowAudioTest() => AudioTest = platform?.Audio is Func<AudioChoice, IAudioDevices> audio ? new AudioTestViewModel(audio, platform.HasEarpiece, platform.RequestMicrophoneAsync) : null;
 
     /// <summary>Stop the audio test and go back to the settings.</summary>
     [RelayCommand]
@@ -256,6 +259,30 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Save after each change made by the user.</summary>
     partial void OnNotifyCallsChanged(bool value) => Save();
 
+    /// <summary>The camera chosen in a call, by <see cref="Uniform.Matrix.Calls.CameraChoice.Id"/>; calls start with it when it is there. Null for the platform's choice.</summary>
+    [ObservableProperty]
+    public partial string? CallCamera { get; set; }
+
+    /// <summary>The microphone chosen in a call, by <see cref="Uniform.Matrix.Audio.AudioDevice.Name"/>; calls start with it when it is there. Null for the platform's default.</summary>
+    [ObservableProperty]
+    public partial string? CallMicrophone { get; set; }
+
+    /// <summary>The speaker chosen in a call, by <see cref="Uniform.Matrix.Audio.AudioDevice.Name"/>; calls start with it when it is there. Null for the platform's default.</summary>
+    [ObservableProperty]
+    public partial string? CallSpeaker { get; set; }
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnCallCameraChanged(string? value) => Save();
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnCallMicrophoneChanged(string? value) => Save();
+
+    /// <summary>Save after each change made by the user.</summary>
+    partial void OnCallSpeakerChanged(string? value) => Save();
+
+    /// <summary>Return the string <paramref name="name"/> of <paramref name="section"/>, or null when it is missing or empty.</summary>
+    private static string? ReadString(JsonObject section, string name) => section[name] is JsonValue value && value.TryGetValue(out string? text) && text.Length > 0 ? text : null;
+
     /// <summary>Return the boolean <paramref name="name"/> of <paramref name="section"/>, or <paramref name="fallback"/> when it is missing or not a boolean.</summary>
     private static bool ReadBool(JsonObject section, string name, bool fallback) => section[name] is JsonValue value && value.TryGetValue(out bool flag) ? flag : fallback;
 
@@ -275,6 +302,9 @@ public sealed partial class SettingsViewModel : ViewModelBase
             ui[nameof(NotifyMentions)] = NotifyMentions;
             ui[nameof(NotifyInvites)] = NotifyInvites;
             ui[nameof(NotifyCalls)] = NotifyCalls;
+            ui[nameof(CallCamera)] = CallCamera;
+            ui[nameof(CallMicrophone)] = CallMicrophone;
+            ui[nameof(CallSpeaker)] = CallSpeaker;
             SettingsFile.Write(path, root);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)

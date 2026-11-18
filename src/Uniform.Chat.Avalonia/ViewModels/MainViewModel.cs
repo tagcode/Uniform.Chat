@@ -111,7 +111,7 @@ public sealed partial class MainViewModel : ViewModelBase
         // Chat over the running engine
         connection = started;
         Settings.LogPath = started.LogPath;
-        CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf, () => Settings.NotifyCalls);
+        CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf, () => Settings.NotifyCalls, Settings);
         chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call);
         chat.Start();
         if (platform.Push is IPushService push)

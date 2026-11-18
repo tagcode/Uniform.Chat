@@ -18,14 +18,17 @@ An incoming call rings and shows the bar at the top, whichever room is open, wit
 
 On a device with a camera, a phone or a Linux computer with a webcam, press 📹 in a direct chat's header to start a video call. When someone calls you with video, the bar says *Incoming video call*; **Answer with video** also sends your camera, and **Answer** answers with voice only. The app asks for the camera permission the first time.
 
-During a video call the video fills the screen; **Chat** shows the rooms and messages under a smaller call bar, and **Video** brings the full screen back. Your own camera shows small in a corner. **Switch camera**, shown when there is more than one camera, changes between them, e.g. the front and back cameras of a phone; and **Camera off** stops your camera until you press **Camera on**; the call goes on with voice.
+During a video call the video fills the screen; **Chat** shows the rooms and messages under a smaller call bar, and **Video** brings the full screen back. Your own camera shows small in a corner. **Camera ▽** lists your cameras, e.g. the front and back cameras of a phone, with a check by the one in use; choose another to switch. *Turn camera off* at its end stops your camera until you turn it on again; the call goes on with voice, and the button shows the camera is off.
 
 The picture turns upright when either phone is held sideways. A phone that cannot keep up with the other's video asks it for a smaller picture, 320x240 at 10 frames per second, and for full quality again once it can. The desktop app sends video from a webcam on Linux; your user needs access to it, usually as a member of the `video` group. On Windows it shows the other person's video, but cannot send video yet.
 
 ## During a call
 
 - **Mute** stops sending your voice; the bar says *muted*.
-- **Speaker** and **Earpiece** switch phones between the loudspeaker and the earpiece.
+- **Microphone ▽** lists the microphones: the default, the built-in one, and those of headsets, wired, USB or Bluetooth.
+- **Speaker ▽** lists where the call plays: the default, a phone's earpiece and loudspeaker, and headphones, headsets and speakers, wired, USB or Bluetooth.
+
+The app remembers the camera, microphone and speaker you choose, and the next call starts with them when they are there; otherwise it uses the default. A Bluetooth headset made for calls also brings its microphone. A Bluetooth speaker connected only for music plays the call as media; as the phone's microphone hears it, the other side may hear an echo, so keep its volume moderate.
 - **Hang up** ends the call, or cancels one that still rings.
 
 The bar says *relayed* when the call goes through your server's relay (TURN), e.g. when a firewall stands between you, and *Reconnecting…* while the network is down for a moment. After the call ends, the bar tells why for a few seconds.

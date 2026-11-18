@@ -22,6 +22,8 @@ public class SettingsTests
         settings.TextSizeIndex = 3;
         settings.NotifyCalls = false;
         settings.NotifyDirectMessages = true;
+        settings.CallCamera = "1";
+        settings.CallSpeaker = "bluetooth:Speaker";
         SettingsViewModel loaded = new(application, canNotify: true);
 
         // Assert
@@ -31,6 +33,9 @@ public class SettingsTests
         Assert.True(loaded.NotifyDirectMessages);
         Assert.False(loaded.NotifyMentions);
         Assert.True(loaded.NotifyInvites);
+        Assert.Equal("1", loaded.CallCamera);
+        Assert.Equal("bluetooth:Speaker", loaded.CallSpeaker);
+        Assert.Null(loaded.CallMicrophone);
         Assert.Equal("@alice:example.org", new AccountMemory(application).Load()?.UserId);
         Assert.Contains("\"Theme\": \"Dark\"", File.ReadAllText(SettingsStore.DefaultPath(application)));
     }

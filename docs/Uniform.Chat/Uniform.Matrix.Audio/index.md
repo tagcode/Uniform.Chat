@@ -23,7 +23,7 @@ Concentus would switch to a native libopus where it finds one; both classes turn
 |---|---|---|
 | Linux | [`AlsaAudioDevices`](xref:Uniform.Matrix.Audio.AlsaAudioDevices) | NAudio.Alsa's `AlsaIn` and `AlsaOut` on ALSA's default devices, which desktops route through PipeWire or PulseAudio |
 | Windows | [`WasapiAudioDevices`](xref:Uniform.Matrix.Audio.WasapiAudioDevices) | NAudio.Wasapi, in shared mode |
-| Android | `AndroidAudioDevices` in [Uniform.Chat.Android](xref:Uniform.Chat.Android.Article) | Android's `AudioRecord` from the voice communication source, with the phone's echo cancellation and noise suppression, and `AudioTrack` as call audio on the earpiece or the loudspeaker |
+| Android | `AndroidAudioDevices` in [Uniform.Chat.Android](xref:Uniform.Chat.Android.Article) | Android's `AudioRecord` from the voice communication source, with the phone's echo cancellation and noise suppression, and `AudioTrack` as call audio on the earpiece, the loudspeaker, or a Bluetooth, wired or USB device; a Bluetooth speaker connected for music only gets it as media |
 
 Devices record and play in their own formats. [`MicrophoneFrames`](xref:Uniform.Matrix.Audio.MicrophoneFrames) turns any `IWaveIn` into voice frames, mixing channels to mono and resampling to 48 kHz; [`SpeakerFrames`](xref:Uniform.Matrix.Audio.SpeakerFrames) plays frames through any `IWavePlayer`, with a short buffer against uneven arrival and silence in the gaps. ALSA's default devices convert formats themselves; WASAPI's shared mode doesn't change sample rates, so on Windows the speaker resamples voice to the device's mix format, such as 44.1 kHz stereo, before handing it over.
 
@@ -40,6 +40,8 @@ loopback.Start();
 ## Choosing devices
 
 [`AudioDevices.ForThisPlatform`](xref:Uniform.Matrix.Audio.AudioDevices.ForThisPlatform*) takes a microphone and a speaker by name: on Linux an ALSA device name such as `pulse` or `plughw:CARD=MKII,DEV=0`, on Windows part of the device's friendly name. [`ListMicrophones`](xref:Uniform.Matrix.Audio.IAudioDevices.ListMicrophones*) and [`ListSpeakers`](xref:Uniform.Matrix.Audio.IAudioDevices.ListSpeakers*) return the choices. The terminal client's `Audio:Microphone` and `Audio:Speaker` settings pass them on.
+
+An [`AudioChoice`](xref:Uniform.Matrix.Audio.AudioChoice) names the microphone and speaker a call uses, by the [`Name`](xref:Uniform.Matrix.Audio.AudioDevice.Name) of each from [`ListMicrophones`](xref:Uniform.Matrix.Audio.IAudioDevices.ListMicrophones) and [`ListSpeakers`](xref:Uniform.Matrix.Audio.IAudioDevices.ListSpeakers); null is the platform's default. The apps open their devices with it, so the call bar's menus can choose them and remember the choice. On phones, [`AudioChoice.Earpiece`](xref:Uniform.Matrix.Audio.AudioChoice.Earpiece) and [`AudioChoice.Loudspeaker`](xref:Uniform.Matrix.Audio.AudioChoice.Loudspeaker) are speakers too.
 
 On Linux, ALSA's `default` and `pulse` devices go through PipeWire's PulseAudio layer, which follows the `PULSE_SOURCE` and `PULSE_SINK` environment variables, so one process can be pointed at other PipeWire devices.
 

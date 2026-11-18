@@ -8,7 +8,7 @@ using Uniform.Matrix.Audio;
 /// <param name="audio">Opens the platform's devices, given whether to use the loudspeaker.</param>
 /// <param name="hasEarpiece">Whether the loudspeaker is a choice, as on phones.</param>
 /// <param name="requestMicrophone">Asks for the microphone permission where needed, or null.</param>
-public sealed partial class AudioTestViewModel(Func<bool, IAudioDevices> audio, bool hasEarpiece, Func<Task<bool>>? requestMicrophone) : ViewModelBase, IDisposable
+public sealed partial class AudioTestViewModel(Func<AudioChoice, IAudioDevices> audio, bool hasEarpiece, Func<Task<bool>>? requestMicrophone) : ViewModelBase, IDisposable
 {
     private static readonly TimeSpan Delay = TimeSpan.FromSeconds(1);
     private VoiceLoopback? loopback;
@@ -51,7 +51,7 @@ public sealed partial class AudioTestViewModel(Func<bool, IAudioDevices> audio, 
         }
         try
         {
-            loopback = new VoiceLoopback(audio(HasEarpiece && Loudspeaker), Delay);
+            loopback = new VoiceLoopback(audio(HasEarpiece && Loudspeaker ? new AudioChoice(Speaker: AudioChoice.Loudspeaker) : AudioChoice.Default), Delay);
             loopback.Start();
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)

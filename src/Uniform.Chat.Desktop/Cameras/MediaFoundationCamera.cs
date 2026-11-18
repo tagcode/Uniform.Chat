@@ -2,6 +2,7 @@ namespace Uniform.Chat.Desktop.Cameras;
 
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
+using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
 
 /// <summary>A Windows webcam through <see href="https://learn.microsoft.com/windows/win32/medfound/media-foundation-programming-guide">Media Foundation</see>'s source reader: NV12 pictures of 640x480, converted to I420 and encoded by <see cref="EncodingCamera"/>; half size when the peer asks for less.</summary>
@@ -13,6 +14,7 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
     private static readonly Guid MajorType = new("48eba18e-f8c9-4687-bf11-0a74c9f96a8f"), Subtype = new("f7e34c9a-42e8-4714-b74b-cb29d72c35e5"), FrameSize = new("1652c33d-d6b2-4012-b834-72030849a37d");
     private static readonly Guid Video = new("73646976-0000-0010-8000-00aa00389b71"), Nv12 = new("3231564e-0000-0010-8000-00aa00389b71");
     private static readonly Guid EnableVideoProcessing = new("fb394f3d-ccf1-42ee-bbb3-f9b845d5681d"), MediaSourceId = new("279a808d-aec7-40c8-9c6b-a6b492c78a66");
+    private static readonly Guid FriendlyName = new("60d0e559-52f8-4fa2-bbce-acdb34a8ec01"), SymbolicLink = new("58f0aad8-22bf-4f8a-bb3d-d2c4978c6e2f");
     private static readonly StrategyBasedComWrappers Wrappers = new();
     private static bool started;
     private IMFActivate[] devices = [];
@@ -20,6 +22,7 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
     private CancellationTokenSource? stopping;
     private Thread? capturing;
     private int index;
+    private string? wanted;
     private int width;
     private int height;
 
@@ -44,12 +47,50 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
         }
     }
 
-    /// <summary>Open the first camera and start capturing on a thread of its own.</summary>
+    /// <summary>The cameras by their symbolic links, which stay the same across runs, named by their friendly names.</summary>
+    public override IReadOnlyList<CameraChoice> Cameras
+    {
+        get
+        {
+            // The open list, else a fresh one freed after
+            IMFActivate[] listed = devices.Length > 0 ? devices : Enumerate();
+            List<CameraChoice> choices = [.. listed.Select((d, i) => new CameraChoice(DeviceString(d, SymbolicLink) ?? $"camera{i}", DeviceString(d, FriendlyName) ?? $"Camera {i + 1}"))];
+            if (listed != devices) foreach (IMFActivate device in listed) Release(device);
+            // Return choices
+            return choices;
+        }
+    }
+
+    /// <summary>The symbolic link of the camera capturing, or of the one to start with.</summary>
+    public override string? CameraId => reader is not null && index < devices.Length ? DeviceString(devices[index], SymbolicLink) : wanted;
+
+    /// <summary>Start with, or switch to, the camera of symbolic link <paramref name="id"/>; the current one stays when it does not open.</summary>
+    public override void SelectCamera(string id)
+    {
+        // Before the start, the one to open
+        if (reader is null)
+        {
+            wanted = id;
+            return;
+        }
+        int number = Array.FindIndex(devices, d => DeviceString(d, SymbolicLink) == id);
+        if (number < 0 || number == index) return;
+        int previous = index;
+        Stop();
+        if (Open(number)) index = number;
+        else if (Open(previous)) index = previous;
+        // Done
+        if (reader is not null) Run();
+    }
+
+    /// <summary>Open the wanted camera, else the first that opens, and start capturing on a thread of its own.</summary>
     public override void Start()
     {
-        // The cameras, then the first that opens
+        // The cameras, the wanted one first, then the first that opens
         devices = Enumerate();
-        for (index = 0; index < devices.Length && !Open(index); index++) { }
+        int chosen = wanted is null ? -1 : Array.FindIndex(devices, d => DeviceString(d, SymbolicLink) == wanted);
+        if (chosen >= 0 && Open(chosen)) index = chosen;
+        else for (index = 0; index < devices.Length && !Open(index); index++) { }
         if (reader is null) throw new IOException("No camera opened; Windows' camera privacy setting may not allow it.");
         // Done
         Run();
@@ -80,6 +121,17 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
         devices = [];
         // Done
         return ValueTask.CompletedTask;
+    }
+
+    /// <summary>Return a string attribute of a device, e.g. its friendly name; null when it has none.</summary>
+    private static string? DeviceString(IMFActivate device, Guid key)
+    {
+        // Allocated by Media Foundation, freed here
+        if (device.GetAllocatedString(key, out IntPtr value, out uint length) < 0 || value == IntPtr.Zero) return null;
+        string text = Marshal.PtrToStringUni(value, (int)length);
+        Marshal.FreeCoTaskMem(value);
+        // Return text
+        return text;
     }
 
     /// <summary>Return the video capture devices.</summary>
@@ -283,8 +335,8 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
         [PreserveSig] int GetStringLength();
         /// <summary>GetString, unused.</summary>
         [PreserveSig] int GetString();
-        /// <summary>GetAllocatedString, unused.</summary>
-        [PreserveSig] int GetAllocatedString();
+        /// <summary>Return a string value in memory the caller frees with CoTaskMemFree.</summary>
+        [PreserveSig] int GetAllocatedString(in Guid key, out IntPtr value, out uint length);
         /// <summary>GetBlobSize, unused.</summary>
         [PreserveSig] int GetBlobSize();
         /// <summary>GetBlob, unused.</summary>

@@ -50,10 +50,44 @@
         <Button Classes="accent" Margin="4,2" Content="Answer with video" Command="{Binding AnswerWithVideoCommand}" IsVisible="{Binding CanAnswerWithVideo}" />
         <Button Margin="4,2" Content="Decline" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
         <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
-        <Button Margin="4,2" Content="Switch camera" Command="{Binding SwitchCameraCommand}" IsVisible="{Binding CanSwitchCamera}" />
-        <Button Margin="4,2" Classes.warning="{Binding CameraOff}" Content="{Binding CameraText}" Command="{Binding ToggleCameraCommand}" IsVisible="{Binding SendsVideo}" />
+        <!-- Device menus: the cameras with turning the camera off, then the microphones and speakers, each filled as it opens -->
+        <Button Margin="4,2" Content="Camera ▽" Classes.warning="{Binding CameraOff}" IsVisible="{Binding SendsVideo}">
+          <Button.Flyout>
+            <MenuFlyout ItemsSource="{Binding CameraMenu}" Opening="OnDeviceMenuOpening">
+              <MenuFlyout.ItemContainerTheme>
+                <ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}" x:DataType="vm:DeviceMenuItem">
+                  <Setter Property="Header" Value="{Binding Label}" />
+                  <Setter Property="Command" Value="{Binding Command}" />
+                </ControlTheme>
+              </MenuFlyout.ItemContainerTheme>
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
+        <Button Margin="4,2" Content="Microphone ▽" IsVisible="{Binding IsActive}">
+          <Button.Flyout>
+            <MenuFlyout ItemsSource="{Binding MicrophoneMenu}" Opening="OnDeviceMenuOpening">
+              <MenuFlyout.ItemContainerTheme>
+                <ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}" x:DataType="vm:DeviceMenuItem">
+                  <Setter Property="Header" Value="{Binding Label}" />
+                  <Setter Property="Command" Value="{Binding Command}" />
+                </ControlTheme>
+              </MenuFlyout.ItemContainerTheme>
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
+        <Button Margin="4,2" Content="Speaker ▽" IsVisible="{Binding IsActive}">
+          <Button.Flyout>
+            <MenuFlyout ItemsSource="{Binding SpeakerMenu}" Opening="OnDeviceMenuOpening">
+              <MenuFlyout.ItemContainerTheme>
+                <ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}" x:DataType="vm:DeviceMenuItem">
+                  <Setter Property="Header" Value="{Binding Label}" />
+                  <Setter Property="Command" Value="{Binding Command}" />
+                </ControlTheme>
+              </MenuFlyout.ItemContainerTheme>
+            </MenuFlyout>
+          </Button.Flyout>
+        </Button>
         <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding ShowsVideo}" />
-        <Button Margin="4,2" Content="{Binding SpeakerText}" Command="{Binding ToggleSpeakerCommand}" IsVisible="{Binding HasEarpiece}" />
         <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
       <Panel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" HorizontalAlignment="Center">

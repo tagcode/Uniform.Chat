@@ -160,6 +160,15 @@ public partial class ChatView : UserControl
         model.IsNarrow = e.NewSize.Width < NarrowWidth;
     }
 
+    /// <summary>Fill a device menu of the call bar from the devices attached now, as it opens.</summary>
+    private void OnDeviceMenuOpening(object? sender, EventArgs e)
+    {
+        // The call bar's model
+        if (sender is not MenuFlyout { Target.DataContext: CallViewModel call }) return;
+        // Done
+        call.RefreshDevices();
+    }
+
     /// <summary>Send with Enter; Shift+Enter starts a new line, Esc stops replying or editing.</summary>
     private void OnComposerKeyDown(object? sender, KeyEventArgs e)
     {

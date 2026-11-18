@@ -27,6 +27,21 @@ public interface IAudioDevices
     IReadOnlyList<AudioDevice> ListSpeakers();
 }
 
+/// <summary>The microphone and speaker a call uses, by the <see cref="AudioDevice.Name"/> of each; null for the platform's default.</summary>
+/// <param name="Microphone">The microphone's name, or null.</param>
+/// <param name="Speaker">The speaker's name, or null.</param>
+public sealed record AudioChoice(string? Microphone = null, string? Speaker = null)
+{
+    /// <summary>The name of a phone's earpiece among its speakers.</summary>
+    public const string Earpiece = "earpiece";
+
+    /// <summary>The name of a phone's loudspeaker among its speakers.</summary>
+    public const string Loudspeaker = "speaker";
+
+    /// <summary>The defaults of the platform.</summary>
+    public static AudioChoice Default { get; } = new();
+}
+
 /// <summary>The audio devices of the platform the app runs on.</summary>
 public static class AudioDevices
 {

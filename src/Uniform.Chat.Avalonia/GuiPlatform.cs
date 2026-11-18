@@ -21,8 +21,8 @@ public sealed record GuiPlatform
     public Action<IServiceCollection>? ConfigureServices { get; init; }
     /// <summary>HTTP handler for requests outside the engine, such as creating an account; null for the default. Tests route them to a server in memory.</summary>
     public Func<HttpMessageHandler>? HttpHandler { get; init; }
-    /// <summary>Open the platform's microphone and speaker, given whether to use the loudspeaker rather than an earpiece; null where there is no audio.</summary>
-    public Func<bool, IAudioDevices>? Audio { get; init; }
+    /// <summary>Open the platform's audio devices as a choice names them, its defaults where the choice is empty; they also list what can be chosen. Null where calls have no audio.</summary>
+    public Func<AudioChoice, IAudioDevices>? Audio { get; init; }
     /// <summary>Whether the platform has an earpiece, so that the loudspeaker is a choice, as on phones.</summary>
     public bool HasEarpiece { get; init; }
     /// <summary>Ask for permission to record, where the platform needs it; return whether it is granted. Null where none is needed.</summary>
@@ -66,7 +66,7 @@ public sealed record GuiPlatform
     {
         ApplicationName = "Uniform.Chat.Desktop",
         DeviceName = OperatingSystem.IsWindows() ? "Uniform Chat on Windows" : OperatingSystem.IsMacOS() ? "Uniform Chat on macOS" : "Uniform Chat on Linux",
-        Audio = AudioDevices.ForThisPlatform() is null ? null : _ => AudioDevices.ForThisPlatform()!,
+        Audio = AudioDevices.ForThisPlatform() is null ? null : choice => AudioDevices.ForThisPlatform(choice.Microphone, choice.Speaker)!,
     };
 }
 

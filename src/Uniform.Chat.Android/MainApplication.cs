@@ -28,7 +28,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             ApplicationName = "Uniform.Chat.Android",
             DeviceName = "Uniform Chat on Android",
             SinglePane = true,
-            Audio = loudspeaker => new AndroidAudioDevices(this, loudspeaker),
+            Audio = choice => new AndroidAudioDevices(this, choice),
             HasEarpiece = true,
             RequestMicrophoneAsync = MainActivity.RequestMicrophoneAsync,
             Camera = () => new AndroidCamera(this),
