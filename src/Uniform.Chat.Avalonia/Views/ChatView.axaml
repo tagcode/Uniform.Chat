@@ -133,18 +133,14 @@
                   </Panel>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
-                  <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Classes.unread="{Binding HasUnread}" />
+                  <!-- The name, then the topic dimmed after it; the name keeps its room, the topic is cut first -->
+                  <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Grid.Column="0" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Classes.unread="{Binding HasUnread}" MaxWidth="{Binding $parent[Grid].Bounds.Width}" />
+                    <TextBlock Grid.Column="1" Classes="hint" Text="{Binding TopicLine, StringFormat='  {0}'}" TextTrimming="CharacterEllipsis" MaxLines="1" VerticalAlignment="Center" IsVisible="{Binding HasTopic}" />
+                  </Grid>
                   <TextBlock Classes="hint" Text="Invitation" IsVisible="{Binding IsInvite}" />
                   <TextBlock Classes="hint" Text="From your server" IsVisible="{Binding IsServerNotice}" />
                   <TextBlock Classes="hint" Text="{Binding LastMessage}" TextTrimming="CharacterEllipsis" MaxLines="1" IsVisible="{Binding HasLastMessage}" />
-                  <TextBlock Classes="hint" Text="{Binding Topic}" TextTrimming="CharacterEllipsis" MaxLines="1">
-                    <TextBlock.IsVisible>
-                      <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="!IsInvite" />
-                        <Binding Path="!HasLastMessage" />
-                      </MultiBinding>
-                    </TextBlock.IsVisible>
-                  </TextBlock>
                 </StackPanel>
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="4">
                   <TextBlock Classes="hint" Text="{Binding LastTime}" HorizontalAlignment="Right" />

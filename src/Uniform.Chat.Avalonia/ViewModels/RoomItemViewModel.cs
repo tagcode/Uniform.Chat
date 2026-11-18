@@ -56,7 +56,14 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 
     /// <summary>Topic, or null.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasTopic), nameof(TopicLine))]
     public partial string? Topic { get; set; }
+
+    /// <summary>Whether the room has a topic to show beside its name.</summary>
+    public bool HasTopic => !string.IsNullOrWhiteSpace(Topic);
+
+    /// <summary>The topic's first line, as shown beside the name.</summary>
+    public string TopicLine => Topic?.Split('\n', 2)[0].Trim() ?? "";
 
     /// <summary>Initial of the name, shown as the room's avatar.</summary>
     [ObservableProperty]
