@@ -13,7 +13,7 @@ The service's settings are in section `MatrixRtc`. Changes take effect at the ne
 | `MatrixRtc:ApiKey` | not set | API key of the LiveKit server, one of the `keys` in its configuration. `MATRIXRTC_KEY` or `MATRIXRTC_KEY_FILE` |
 | `MatrixRtc:ApiSecret` | not set | Secret of that API key. Keep it out of command lines. `MATRIXRTC_SECRET` or `MATRIXRTC_SECRET_FILE` |
 | `MatrixRtc:FullAccessHomeservers` | not set | Homeservers whose users may start calls and send audio and video, separated by commas, or `*` for all; users of other servers can only watch and listen in calls that are already going. Required. `MATRIXRTC_FULL_ACCESS_HOMESERVERS` |
-| `MatrixRtc:TokenLifetime` | `01:00:00` | How long a SFU token can be used to join; a call that has started goes on. |
+| `MatrixRtc:TokenLifetime` | `01:00:00` | How long an SFU token can be used to join; a call that has started goes on. |
 | `MatrixRtc:CanUpdateOwnMetadata` | `false` | Let participants change their own name and metadata on the SFU. |
 | `Logging:LogLevel:Default` | `Information` | Least important log entries written: `Information` logs every issued token, `Warning` only refusals. |
 

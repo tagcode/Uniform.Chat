@@ -10,7 +10,7 @@ Voice audio for calls, the first part of calling: microphone and speaker through
 
 Calls carry voice as 20 ms frames of 48 kHz mono 16-bit samples ([`VoiceFormat`](xref:Uniform.Matrix.Audio.VoiceFormat)), each one an Opus packet:
 
-- [`VoiceEncoder`](xref:Uniform.Matrix.Audio.VoiceEncoder) encodes a frame, tuned for speech: the VoIP application, 32 kbit/s by default, and in-band forward error correction.
+- [`VoiceEncoder`](xref:Uniform.Matrix.Audio.VoiceEncoder) encodes a frame, tuned for speech: the VoIP application, 64 kbit/s by default for full-band speech, and in-band forward error correction.
 - [`VoiceDecoder`](xref:Uniform.Matrix.Audio.VoiceDecoder) decodes a packet back into a frame; given no packet, it conceals the loss from the frames before.
 
 Concentus would switch to a native libopus where it finds one; both classes turn that off, so every platform runs the same code.

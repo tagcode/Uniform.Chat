@@ -60,7 +60,7 @@ Settings come from these places; later ones override earlier ones:
 | `MatrixRtc:ApiKey` | not set | API key of the LiveKit server, one of the `keys` in its configuration. |
 | `MatrixRtc:ApiSecret` | not set | Secret of that API key. Keep it out of command lines; set it in the settings file or as the environment variable `MatrixRtc__ApiSecret`. |
 | `MatrixRtc:FullAccessHomeservers` | not set | Homeservers whose users may start calls and send audio and video, separated by commas, or `*` for all; users of other servers can only watch and listen in calls that are already going. This server's name when not set. |
-| `MatrixRtc:TokenLifetime` | `01:00:00` | How long a SFU token can be used to join; a call that has started goes on. |
+| `MatrixRtc:TokenLifetime` | `01:00:00` | How long an SFU token can be used to join; a call that has started goes on. |
 | `MatrixRtc:CanUpdateOwnMetadata` | `false` | Let participants change their own name and metadata on the SFU. |
 | `Turn:Enabled` | `false` | Run the built-in STUN and TURN server, which relays calls between users whose networks would block them; calls then use it unless `Calls:TurnUris` names another. See [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article). ↻ |
 | `Turn:Realm` | not set | Realm of the TURN credentials; the server name when not set. ↻ |

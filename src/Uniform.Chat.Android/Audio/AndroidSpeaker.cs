@@ -49,7 +49,9 @@ public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlay
         AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(media is null ? AudioUsageKind.VoiceCommunication : AudioUsageKind.Media)!.SetContentType(AudioContentType.Speech)!.Build()!;
         AudioFormat format = new AudioFormat.Builder().SetEncoding(Encoding.Pcm16bit)!.SetSampleRate(VoiceFormat.SampleRate)!.SetChannelMask(ChannelOut.Mono)!.Build()!;
         int minimum = AudioTrack.GetMinBufferSize(VoiceFormat.SampleRate, ChannelOut.Mono, Encoding.Pcm16bit);
-        track = new AudioTrack.Builder().SetAudioAttributes(attributes)!.SetAudioFormat(format)!.SetTransferMode(AudioTrackMode.Stream)!.SetBufferSizeInBytes(Math.Max(minimum, ChunkBytes * 4))!.Build()!;
+        AudioTrack.Builder builder = new AudioTrack.Builder().SetAudioAttributes(attributes)!.SetAudioFormat(format)!.SetTransferMode(AudioTrackMode.Stream)!.SetBufferSizeInBytes(Math.Max(minimum, ChunkBytes * 2))!;
+        if (OperatingSystem.IsAndroidVersionAtLeast(26)) builder.SetPerformanceMode(AudioTrackPerformanceMode.LowLatency);
+        track = builder.Build()!;
         track.SetVolume(Volume);
         if (media is not null) track.SetPreferredDevice(media);
 

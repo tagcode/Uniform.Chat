@@ -4,7 +4,7 @@ uid: Uniform.Chat.Server.MatrixRtc.Article
 ---
 # Video calls in Element X
 
-Element X, Element Call and other MatrixRTC apps don't call each other directly. They all join a room on a LiveKit server, a media server that forwards everyone's audio and video. Before joining, an app asks the homeserver's authorization service for a SFU token, proving who it is with a Matrix OpenID token.
+Element X, Element Call and other MatrixRTC apps don't call each other directly. They all join a room on a LiveKit server, a media server that forwards everyone's audio and video. Before joining, an app asks the homeserver's authorization service for an SFU token, proving who it is with a Matrix OpenID token.
 
 The homeserver has that authorization service built in. You run the LiveKit server next to it. Uniform Chat's apps call this way too when the homeserver has an SFU, so that Element X users can answer. Without it, they call each other directly; see [Calls through firewalls](xref:Uniform.Chat.Server.Turn.Article).
 

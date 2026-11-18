@@ -86,6 +86,34 @@ public class RtpTests
         Assert.Equal(1, buffer.Underruns);
     }
 
+    /// <summary>Delay that late packets added drains again: a little behind, only near-silent frames are skipped, now and then; far behind, any frame is, until near the target.</summary>
+    [Fact]
+    public void DrainAddedDelay()
+    {
+        // Playing with a target of three, then a hiccup: twelve packets held at once, a pause between words in the middle
+        JitterBuffer buffer = new(delayPackets: 3);
+        byte[] speech = new byte[120], silence = new byte[3];
+        ushort sequence = 0;
+        for (; sequence < 3; sequence++) buffer.Add(Packet(sequence) with { Payload = speech });
+        Assert.Equal(0, buffer.Next(out _)!.Sequence);
+        for (; sequence < 13; sequence++) buffer.Add(Packet(sequence) with { Payload = sequence is >= 4 and < 10 ? silence : speech });
+
+        // A little behind: all speech plays, some of the pause is skipped
+        List<int> played = [];
+        while (buffer.Count > 0) played.Add(buffer.Next(out _)?.Sequence ?? -1);
+        Assert.True(new[] { 1, 2, 3, 10, 11, 12 }.All(played.Contains), string.Join(",", played));
+        long quietDrained = buffer.Drained;
+        Assert.InRange(quietDrained, 1, 4);
+
+        // Far behind: a second of speech at once, thinned to near the target
+        for (int i = 0; i < 50; i++, sequence++) buffer.Add(Packet(sequence) with { Payload = speech });
+        int turns = 0;
+        while (buffer.Count > 3 + JitterBuffer.FarAhead && turns < 100) { buffer.Next(out _); turns++; }
+        // Done: drained by skipping speech too
+        Assert.True(buffer.Drained > quietDrained, $"{buffer.Drained} drained");
+        Assert.True(turns < 50 - 3 - JitterBuffer.FarAhead, $"{turns} turns");
+    }
+
     /// <summary>Return a packet with a sequence number.</summary>
     private static RtpPacket Packet(ushort sequence, uint ssrc = 1) => new() { PayloadType = 111, Sequence = sequence, Timestamp = sequence * 960u, Ssrc = ssrc, Payload = [] };
 

@@ -90,7 +90,7 @@ public sealed class AlsaAudioDevices(string? microphone = null, string? speaker 
 #pragma warning disable CS0618
 public sealed class WasapiAudioDevices(string? microphone = null, string? speaker = null) : IAudioDevices
 {
-    private const int LatencyMilliseconds = 60;
+    private const int LatencyMilliseconds = 40;
 
     /// <summary>Open the capture device; it records in the system's mix format, which <see cref="MicrophoneFrames"/> converts.</summary>
     public IWaveIn OpenMicrophone() => Find(DataFlow.Capture, microphone) is MMDevice device ? new WasapiCapture(device) : new WasapiCapture();

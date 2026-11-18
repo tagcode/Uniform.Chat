@@ -9,7 +9,7 @@ using Uniform.Matrix.WebRtc.Rtp;
 public sealed class VoiceMedia : IAsyncDisposable
 {
     /// <summary>How much audio the speaker is kept queued.</summary>
-    public static readonly TimeSpan SpeakerTarget = TimeSpan.FromMilliseconds(60);
+    public static readonly TimeSpan SpeakerTarget = TimeSpan.FromMilliseconds(40);
     private static readonly TimeSpan Tick = TimeSpan.FromMilliseconds(10);
     private readonly IMediaConnection connection;
     private readonly MicrophoneFrames microphone;
@@ -46,6 +46,9 @@ public sealed class VoiceMedia : IAsyncDisposable
 
     /// <summary>Frames concealed while waiting for a late packet.</summary>
     public long Underruns => jitter.Underruns;
+
+    /// <summary>Frames skipped to drain delay that late packets added.</summary>
+    public long Drained => jitter.Drained;
 
     /// <summary>Frames received.</summary>
     public long Received => Interlocked.Read(ref received);

@@ -4,16 +4,19 @@ using Concentus;
 using Concentus.Enums;
 
 /// <summary>Encodes 20 ms voice frames as Opus packets, with Concentus in pure C#.</summary>
-/// <remarks>Tuned for speech: the VoIP application, voice signal, variable bit rate and in-band forward error correction, so a lost packet can be partly recovered from the next.</remarks>
+/// <remarks>Tuned for speech: the VoIP application, voice signal, variable bit rate and in-band forward error correction, so a lost packet can be partly recovered from the next. At 64 kbit/s Opus codes full-band speech, up to 20 kHz, where 32 kbit/s gives wideband.</remarks>
 public sealed class VoiceEncoder
 {
     /// <summary>Largest Opus packet.</summary>
     public const int MaxPacketBytes = 1275;
+
+    /// <summary>The bit rate calls send at, in bits per second.</summary>
+    public const int DefaultBitrate = 64000;
     private readonly IOpusEncoder encoder;
 
     /// <summary>Create an encoder.</summary>
-    /// <param name="bitrate">Bits per second; 32 kbit/s gives clear wideband speech.</param>
-    public VoiceEncoder(int bitrate = 32000)
+    /// <param name="bitrate">Bits per second, at most; 64 kbit/s gives full-band speech, 32 kbit/s clear wideband speech.</param>
+    public VoiceEncoder(int bitrate = DefaultBitrate)
     {
         // Pure C# on every platform, whether or not a native libopus is installed
         OpusCodecFactory.AttemptToUseNativeLibrary = false;

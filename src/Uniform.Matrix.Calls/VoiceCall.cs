@@ -272,7 +272,7 @@ public abstract class VoiceCall : IAsyncDisposable
         if (media is not null)
         {
             await media.DisposeAsync();
-            logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for", CallId, media.Sent, media.Received, media.Lost, media.Underruns);
+            logger.LogInformation("Call {CallId} voice: {Sent} frames sent, {Received} received, {Lost} lost, {Underruns} waited for, {Drained} skipped to cut delay", CallId, media.Sent, media.Received, media.Lost, media.Underruns, media.Drained);
         }
         if (sending is not null) await sending.DisposeAsync();
         if (video is not null)
