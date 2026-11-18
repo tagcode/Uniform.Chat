@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit;
+namespace Uniform.MatrixRtc;
 
 using System.Collections.Concurrent;
 using System.Globalization;

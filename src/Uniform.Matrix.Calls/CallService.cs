@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Uniform.LiveKit;
+using Uniform.MatrixRtc;
 using Uniform.Matrix.Protocol.Crypto;
 using Uniform.Matrix.Video;
 using Uniform.Matrix.Audio;

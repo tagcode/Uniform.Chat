@@ -6,9 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- The program is uniform-livekit-server, as its service and folders are named -->
-    <AssemblyName>uniform-livekit-server</AssemblyName>
-    <RootNamespace>Uniform.LiveKit.Server</RootNamespace>
+    <!-- The program is uniform-matrixrtc-server, as its service and folders are named -->
+    <AssemblyName>uniform-matrixrtc-server</AssemblyName>
+    <RootNamespace>Uniform.MatrixRtc.Server</RootNamespace>
     <!-- Code comments are for developers: no .xml documentation files in the published app -->
     <PublishDocumentationFile>false</PublishDocumentationFile>
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
@@ -26,11 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uniform.LiveKit.Hosting\Uniform.LiveKit.Hosting.csproj" />
+    <ProjectReference Include="..\Uniform.MatrixRtc.Hosting\Uniform.MatrixRtc.Hosting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Uniform.LiveKit.Tests" />
+    <InternalsVisibleTo Include="Uniform.MatrixRtc.Tests" />
   </ItemGroup>
 
 </Project>

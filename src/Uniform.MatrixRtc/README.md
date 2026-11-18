@@ -1,4 +1,4 @@
-# Uniform.LiveKit
+# Uniform.MatrixRtc
 
 A LiveKit client in pure C#, for MatrixRTC calls:
 

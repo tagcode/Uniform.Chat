@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Net;
 using System.Text;

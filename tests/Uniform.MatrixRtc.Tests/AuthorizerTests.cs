@@ -1,11 +1,11 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
-using Uniform.LiveKit.Authorization;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Authorization;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Tests of <see cref="LiveKitAuthorizer"/> and <see cref="FederationOpenIdVerifier"/>.</summary>
 public sealed class AuthorizerTests

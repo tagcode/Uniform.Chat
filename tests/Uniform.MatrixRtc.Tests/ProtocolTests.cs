@@ -1,8 +1,8 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Text;
 using System.Text.Json;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Tests of access tokens and MatrixRTC names.</summary>
 public sealed class ProtocolTests

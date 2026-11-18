@@ -1,6 +1,6 @@
-namespace Uniform.LiveKit.Server;
+namespace Uniform.MatrixRtc.Server;
 
-using Uniform.LiveKit.Hosting;
+using Uniform.MatrixRtc.Hosting;
 
 /// <summary>Reads lk-jwt-service's environment variables as settings, so that this program replaces it as is, e.g. in a container.</summary>
 internal static class CompatibleEnvironment
@@ -25,7 +25,7 @@ internal static class CompatibleEnvironment
         string.IsNullOrWhiteSpace(options.Url) ? "LiveKit's URL"
         : string.IsNullOrWhiteSpace(options.ApiKey) ? "LiveKit's API key"
         : string.IsNullOrWhiteSpace(options.ApiSecret) ? "LiveKit's API secret"
-        : string.IsNullOrWhiteSpace(options.FullAccessHomeservers) ? "the homeservers whose users may start calls, LiveKit:FullAccessHomeservers or LIVEKIT_FULL_ACCESS_HOMESERVERS, e.g. example.org, or * for all"
+        : string.IsNullOrWhiteSpace(options.FullAccessHomeservers) ? "the homeservers whose users may start calls, MatrixRtc:FullAccessHomeservers or LIVEKIT_FULL_ACCESS_HOMESERVERS, e.g. example.org, or * for all"
         : null;
 
     /// <summary>Set <paramref name="key"/> when <paramref name="value"/> is not empty.</summary>

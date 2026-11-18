@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 using System.Collections.Concurrent;
 using System.Net;

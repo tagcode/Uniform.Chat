@@ -1,8 +1,10 @@
-namespace Uniform.LiveKit.Hosting;
+namespace Uniform.MatrixRtc.Hosting;
 
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -11,14 +13,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Uniform.LiveKit.Authorization;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Authorization;
+using Uniform.MatrixRtc.Protocol;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Adds the MatrixRTC authorization service, compatible with lk-jwt-service, to an ASP.NET host.</summary>
 /// <example><code><![CDATA[
 /// WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-/// builder.AddLiveKitAuthorization(); // serves when LiveKit:Enabled is true
+/// builder.AddLiveKitAuthorization(); // serves when MatrixRtc:Enabled is true
 /// WebApplication app = builder.Build();
 /// app.MapLiveKitAuthorization();
 /// await app.RunAsync();
@@ -26,12 +28,14 @@ using Uniform.Matrix.Hosting;
 public static class LiveKitHostingExtensions
 {
     /// <summary>Name of the HTTP client of OpenID verification and LiveKit's room service.</summary>
-    public const string HttpClientName = "Uniform.LiveKit";
+    public const string HttpClientName = "Uniform.MatrixRtc";
 
     /// <summary>Bind section <see cref="LiveKitOptions.Section"/>, list it among the settings, and register a <see cref="LiveKitAuthorizer"/>; register an <see cref="IOpenIdVerifier"/> before this to verify tokens otherwise than over federation.</summary>
+    /// <remarks>Settings still under the old section <see cref="LiveKitOptions.OldSection"/> are read as the new one's, where it does not set them, and a warning tells to rename them.</remarks>
     public static IHostApplicationBuilder AddLiveKitAuthorization(this IHostApplicationBuilder builder)
     {
-        // Options and an HTTP client
+        // Settings of the old name copied under the new, then options and an HTTP client
+        IReadOnlyList<string> renamed = CopyOldSection(builder.Configuration);
         builder.Services.AddOptionSection<LiveKitOptions>(builder.Configuration, LiveKitOptions.Section);
         builder.Services.AddHttpClient(HttpClientName, http => http.Timeout = TimeSpan.FromSeconds(15));
         builder.Services.TryAddSingleton(TimeProvider.System);
@@ -48,10 +52,29 @@ public static class LiveKitHostingExtensions
         {
             IOptionsMonitor<LiveKitOptions> options = services.GetRequiredService<IOptionsMonitor<LiveKitOptions>>();
             HttpClient http = services.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientName);
+            if (renamed.Count > 0) services.GetRequiredService<ILogger<LiveKitAuthorizer>>().LogWarning("Settings section {Old} is now {New}; rename {Keys}", LiveKitOptions.OldSection, LiveKitOptions.Section, string.Join(", ", renamed));
             return new LiveKitAuthorizer(() => options.CurrentValue.ToAuthorizer(), services.GetRequiredService<IOpenIdVerifier>(), http, services.GetRequiredService<TimeProvider>(), services.GetRequiredService<ILogger<LiveKitAuthorizer>>(), services.GetService<IRoomMembership>(), services.GetRequiredService<DelayedLeaveKeeper>());
         });
         // Return builder
         return builder;
+    }
+
+    /// <summary>Copy settings of the old section <see cref="LiveKitOptions.OldSection"/> under <see cref="LiveKitOptions.Section"/> where that does not set them; return the old keys copied.</summary>
+    private static IReadOnlyList<string> CopyOldSection(IConfigurationManager configuration)
+    {
+        // Values set under the old name only
+        string oldPrefix = LiveKitOptions.OldSection + ":";
+        Dictionary<string, string?> copied = [];
+        foreach ((string key, string? value) in configuration.GetSection(LiveKitOptions.OldSection).AsEnumerable())
+        {
+            if (value is null || !key.StartsWith(oldPrefix, StringComparison.OrdinalIgnoreCase)) continue;
+            string newKey = LiveKitOptions.Section + ":" + key[oldPrefix.Length..];
+            if (configuration[newKey] is null) copied[newKey] = value;
+        }
+        // Under every other source, so that a setting of the new name, also one written later, wins
+        if (copied.Count > 0) ((IConfigurationBuilder)configuration).Sources.Insert(0, new MemoryConfigurationSource { InitialData = copied });
+        // Return the old keys
+        return [.. copied.Keys.Select(k => LiveKitOptions.OldSection + k[LiveKitOptions.Section.Length..]).Order()];
     }
 
     /// <summary>Map <c>/sfu/get</c>, <c>/get_token</c>, <c>/delegate_delayed_leave</c> and <c>/healthz</c> under <paramref name="prefix"/>, e.g. <c>/livekit/jwt</c>; they answer M_UNRECOGNIZED while <see cref="LiveKitOptions.Enabled"/> is false.</summary>

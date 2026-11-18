@@ -1,8 +1,8 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 using System.Net;
 using System.Text.Json;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Verifies OpenID tokens over the federation API, <c>GET /_matrix/federation/v1/openid/userinfo</c>, at the address the server name delegates to by <c>/.well-known/matrix/server</c>, else at port 8448.</summary>
 /// <see href="https://spec.matrix.org/v1.16/server-server-api/#openid"/>

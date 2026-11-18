@@ -1,11 +1,11 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
-using Uniform.LiveKit.Authorization;
+using Uniform.MatrixRtc.Authorization;
 
 /// <summary>Tests of <see cref="DelayedLeaveKeeper"/>.</summary>
 public sealed class DelayedLeaveTests

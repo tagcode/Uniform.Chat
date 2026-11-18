@@ -6,7 +6,7 @@ title: Uniform.Matrix.Calls
 
 Matrix 1:1 voice and video calls for the [client engine](xref:Uniform.Matrix.Client.Article), of two kinds:
 
-- [`RtcCall`](xref:Uniform.Matrix.Calls.RtcCall): [MatrixRTC](https://github.com/matrix-org/matrix-spec-proposals/pull/4143) through a LiveKit SFU, as Element X and Element Call make calls, over [Uniform.LiveKit](xref:Uniform.LiveKit.Article).
+- [`RtcCall`](xref:Uniform.Matrix.Calls.RtcCall): [MatrixRTC](https://github.com/matrix-org/matrix-spec-proposals/pull/4143) through a LiveKit SFU, as Element X and Element Call make calls, over [Uniform.MatrixRtc](xref:Uniform.MatrixRtc.Article).
 - [`LegacyCall`](xref:Uniform.Matrix.Calls.LegacyCall): the [`m.call.*` events](https://spec.matrix.org/latest/client-server-api/#voice-over-ip) of version 1, directly between the apps, as Element on the desktop and Element Classic make calls.
 
 Both are a [`VoiceCall`](xref:Uniform.Matrix.Calls.VoiceCall), which the apps show the same way. Media goes over [Uniform.Matrix.WebRtc](xref:Uniform.Matrix.WebRtc.Article), voice through [Uniform.Matrix.Audio](xref:Uniform.Matrix.Audio.Article), and video is decoded with [Uniform.Matrix.Video](xref:Uniform.Matrix.Video.Article).

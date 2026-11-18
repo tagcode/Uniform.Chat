@@ -1,7 +1,7 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 using System.Net;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>A refused request, with the HTTP status and Matrix error code to answer with.</summary>
 /// <param name="status">The HTTP status, e.g. 403.</param>

@@ -1,8 +1,8 @@
-namespace Uniform.LiveKit;
+namespace Uniform.MatrixRtc;
 
 using System.Net.Http.Json;
 using System.Text.Json;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Asks a MatrixRTC authorization service, e.g. lk-jwt-service from a homeserver's <c>rtc_foci</c>, for LiveKit's URL and a token to join a call with.</summary>
 /// <param name="http">The client of the requests.</param>

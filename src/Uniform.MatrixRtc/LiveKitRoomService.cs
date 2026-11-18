@@ -1,9 +1,9 @@
-namespace Uniform.LiveKit;
+namespace Uniform.MatrixRtc;
 
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Calls LiveKit's room service over Twirp with JSON, authorized by a short access token signed with the API secret.</summary>
 /// <see href="https://docs.livekit.io/reference/server/server-apis/"/>

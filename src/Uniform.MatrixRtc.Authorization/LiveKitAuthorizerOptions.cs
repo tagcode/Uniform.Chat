@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 /// <summary>What <see cref="LiveKitAuthorizer"/> needs: the LiveKit server, its API key, and whose users may start calls.</summary>
 public sealed record LiveKitAuthorizerOptions

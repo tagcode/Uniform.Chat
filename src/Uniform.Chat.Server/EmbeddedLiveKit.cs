@@ -3,15 +3,15 @@ namespace Uniform.Chat.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Uniform.LiveKit.Authorization;
-using Uniform.LiveKit.Hosting;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Authorization;
+using Uniform.MatrixRtc.Hosting;
+using Uniform.MatrixRtc.Protocol;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Accounts;
 using Uniform.Matrix.Server.Configuration;
 using Uniform.Matrix.Server.Rooms;
 
-/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>LiveKit:Enabled</c> is set: it hands out tokens of a LiveKit server, verifying the homeserver's own OpenID tokens directly and those of other servers over federation, and only to users joined to the call's room.</summary>
+/// <summary>The MatrixRTC authorization service inside the homeserver, at <see cref="Prefix"/>, when <c>MatrixRtc:Enabled</c> is set: it hands out tokens of a LiveKit server, verifying the homeserver's own OpenID tokens directly and those of other servers over federation, and only to users joined to the call's room.</summary>
 internal static class EmbeddedLiveKit
 {
     /// <summary>Path of the service, as reverse proxies in front of lk-jwt-service commonly have it.</summary>
@@ -20,7 +20,7 @@ internal static class EmbeddedLiveKit
     /// <summary>Add the service and connect it to the homeserver; what is not set follows the homeserver's settings.</summary>
     /// <remarks>
     /// <list type="bullet">
-    /// <item><description><c>LiveKit:FullAccessHomeservers</c>: <c>Server:ServerName</c>, so that the homeserver's users start calls and others join them.</description></item>
+    /// <item><description><c>MatrixRtc:FullAccessHomeservers</c>: <c>Server:ServerName</c>, so that the homeserver's users start calls and others join them.</description></item>
     /// <item><description><c>Calls:LiveKitServiceUrl</c>: <see cref="Prefix"/> at <c>Server:PublicBaseUrl</c>, else at <c>https://</c> and <c>Server:ServerName</c>.</description></item>
     /// </list>
     /// </remarks>

@@ -38,7 +38,7 @@ await Task.WhenAll(caller.ConnectAsync(), callee.ConnectAsync());
 await caller.SendAudioAsync(encoder.Encode(frame));
 ```
 
-The voice and video pipelines see a connection as an [`IMediaConnection`](xref:Uniform.Matrix.WebRtc.IMediaConnection), so they also run over the connections of an SFU call together, such as [`LiveKitMedia`](xref:Uniform.LiveKit.LiveKitMedia).
+The voice and video pipelines see a connection as an [`IMediaConnection`](xref:Uniform.Matrix.WebRtc.IMediaConnection), so they also run over the connections of an SFU call together, such as [`LiveKitMedia`](xref:Uniform.MatrixRtc.LiveKitMedia).
 
 TURN servers, e.g. those of a homeserver's `/voip/turnServer`, go in [`PeerConnectionOptions.Servers`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.Servers); [`RelayOnly`](xref:Uniform.Matrix.WebRtc.PeerConnectionOptions.RelayOnly) keeps the call on the relay, so the peer does not learn this device's addresses.
 

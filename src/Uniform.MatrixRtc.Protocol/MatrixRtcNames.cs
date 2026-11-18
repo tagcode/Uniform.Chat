@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Protocol;
+namespace Uniform.MatrixRtc.Protocol;
 
 using System.Security.Cryptography;
 using System.Text;

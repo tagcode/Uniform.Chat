@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit;
+namespace Uniform.MatrixRtc;
 
 using System.Net.WebSockets;
 using Google.Protobuf;

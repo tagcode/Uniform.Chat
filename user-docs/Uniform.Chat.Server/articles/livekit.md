@@ -51,7 +51,7 @@ Turn on the authorization service and point it at LiveKit. Put the secret in the
 
 ```json
 {
-  "LiveKit": {
+  "MatrixRtc": {
     "Enabled": true,
     "Url": "wss://livekit.example.org",
     "ApiKey": "homeserver",
@@ -62,7 +62,7 @@ Turn on the authorization service and point it at LiveKit. Put the secret in the
 
 Restart the homeserver after editing its settings file, as it reads the file only on starting. The dashboard's **Apply** changes the settings of the running server at once, with no restart.
 
-The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. Only users joined to the call's room get in. Your users can start calls and send audio and video. Users of other homeservers who are in the room can join calls that are already going, but only to watch and listen, unless you add their servers to `LiveKit:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
+The service is then at `/livekit/jwt` of the homeserver's `Server:PublicBaseUrl`, and the homeserver announces it to the apps. Only users joined to the call's room get in. Your users can start calls and send audio and video. Users of other homeservers who are in the room can join calls that are already going, but only to watch and listen, unless you add their servers to `MatrixRtc:FullAccessHomeservers`. See [Settings](xref:Uniform.Chat.Server.Settings.Article) for every `LiveKit` setting.
 
 A reverse proxy in front of the homeserver must pass `/livekit/jwt` to it as well. With the nginx site of [Installing](xref:Uniform.Chat.Server.Install.Article), add it to the `location` line:
 
@@ -74,4 +74,4 @@ To check the service, open `https://example.org/livekit/jwt/healthz`, with your 
 
 ## Using another service
 
-If you already run lk-jwt-service or a separate `uniform-livekit-server`, leave `LiveKit:Enabled` off. Set `Calls:LiveKitServiceUrl` to that service's address, such as `https://example.org/livekit/jwt`, and the homeserver announces it instead.
+If you already run lk-jwt-service or a separate `uniform-matrixrtc-server`, leave `MatrixRtc:Enabled` off. Set `Calls:LiveKitServiceUrl` to that service's address, such as `https://example.org/livekit/jwt`, and the homeserver announces it instead.

@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Net;
 using System.Net.Http.Json;
@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http;
-using Uniform.LiveKit.Hosting;
-using Uniform.LiveKit.Protocol;
-using Uniform.LiveKit.Server;
+using Uniform.MatrixRtc.Hosting;
+using Uniform.MatrixRtc.Protocol;
+using Uniform.MatrixRtc.Server;
 
 /// <summary>Tests of the service's endpoints in a host, and of the standalone app's settings.</summary>
 public sealed class HostingTests
@@ -23,9 +23,9 @@ public sealed class HostingTests
     private static async Task<WebApplication> StartAsync(FakeNetwork network, bool enabled = true)
     {
         // Settings, and the fake network under the HTTP client
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.LiveKit.Tests", EnvironmentName = "Development" });
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.MatrixRtc.Tests", EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
-        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["LiveKit:Enabled"] = enabled.ToString(), ["LiveKit:Url"] = "wss://livekit.example.org", ["LiveKit:ApiKey"] = "key", ["LiveKit:ApiSecret"] = "secret", ["LiveKit:FullAccessHomeservers"] = "example.org" });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["MatrixRtc:Enabled"] = enabled.ToString(), ["MatrixRtc:Url"] = "wss://livekit.example.org", ["MatrixRtc:ApiKey"] = "key", ["MatrixRtc:ApiSecret"] = "secret", ["MatrixRtc:FullAccessHomeservers"] = "example.org" });
         builder.AddLiveKitAuthorization();
         builder.Services.AddHttpClient(LiveKitHostingExtensions.HttpClientName).ConfigurePrimaryHttpMessageHandler(() => network);
         WebApplication app = builder.Build();
@@ -89,12 +89,30 @@ public sealed class HostingTests
         Dictionary<string, string?> settings = CompatibleEnvironment.Read(name => environment.GetValueOrDefault(name));
 
         // Done
-        Assert.Equal("wss://livekit.example.org", settings["LiveKit:Url"]);
-        Assert.Equal("secret", settings["LiveKit:ApiSecret"]);
+        Assert.Equal("wss://livekit.example.org", settings["MatrixRtc:Url"]);
+        Assert.Equal("secret", settings["MatrixRtc:ApiSecret"]);
         Assert.Equal("http://0.0.0.0:8081", settings["Urls"]);
         LiveKitOptions options = new ConfigurationBuilder().AddInMemoryCollection(settings).Build().GetSection(LiveKitOptions.Section).Get<LiveKitOptions>()!;
         Assert.Null(CompatibleEnvironment.Missing(options));
         Assert.Equal(["example.org", "other.org"], options.ToAuthorizer().FullAccessHomeservers);
         Assert.Contains("secret", CompatibleEnvironment.Missing(new LiveKitOptions { Url = "wss://x", ApiKey = "k" }));
+    }
+
+    /// <summary>Settings under the old section name <c>LiveKit</c> still apply where <c>MatrixRtc</c> does not set them; a setting of the new name wins, also one written after the start.</summary>
+    [Fact]
+    public void ReadOldSection()
+    {
+        // The old section in one source, one key of the new name in a later one
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.MatrixRtc.Tests", EnvironmentName = "Development" });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["LiveKit:Enabled"] = "true", ["LiveKit:Url"] = "wss://old.example.org", ["LiveKit:ApiKey"] = "old-key" });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["MatrixRtc:ApiKey"] = "new-key" });
+        builder.AddLiveKitAuthorization();
+        builder.Configuration["MatrixRtc:Url"] = "wss://new.example.org";
+
+        // Done: old values where the new name is unset; the new name everywhere else
+        LiveKitOptions options = builder.Configuration.GetSection(LiveKitOptions.Section).Get<LiveKitOptions>()!;
+        Assert.True(options.Enabled);
+        Assert.Equal("new-key", options.ApiKey);
+        Assert.Equal("wss://new.example.org", options.Url);
     }
 }

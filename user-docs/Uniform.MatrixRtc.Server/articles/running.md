@@ -1,6 +1,6 @@
 ---
 title: Running
-uid: Uniform.LiveKit.Server.Running.Article
+uid: Uniform.MatrixRtc.Server.Running.Article
 ---
 # Running
 
@@ -8,7 +8,7 @@ The service needs a LiveKit server with an API key, see [LiveKit's self-hosting 
 
 ## Install
 
-Unpack the release anywhere. On Debian and Ubuntu, the releases are also an apt repository, for x64 and arm64: add it once, with its signing key, then install the service, which `sudo apt upgrade` keeps up to date. The command is then `uniform-livekit-server` in place of `./uniform-livekit-server` below.
+Unpack the release anywhere. On Debian and Ubuntu, the releases are also an apt repository, for x64 and arm64: add it once, with its signing key, then install the service, which `sudo apt upgrade` keeps up to date. The command is then `uniform-matrixrtc-server` in place of `./uniform-matrixrtc-server` below.
 
 ```bash
 sudo install -d -m 0755 /etc/apt/keyrings
@@ -18,7 +18,7 @@ sudo apt update
 ```
 
 ```bash
-sudo apt install uniform-livekit-server
+sudo apt install uniform-matrixrtc-server
 ```
 
 ## First start
@@ -27,7 +27,7 @@ Give the service LiveKit's address, its API key and secret, and your homeserver.
 
 ```bash
 export LiveKit__ApiSecret='a-long-random-secret-of-at-least-32-characters'
-./uniform-livekit-server --LiveKit:Url=wss://livekit.example.org --LiveKit:ApiKey=homeserver --LiveKit:FullAccessHomeservers=example.org
+./uniform-matrixrtc-server --MatrixRtc:Url=wss://livekit.example.org --MatrixRtc:ApiKey=homeserver --MatrixRtc:FullAccessHomeservers=example.org
 ```
 
 It listens on port 8080. When a setting is missing, the service prints which one and stops.
@@ -47,29 +47,29 @@ example.org {
 Settings come from, later ones overriding earlier ones:
 
 1. `appsettings.json` next to the program
-2. `~/.config/uniform-livekit-server/settings.json`
+2. `~/.config/uniform-matrixrtc-server/settings.json`
 3. lk-jwt-service's variables, such as `LIVEKIT_SECRET`
 4. Environment variables, with `__` between parts: `LiveKit__ApiSecret`
-5. The command line: `--LiveKit:Url=wss://livekit.example.org`
+5. The command line: `--MatrixRtc:Url=wss://livekit.example.org`
 
-Its log files are in `~/.local/share/uniform-livekit-server/logs`, one per start.
+Its log files are in `~/.local/share/uniform-matrixrtc-server/logs`, one per start.
 
 ## As a system service
 
-Unpack it in `/opt/uniform-livekit-server`, create a user for it, and write the settings, with the secret, to `/etc/uniform-livekit-server/settings.json`:
+Unpack it in `/opt/uniform-matrixrtc-server`, create a user for it, and write the settings, with the secret, to `/etc/uniform-matrixrtc-server/settings.json`:
 
 ```bash
-sudo useradd --system --home-dir /var/lib/uniform-livekit-server --shell /usr/sbin/nologin uniform-livekit-server
-sudo mkdir -p /opt/uniform-livekit-server /etc/uniform-livekit-server
-sudo tar -xzf uniform-chat-livekit-<version>-linux-x64.tar.gz -C /opt/uniform-livekit-server --strip-components=1
-sudo nano /etc/uniform-livekit-server/settings.json
-sudo chown -R uniform-livekit-server:uniform-livekit-server /etc/uniform-livekit-server
-sudo chmod 600 /etc/uniform-livekit-server/settings.json
+sudo useradd --system --home-dir /var/lib/uniform-matrixrtc-server --shell /usr/sbin/nologin uniform-matrixrtc-server
+sudo mkdir -p /opt/uniform-matrixrtc-server /etc/uniform-matrixrtc-server
+sudo tar -xzf uniform-chat-matrixrtc-<version>-linux-x64.tar.gz -C /opt/uniform-matrixrtc-server --strip-components=1
+sudo nano /etc/uniform-matrixrtc-server/settings.json
+sudo chown -R uniform-matrixrtc-server:uniform-matrixrtc-server /etc/uniform-matrixrtc-server
+sudo chmod 600 /etc/uniform-matrixrtc-server/settings.json
 ```
 
 ```json
 {
-  "LiveKit": {
+  "MatrixRtc": {
     "Url": "wss://livekit.example.org",
     "ApiKey": "homeserver",
     "ApiSecret": "a-long-random-secret-of-at-least-32-characters",
@@ -78,7 +78,7 @@ sudo chmod 600 /etc/uniform-livekit-server/settings.json
 }
 ```
 
-Then the unit file `/etc/systemd/system/uniform-livekit-server.service`:
+Then the unit file `/etc/systemd/system/uniform-matrixrtc-server.service`:
 
 ```ini
 [Unit]
@@ -87,18 +87,18 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=uniform-livekit-server
-Group=uniform-livekit-server
-ExecStart=/opt/uniform-livekit-server/uniform-livekit-server
+User=uniform-matrixrtc-server
+Group=uniform-matrixrtc-server
+ExecStart=/opt/uniform-matrixrtc-server/uniform-matrixrtc-server
 Environment=XDG_CONFIG_HOME=/etc
 Environment=XDG_DATA_HOME=/var/lib
-StateDirectory=uniform-livekit-server
+StateDirectory=uniform-matrixrtc-server
 Restart=on-failure
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
-ReadWritePaths=/var/lib/uniform-livekit-server
+ReadWritePaths=/var/lib/uniform-matrixrtc-server
 
 [Install]
 WantedBy=multi-user.target
@@ -106,6 +106,6 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now uniform-livekit-server
-journalctl -u uniform-livekit-server -f
+sudo systemctl enable --now uniform-matrixrtc-server
+journalctl -u uniform-matrixrtc-server -f
 ```

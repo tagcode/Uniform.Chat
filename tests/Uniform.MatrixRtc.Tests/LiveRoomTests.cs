@@ -1,10 +1,10 @@
-namespace Uniform.LiveKit.Tests;
+namespace Uniform.MatrixRtc.Tests;
 
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using global::LiveKit.Proto;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 using Uniform.Matrix.Video;
 using Uniform.Matrix.Video.Vp8;
 using Uniform.Matrix.WebRtc;

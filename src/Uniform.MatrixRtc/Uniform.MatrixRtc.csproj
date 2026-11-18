@@ -28,12 +28,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
-    <ProjectReference Include="..\Uniform.LiveKit.Protocol\Uniform.LiveKit.Protocol.csproj" />
+    <ProjectReference Include="..\Uniform.MatrixRtc.Protocol\Uniform.MatrixRtc.Protocol.csproj" />
     <ProjectReference Include="..\Uniform.Matrix.WebRtc\Uniform.Matrix.WebRtc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Uniform.LiveKit.Tests" />
+    <InternalsVisibleTo Include="Uniform.MatrixRtc.Tests" />
   </ItemGroup>
 
 </Project>

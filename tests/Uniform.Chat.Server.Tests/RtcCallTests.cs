@@ -153,10 +153,10 @@ public sealed class RtcCallTests
             ["Server:PublicBaseUrl"] = $"http://127.0.0.1:{HomeserverPort}/",
             ["Server:Registration"] = "Open",
             ["Storage:DataDirectory"] = Path.Combine(directory, "server"),
-            ["LiveKit:Enabled"] = "true",
-            ["LiveKit:Url"] = $"ws://127.0.0.1:{LiveKitPort}",
-            ["LiveKit:ApiKey"] = ApiKey,
-            ["LiveKit:ApiSecret"] = ApiSecret,
+            ["MatrixRtc:Enabled"] = "true",
+            ["MatrixRtc:Url"] = $"ws://127.0.0.1:{LiveKitPort}",
+            ["MatrixRtc:ApiKey"] = ApiKey,
+            ["MatrixRtc:ApiSecret"] = ApiSecret,
         });
         builder.WebHost.UseUrls($"http://127.0.0.1:{HomeserverPort}");
         builder.Logging.ClearProviders();

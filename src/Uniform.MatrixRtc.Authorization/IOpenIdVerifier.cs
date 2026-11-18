@@ -1,6 +1,6 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Verifies a Matrix OpenID token with the homeserver that issued it.</summary>
 public interface IOpenIdVerifier

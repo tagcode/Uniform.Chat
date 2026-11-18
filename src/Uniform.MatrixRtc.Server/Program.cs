@@ -3,8 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.Logging;
-using Uniform.LiveKit.Hosting;
-using Uniform.LiveKit.Server;
+using Uniform.MatrixRtc.Hosting;
+using Uniform.MatrixRtc.Server;
 using Uniform.Matrix.Hosting;
 
 // Read appsettings.json next to the executable; the application name names the folders
@@ -26,7 +26,7 @@ LiveKitOptions options = builder.Configuration.GetSection(LiveKitOptions.Section
 if (CompatibleEnvironment.Missing(options) is string missing)
 {
     Console.Error.WriteLine($"The MatrixRTC authorization service needs {missing}.");
-    Console.Error.WriteLine($"Settings are in {SettingsStore.DefaultPath(ApplicationName)}, or set LiveKit:Url, LiveKit:ApiKey and LiveKit:ApiSecret there, or LIVEKIT_URL, LIVEKIT_KEY and LIVEKIT_SECRET in the environment.");
+    Console.Error.WriteLine($"Settings are in {SettingsStore.DefaultPath(ApplicationName)}, or set MatrixRtc:Url, MatrixRtc:ApiKey and MatrixRtc:ApiSecret there, or LIVEKIT_URL, LIVEKIT_KEY and LIVEKIT_SECRET in the environment.");
     return 1;
 }
 
@@ -40,6 +40,6 @@ return 0;
 /// <summary>The program's names.</summary>
 internal partial class Program
 {
-    /// <summary>Application name, which names the settings and data folders: <c>~/.config/uniform-livekit-server</c> and <c>~/.local/share/uniform-livekit-server</c> on Linux.</summary>
-    private const string ApplicationName = "uniform-livekit-server";
+    /// <summary>Application name, which names the settings and data folders: <c>~/.config/uniform-matrixrtc-server</c> and <c>~/.local/share/uniform-matrixrtc-server</c> on Linux.</summary>
+    private const string ApplicationName = "uniform-matrixrtc-server";
 }

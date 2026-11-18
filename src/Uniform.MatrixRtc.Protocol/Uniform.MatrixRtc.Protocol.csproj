@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Uniform.LiveKit.Tests" />
+    <InternalsVisibleTo Include="Uniform.MatrixRtc.Tests" />
   </ItemGroup>
 
 </Project>

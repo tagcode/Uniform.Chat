@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Uniform.LiveKit.Hosting;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Hosting;
+using Uniform.MatrixRtc.Protocol;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Server;
@@ -24,7 +24,7 @@ public sealed class EmbeddedLiveKitTests
     public async Task IssueTokensToLocalUsers()
     {
         // A homeserver with LiveKit, whose room service is faked
-        string directory = Directory.CreateTempSubdirectory("uniform-chat-livekit-").FullName;
+        string directory = Directory.CreateTempSubdirectory("uniform-chat-matrixrtc-").FullName;
         FakeLiveKit livekit = new();
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
@@ -33,10 +33,10 @@ public sealed class EmbeddedLiveKitTests
             ["Server:PublicBaseUrl"] = "https://matrix.test.local/",
             ["Server:Registration"] = "Open",
             ["Storage:DataDirectory"] = directory,
-            ["LiveKit:Enabled"] = "true",
-            ["LiveKit:Url"] = "wss://livekit.test.local",
-            ["LiveKit:ApiKey"] = "key",
-            ["LiveKit:ApiSecret"] = "secret",
+            ["MatrixRtc:Enabled"] = "true",
+            ["MatrixRtc:Url"] = "wss://livekit.test.local",
+            ["MatrixRtc:ApiKey"] = "key",
+            ["MatrixRtc:ApiSecret"] = "secret",
         });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Logging.ClearProviders();
@@ -68,7 +68,7 @@ public sealed class EmbeddedLiveKitTests
             // Delegation: found by Element Call's probe, and a handed-over leave kept
             Assert.Equal(HttpStatusCode.BadRequest, (await http.PostAsync("/livekit/jwt/delegate_delayed_leave", null, Ct)).StatusCode);
             Assert.Equal(HttpStatusCode.OK, (await RequestTokenAsync(http, alice, "alice", roomId, "delay1")).StatusCode);
-            Assert.Single(app.Services.GetRequiredService<Uniform.LiveKit.Authorization.DelayedLeaveKeeper>().Members);
+            Assert.Single(app.Services.GetRequiredService<Uniform.MatrixRtc.Authorization.DelayedLeaveKeeper>().Members);
 
             // Announced, issued with full access, and the room created
             Assert.Equal("https://matrix.test.local/livekit/jwt", transports.GetProperty("rtc_transports")[0].GetProperty("livekit_service_url").GetString());
@@ -110,7 +110,7 @@ public sealed class EmbeddedLiveKitTests
     public async Task ApplyWithoutRestart()
     {
         // A homeserver with LiveKit off
-        string directory = Directory.CreateTempSubdirectory("uniform-chat-livekit-").FullName;
+        string directory = Directory.CreateTempSubdirectory("uniform-chat-matrixrtc-").FullName;
         WebApplicationBuilder builder = WebApplication.CreateBuilder(new WebApplicationOptions { ApplicationName = "Uniform.Chat.Server.Tests", EnvironmentName = "Development" });
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["Server:ServerName"] = "test.local", ["Server:PublicBaseUrl"] = "https://matrix.test.local/", ["Server:Registration"] = "Open", ["Storage:DataDirectory"] = directory });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -134,10 +134,10 @@ public sealed class EmbeddedLiveKitTests
 
             // Applied
             IConfigurationRoot configuration = (IConfigurationRoot)app.Configuration;
-            configuration["LiveKit:Enabled"] = "true";
-            configuration["LiveKit:Url"] = "wss://livekit.test.local";
-            configuration["LiveKit:ApiKey"] = "key";
-            configuration["LiveKit:ApiSecret"] = "secret";
+            configuration["MatrixRtc:Enabled"] = "true";
+            configuration["MatrixRtc:Url"] = "wss://livekit.test.local";
+            configuration["MatrixRtc:ApiKey"] = "key";
+            configuration["MatrixRtc:ApiSecret"] = "secret";
             configuration.Reload();
 
             // Done

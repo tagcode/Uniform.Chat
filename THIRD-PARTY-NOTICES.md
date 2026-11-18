@@ -30,7 +30,7 @@ Changes: the code was translated from C to C#, with arrays and indices in place 
 
 ## LiveKit protocol
 
-The signalling messages of `Uniform.LiveKit.Protocol` are generated from the protocol definitions of [LiveKit](https://github.com/livekit/protocol): `livekit_rtc.proto`, `livekit_models.proto`, `livekit_metrics.proto` and `logger/options.proto`, copied unchanged from commit e6dd7c1 (2026-11-10) into `src/Uniform.LiveKit.Protocol/Protos`.
+The signalling messages of `Uniform.MatrixRtc.Protocol` are generated from the protocol definitions of [LiveKit](https://github.com/livekit/protocol): `livekit_rtc.proto`, `livekit_models.proto`, `livekit_metrics.proto` and `logger/options.proto`, copied unchanged from commit e6dd7c1 (2026-11-10) into `src/Uniform.MatrixRtc.Protocol/Protos`.
 
 - Copyright 2023 LiveKit, Inc.
 

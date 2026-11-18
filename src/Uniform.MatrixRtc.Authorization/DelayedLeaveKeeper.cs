@@ -1,8 +1,8 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
-using Uniform.LiveKit;
+using Uniform.MatrixRtc;
 
 /// <summary>Keeps the delayed leaves (MSC4140) that members handed over: while a member is on LiveKit, its delayed leave is restarted before it goes off; once LiveKit no longer has the member, the leave is sent at once, so the member's call membership ends.</summary>
 /// <remarks>

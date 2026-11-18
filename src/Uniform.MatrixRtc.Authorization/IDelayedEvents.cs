@@ -1,4 +1,4 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 /// <summary>Acts on members' delayed events (MSC4140) at their homeservers: restarts them, or sends them at once.</summary>
 /// <see href="https://github.com/matrix-org/matrix-spec-proposals/pull/4140"/>

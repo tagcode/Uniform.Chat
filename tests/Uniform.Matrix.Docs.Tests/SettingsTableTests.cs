@@ -11,7 +11,7 @@ using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Server;
 using Uniform.Chat.Server;
 using Uniform.Stun.Hosting;
-using Uniform.LiveKit.Hosting;
+using Uniform.MatrixRtc.Hosting;
 
 /// <summary>The settings tables of the user guides match the options the apps register: every setting is listed, no row is for a setting that does not exist, and the defaults agree.</summary>
 public partial class SettingsTableTests
@@ -75,7 +75,7 @@ public partial class SettingsTableTests
         builder.AddLiveKitAuthorization();
 
         // Act and assert
-        AssertTable("user-docs/Uniform.LiveKit.Server/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));
+        AssertTable("user-docs/Uniform.MatrixRtc.Server/articles/settings.md", Options(builder.Services, new ConfigurationBuilder().Build()));
     }
 
     /// <summary>Return the options of the registered sections and the default log level, as the settings windows list them.</summary>

@@ -1,8 +1,8 @@
-namespace Uniform.LiveKit.Authorization;
+namespace Uniform.MatrixRtc.Authorization;
 
 using System.Net;
 using Microsoft.Extensions.Logging;
-using Uniform.LiveKit.Protocol;
+using Uniform.MatrixRtc.Protocol;
 
 /// <summary>Exchanges Matrix OpenID tokens for LiveKit access tokens to a call's room, as lk-jwt-service does: the user is verified with their homeserver; users of full-access homeservers may publish and get the room created, others only join rooms that exist.</summary>
 /// <see href="https://github.com/element-hq/lk-jwt-service"/>

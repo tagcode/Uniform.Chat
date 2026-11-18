@@ -1,6 +1,6 @@
 - name: Running
-  uid: Uniform.LiveKit.Server.Running.Article
+  uid: Uniform.MatrixRtc.Server.Running.Article
 - name: Settings
-  uid: Uniform.LiveKit.Server.Settings.Article
+  uid: Uniform.MatrixRtc.Server.Settings.Article
 - name: Homeservers
-  uid: Uniform.LiveKit.Server.Homeservers.Article
+  uid: Uniform.MatrixRtc.Server.Homeservers.Article

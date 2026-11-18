@@ -1,4 +1,4 @@
-# Uniform.LiveKit.Protocol
+# Uniform.MatrixRtc.Protocol
 
 LiveKit access tokens and MatrixRTC authorization messages, in pure C#:
 
