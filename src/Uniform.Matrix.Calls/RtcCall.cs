@@ -98,8 +98,9 @@ public sealed class RtcCall : VoiceCall
     /// <param name="logger">Logger.</param>
     /// <param name="camera">Opens the camera.</param>
     /// <param name="videoDecoder">Makes the decoder of the peer's video.</param>
-    internal RtcCall(string roomId, string peerUserId, RtcContext context, string? notificationId, bool video, Func<IAudioDevices?> devices, ILogger logger, Func<IVideoCamera?>? camera, Func<IVideoDecoder?>? videoDecoder)
-        : base(roomId, "rtc-" + Guid.NewGuid().ToString("N"), peerUserId, devices, logger, camera, videoDecoder)
+    /// <param name="ringbackDevices">Opens the speaker of the ringback an outgoing call plays until the peer joins; null for no ringback.</param>
+    internal RtcCall(string roomId, string peerUserId, RtcContext context, string? notificationId, bool video, Func<IAudioDevices?> devices, ILogger logger, Func<IVideoCamera?>? camera, Func<IVideoDecoder?>? videoDecoder, Func<IAudioDevices?>? ringbackDevices = null)
+        : base(roomId, "rtc-" + Guid.NewGuid().ToString("N"), peerUserId, devices, logger, camera, videoDecoder, ringbackDevices)
     {
         // Ringing when incoming, else inviting
         this.context = context;

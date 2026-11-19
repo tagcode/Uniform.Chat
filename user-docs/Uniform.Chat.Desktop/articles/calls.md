@@ -8,7 +8,7 @@ You can voice call the other person of a direct chat. When your homeserver has a
 
 ## Calling
 
-Open the direct chat, and press 📞 in its header. A bar at the top of the window shows the call: *Calling…* while it rings on the other side, then the call's length once you are connected.
+Open the direct chat, and press 📞 in its header. A bar at the top of the window shows the call: *Calling…* while it rings on the other side, then the call's length once you are connected. Until then you hear a ringback tone, a beep every five seconds, on the call's speaker: the earpiece of a phone, unless you chose another.
 
 ## Answering
 

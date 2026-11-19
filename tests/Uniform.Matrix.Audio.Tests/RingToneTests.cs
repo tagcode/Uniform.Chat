@@ -19,4 +19,19 @@ public sealed class RingToneTests
         // Done
         RingTone.Start(null).Dispose();
     }
+
+    /// <summary>Ring back for one second every five, a single tone quieter than the ring; without a speaker, silently.</summary>
+    [Fact]
+    public void RingBackEveryFiveSeconds()
+    {
+        // Loudest sample of a stretch of the cycle, in seconds
+        static double Peak(double from, double to) => Enumerable.Range((int)(from * VoiceFormat.SampleRate), (int)((to - from) * VoiceFormat.SampleRate)).Max(i => Math.Abs(RingTone.RingbackSample(i)));
+
+        // On, off, and the next cycle on
+        Assert.InRange(Peak(0, 1.0), 0.1, 0.16);
+        Assert.Equal(0, Peak(1.0, 5.0));
+        Assert.InRange(Peak(5.0, 6.0), 0.1, 0.16);
+        // Done
+        RingTone.StartRingback(null).Dispose();
+    }
 }

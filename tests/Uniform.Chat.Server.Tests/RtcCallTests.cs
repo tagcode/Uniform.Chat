@@ -136,7 +136,10 @@ public sealed class RtcCallTests
         builder.Services.AddSingleton<ICredentialPrompt>(new FixedPassword(password));
         builder.Services.AddSingleton<CallService>();
         IHost app = builder.Build();
-        app.Services.GetRequiredService<CallService>().Devices = () => audio;
+        // Without ringback, so the speaker measured is the call's voice
+        CallService calls = app.Services.GetRequiredService<CallService>();
+        calls.Devices = () => audio;
+        calls.Ringback = false;
         await app.StartAsync(Ct);
         // Return app
         return app;

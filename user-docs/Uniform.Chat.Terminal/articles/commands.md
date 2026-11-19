@@ -30,7 +30,7 @@ uid: Uniform.Chat.Terminal.Commands.Article
 | `/devices` | Manage your sessions |
 | `/settings` | View and change options |
 | `/logs` | Read this and earlier session logs |
-| `/call` | Voice call the other member of this direct chat |
+| `/call` | Voice call the other member of this direct chat; a ringback tone plays until they answer and the call connects |
 | `/answer` | Answer the ringing call |
 | `/reject` | Decline the ringing call |
 | `/hangup` | End the call, or cancel one that rings |

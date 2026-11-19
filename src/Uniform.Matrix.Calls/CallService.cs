@@ -58,6 +58,12 @@ public sealed class CallService : IAsyncDisposable
     /// <summary>Open the microphone and speaker of a call; the platform's devices by default, which Android replaces.</summary>
     public Func<IAudioDevices?> Devices { get; set; } = () => AudioDevices.ForThisPlatform();
 
+    /// <summary>Whether an outgoing call plays a ringback on the speaker of <see cref="Devices"/> while it waits to be answered and connects; on by default.</summary>
+    public bool Ringback { get; set; } = true;
+
+    /// <summary>Return what opens the speaker of a new call's ringback, or null when <see cref="Ringback"/> is off.</summary>
+    private Func<IAudioDevices?>? RingbackDevices => Ringback ? () => Devices() : null;
+
     /// <summary>Opens the platform's camera, for calls answered with video; null where there is none, as on desktops for now.</summary>
     public Func<IVideoCamera?>? Camera { get; set; }
 
@@ -307,7 +313,7 @@ public sealed class CallService : IAsyncDisposable
             Http = AuthorizationHttp,
             ReadMembers = () => ReadMembers(roomId),
         };
-        RtcCall call = new(roomId, peerUserId, context, notificationId, video, () => Devices(), logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
+        RtcCall call = new(roomId, peerUserId, context, notificationId, video, () => Devices(), logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke(), RingbackDevices);
         call.Changed += c => CallChanged?.Invoke(c);
         calls[call.CallId] = call;
         // Return call
@@ -434,7 +440,7 @@ public sealed class CallService : IAsyncDisposable
     private LegacyCall Create(string roomId, string callId, string ownUserId, string peerUserId, CallInviteContent? invite, PeerConnectionOptions options)
     {
         // Events through the outbox, changes to the listeners
-        LegacyCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke());
+        LegacyCall call = new(roomId, callId, partyId, ownUserId, peerUserId, invite, (type, content, token) => outbox.EnqueueAsync(roomId, type, content, token), () => Devices(), options, logger, () => Camera?.Invoke(), () => VideoDecoder?.Invoke(), RingbackDevices);
         call.Changed += c =>
         {
             CallChanged?.Invoke(c);

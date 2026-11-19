@@ -55,8 +55,9 @@ public sealed class LegacyCall : VoiceCall
     /// <param name="logger">Logger.</param>
     /// <param name="camera">Opens the camera when a call answered with video connects; null, or returning null, for none.</param>
     /// <param name="videoDecoder">Makes the decoder of the peer's video, e.g. the platform's hardware one; null, or returning null, for the C# one.</param>
-    internal LegacyCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null, Func<IVideoDecoder?>? videoDecoder = null)
-        : base(roomId, callId, peerUserId, devices, logger, camera, videoDecoder)
+    /// <param name="ringbackDevices">Opens the speaker of the ringback an outgoing call plays until its voice starts; null for no ringback, e.g. in tests.</param>
+    internal LegacyCall(string roomId, string callId, string partyId, string ownUserId, string peerUserId, CallInviteContent? invite, CallEventSender send, Func<IAudioDevices?> devices, PeerConnectionOptions options, ILogger logger, Func<IVideoCamera?>? camera = null, Func<IVideoDecoder?>? videoDecoder = null, Func<IAudioDevices?>? ringbackDevices = null)
+        : base(roomId, callId, peerUserId, devices, logger, camera, videoDecoder, ringbackDevices)
     {
         // Identity, and the parts the call uses
         this.partyId = partyId;

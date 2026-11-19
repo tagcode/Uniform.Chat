@@ -80,6 +80,49 @@ public class VoiceCallTests
         Assert.True(pair.Alice.EndedByPeer);
     }
 
+    /// <summary>Alice hears the ringback while Bob's phone rings and the call connects, and not once voice flows; Bob, who is called, hears none.</summary>
+    [Fact]
+    public async Task RingBackUntilConnected()
+    {
+        // Alice's call rings back from the start
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        FakeAudio aliceRingback = new(0), bobRingback = new(0);
+        await using Pair pair = new(new FakeAudio(440), new FakeAudio(660), aliceRingback, bobRingback);
+        Assert.True(pair.Alice.PlaysRingback);
+        await WaitForAsync(() => aliceRingback.Speaker?.Energy > 0, cancellationToken);
+        await pair.Alice.InviteAsync(cancellationToken);
+        VoiceCall bob = await pair.Ringing.Task.WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
+        Assert.False(bob.PlaysRingback);
+
+        // Answered and connected
+        await bob.AnswerAsync(cancellationToken);
+        await WaitForAsync(() => pair.Alice.State == CallState.Connected, cancellationToken);
+        Assert.False(pair.Alice.PlaysRingback);
+
+        // Done: the ringback's speaker stopped, and Bob's never opened
+        await WaitForAsync(() => aliceRingback.Speaker!.PlaybackState == NAudio.Wave.PlaybackState.Stopped, cancellationToken);
+        Assert.Null(bobRingback.Speaker);
+    }
+
+    /// <summary>The ringback stops when the call ends unanswered.</summary>
+    [Fact]
+    public async Task StopRingBackWhenDeclined()
+    {
+        // Ringing back, then declined
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        FakeAudio aliceRingback = new(0);
+        await using Pair pair = new(null, null, aliceRingback);
+        await WaitForAsync(() => aliceRingback.Speaker?.PlaybackState == NAudio.Wave.PlaybackState.Playing, cancellationToken);
+        await pair.Alice.InviteAsync(cancellationToken);
+        VoiceCall bob = await pair.Ringing.Task.WaitAsync(TimeSpan.FromSeconds(5), cancellationToken);
+        await bob.RejectAsync(cancellationToken);
+        await WaitForAsync(() => pair.Alice.State == CallState.Ended, cancellationToken);
+
+        // Done
+        Assert.False(pair.Alice.PlaysRingback);
+        await WaitForAsync(() => aliceRingback.Speaker!.PlaybackState == NAudio.Wave.PlaybackState.Stopped, cancellationToken);
+    }
+
     /// <summary>Wait until a condition holds, failing after ten seconds.</summary>
     private static async Task WaitForAsync(Func<bool> condition, CancellationToken cancellationToken)
     {
@@ -100,15 +143,17 @@ public class VoiceCallTests
         private readonly CancellationTokenSource stopping = new();
         private readonly Task[] pumps;
         private readonly FakeAudio? bobAudio;
+        private readonly FakeAudio? bobRingback;
         private LegacyCall? bob;
 
-        /// <summary>Create Alice's call, and start carrying events.</summary>
-        public Pair(FakeAudio? aliceAudio, FakeAudio? bobAudio)
+        /// <summary>Create Alice's call, and start carrying events; the calls play a ringback on <paramref name="aliceRingback"/> and <paramref name="bobRingback"/> where given.</summary>
+        public Pair(FakeAudio? aliceAudio, FakeAudio? bobAudio, FakeAudio? aliceRingback = null, FakeAudio? bobRingback = null)
         {
             // Loopback media; events into the queues
             this.bobAudio = bobAudio;
+            this.bobRingback = bobRingback;
             PeerConnectionOptions options = new() { IncludeLoopback = true };
-            Alice = new LegacyCall(Room, "call1", "ALICE", AliceId, BobId, null, (type, content, _) => toBob.Writer.WriteAsync((type, content)).AsTask(), () => aliceAudio, options, NullLogger.Instance);
+            Alice = new LegacyCall(Room, "call1", "ALICE", AliceId, BobId, null, (type, content, _) => toBob.Writer.WriteAsync((type, content)).AsTask(), () => aliceAudio, options, NullLogger.Instance, ringbackDevices: aliceRingback is null ? null : () => aliceRingback);
             pumps = [PumpToBobAsync(options), PumpToAliceAsync()];
         }
 
@@ -136,7 +181,7 @@ public class VoiceCallTests
             {
                 if (content is CallInviteContent invite)
                 {
-                    bob = new LegacyCall(Room, invite.CallId, "BOB", BobId, AliceId, invite, (t, c, _) => toAlice.Writer.WriteAsync((t, c)).AsTask(), () => bobAudio, options, NullLogger.Instance);
+                    bob = new LegacyCall(Room, invite.CallId, "BOB", BobId, AliceId, invite, (t, c, _) => toAlice.Writer.WriteAsync((t, c)).AsTask(), () => bobAudio, options, NullLogger.Instance, ringbackDevices: bobRingback is null ? null : () => bobRingback);
                     Ringing.TrySetResult(bob);
                     continue;
                 }

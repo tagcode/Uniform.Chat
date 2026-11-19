@@ -24,10 +24,13 @@ public enum CallState
 }
 
 /// <summary>A 1:1 call with another user, as the apps show it: its state, mute and camera, and the other's pictures; a <see cref="LegacyCall"/> of <c>m.call.*</c> events, or a <see cref="RtcCall"/> of MatrixRTC through an SFU.</summary>
-/// <remarks>The voice and video go over an <see cref="IMediaConnection"/>: <see cref="VoiceMedia"/> records and plays, a <see cref="VideoReceiver"/> decodes, and the camera's frames are sent. A call's actions and events run one at a time under <see cref="gate"/>.</remarks>
+/// <remarks>The voice and video go over an <see cref="IMediaConnection"/>: <see cref="VoiceMedia"/> records and plays, a <see cref="VideoReceiver"/> decodes, and the camera's frames are sent. A call's actions and events run one at a time under <see cref="gate"/>. An outgoing call plays a ringback while it waits to be answered and connects, until its voice starts.</remarks>
 public abstract class VoiceCall : IAsyncDisposable
 {
     private readonly Func<IAudioDevices?> devices;
+    private readonly Func<IAudioDevices?>? ringbackDevices;
+    private readonly Lock ringbackGate = new();
+    private RingTone? ringback;
     private readonly Func<IVideoCamera?> camera;
     private readonly Func<IVideoDecoder?> videoDecoder;
     /// <summary>Logger.</summary>
@@ -51,13 +54,15 @@ public abstract class VoiceCall : IAsyncDisposable
     /// <param name="logger">Logger.</param>
     /// <param name="camera">Opens the camera when a call with video connects; null, or returning null, for none.</param>
     /// <param name="videoDecoder">Makes the decoder of the peer's video, e.g. the platform's hardware one; null, or returning null, for the C# one.</param>
-    private protected VoiceCall(string roomId, string callId, string peerUserId, Func<IAudioDevices?> devices, ILogger logger, Func<IVideoCamera?>? camera, Func<IVideoDecoder?>? videoDecoder)
+    /// <param name="ringbackDevices">Opens the speaker of the ringback an outgoing call plays until its voice starts; null for no ringback.</param>
+    private protected VoiceCall(string roomId, string callId, string peerUserId, Func<IAudioDevices?> devices, ILogger logger, Func<IVideoCamera?>? camera, Func<IVideoDecoder?>? videoDecoder, Func<IAudioDevices?>? ringbackDevices)
     {
         // Identity, and the parts the call uses
         RoomId = roomId;
         CallId = callId;
         PeerUserId = peerUserId;
         this.devices = devices;
+        this.ringbackDevices = ringbackDevices;
         this.logger = logger;
         this.camera = camera ?? (() => null);
         this.videoDecoder = videoDecoder ?? (() => null);
@@ -74,6 +79,12 @@ public abstract class VoiceCall : IAsyncDisposable
 
     /// <summary>Whether the other user called.</summary>
     public abstract bool IsIncoming { get; }
+
+    /// <summary>Whether the ringback plays now: an outgoing call, waiting to be answered or connecting, before its voice starts.</summary>
+    public bool PlaysRingback
+    {
+        get { lock (ringbackGate) return ringback is not null; }
+    }
 
     /// <summary>Whether the call has video, which this side can show.</summary>
     public bool IsVideo { get; private protected set; }
@@ -209,7 +220,8 @@ public abstract class VoiceCall : IAsyncDisposable
     /// <summary>Open the devices and start the voice, unless there are none; a device that fails leaves the call without voice, not ended.</summary>
     private protected void StartMedia(IMediaConnection connection)
     {
-        // Devices as chosen now
+        // The ringback gives way to the voice, unless the call still waits for an answer, as a MatrixRTC call that joined its SFU; then devices as chosen now
+        if (State != CallState.Inviting) StopRingback();
         mediaConnection = connection;
         if (devices() is not IAudioDevices audio) return;
         try
@@ -292,7 +304,36 @@ public abstract class VoiceCall : IAsyncDisposable
         // Changes only; ended stays ended
         if (State == state || (State == CallState.Ended && state != CallState.Ended)) return;
         State = state;
+        if (state is CallState.Inviting or CallState.Connecting) StartRingback();
+        else StopRingback();
         // Done
         Changed?.Invoke(this);
+    }
+
+    /// <summary>Start the ringback of an outgoing call, once, where the call has one.</summary>
+    private void StartRingback()
+    {
+        // Outgoing calls with ringback devices
+        if (IsIncoming || ringbackDevices is null) return;
+        lock (ringbackGate)
+        {
+            if (ringback is not null) return;
+            // Done
+            ringback = RingTone.StartRingback(ringbackDevices());
+        }
+    }
+
+    /// <summary>Stop the ringback, if it plays.</summary>
+    private void StopRingback()
+    {
+        // Once
+        RingTone? playing;
+        lock (ringbackGate)
+        {
+            playing = ringback;
+            ringback = null;
+        }
+        // Done
+        playing?.Dispose();
     }
 }
