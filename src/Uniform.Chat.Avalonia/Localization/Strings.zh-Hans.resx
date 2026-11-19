@@ -1,0 +1,1343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chinese (Simplified) texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>接受</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>我已阅读并接受这些政策</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>请阅读并接受服务器的政策以继续。</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>请在 {0} 上接受请求。</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>账户</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>账户密码</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>账户</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>你的账户已被服务器管理员暂停：你可以阅读和离开房间，但不能发送消息、加入房间或邀请他人。如有服务器通知房间，请查看。</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} 失败：{1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>允许通知…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>消息已发送。</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>一条消息</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>接听</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>正在接听</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>视频接听</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>此服务器不允许应用创建账户。</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>正在查询 {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>无法打开麦克风或扬声器：{0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>音频测试</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>测试需要麦克风权限。</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>已录制 {0:F0} 秒，以 {1:F0} kbit/s 发送。</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>请说话：一秒后你会听到自己的声音。如果没有声音，说明输入设备不是麦克风。</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>开始后请说话：一秒后你会通过通话所用的 Opus 编解码器听到自己的声音。</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>后置摄像头</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>屏蔽</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>已屏蔽 {0}：其消息和邀请将不再显示。可在“安全与恢复”中解除屏蔽。</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>已屏蔽的用户</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>不显示他们的消息和邀请。</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>正在屏蔽</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>屏蔽发送者</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>通话已结束：{0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>正在呼叫…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>呼叫失败：{0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>通话需要麦克风权限。</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>摄像头已关闭</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>摄像头 ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>关闭摄像头</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>开启摄像头</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>取消（Esc）</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>取消发送</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>更改会立即保存。</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>正在更改管理员权限</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>聊天</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>检查加密失败：{0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>选择“聊天”以开始与 {0} 聊天。</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>选择“加入”以加入 {0}。</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>选择要分享 {0} 的房间。</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>选择一个房间开始。</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>与你已登录的另一台设备比较表情符号，例如手机上的 Element。</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>与 {0} 比较。它们是否按相同顺序显示相同的表情符号？</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>正在连接…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>连接已断开，正在重试…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>复制图片</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>复制失败：{0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>复制图片失败：{0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>复制链接</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>复制文本</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>无法加入 {0}。</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>创建账户</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>账户将在用户 ID 所属的服务器上创建（如果服务器允许）。请自行设置密码。</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>创建账户</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>创建 Matrix 账户</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>正在创建 {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>正在创建令牌</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>yyyy年M月d日</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>M月d日 dddd</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>天数；留空表示永不过期</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>停用…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>永久停用 {0}？对方将离开所有房间且无法再次登录；该用户 ID 不会再分配给他人。</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>已停用 {0}。</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>正在停用</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>正在拒绝 {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>正在拒绝</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>删除账户</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>永久删除账户？你将离开所有房间，你的名称和头像将被移除，所有设备都会退出登录。该用户 ID 将无法再使用。请输入密码以确认。</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>删除账户…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>删除举报</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>删除账户失败：{0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>正在删除消息</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>正在删除举报</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>正在删除令牌</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>已编辑</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>加密</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>事件 ID</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>发送者</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>房间 ID</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>详细信息…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>已发送</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>未读</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} 台设备</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0}（{1}），最后活动于 {2}，来自 {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>设备</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>你的服务器或其他服务器（如 matrix.org）上的公开房间。</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>服务器，例如 matrix.org；留空为你的服务器</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>下载 {0} 失败：{1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>听筒</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>（已编辑）</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>正在编辑消息</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>消息已发送，因此未进行更改。</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 已加密</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>加密消息</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>此房间已加密，但此设备上无法使用加密：{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>已在其他设备上接听</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>已拒绝</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>已在其他设备上拒绝</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>已结束对 {0} 的暂停。</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>未接</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>无人接听</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>无连接</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>对方再次呼叫</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>结束暂停</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>对方已挂断</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>端到端加密</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>你已拒绝</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>你已挂断</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>请输入账户密码以确认。</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>请输入你在本应用或其他应用（如 Element）中设置的恢复密钥或口令。</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>外接摄像头</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>收藏</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} 个文件</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>查找</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>指纹</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>管理员</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>已屏蔽</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>已邀请</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>已锁定</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>已暂停</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>已验证</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>来自服务器管理员</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>来自你的服务器</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>前置摄像头</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>正在挂断</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>挂断</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>我已有账户：登录</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>隐藏并重试</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>图片已复制</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>正在与 {0} 通话</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>来电</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>来电</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>视频来电</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>语音来电</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>在后台</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>邀请</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>邀请</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>已邀请 {0}。</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>你被邀请加入此房间。</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} 邀请你加入 {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>邀请</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>正在邀请 {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} 是服务器管理员。</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} 来电</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} 已验证。</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>加入</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>正在加入 {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>正在加入 {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>保持连接，滑动可关闭。</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>已恢复 {0} 个消息密钥。</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>已恢复 {0} 个消息密钥；此设备现已验证。</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>系统语言</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>大</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>最后活动于 {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>离开房间</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>正在离开 {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>许可证</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>许可证…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat 是基于 MIT 许可证的自由软件。它包含 .NET 运行时和其他库，各自遵循自己的许可证，许可证文本如下。</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>正在加载账户</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>加载历史记录失败：{0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>正在加载举报</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>正在加载令牌</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>锁定</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>已锁定 {0}：在解锁前，服务器会拒绝其设备。</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>正在锁定</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>日志…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>无法读取日志：{0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>重新查找分发器</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>正在查询设备</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>扬声器</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>低优先级</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>设为管理员</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>标为已读</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} 位成员</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>成员</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}，{1} 人受邀</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>消息已删除</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>消息通过 {0} 送达；应用无需自己的连接。</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>私聊中的消息</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>提及你的消息</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>麦克风 ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>静音</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>已静音</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>需要恢复密钥</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>此服务器需要管理员提供的注册令牌。</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>从未</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>新消息</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>新密码；对方的设备将退出登录</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>新令牌</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>这里没有可以打开 {0} 的应用。</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>这里没有可以打开 {0} 的应用；请改用“保存…”。</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>没有摄像头权限；仅以语音接听。</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>没有摄像头权限；仅以语音呼叫。</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>没有已登录的设备。</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>没有加密密钥</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>永不过期</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>此级别没有记录。</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} 不再是服务器管理员。</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>没有举报。</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>未找到房间。</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>“{0}”不是 Matrix 用户 ID；格式类似 @alice:matrix.org。</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} 不是用户 ID；用户 ID 的格式类似 @名称:服务器。</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>不可用：{0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>未加密</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>没有录到任何声音。</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>已向 {0} 发送服务器通知。</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>系统设置中已关闭 Uniform Chat 的通知。来电会响铃但不显示来电者，消息也不会通知。</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>以后再说</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>未发送：{0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>未设置</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>未验证</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>（现在）</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>开启</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>通话中</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>在线</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>打开 {0} 失败：{1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>或数字 {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>自有后台连接</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>应用保持自己的连接，并以一条通知显示。</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>应用保持自己的连接，并以一条通知显示。安装 UnifiedPush 分发器（如 ntfy）即可在没有该连接的情况下接收消息。</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>用户 ID 或名称的一部分</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>密码未被接受。</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>你的密码仅用于登录，不会被保存。</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>已为 {0} 设置新密码，并让其设备退出登录。</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>粘贴失败：{0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>手机默认</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>手机麦克风</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>隐私政策</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Uniform Chat 消息和通话</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>回应</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>骚扰或仇恨</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>违法内容</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>原因：{0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>色情或暴力内容</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>垃圾信息</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>正在重新连接…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>恢复</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>恢复失败：{0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>恢复密钥已复制。</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>请立即记下或复制到安全的地方；它不会再次显示。有了它，新的登录可以自行验证并读取旧消息。</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>创建账户时，服务器要求的内容超出了本应用的能力。</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>注册令牌</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>注册令牌</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>当服务器注册要求令牌时，新账户需要其中一个。</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>此服务器需要本应用无法完成的步骤，例如验证码或电子邮件。请在服务器网站上创建账户，然后在此登录。</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>中继</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>取消收藏</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>取消低优先级</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>回复</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>回复 {0}：{1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>举报已删除。</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} 举报了 {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>已举报给服务器管理员。你也可以从消息菜单屏蔽发送者。</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>已将 {0} 举报给服务器管理员。</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>正在举报消息</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>正在举报房间</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>正在举报用户</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>举报消息</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>举报房间…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>举报房间</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>举报</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>举报发送者</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>正在重置密码</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>正在重试：{0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>房间</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>通过地址或链接加入房间、与用户聊天，或创建私人房间</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#房间、@用户、链接或新名称</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} 个房间</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>房间目录</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>房间目录…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>房间：{0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>房间</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>房间已被服务器管理员关闭</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>已保存 {0}。</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>保存…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>保存文件</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>保存文件失败：{0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>搜索失败：{0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>正在搜索…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>安全</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>安全与恢复…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>发送</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>发送文件</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0}，在 {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>正在发送…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>发送 {0} 失败：{1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>正在发送通知</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>发送文件失败：{0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>发送（Enter）；消息框保持焦点</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>服务器地址</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>留空则根据你的用户 ID 查找服务器。对于不支持自动发现的服务器（例如本机的 http://localhost:8008）则需要填写。</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>服务器管理</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>服务器管理…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>来自服务器管理员的消息。你无法在此回复。</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>发给对方的服务器通知</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>服务器的政策</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>无法连接服务器：{0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>设置…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>正在设置主题</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>设置恢复失败：{0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>已设置，在此受信任</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>已设置</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>已设置，在此尚未受信任</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>设置恢复</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>创建交叉签名密钥、消息密钥备份和恢复密钥。</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>一个链接</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>一段文本</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>分享 {0}</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>分享 {0} 个文件</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>分享 {0} 失败：{1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>关闭 {0}？此服务器上的所有成员都将离开，其在此的地址将被删除，此服务器上的任何人都不能再加入。</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>已关闭 {0}：移除了 {1} 位成员。</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>关闭房间…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>正在关闭房间</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>{0} 已退出登录。</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>登录失败。</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>正在登录 {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>{0} 退出登录失败：{1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>登录 Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>退出登录</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>让 {0} 退出登录？请输入账户密码以确认。</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>退出登录…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>小</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>某人</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>扬声器 ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>聊天</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>正在开始与 {0} 聊天</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>从 {0} 开始…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>交叉签名</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>设备</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>密钥备份</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>恢复密钥</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>已停止：{0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>设置恢复后，其他人会看到此设备已验证，恢复密钥也能在新设备上解锁你的消息。</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>用你的另一台设备或恢复密钥验证此设备，这样其他人会看到它已验证，它也能读取你的旧消息。</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>暂停</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>已暂停 {0}：可以阅读，但不能发送、加入或邀请。</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>正在暂停</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>暂停用户</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>正在切换麦克风</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>正在切换扬声器</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>系统默认</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>正在标记房间</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>撤销管理员权限</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>测试音频…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>文字大小</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>不一致</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>一致</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>此设备</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>今天</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>令牌已复制。</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>令牌已删除；用它创建的账户仍保留。</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>服务器不接受此注册令牌。</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>有效期至 {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>已使用 {0} 次，无限制</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>已使用 {0}/{1} 次</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>关闭摄像头</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>开启摄像头</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} 正在输入…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>多人正在输入…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} 和 {1} 正在输入…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>解除屏蔽</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>已解除对 {0} 的屏蔽。</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>正在解除屏蔽</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>解除屏蔽 {0} 失败：{1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>解锁</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>已解锁 {0}。</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>解锁加密历史记录</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>取消静音</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>正在取消标记</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>用户 ID</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>该用户 ID 已被占用；请换一个。</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>用户政策</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>继续即表示你接受用户政策：禁止违法、侮辱或有害内容。请在消息中举报此类内容并屏蔽相关人员。</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>使用次数；留空表示不限</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>验证已取消。</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>验证已取消：{0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>验证失败：{0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>已验证</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>验证</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>验证设备</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>验证 {0} 失败：{1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>用另一台设备验证</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>特大</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>特小</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>视频</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>视频通话</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>语音通话</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>正在等待 {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>正在等待 {0} 确认…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} 想通过比较表情符号验证此设备。</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>房间的主题</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>有线耳机</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>有线耳麦</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>是，执行</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>昨天</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>你</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>你的设备 {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>你的恢复密钥</value>
+  </data>
+</root>

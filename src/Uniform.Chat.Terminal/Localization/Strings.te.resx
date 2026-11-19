@@ -1,0 +1,1805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Telugu texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>గురించి</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+టెర్మినల్ కోసం Matrix చాట్ క్లయింట్.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>కొనసాగితే మీరు వినియోగదారు విధానాన్ని అంగీకరిస్తారు: చట్టవిరుద్ధ, అభ్యంతరకర లేదా హానికర కంటెంట్ ఉండకూడదు.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>మీ ఖాతా తొలగించబడింది.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>వినియోగదారు ID లేదా పేరులో భాగం; అన్నింటికీ ఖాళీ:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>ఖాతాలు</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} ఖాతా{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} ఖాతాలు{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} విఫలమైంది: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>చిరునామా జోడించు</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>{0} జోడించబడింది</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>{0} జోడిస్తోంది</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>చిరునామా, ఉదా. #గది లేదా #గది:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>తొలగించాల్సిన చిరునామా, ఉదా. #గది:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>ఈ గది ఇప్పటికే ఎన్‌క్రిప్ట్ చేయబడింది.</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> మరియు మరో {0}</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> మరియు మరో {0}</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>సమాధానం ఇస్తోంది</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>{0} కోసం పాస్‌వర్డ్:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>{0}ని అడుగుతోంది…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>ఆడియో పరీక్ష</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>మైక్రోఫోన్: {0}. స్పీకర్: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>ఆడియో పరీక్ష: ఏమీ రికార్డ్ కాలేదు</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>ఆడియో పరీక్ష: {0:F0} సెకన్లు, {1:F0} kbit/s వద్ద</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>నిశ్శబ్దం అంటే ఇన్‌పుట్ మైక్రోఫోన్ లేదు: సిస్టమ్ సౌండ్ సెట్టింగ్‌లలో ఒకటి ఎంచుకోండి, లేదా సెట్టింగ్‌లలో Audio:Microphone సెట్ చేయండి.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>మాట్లాడండి: కాల్‌లో లాగే Opus ద్వారా ఒక సెకను తర్వాత మీ గొంతు మీకు వినిపిస్తుంది.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>ఈ ప్లాట్‌ఫారమ్‌లో ఆడియోకు మద్దతు లేదు.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>వెర్షన్ {0}, పునరుద్ధరణ కీ అవసరం</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>ఆన్ (వెర్షన్ {0})</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>కీ బ్యాకప్ పునరుద్ధరించబడింది: {0} గది కీ దిగుమతి అయింది.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>కీ బ్యాకప్ పునరుద్ధరించబడింది: {0} గది కీలు దిగుమతి అయ్యాయి.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>నిషేధించు</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>నిషేధిస్తోంది</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, బ్లాక్ చేయబడింది</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>బ్లాక్ చేసినవారు: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} బ్లాక్ చేయబడ్డారు: వారి సందేశాలు, ఆహ్వానాలు ఇక కనిపించవు. /unignore {1} దీన్ని రద్దు చేస్తుంది.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>బ్లాక్ చేస్తోంది</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>నేను అంగీకరిస్తున్నాను(_A)</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>పంపినవారిని బ్లాక్ చేయి(_B)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>రద్దు చేయి(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>మూసివేయి(_C)</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>ఖాతా సృష్టించు(_C)</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>తొలగించు(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>సవరించు(_E)</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>చేరు(_J)</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>తర్వాత(_L)</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>జాబితాలో చేర్చు(_L)</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>పరికరాన్ని లాగ్ అవుట్ చేయి(_L)</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>మిగతా అన్నీ లాగ్ అవుట్ చేయి(_A)</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>లింక్ తెరువు(_L)</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>ఇతరం(_O)…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>నిష్క్రమించు(_Q)</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>స్పందించు(_A)</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>పునరుద్ధరించు(_R)</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>తిరస్కరించు(_R)</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>పేరు మార్చు(_R)</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>ప్రత్యుత్తరం ఇవ్వు(_R)</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>నివేదించు(_P)</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>ఫైల్ సేవ్ చేయి(_S)</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>పునరుద్ధరణ సెటప్ చేయి(_U)</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>మూసివేయి(_D)</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>మూసివేసి బ్లాక్ చేయి(_B)</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>సైన్ ఇన్ చేయి(_S)</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>సరిపోలవు(_D)</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>సరిపోలుతాయి(_M)</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>జాబితా నుండి తీసివేయి(_U)</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>ఈ పరికరాన్ని ధృవీకరించు(_V)</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>ఎంచుకున్నదాన్ని ధృవీకరించు(_V)</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>చిత్రం చూడు(_V)</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>కాల్</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>కాల్: {0}తో కాల్‌లో{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>కాల్: {0}కి కనెక్ట్ అవుతోంది…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>కాల్: {0}తో కాల్ ముగిసింది: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>కాల్ చేస్తోంది</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>కాల్: {0}కి కాల్ చేస్తోంది…  రద్దు చేయడానికి /hangup</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>కాల్: {0}కి మళ్లీ కనెక్ట్ అవుతోంది…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>కాల్: {0} కాల్ చేస్తున్నారు: /answer లేదా /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>కనెక్ట్ కాలేము</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>మైక్రోఫోన్ లేదా స్పీకర్ తెరవలేము: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>ప్రదర్శన పేరు మారుస్తోంది</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్ తనిఖీ చేస్తోంది…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>స్పందన ఎంచుకోండి:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>కమాండ్‌లు మరియు కీలు</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>ఎమోజీలను పోల్చు</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>{0}తో పోల్చండి:
+
+{1}
+
+లేదా సంఖ్యలు {2}
+
+రెండింటిలోనూ అదే క్రమంలో అవే కనిపిస్తున్నాయా?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>నిర్ధారించు</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>{0}గా కనెక్ట్ అయింది</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>కనెక్ట్ అవుతోంది…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>కనెక్షన్ సమస్య: {0}</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0}ని తొలగించలేకపోయాము</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0}ని తొలగించలేకపోయాము</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>ఖాతా సృష్టించు</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>#{0}:{1} సృష్టించబడింది</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>{0} సృష్టించబడింది.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>ఖాతా సృష్టిస్తోంది</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>#{0}:{1} సృష్టిస్తోంది</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>గది సృష్టిస్తోంది</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>టోకెన్ సృష్టిస్తోంది</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} ఈ గదిని సృష్టించారు, వారికి అపరిమిత హక్కులు ఉన్నాయి, వాటిని మార్చలేము.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>క్రాస్-సైనింగ్ కీలు రహస్య నిల్వలో లేవు.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>క్రాస్-సైనింగ్ పునరుద్ధరించబడింది; ఈ పరికరం ఇప్పుడు ధృవీకరించబడింది.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- రోజు మారింది {0:ddd, d MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>నిష్క్రియం చేయి</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>శాశ్వతంగా నిష్క్రియం చేయి…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} నిష్క్రియం చేయబడ్డారు.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>{0}ని శాశ్వతంగా నిష్క్రియం చేయాలా? వారు అన్ని గదులను వదిలివేస్తారు, మళ్లీ లాగిన్ కాలేరు; వినియోగదారు ID మళ్లీ ఇవ్వబడదు.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>నిష్క్రియం చేస్తోంది</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>ఖాతా తొలగించు</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>మీ ఖాతాను శాశ్వతంగా తొలగించాలా? మీరు అన్ని గదులను వదిలివేస్తారు, మీ పేరు, చిత్రం తొలగించబడతాయి, అన్ని పరికరాలు సైన్ అవుట్ అవుతాయి. వినియోగదారు IDని మళ్లీ ఉపయోగించలేరు.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>నివేదిక {0} తొలగించబడింది.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>టోకెన్ {0} తొలగించబడింది.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>సందేశం తొలగించు</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>"{0}"ని అందరికీ తొలగించాలా?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>నివేదిక తొలగించు</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>టోకెన్ తొలగించు</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>టోకెన్ {0}ని తొలగించాలా? దానితో సృష్టించిన ఖాతాలు అలాగే ఉంటాయి.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>ఖాతా తొలగిస్తోంది</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>సందేశాన్ని తొలగిస్తోంది</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>నివేదికను తొలగిస్తోంది</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>టోకెన్‌ను తొలగిస్తోంది</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} పరికరం</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} పరికరాలు</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    చివరిగా {2}, {3} నుండి</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>ఈ పరికరం ఇంకా ధృవీకరించబడలేదు. దీన్ని మీ మరో పరికరం లేదా పునరుద్ధరణ కీతో ధృవీకరించండి, అప్పుడు ఇతరులకు ఇది ధృవీకరించబడినట్లు కనిపిస్తుంది, ఇది మీ పాత సందేశాలు చదవగలదు.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>పరికరాలు</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>పరికరాలు ({0}, * = ఈ పరికరం)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>నేరు సందేశం</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>మీ సర్వర్ కోసం సర్వర్‌ను ఖాళీగా ఉంచండి; ఏ ఫీల్డ్‌లోనైనా Enter వెతుకుతుంది.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>డైరెక్టరీలో జాబితా</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>{0} డౌన్‌లోడ్ అవుతోంది…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్షన్ అందుబాటులో లేదు.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (సవరించబడింది)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[సవరణ] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్ ఆన్ చేయి</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>ఈ గదిలోని అన్ని కొత్త సందేశాలను ఎన్‌క్రిప్ట్ చేయాలా? దీన్ని తర్వాత ఆఫ్ చేయలేము.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్ ఆన్ చేస్తోంది</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [ఎన్‌క్రిప్ట్ చేయబడింది]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [ఎన్‌క్రిప్ట్ చేసిన సందేశం; కీ ఇంకా రాలేదు]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>ఈ పరికరంలో ఎన్‌క్రిప్షన్ అందుబాటులో లేదు.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>మరో పరికరంలో సమాధానం ఇవ్వబడింది</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>వారు మళ్లీ కాల్ చేశారు</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>తిరస్కరించబడింది</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>మరో పరికరంలో తిరస్కరించబడింది</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>{0} సస్పెన్షన్ ముగించబడింది.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>ముగిసింది</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>సస్పెన్షన్ ముగిస్తోంది</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>మిస్డ్</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>సమాధానం లేదు</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>కనెక్షన్ లేదు</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>సస్పెన్షన్ ముగించు</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>వారు కాల్ పెట్టేశారు</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>మీరు తిరస్కరించారు</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>మీరు కాల్ పెట్టేశారు</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>విఫలమైంది: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>ఫైల్ సేవ్ అయింది</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, మొదటి {0} చూపబడింది</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, మొదటి {0} చూపబడ్డాయి</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>నిర్వాహకులు</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>నిష్క్రియం</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [ఎన్‌క్రిప్ట్ చేయబడింది]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>లాక్ చేయబడింది</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [పబ్లిక్]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [పరిష్కరించబడింది]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>సస్పెండ్ చేయబడింది</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>@పేరు:సర్వర్ వంటి వినియోగదారు ID ఇవ్వండి.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>ప్రారంభించడానికి మీ Matrix వినియోగదారు ID ఇవ్వండి.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>మీ వినియోగదారు ID ఇవ్వండి.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>కాల్ పెట్టేస్తోంది</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>సహాయం</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**బోల్డ్** _ఇటాలిక్_ `కోడ్` ~~కొట్టివేత~~ [టెక్స్ట్](url)   Markdown ఫార్మాట్ చేసి పంపబడుతుంది
+/plain text     Markdown లేకుండా పంపు
+/me text        చర్య, ఉదా. * మీరు చేయి ఊపుతారు
+/join #room     గదిలో చేరు; !id లేదా లింక్ కూడా, తర్వాత ఏ సర్వర్‌ల ద్వారా చేరాలో
+/leave          ఈ గదిని వదిలివేయి
+/topic text     అంశాన్ని సెట్ చేయి
+/name text      గది పేరు సెట్ చేయి
+/avatar [file]  గది చిత్రాన్ని సెట్ చేయి; /avatar none దాన్ని తొలగిస్తుంది
+/kick @user [reason]   సభ్యుడిని తొలగించు
+/ban @user [reason]    సభ్యుడిని శాశ్వతంగా తొలగించు
+/unban @user    నిషేధించిన వినియోగదారుని తిరిగి రానివ్వు
+/power @user level     హక్కుల స్థాయి సెట్ చేయి: సంఖ్య, admin, moderator లేదా member
+/op @user, /deop @user  నిర్వాహకులుగా చేయి, లేదా సాధారణ సభ్యుడిగా
+/invite @user   వినియోగదారుని ఆహ్వానించు
+/msg @user      నేరు చాట్ ప్రారంభించు
+/nick name      మీ ప్రదర్శన పేరు సెట్ చేయి
+/list [server]  పబ్లిక్ గదులు చూడు, ఇక్కడ లేదా మరో సర్వర్‌లో
+/create name    ప్రైవేట్ గది సృష్టించు
+/create #room [name]   ఆ చిరునామాతో పబ్లిక్ గది సృష్టించు
+/alias #room, /unalias #room   ఈ గది చిరునామా జోడించు లేదా తొలగించు
+/publish, /unpublish   ఈ గదిని పబ్లిక్ గదుల డైరెక్టరీలో చూపు, లేదా చూపకు
+/upload         ఫైల్ పంపు
+/devices        మీ సెషన్‌లను నిర్వహించు
+/settings       సెట్టింగ్‌లు చూడు మరియు మార్చు
+/logs           ఈ మరియు మునుపటి సెషన్‌ల లాగ్‌లు చదువు
+/audiotest      మైక్రోఫోన్, స్పీకర్ తనిఖీకి Opus ద్వారా మీ గొంతు విను
+/call           ఈ నేరు చాట్‌లోని మరో సభ్యుడికి వాయిస్ కాల్ చేయి
+/answer /reject ఇన్‌కమింగ్ కాల్‌కు సమాధానం ఇవ్వు లేదా తిరస్కరించు
+/hangup /mute   కాల్ ముగించు, లేదా మైక్రోఫోన్ మ్యూట్, అన్‌మ్యూట్ చేయి
+/encryption     కీలు, పునరుద్ధరణ మరియు బ్యాకప్
+/recover        పునరుద్ధరణ కీతో పాత సందేశాలు తెరువు
+/verify [@user] మీ మరో పరికరాన్ని లేదా వినియోగదారుని ఎమోజీలతో ధృవీకరించు
+/ignore @user   వినియోగదారుని బ్లాక్ చేయి: వారి సందేశాలు, ఆహ్వానాలు ఇక కనిపించవు; /ignore మాత్రమే జాబితా చూపుతుంది
+/unignore @user వినియోగదారుని అన్‌బ్లాక్ చేయి
+/report [@user] ఈ గదిని లేదా వినియోగదారుని సర్వర్ నిర్వాహకులకు నివేదించు; సందేశాలను వాటి మెనూ నుండి (Enter)
+/quit           నిష్క్రమించు
+
+సర్వర్ నిర్వాహకులు, సర్వర్ మెనూలో కూడా:
+/whois @user    వినియోగదారు పరికరాలు మరియు చిరునామాలు; ఎవరైనా తమను తాము చూడవచ్చు
+/accounts [text], /rooms [text]   సర్వర్ ఖాతాలు లేదా గదులను జాబితా చేసి నిర్వహించు
+/suspend @user, /unsuspend @user  చదవగలరు కానీ పంపలేరు, చేరలేరు, ఆహ్వానించలేరు
+/lock @user, /unlock @user        సర్వర్ వారి సెషన్‌లను తిరస్కరిస్తుంది
+/notice @user text   సర్వర్ నోటీసు పంపు
+/tokens, /reports    నమోదు టోకెన్‌లు, వినియోగదారుల నివేదికలు
+
+Alt+1…9         గది 1…9కి వెళ్లు
+Ctrl+N, Ctrl+P  తదుపరి, మునుపటి గది
+Ctrl+O          గదిలో చేరు
+Ctrl+R          గదుల డైరెక్టరీ
+PageUp/Down     సందేశాలను స్క్రోల్ చేయి
+Ctrl+PageUp     పాత సందేశాలు లోడ్ చేయి
+F2              సభ్యులను చూపు లేదా దాచు
+Ctrl+Up, Enter  సందేశాన్ని ఎంచుకొని, దానిపై చర్య తీసుకో
+Tab             మారుపేరు పూర్తి చేయి
+Esc             ప్రత్యుత్తరం లేదా సవరణ రద్దు చేయి
+F10             మెనూ తెరువు</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>చిత్రం</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>ఈ చిత్ర ఫార్మాట్‌ను చూపలేము. మరో ప్రోగ్రామ్‌లో తెరవడానికి ఫైల్ సేవ్ చేయి ఉపయోగించండి.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>చెల్లని చిరునామా</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>చెల్లని గది</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>చెల్లని వినియోగదారు</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>ఆహ్వానించు</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>{0}కి ఆహ్వానించబడ్డారు</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- మిమ్మల్ని ఈ గదికి ఆహ్వానించారు. చేరడానికి లేదా తిరస్కరించడానికి Enter నొక్కండి.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} మిమ్మల్ని {1}కి ఆహ్వానించారు.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>{0}ని ఆహ్వానిస్తోంది</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} సర్వర్ నిర్వాహకులు.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} ధృవీకరించబడ్డారు.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>చేరు</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>{0}లో చేరారు</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>{0}లో చేరుతోంది</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>{0}{1}లో చేరాలా?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>గదిలో చేరు</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>గది చిరునామా, ID లేదా లింక్, ఉదా. #matrix:matrix.org; ఏ సర్వర్‌ల ద్వారా చేరాలో తర్వాత ఇవ్వవచ్చు:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> ({0} ద్వారా)</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>తొలగించు</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>తొలగిస్తోంది</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>{0}ని వదిలివేయాలా?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>గదిని వదిలివేయి</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>{0}ని వదిలివేస్తోంది</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>నిర్వాహకులు ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>{0} కోసం స్థాయి, 0 నుండి 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>సభ్యుడు (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>మోడరేటర్ ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>ఇతరం…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>ఖాతాలను తెస్తోంది</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>సభ్యులను తెస్తోంది</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>నివేదికలను తెస్తోంది</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>{0}ని డైరెక్టరీలో చేరుస్తోంది</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>గదులను తెస్తోంది</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>నమోదు టోకెన్‌లను తెస్తోంది</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>{0}ని {1} పబ్లిక్ గదుల డైరెక్టరీలో చూపాలా? దీని వల్ల ఎవరు చేరవచ్చో మారదు.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>సభ్యులను లోడ్ చేస్తోంది</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>{0} లోడ్ అవుతోంది…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[ప్రివ్యూ లోడ్ అవుతోంది…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>లాక్ చేయి</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>లాక్ చేయి: అన్ని సెషన్‌లను తిరస్కరించు</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} లాక్ చేయబడ్డారు: /unlock {1} వరకు సర్వర్ వారి సెషన్‌లను తిరస్కరిస్తుంది.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>లాక్ చేస్తోంది</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>లాగ్ అవుట్ అవుతోంది</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>పరికరాలను లాగ్ అవుట్ చేస్తోంది</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>లాగిన్ చేయి</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>లాగ్ అవుట్ చేయి</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>పరికరాలను లాగ్ అవుట్ చేయి</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>{0} పరికరాన్ని లాగ్ అవుట్ చేయాలా: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>{0} పరికరాలను లాగ్ అవుట్ చేయాలా: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>సర్వర్‌లో ఈ సెషన్‌ను ముగించాలా? సందేశాలు స్థానిక డేటాబేస్‌లో ఉంటాయి.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>వినియోగదారుని వెతుకుతోంది</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>మీ స్థాయిని {0} నుండి {1}కి తగ్గించాలా? మీరు దాన్ని మళ్లీ మీరే పెంచలేరు.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>సర్వర్ నిర్వాహకులుగా చేయి</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>{0}ని సర్వర్‌లోని అన్ని ఖాతాలు, గదులను నిర్వహించనివ్వాలా?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>నిర్వాహకులుగా చేస్తోంది</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} సభ్యుడు</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} సభ్యులు</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>ఈ గదిలోని వినియోగదారు ID లేదా పేరు:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>సభ్యులు</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>సభ్యులు ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>{0} సభ్యులు</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>గురించి(_A)</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>ఖాతాలు(_A)…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>సర్వర్ నిర్వాహకులు: ఖాతాలను జాబితా చేసి నిర్వహించు</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>చిరునామా జోడించు(_S)…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>#గది:సర్వర్ వంటి చిరునామా</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>ఆడియో పరీక్ష(_A)…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>మైక్రోఫోన్, స్పీకర్ తనిఖీకి మీ గొంతు విను</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>నిషేధించు(_B)…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>సభ్యుడిని శాశ్వతంగా తొలగించు</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>కాల్ చేయి(_C)</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>ఈ నేరు చాట్‌లో వాయిస్ కాల్</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>కమాండ్‌లు మరియు కీలు(_C)</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>ఖాతా తొలగించు(_A)…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>ఖాతాను శాశ్వతంగా నిష్క్రియం చేయి</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>పరికరాలు(_D)…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>సెషన్‌లు చూడు, లాగ్ అవుట్ చేయి</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>నేరు సందేశం(_M)…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>వినియోగదారుతో చాట్ ప్రారంభించు</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>గదుల డైరెక్టరీ(_D)…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>పబ్లిక్ గదులు కనుగొను</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>డైరెక్టరీలో జాబితా(_G)…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>పబ్లిక్ గదుల డైరెక్టరీలో చూపు</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్ ఆన్ చేయి(_Y)…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>ఈ గదిని ఎన్‌క్రిప్ట్ చేయి; వెనక్కి తీసుకోలేము</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్(_E)…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>కీలు, పునరుద్ధరణ మరియు బ్యాకప్</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>ఫైల్(_F)</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>కాల్ పెట్టేయి(_H)</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>కాల్ ముగించు</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>సహాయం(_H)</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>ఆహ్వానించు(_I)…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>వినియోగదారుని ఇక్కడికి ఆహ్వానించు</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>చేరు(_J)…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>చిరునామా లేదా IDతో చేరు</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>తొలగించు(_K)…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>సభ్యుడిని తొలగించు</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>వదిలివేయి(_L)</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>ఈ గదిని వదిలివేయి</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>లాగ్ అవుట్ చేయి(_L)…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>సర్వర్‌లో సెషన్ ముగించు</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>లాగ్‌లు(_L)…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>ఈ మరియు మునుపటి సెషన్‌లు</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>సభ్యులు(_M)</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>చూపు లేదా దాచు</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>కొత్త పబ్లిక్ గది(_R)…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>ఎవరైనా చేరగల గది సృష్టించు</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>కొత్త గది(_N)…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>ప్రైవేట్ గది సృష్టించు</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>తదుపరి గది(_N)</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>పాత సందేశాలు(_O)</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>చరిత్ర లోడ్ చేయి</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>హక్కుల స్థాయి(_P)…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>సభ్యుడిని నిర్వాహకులు లేదా మోడరేటర్‌గా చేయి</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>మునుపటి గది(_P)</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>నిష్క్రమించు(_Q)</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>నిష్క్రమించు, సెషన్ అలాగే ఉంటుంది</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>నమోదు టోకెన్‌లు(_R)…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>కొత్త ఖాతాలు నమోదు చేసుకునే టోకెన్‌లు</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>నివేదికలు(_P)…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>వినియోగదారులు ఏమి నివేదించారు</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>గది(_R)</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>సందేశం ఎంచుకో(_S)</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>ప్రత్యుత్తరం, స్పందన, సవరణ…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>ఫైల్ పంపు(_F)…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>ఇక్కడ ఫైల్ అప్‌లోడ్ చేయి</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>సర్వర్(_S)</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>సర్వర్ నోటీసు(_N)…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>సర్వర్ తరఫున వినియోగదారుకు సందేశం</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>గదులు(_O)…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>సర్వర్‌లోని అన్ని గదులు</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>చిత్రం సెట్ చేయి(_A)…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>గది చిత్రం</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>పేరు సెట్ చేయి(_E)…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>గది పేరు మార్చు</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>సెట్టింగ్‌లు(_S)…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>సెట్టింగ్‌లు చూడు మరియు మార్చు</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>అంశం సెట్ చేయి(_T)…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>అంశం మార్చు</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>నిషేధం ఎత్తివేయి(_U)…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>నిషేధించిన వినియోగదారుని తిరిగి రానివ్వు</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>ఈ పరికరాన్ని ధృవీకరించు(_V)…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>ఎమోజీ పోలిక</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>వీక్షణ(_V)</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>ఎవరు(_W)…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>వినియోగదారు పరికరాలు మరియు చిరునామాలు</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>సందేశం</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [సందేశం తొలగించబడింది]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>{0}లో సందేశం</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>మైక్రోఫోన్‌లు: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, మ్యూట్</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>{0} కోసం పేరు:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>మీ ప్రస్తుత గుర్తింపు ఈ పరికరాన్ని గానీ {0}ని గానీ విశ్వసించదు, కాబట్టి ఏదీ మరొకదానికి హామీ ఇవ్వలేదు.
+
+ఈ పరికరాన్ని విశ్వసనీయ పరికరం నుండి ధృవీకరించండి{1}, లేదా మీ పునరుద్ధరణ కీని ఉపయోగించండి.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>ఎప్పుడూ కాదు</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>కొత్త ఖాతా</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ కొత్త ఖాతా…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>{0} కోసం కొత్త పాస్‌వర్డ్; వారి పరికరాలు లాగ్ అవుట్ అవుతాయి:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>కొత్త పబ్లిక్ గది</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>కొత్త గది</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>కొత్త టోకెన్</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ కొత్త టోకెన్…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>ఈ సర్వర్ యాప్‌లను ఖాతాలు సృష్టించనివ్వదు.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>ఏ కాల్ మోగడం లేదు.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>పెట్టేయడానికి కాల్ లేదు.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>మ్యూట్ చేయడానికి కాల్ లేదు.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>ఏ పరికరం లాగిన్ కాలేదు.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>ఎప్పటికీ గడువు ముగియదు</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} ఇకపై సర్వర్ నిర్వాహకులు కారు.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>ఇక్కడ "{0}" పేరుతో సభ్యుడు లేరు. @alice:matrix.org వంటి వినియోగదారు ID ఇవ్వండి.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>సభ్యులు లేరు.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>ఏదీ లేదు</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>ఏదీ కనుగొనబడలేదు</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>మీ ప్రస్తుత గుర్తింపు మీ పరికరాలలో దేనినీ విశ్వసించదు, కాబట్టి ఏదీ ఈ పరికరానికి హామీ ఇవ్వలేదు.
+
+మీ పునరుద్ధరణ కీని ఉపయోగించండి, లేదా మీరు ఉంచుకునే పరికరంలో మీ గుర్తింపును రీసెట్ చేయండి.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>ఎవరూ బ్లాక్ చేయబడలేదు.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[ప్రివ్యూ లేదు]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>ఈ ఖాతాకు ఇంకా పునరుద్ధరణ సెటప్ చేయలేదు. సెటప్ చేస్తే ఇతరులకు ఈ పరికరం ధృవీకరించబడినట్లు కనిపిస్తుంది, మీకు కొత్త పరికరాల్లో మీ సందేశాలను తెరిచే పునరుద్ధరణ కీ వస్తుంది.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>నివేదికలు లేవు.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>గది లేదు</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>గదులు కనుగొనబడలేదు</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} కమాండ్ కాదు. సహాయం → కమాండ్‌లు మరియు కీలు చూడండి.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" స్థాయి కాదు; ఒక సంఖ్య ఇవ్వండి, లేదా admin, moderator లేదా member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" Matrix వినియోగదారు ID కాదు; అది @alice:matrix.org లాగా ఉంటుంది.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} చిత్ర ఫైల్ కాదు.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" మరో వినియోగదారు ID కాదు; అది @alice:matrix.org లాగా ఉంటుంది.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} #matrix:matrix.org వంటి గది చిరునామా, ID లేదా లింక్ కాదు. వినియోగదారుతో చాట్ చేయడానికి /msg ఉపయోగించండి.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} #గది లేదా #గది:{1} వంటి గది చిరునామా కాదు.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" సర్వర్ చిరునామా కాదు; అది https://matrix.example.org లాగా ఉంటుంది.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} @alice:matrix.org వంటి వినియోగదారు ID కాదు.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" వినియోగదారు ID కాదు; అది @alice:matrix.org లాగా ఉంటుంది.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" వినియోగదారు ID కాదు; అది @alice:{1} లాగా ఉంటుంది.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>కనెక్ట్ కాలేదు</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>లాగ్ అవుట్ చేయడానికి ఏమీ లేదు. ఈ సెషన్ ముగించడానికి ఫైల్ → లాగ్ అవుట్ చేయి ఉపయోగించండి.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>{0} కోసం నోటీసు; అది వారి సర్వర్ నోటీసుల గదికి చేరుతుంది:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [పంపబడలేదు: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>సెటప్ చేయలేదు</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>విశ్వసనీయం కాదు</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>ధృవీకరించబడలేదు</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>ఉపయోగపడే కీ బ్యాకప్ కనుగొనబడలేదు.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>మీ విశ్వసనీయ పరికరాల్లో ఒకటి</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>ముందుగా ఒక నేరు చాట్ తెరవండి.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+ఎన్‌క్రిప్షన్ విండోను ఇప్పుడు తెరవాలా? అది ఫైల్ → ఎన్‌క్రిప్షన్, /encryptionలో కూడా ఉంది.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>{0} తెరుస్తోంది</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>ముందుగా మీరు చేరిన గదిని తెరవండి.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>లింక్ తెరువు</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>మరో సర్వర్</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>చిరునామాలను మీ సొంత సర్వర్ {0}లో మాత్రమే సృష్టించవచ్చు.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>{0} పాస్‌వర్డ్:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>పాస్‌వర్డ్ అంగీకరించబడలేదు.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>{0}కి కొత్త పాస్‌వర్డ్ సెట్ చేసి, వారి పరికరాలను లాగ్ అవుట్ చేశాము.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>పాస్‌వర్డ్‌లు వేరుగా ఉన్నాయి.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>హక్కుల స్థాయి</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>{0} హక్కుల స్థాయి (ప్రస్తుతం {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>మూసివేయడానికి Enter నొక్కండి.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>నిష్క్రమించు</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>స్పందించు</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>స్పందన టెక్స్ట్ లేదా ఎమోజీ:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>{0} కోసం కారణం (ఐచ్ఛికం):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>వేధింపు లేదా ద్వేషం(_H)</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>చట్టవిరుద్ధ కంటెంట్(_I)</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>ఇతరం(_O)</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>లైంగిక లేదా హింసాత్మక కంటెంట్(_X)</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>స్పామ్(_S)</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>పునరుద్ధరించు</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>పునరుద్ధరించబడింది</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>పునరుద్ధరిస్తోంది</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>కీలను పునరుద్ధరిస్తోంది…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>పునరుద్ధరణ కీ</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>పునరుద్ధరణ కీ (లేదా పాస్‌ఫ్రేజ్):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>ఈ సర్వర్‌కు ఈ యాప్ చేయలేని ఒక దశ అవసరం, ఉదా. క్యాప్చా లేదా ఇమెయిల్. సర్వర్ వెబ్‌సైట్‌లో ఖాతా సృష్టించి, ఇక్కడ సైన్ ఇన్ చేయండి.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>సర్వర్ నిర్వాహకుల నుండి నమోదు టోకెన్:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>నమోదు టోకెన్‌లు</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>{0}ని తిరస్కరిస్తోంది</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>తిరస్కరిస్తోంది</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, రిలే</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>చిరునామా తొలగించు</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>{0} తొలగించబడింది</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>{0} తొలగిస్తోంది</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>చిత్రాన్ని తొలగిస్తోంది</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>పరికరం పేరు మార్చు</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>పరికరం పేరు మారుస్తోంది</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} ఇప్పటికే ఉంది. భర్తీ చేయాలా?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[ప్రత్యుత్తరం {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[ప్రత్యుత్తరం] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[ప్రత్యుత్తరం {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>నివేదించు</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>{0} మీ సర్వర్ నిర్వాహకులకు నివేదించబడ్డారు.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>సందేశం మీ సర్వర్ నిర్వాహకులకు నివేదించబడింది. /ignore పంపినవారిని బ్లాక్ చేస్తుంది.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>నివేదిస్తోంది</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>సందేశాన్ని నివేదిస్తోంది</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" వినియోగదారు ID కాదు; /report @user:server, లేదా ఈ గది కోసం /report మాత్రమే.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>నివేదికలు</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} నివేదిక, కొత్తవి ముందు:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} నివేదికలు, కొత్తవి ముందు:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>నివేదిక {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>మీ సర్వర్ నిర్వాహకులకు నివేదిక: {0}. ఎందుకు?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>పాస్‌వర్డ్ రీసెట్ చేయి</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>పాస్‌వర్డ్ రీసెట్ చేయి…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>పాస్‌వర్డ్ రీసెట్ చేస్తోంది</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>గది చిత్రం</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>గది చిత్రం సెట్ అయింది</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} గది</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} గదులు</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>గదుల డైరెక్టరీ</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>ఈ గది ఎన్‌క్రిప్ట్ చేయబడింది, కానీ ఈ పరికరంలో ఎన్‌క్రిప్షన్ అందుబాటులో లేదు.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>గది పేరు, చిరునామా లేదా IDలో భాగం; అన్నింటికీ ఖాళీ:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} గదుల డైరెక్టరీలో జాబితాలో ఉంది</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>గది పేరు:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} ఏ సర్వర్‌నూ పేర్కొనదు. గదిలో ఏ సర్వర్‌ల ద్వారా చేరాలో ఇవ్వండి, ఉదా. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>గదులు</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} గది, ఎక్కువ సభ్యులున్నవి ముందు{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} గదులు, ఎక్కువ సభ్యులున్నవి ముందు{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} ఇకపై గదుల డైరెక్టరీలో జాబితాలో లేదు</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>అదే పాస్‌వర్డ్ మళ్లీ:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>ఇలా సేవ్ చేయి (ఫైల్, లేదా సేవ్ చేయాల్సిన ఫోల్డర్):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>{0} సేవ్ అయింది</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>ఫైల్ సేవ్ చేయి</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>ఫైల్ సేవ్ చేస్తోంది</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>వెతుకులాట విఫలమైంది: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>వెతుకుతోంది…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>వెతుకు:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+వివరాల కోసం లాగ్ ఫైల్ చూడండి.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>ఫైల్ పంపు</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>{0}ని ఈ గదికి పంపాలా?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>ఫైళ్లు పంపు</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>ఈ {0} ఫైల్‌ను ఈ గదికి పంపాలా?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>ఈ {0} ఫైళ్లను ఈ గదికి పంపాలా?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>{0} పంపుతోంది</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>నోటీసు పంపుతోంది</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [పంపుతోంది…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>ధృవీకరణ అభ్యర్థన పంపుతోంది…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>సర్వర్ నోటీసు పంపు…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>{0} పంపబడింది</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>{0}కి సర్వర్ నోటీసు పంపబడింది.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>ఉదాహరణకు, ఈ కంప్యూటర్‌లోని సర్వర్ కోసం http://localhost:8008.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>సర్వర్ చిరునామా, వినియోగదారు ID నుండి కనుగొనలేకపోతే మాత్రమే:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>సర్వర్:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>సర్వర్ అవసరం</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>సర్వర్ నోటీసు</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>సర్వర్ విధానాలు:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>పేరు సెట్ చేయి</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>చిత్రాన్ని సెట్ చేస్తోంది</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>పేరు సెట్ చేస్తోంది</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>{0} హక్కుల స్థాయి సెట్ చేస్తోంది</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>అంశాన్ని సెట్ చేస్తోంది</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>పునరుద్ధరణ సెటప్ చేస్తోంది…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>అంశం సెట్ చేయి</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>సెటప్ చేయబడింది</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>సెటప్ చేయబడింది, ఇక్కడ విశ్వసనీయం</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>సెటప్ చేయబడింది, ఇక్కడ ఇంకా విశ్వసనీయం కాదు</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>పునరుద్ధరణ సెటప్ చేయి</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>క్రాస్-సైనింగ్ కీలు, కీ బ్యాకప్, పునరుద్ధరణ కీ సృష్టించాలా?
+
+పునరుద్ధరణ కీతో కొత్త లాగిన్ తనను తాను ధృవీకరించుకొని పాత సందేశాలు చదవగలదు. దాన్ని పాస్‌వర్డ్ లాగా సురక్షితంగా ఉంచండి.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>మూసివేయి</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>మూసివేయి…</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} మూసివేయబడింది: {1} సభ్యుడిని తొలగించాము{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} మూసివేయబడింది: {1} సభ్యులను తొలగించాము{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>ఈ సర్వర్‌లోని సభ్యులందరినీ {0}ని వదిలివేయించి, ఇక్కడ దాని చిరునామాలను తొలగించాలా? బ్లాక్ చేస్తే వారు మళ్లీ చేరలేరు కూడా.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>సభ్యులకు చూపే కారణం; లేకపోతే ఖాళీ:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>గదిని మూసివేయి…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>గదిని మూసివేస్తోంది</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>ప్రారంభించడానికి మీ పూర్తి Matrix వినియోగదారు ID ఇవ్వండి; విజయవంతమైన లాగిన్ తర్వాత అది గుర్తుంచుకోబడుతుంది.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Matrixలో సైన్ ఇన్ చేయి</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>ఎవరో</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>స్పీకర్‌లు: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>{0}తో నేరు చాట్ ప్రారంభించాలా?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>{0}తో చాట్ ప్రారంభిస్తోంది</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat ఒక టెర్మినల్ యాప్: దాన్ని టెర్మినల్‌లో ప్రారంభించండి.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>క్రాస్-సైనింగ్:         {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>పరికరం:               {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>ఫింగర్‌ప్రింట్:         {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>కీ బ్యాకప్:            {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>పునరుద్ధరణ కీ:        {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>ఈ పరికరం:             {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>సస్పెండ్ చేయి</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>సస్పెండ్ చేయి: చదవగలరు, పంపలేరు</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} సస్పెండ్ చేయబడ్డారు: వారు గదులను చదవవచ్చు, వదిలివేయవచ్చు, కానీ పంపలేరు, చేరలేరు, ఆహ్వానించలేరు. /unsuspend {1} దీన్ని ముగిస్తుంది.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>సస్పెండ్ చేస్తోంది</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>{0}ని సస్పెండ్ చేయి</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>సిస్టమ్ డిఫాల్ట్</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>సర్వర్ నిర్వాహక హక్కులు తీసివేయి</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>నిర్వాహక హక్కులు తీసివేస్తోంది</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>ధృవీకరణ రద్దయింది.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>ఇది మీరు ఉపయోగిస్తున్న పరికరమే. మీ మరో పరికరాన్ని ఎంచుకోండి.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>ఈ సందేశం</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>ఈ గది</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>చెల్లుబాటు రోజుల సంఖ్య; ఎప్పటికీ గడువు లేకపోతే ఖాళీ:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>సర్వర్ నమోదు టోకెన్‌ను అంగీకరించలేదు.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>టోకెన్; యాదృచ్ఛికానికి ఖాళీ:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>నమోదుకు టోకెన్ అవసరమైనప్పుడు, కొత్త ఖాతాలకు వీటిలో ఒకటి కావాలి:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>{0:yyyy-MM-dd HH:mm} వరకు</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>{0} సార్లు ఉపయోగించబడింది, పరిమితి లేదు</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>{1}లో {0} సార్లు ఉపయోగించబడింది</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>ఎన్ని ఖాతాలు దీన్ని ఉపయోగించవచ్చు; అపరిమితానికి ఖాళీ:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>అంశం:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>క్రాస్-సైన్ చేయబడింది</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>కీలు లేవు</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>ఈ పరికరం</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>ధృవీకరించబడలేదు</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>ధృవీకరించబడింది</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} టైప్ చేస్తున్నారు…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>నిషేధం ఎత్తివేయి</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>నిషేధం ఎత్తివేస్తోంది</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} అన్‌బ్లాక్ చేయబడ్డారు.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>అన్‌బ్లాక్ చేస్తోంది</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>తెలియదు</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>తెలియని కమాండ్</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>{0}ని డైరెక్టరీ నుండి తీసివేస్తోంది</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>అన్‌లాక్ చేయి</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} అన్‌లాక్ చేయబడ్డారు.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>అన్‌లాక్ చేస్తోంది</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>{0} అప్‌లోడ్ అవుతోంది…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>వినియోగదారు ID, ఉదా. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} ఇప్పటికే తీసుకోబడింది; మరొకటి ఎంచుకోండి.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>వినియోగదారు, ఉదా. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>ధృవీకరణ</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>ధృవీకరణ రద్దయింది</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>{0}తో ధృవీకరణ రద్దయింది: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>{0} {1} నుండి వచ్చిన ధృవీకరణ అభ్యర్థన పట్టించుకోబడలేదు: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>ధృవీకరణ అభ్యర్థన</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>ధృవీకరణ అభ్యర్థించబడింది; దాన్ని {0}లో అంగీకరించండి.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>ధృవీకరించబడింది (క్రాస్-సైన్ చేయబడింది)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>{0} ధృవీకరించబడింది</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>ధృవీకరించు</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>{0} నిర్ధారణ కోసం వేచి ఉంది…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>క్లయింట్ కనెక్ట్ అయ్యే వరకు వేచి ఉండండి.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} ఎమోజీలను పోల్చి ఈ పరికరాన్ని ధృవీకరించాలనుకుంటున్నారు.
+
+అంగీకరించాలా?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>ఏ గది లేదా వినియోగదారు?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>ఎవరు</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>ఎవరు: పరికరాలు మరియు చిరునామాలు</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>{0} ఎవరు</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>ఈ పునరుద్ధరణ కీని ఇప్పుడే రాసుకోండి లేదా కాపీ చేసి సురక్షితంగా ఉంచండి. ఇది మళ్లీ చూపబడదు.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>మీ పరికరం {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>మీ మరో పరికరం</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>నిర్ధారించడానికి మీ పాస్‌వర్డ్:</value>
+  </data>
+</root>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indonesian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Diterapkan</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Diterapkan. Ini berlaku setelah dimulai ulang:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Terapkan</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Terapkan</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Batal</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>T_utup</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Selesai</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Edit</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_kspor…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Muat…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Tidak</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Atur ulang</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Simpan</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ya</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Tidak dapat membaca {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Saat ini: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Bawaan: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} tidak ada.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Berlaku setelah dimulai ulang.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Berlaku saat diterapkan.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (kosong = tidak diatur)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Tulis pengaturan saat ini ke:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Ekspor pengaturan</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filter:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Tingkat: {0}+</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} pengaturan dimuat sebagai suntingan. Terapkan atau simpan untuk menggunakannya.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Berkas pengaturan yang akan dimuat:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Muat pengaturan</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} dari {1} entri · {2}   Enter: entri lengkap  Alt+F: filter</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} baris]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Nilai baru{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(tidak diatur)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>sekarang</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>log lama</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Salah satu dari: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Jenis: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Saat ini diatur oleh {0}, yang menimpa berkas pengaturan.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Atur ulang</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Simpan</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Tersimpan</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Disimpan ke {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Nilai ini rahasia. Berikan di baris perintah, atau masukkan saat program memintanya.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sesi</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Pengaturan</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Berkas pengaturan: {0}    * disunting  + diterapkan, belum disimpan  ↻ setelah dimulai ulang</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Ini berlaku setelah dimulai ulang:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Beberapa perubahan belum disimpan ke berkas pengaturan. Tetap tutup?
+
+Perubahan yang diterapkan berlaku sampai program dimulai ulang.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Pengaturan belum disimpan</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} ditulis. Rahasia tidak disertakan.</value>
+  </data>
+</root>

@@ -222,7 +222,7 @@ public sealed partial class SecurityViewModel : ViewModelBase
         {
             RecoveryResult result = await connection.Crypto.RecoverAsync(RecoveryInput.Trim());
             RecoveryInput = "";
-            Message = Translations.Format(result.CrossSigningRestored ? Strings.KeysRestoredVerified : Strings.KeysRestored, result.KeysImported);
+            Message = Translations.Plural(result.CrossSigningRestored ? nameof(Strings.KeysRestoredVerified_other) : nameof(Strings.KeysRestored_other), result.KeysImported, result.KeysImported);
             await recovered();
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

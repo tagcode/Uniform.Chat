@@ -85,8 +85,11 @@
   <data name="LevelButton" xml:space="preserve">
     <value>_Taso: {0}+</value>
   </data>
-  <data name="LoadedSettings" xml:space="preserve">
-    <value>Ladattiin asetuksia muokkauksiksi: {0}. Ota ne käyttöön tai tallenna ne käyttääksesi niitä.</value>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Ladattiin {0} asetus muokkaukseksi. Ota se käyttöön tai tallenna se käyttääksesi sitä.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Ladattiin {0} asetusta muokkauksiksi. Ota ne käyttöön tai tallenna ne käyttääksesi niitä.</value>
   </data>
   <data name="LoadPrompt" xml:space="preserve">
     <value>Ladattava asetustiedosto:</value>
@@ -97,10 +100,16 @@
   <data name="Logs" xml:space="preserve">
     <value>Lokit</value>
   </data>
-  <data name="LogStatus" xml:space="preserve">
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0}/{1} merkintä · {2}   Enter: koko merkintä  Alt+D: suodatin</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
     <value>{0}/{1} merkintää · {2}   Enter: koko merkintä  Alt+D: suodatin</value>
   </data>
-  <data name="MoreLines" xml:space="preserve">
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} rivi]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
     <value>  [+{0} riviä]</value>
   </data>
   <data name="NewValuePrompt" xml:space="preserve">

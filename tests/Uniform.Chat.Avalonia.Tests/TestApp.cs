@@ -1,6 +1,7 @@
 using global::Avalonia;
 using global::Avalonia.Headless;
 using Uniform.Chat.Avalonia;
+using Uniform.Chat.Avalonia.Localization;
 
 [assembly: AvaloniaTestApplication(typeof(Uniform.Chat.Avalonia.Tests.TestApp))]
 
@@ -20,6 +21,6 @@ public static class TestApp
         Environment.SetEnvironmentVariable("XDG_DATA_HOME", Path.Combine(Home, "data"));
         App.Platform = new GuiPlatform { ApplicationName = "Uniform.Chat.Avalonia.Tests", DeviceName = "Uniform Chat tests" };
         // Return builder
-        return AppBuilder.Configure<App>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
+        return AppBuilder.Configure<App>().WithScriptFonts().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
     }
 }

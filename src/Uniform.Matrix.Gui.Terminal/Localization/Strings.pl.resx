@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Polish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Zastosowano</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Zastosowano. Te zadziałają po ponownym uruchomieniu:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Zastosuj</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Zastosuj</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Anuluj</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Za_mknij</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Gotowe</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Edytuj</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_ksportuj…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Wczytaj…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nie</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Resetuj</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>Za_pisz</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Tak</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Nie można odczytać {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Bieżąca: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Domyślnie: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} nie istnieje.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Działa po ponownym uruchomieniu.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Działa po zastosowaniu.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (puste = nieustawione)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Zapisz bieżące ustawienia do:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Eksportuj ustawienia</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filtr:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Poziom: {0}+</value>
+  </data>
+  <data name="LoadedSettings_few" xml:space="preserve">
+    <value>Wczytano {0} ustawienia jako zmiany. Zastosuj je lub zapisz, aby ich użyć.</value>
+  </data>
+  <data name="LoadedSettings_many" xml:space="preserve">
+    <value>Wczytano {0} ustawień jako zmiany. Zastosuj je lub zapisz, aby ich użyć.</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Wczytano {0} ustawienie jako zmianę. Zastosuj je lub zapisz, aby go użyć.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Wczytano {0} ustawienia jako zmiany. Zastosuj je lub zapisz, aby ich użyć.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Plik ustawień do wczytania:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Wczytaj ustawienia</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Dzienniki</value>
+  </data>
+  <data name="LogStatus_few" xml:space="preserve">
+    <value>Wpisy: {0}/{1} · {2}   Enter: cały wpis  Alt+F: filtr</value>
+  </data>
+  <data name="LogStatus_many" xml:space="preserve">
+    <value>Wpisy: {0}/{1} · {2}   Enter: cały wpis  Alt+F: filtr</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>Wpisy: {0}/{1} · {2}   Enter: cały wpis  Alt+F: filtr</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>Wpisy: {0}/{1} · {2}   Enter: cały wpis  Alt+F: filtr</value>
+  </data>
+  <data name="MoreLines_few" xml:space="preserve">
+    <value>  [+{0} wiersze]</value>
+  </data>
+  <data name="MoreLines_many" xml:space="preserve">
+    <value>  [+{0} wierszy]</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} wiersz]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} wiersza]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Nowa wartość{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(nieustawione)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>teraz</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>starszy dziennik</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Jedno z: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Typ: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Obecnie ustawione przez {0}, co ma pierwszeństwo przed plikiem ustawień.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Resetuj</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Zapisano</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Zapisano w {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Ta wartość jest tajna. Podaj ją w wierszu poleceń lub wpisz, gdy program o nią poprosi.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sesje</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Plik ustawień: {0}    * zmienione  + zastosowane, niezapisane  ↻ po ponownym uruchomieniu</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Te zadziałają po ponownym uruchomieniu:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Niektóre zmiany nie są zapisane w pliku ustawień. Zamknąć mimo to?
+
+Zastosowane zmiany obowiązują do ponownego uruchomienia programu.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Niezapisane ustawienia</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Zapisano {0}. Sekrety nie zostały uwzględnione.</value>
+  </data>
+</root>

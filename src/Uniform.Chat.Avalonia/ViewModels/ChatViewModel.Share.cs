@@ -28,7 +28,7 @@ public sealed partial class ChatViewModel
     public bool HasSharedFiles => SharedFiles is { Count: > 0 };
 
     /// <summary>What waits to be sent, e.g. <c>Share photo.jpg</c>.</summary>
-    public string SharedFilesText => SharedFiles is not { Count: > 0 } files ? "" : Translations.Format(files.Count == 1 ? Strings.ShareFile : Strings.ShareFiles, files.Count == 1 ? files[0].Name : files.Count);
+    public string SharedFilesText => SharedFiles is not { Count: > 0 } files ? "" : files.Count == 1 ? Translations.Format(Strings.ShareFile, files[0].Name) : Translations.Plural(nameof(Strings.ShareFiles_other), files.Count, files.Count);
 
     /// <summary>Follow the share sheet, and take what was shared before this view existed, e.g. what started the app.</summary>
     private void ListenForShares()

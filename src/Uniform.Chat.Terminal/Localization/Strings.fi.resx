@@ -25,13 +25,16 @@ https://spec.matrix.org</value>
     <value>Osa käyttäjätunnusta tai nimeä; tyhjä näyttää kaikki:</value>
   </data>
   <data name="AccountRow" xml:space="preserve">
-    <value>{0}  {1}{2}  laitteita {3}, huoneita {4}</value>
+    <value>{0}  {1}{2}  {3}, {4}</value>
   </data>
   <data name="Accounts" xml:space="preserve">
     <value>Tilit</value>
   </data>
-  <data name="AccountsCount" xml:space="preserve">
-    <value>Tilejä {0}{1}:</value>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} tili{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} tiliä{1}:</value>
   </data>
   <data name="ActionFailed" xml:space="preserve">
     <value>{0} epäonnistui: {1}</value>
@@ -54,7 +57,10 @@ https://spec.matrix.org</value>
   <data name="AlreadyEncrypted" xml:space="preserve">
     <value>Tämä huone on jo salattu.</value>
   </data>
-  <data name="AndMore" xml:space="preserve">
+  <data name="AndMore_one" xml:space="preserve">
+    <value> ja {0} muu</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
     <value> ja {0} muuta</value>
   </data>
   <data name="Answering" xml:space="preserve">
@@ -93,8 +99,11 @@ https://spec.matrix.org</value>
   <data name="BackupOn" xml:space="preserve">
     <value>käytössä (versio {0})</value>
   </data>
-  <data name="BackupRestored" xml:space="preserve">
-    <value>Avainten varmuuskopio palautettu: huoneavaimia tuotiin {0}.</value>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Avainten varmuuskopio palautettu: {0} huoneavain tuotiin.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Avainten varmuuskopio palautettu: {0} huoneavainta tuotiin.</value>
   </data>
   <data name="Ban" xml:space="preserve">
     <value>Porttikielto</value>
@@ -127,7 +136,7 @@ https://spec.matrix.org</value>
     <value>_Sulje</value>
   </data>
   <data name="ButtonCreateAccount" xml:space="preserve">
-    <value>_Luo tili</value>
+    <value>Luo _tili</value>
   </data>
   <data name="ButtonDelete" xml:space="preserve">
     <value>_Poista</value>
@@ -276,8 +285,11 @@ Näkyvätkö samat, samassa järjestyksessä?</value>
   <data name="ConnectionProblem" xml:space="preserve">
     <value>Yhteysongelma: {0}</value>
   </data>
-  <data name="CouldNotRemove" xml:space="preserve">
-    <value>; {0} ei voitu poistaa</value>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0} jäsen jäi poistamatta</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0} jäsentä jäi poistamatta</value>
   </data>
   <data name="CreateAccount" xml:space="preserve">
     <value>Luo tili</value>
@@ -365,6 +377,12 @@ Näkyvätkö samat, samassa järjestyksessä?</value>
   </data>
   <data name="DeletingToken" xml:space="preserve">
     <value>Poistetaan koodia</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} laite</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} laitetta</value>
   </data>
   <data name="DeviceLastSeen" xml:space="preserve">
     <value>{0}  {1}
@@ -473,8 +491,11 @@ Näkyvätkö samat, samassa järjestyksessä?</value>
   <data name="FileSaved" xml:space="preserve">
     <value>Tiedosto tallennettu</value>
   </data>
-  <data name="FirstShown" xml:space="preserve">
-    <value>, näytetään ensimmäiset {0}</value>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, näytetään {0} ensimmäinen</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, näytetään {0} ensimmäistä</value>
   </data>
   <data name="FlagAdmin" xml:space="preserve">
     <value>ylläpitäjä</value>
@@ -716,8 +737,11 @@ F10             avaa valikko</value>
   <data name="LogOutDevices" xml:space="preserve">
     <value>Kirjaa laitteet ulos</value>
   </data>
-  <data name="LogOutDevicesQuestion" xml:space="preserve">
-    <value>Kirjataanko ulos laitteet ({0}): {1}?</value>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>Kirjataanko ulos {0} laite: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Kirjataanko ulos {0} laitetta: {1}?</value>
   </data>
   <data name="LogOutQuestion" xml:space="preserve">
     <value>Lopetetaanko tämä istunto palvelimella? Viestit jäävät paikalliseen tietokantaan.</value>
@@ -736,6 +760,12 @@ F10             avaa valikko</value>
   </data>
   <data name="MakingAdmin" xml:space="preserve">
     <value>Tehdään ylläpitäjäksi</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} jäsen</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} jäsentä</value>
   </data>
   <data name="MemberPrompt" xml:space="preserve">
     <value>Käyttäjätunnus tai nimi tässä huoneessa:</value>
@@ -1327,8 +1357,11 @@ Avataanko salausikkuna nyt? Se löytyy myös kohdasta Tiedosto → Salaus, ja ko
   <data name="Reports" xml:space="preserve">
     <value>Raportit</value>
   </data>
-  <data name="ReportsCount" xml:space="preserve">
-    <value>Raportteja {0}, uusin ensin:</value>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} raportti, uusin ensin:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} raporttia, uusin ensin:</value>
   </data>
   <data name="ReportTitle" xml:space="preserve">
     <value>Raportti {0}</value>
@@ -1351,6 +1384,12 @@ Avataanko salausikkuna nyt? Se löytyy myös kohdasta Tiedosto → Salaus, ja ko
   <data name="RoomAvatarSet" xml:space="preserve">
     <value>Huoneen kuva asetettu</value>
   </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} huone</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} huonetta</value>
+  </data>
   <data name="RoomDirectory" xml:space="preserve">
     <value>Huonehakemisto</value>
   </data>
@@ -1372,13 +1411,16 @@ Avataanko salausikkuna nyt? Se löytyy myös kohdasta Tiedosto → Salaus, ja ko
     <value>{0} ei nimeä palvelinta. Anna huoneessa olevat palvelimet, joiden kautta liitytään, esim. /join {1} matrix.org.</value>
   </data>
   <data name="RoomRow" xml:space="preserve">
-    <value>{0}{1}  jäseniä {2}{3}{4}</value>
+    <value>{0}{1}  {2}{3}{4}</value>
   </data>
   <data name="Rooms" xml:space="preserve">
     <value>Huoneet</value>
   </data>
-  <data name="RoomsCount" xml:space="preserve">
-    <value>Huoneita {0}, eniten jäseniä ensin{1}:</value>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} huone, eniten jäseniä ensin{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} huonetta, eniten jäseniä ensin{1}:</value>
   </data>
   <data name="RoomUnlisted" xml:space="preserve">
     <value>{0} ei enää näy huonehakemistossa</value>
@@ -1421,8 +1463,13 @@ Lisätiedot ovat lokitiedostossa.</value>
   <data name="SendFiles" xml:space="preserve">
     <value>Lähetä tiedostot</value>
   </data>
-  <data name="SendFilesQuestion" xml:space="preserve">
-    <value>Lähetetäänkö nämä tiedostot ({0}) tähän huoneeseen?
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>Lähetetäänkö {0} tiedosto tähän huoneeseen?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Lähetetäänkö nämä {0} tiedostoa tähän huoneeseen?
 
 {1}</value>
   </data>
@@ -1510,8 +1557,11 @@ Palautusavaimella uusi kirjautuminen voi vahvistaa itsensä ja lukea vanhat vies
   <data name="ShutDownAction" xml:space="preserve">
     <value>Sulje…</value>
   </data>
-  <data name="ShutDownDone" xml:space="preserve">
-    <value>{0} suljettiin: jäseniä poistettiin {1}{2}{3}.</value>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} suljettiin: {1} jäsen poistettiin{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} suljettiin: {1} jäsentä poistettiin{2}{3}.</value>
   </data>
   <data name="ShutDownQuestion" xml:space="preserve">
     <value>Poistetaanko kaikki tämän palvelimen jäsenet huoneesta {0} ja poistetaanko sen osoitteet täältä? Esto estää myös liittymästä uudelleen.</value>

@@ -1,0 +1,1805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Hakkında</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+Terminal için bir Matrix sohbet istemcisi.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Devam ederek kullanım politikasını kabul edersiniz: yasa dışı, kötü niyetli veya zararlı içerik yok.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Hesabınız silindi.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Kullanıcı kimliğinin veya adın bir kısmı; boş = tümü:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Hesaplar</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} hesap{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} hesap{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} başarısız: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Adres ekle</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>{0} eklendi</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>{0} ekleniyor</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Adres, ör. #oda veya #oda:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Kaldırılacak adres, ör. #oda:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Bu oda zaten şifreli.</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> ve {0} tane daha</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> ve {0} tane daha</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Yanıtlanıyor</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>{0} için bir parola:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>{0} sorgulanıyor…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Ses testi</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Mikrofon: {0}. Hoparlör: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Ses testi: hiçbir şey kaydedilmedi</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Ses testi: {0:F0} sn, {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Sessizlik, girişin mikrofon olmadığı anlamına gelir: sistemin ses ayarlarından birini seçin veya Ayarlar'da Audio:Microphone değerini ayarlayın.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Konuşun: kendinizi bir saniye sonra, aramadaki gibi Opus üzerinden duyarsınız.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Bu platformda ses desteklenmiyor.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>sürüm {0}, kurtarma anahtarı gerekiyor</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>açık (sürüm {0})</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Anahtar yedeği geri yüklendi: {0} oda anahtarı içe aktarıldı.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Anahtar yedeği geri yüklendi: {0} oda anahtarı içe aktarıldı.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Yasakla</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Yasaklanıyor:</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, engellendi</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Engellenenler: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} engellendi: bu kişinin mesajları ve davetleri artık gösterilmiyor. /unignore {1} bunu geri alır.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Engelleniyor</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>_Kabul ediyorum</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>_Göndereni engelle</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_İptal</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Ka_pat</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Hesap oluştur</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>_Sil</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Düzenle</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>_Katıl</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Sonra</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Listele</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>Cihazın _oturumunu kapat</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>_Diğer tümünü kapat</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>_Bağlantıyı aç</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Diğer…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>Ç_ıkış</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Tepki ver</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>K_urtar</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Reddet</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Yeniden adlandır</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Yanıtla</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>Şikâyet _et</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>Dosyayı _kaydet</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Kurtarmayı ayarla</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Kapat</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Kapat ve _engelle</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Giriş yap</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>Eşleşmi_yor</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>_Eşleşiyor</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>Listeden _çıkar</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>Bu _cihazı doğrula</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>Seçileni doğ_rula</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>_Resmi göster</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Arama</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Arama: {0} ile görüşmede{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Arama: {0} kullanıcısına bağlanıyor…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Arama: {0} ile arama bitti: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Aranıyor</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Arama: {0} aranıyor…  /hangup iptal eder</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Arama: {0} kullanıcısına yeniden bağlanıyor…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Arama: {0} arıyor: /answer veya /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Bağlanılamıyor</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Mikrofon veya hoparlör açılamıyor: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Görünen ad değiştiriliyor</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Şifreleme denetleniyor…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Bir tepki seçin:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Komutlar ve tuşlar</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Emojileri karşılaştır</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>{0} ile karşılaştırın:
+
+{1}
+
+veya {2} sayıları
+
+Aynı şeyleri aynı sırada mı gösteriyorlar?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Onayla</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>{0} olarak bağlı</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Bağlanıyor…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Bağlantı sorunu: {0}</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0} kişi çıkarılamadı</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0} kişi çıkarılamadı</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Hesap oluştur</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>#{0}:{1} oluşturuldu</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>{0} oluşturuldu.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Hesap oluşturuluyor</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>#{0}:{1} oluşturuluyor</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Oda oluşturuluyor</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Kod oluşturuluyor</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} bu odayı oluşturdu ve değiştirilemeyen sınırsız yetkiye sahip.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Çapraz imzalama anahtarları gizli depolamada değildi.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Çapraz imzalama geri yüklendi; bu cihaz artık doğrulandı.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Gün değişti {0:d MMM yyyy ddd} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Devre dışı bırak</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Kalıcı olarak devre dışı bırak…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} devre dışı bırakıldı.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>{0} kalıcı olarak devre dışı bırakılsın mı? Tüm odalardan ayrılır ve bir daha giriş yapamaz; kullanıcı kimliği yeniden verilmez.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Devre dışı bırakılıyor</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Hesabı sil</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Hesabınız kalıcı olarak silinsin mi? Tüm odalardan ayrılırsınız, adınız ve resminiz kaldırılır ve tüm cihazların oturumu kapatılır. Kullanıcı kimliği yeniden kullanılamaz.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>{0} numaralı şikâyet silindi.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>{0} kodu silindi.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Mesajı sil</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>"{0}" herkes için silinsin mi?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Şikâyeti sil</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Kodu sil</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>{0} kodu silinsin mi? Onunla oluşturulan hesaplar kalır.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Hesap siliniyor</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Mesaj siliniyor</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Şikâyet siliniyor</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Kod siliniyor</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} cihaz</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} cihaz</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    son görülme {2}, {3} adresinden</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Bu cihaz henüz doğrulanmadı. Başkalarının doğrulanmış görmesi ve eski mesajlarınızı okuyabilmesi için başka bir cihazınızla veya kurtarma anahtarınızla doğrulayın.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Cihazlar</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Cihazlar ({0}, * = bu cihaz)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Özel mesaj</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Kendi sunucunuz için sunucuyu boş bırakın; herhangi bir alanda Enter arar.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Dizinde görünürlük</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>{0} indiriliyor…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Uçtan uca şifreleme kullanılamıyor.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (düzenlendi)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[düzenleme] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Şifrelemeyi aç</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Bu odadaki tüm yeni mesajlar şifrelensin mi? Bu daha sonra kapatılamaz.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Şifreleme açılıyor</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [şifreli]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [şifreli mesaj; anahtar henüz gelmedi]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Şifreleme</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Bu cihazda şifreleme kullanılamıyor.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>başka bir cihazda yanıtlandı</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>karşı taraf yeniden aradı</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>reddedildi</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>başka bir cihazda reddedildi</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>{0} için askıya alma sona erdi.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>bitti</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Askıya alma bitiriliyor</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>cevapsız</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>yanıt yok</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>bağlantı yok</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Askıya almayı bitir</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>karşı taraf kapattı</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>siz reddettiniz</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>siz kapattınız</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Başarısız: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Dosya kaydedildi</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, ilk {0} gösteriliyor</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, ilk {0} gösteriliyor</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>yönetici</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>devre dışı</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [şifreli]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>kilitli</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [herkese açık]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [çözüldü]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>askıda</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>@ad:sunucu gibi bir kullanıcı kimliği girin.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Başlamak için Matrix kullanıcı kimliğinizi girin.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Kullanıcı kimliğinizi girin.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Kapatılıyor</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Yardım</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**kalın** _italik_ `kod` ~~üstü çizili~~ [metin](url)   Markdown biçimlendirilmiş olarak gönderilir
+/plain text     Markdown olmadan gönder
+/me text        eylem, örneğin * el sallıyorsunuz
+/join #room     odaya katıl; ayrıca !id veya bağlantı, ardından üzerinden katılınacak sunucular
+/leave          bu odadan ayrıl
+/topic text     konuyu ayarla
+/name text      oda adını ayarla
+/avatar [file]  oda resmini ayarla; /avatar none kaldırır
+/kick @user [reason]   üyeyi çıkar
+/ban @user [reason]    üyeyi kalıcı olarak çıkar
+/unban @user    yasaklı kullanıcının dönmesine izin ver
+/power @user level     yetki düzeyi ayarla: sayı, admin, moderator veya member
+/op @user, /deop @user  yönetici yap veya sıradan üye yap
+/invite @user   kullanıcı davet et
+/msg @user      özel sohbet başlat
+/nick name      görünen adınızı ayarla
+/list [server]  herkese açık odalara göz at, burada veya başka sunucuda
+/create name    özel oda oluştur
+/create #room [name]   bu adresle herkese açık oda oluştur
+/alias #room, /unalias #room   bu odanın adresini ekle veya kaldır
+/publish, /unpublish   bu odayı herkese açık oda dizininde listele veya listeleme
+/upload         dosya gönder
+/devices        oturumlarınızı yönetin
+/settings       ayarları görüntüle ve değiştir
+/logs           bu ve önceki oturumların günlüklerini oku
+/audiotest      mikrofonu ve hoparlörü test etmek için kendinizi Opus üzerinden duyun
+/call           bu özel sohbetin diğer üyesini ara
+/answer /reject çalan aramayı yanıtla veya reddet
+/hangup /mute   aramayı bitir veya mikrofonu kapat ve aç
+/encryption     anahtarlar, kurtarma ve yedek
+/recover        eski mesajları kurtarma anahtarıyla aç
+/verify [@user] diğer cihazınızı veya bir kullanıcıyı emojiyle doğrula
+/ignore @user   kullanıcıyı engelle: mesajları ve davetleri artık görünmez; yalnız /ignore listeler
+/unignore @user kullanıcının engelini kaldır
+/report [@user] bu odayı veya kullanıcıyı sunucu yöneticilerine bildir; mesajları kendi menülerinden (Enter)
+/quit           çıkış
+
+Sunucu yöneticileri, ayrıca Sunucu menüsünde:
+/whois @user    bir kullanıcının cihazları ve adresleri; herkes kendine bakabilir
+/accounts [text], /rooms [text]   sunucunun hesaplarını veya odalarını listele ve yönet
+/suspend @user, /unsuspend @user  okuyabilir ama gönderemez, katılamaz veya davet edemez
+/lock @user, /unlock @user        sunucu oturumlarını reddeder
+/notice @user text   sunucu duyurusu gönder
+/tokens, /reports    kayıt kodları, kullanıcı şikâyetleri
+
+Alt+1…9         1…9 numaralı odaya git
+Ctrl+N, Ctrl+P  sonraki, önceki oda
+Ctrl+O          odaya katıl
+Ctrl+R          oda dizini
+PageUp/Down     mesajları kaydır
+Ctrl+PageUp     eski mesajları yükle
+F2              üyeleri göster veya gizle
+Ctrl+Up, Enter  bir mesaj seç ve üzerinde işlem yap
+Tab             takma adı tamamla
+Esc             yanıtı veya düzenlemeyi iptal et
+F10             menüyü aç</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Resim</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Bu resim biçimi gösterilemiyor. Başka bir programda açmak için Dosyayı kaydet'i kullanın.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Geçersiz adres</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Geçersiz oda</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Geçersiz kullanıcı</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Davet et</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>{0} odasına davet</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Bu odaya davet edildiniz. Katılmak veya reddetmek için Enter'a basın.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} sizi {1} odasına davet etti.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>{0} davet ediliyor</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} bir sunucu yöneticisi.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} doğrulandı.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Katıl</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>{0} odasına katılındı</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>{0} odasına katılınıyor</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>{0}{1} odasına katılınsın mı?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Odaya katıl</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Oda adresi, kimliği veya bağlantısı, ör. #matrix:matrix.org; ardından üzerinden katılınacak sunucular gelebilir:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> ({0} üzerinden)</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Çıkar</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Çıkarılıyor:</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>{0} odasından ayrılınsın mı?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Odadan ayrıl</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>{0} odasından ayrılınıyor</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Yönetici ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>{0} için düzey, 0 ile 100 arası:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Üye (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Moderatör ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Diğer…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Hesaplar alınıyor</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Üyeler alınıyor</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Şikâyetler alınıyor</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>{0} dizinde listeleniyor</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Odalar alınıyor</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Kayıt kodları alınıyor</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>{0}, {1} sunucusunun herkese açık oda dizininde listelensin mi? Bu, kimlerin katılabileceğini değiştirmez.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Üyeler yükleniyor</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>{0} yükleniyor…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[önizleme yükleniyor…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Kilitle</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Kilitle: tüm oturumları reddet</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} kilitlendi: sunucu, /unlock {1} yapılana kadar oturumlarını reddeder.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Kilitleniyor</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Oturum kapatılıyor</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Cihazların oturumu kapatılıyor</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Giriş yap</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Oturumu kapat</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Cihazların oturumunu kapat</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>{0} cihazın oturumu kapatılsın mı: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>{0} cihazın oturumu kapatılsın mı: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Bu oturum sunucuda sonlandırılsın mı? Mesajlar yerel veritabanında kalır.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Kullanıcı sorgulanıyor</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Kendi düzeyiniz {0} değerinden {1} değerine düşürülsün mü? Kendiniz yeniden yükseltemezsiniz.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Sunucu yöneticisi yap</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>{0}, sunucunun tüm hesaplarını ve odalarını yönetebilsin mi?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Yönetici yapılıyor</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} üye</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} üye</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>Bu odadaki kullanıcı kimliği veya ad:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Üyeler</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Üyeler ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>{0} üyeleri</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Hakkında</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Hesaplar…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Sunucu yöneticileri: hesapları listele ve yönet</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Ad_res ekle…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>#oda:sunucu gibi bir adres</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>_Ses testi…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Mikrofonu ve hoparlörü test etmek için kendinizi duyun</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Ya_sakla…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Üyeyi kalıcı olarak çıkar</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>_Ara</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Bu özel sohbette sesli arama</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Komutlar ve tuşlar</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>_Hesabı sil…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Hesabı kalıcı olarak devre dışı bırak</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>Ciha_zlar…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Oturumları gör ve kapat</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>Ö_zel mesaj…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Bir kullanıcıyla sohbet başlat</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>Oda _dizini…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Herkese açık odaları ara</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>Dizinde g_örünürlük…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Herkese açık oda dizininde listele</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>_Şifrelemeyi aç…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Bu odayı şifrele; geri alınamaz</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Şifreleme…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Anahtarlar, kurtarma ve yedek</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Dosya</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>Aramayı _bitir</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Aramayı sonlandır</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Yardım</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>Davet _et…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Buraya bir kullanıcı davet et</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Katıl…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Adres veya kimlikle katıl</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>_Çıkar…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Üyeyi çıkar</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>_Odadan çık</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Bu odadan ayrıl</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>Oturumu _kapat…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Sunucudaki oturumu sonlandır</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>_Günlükler…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Bu ve önceki oturumlar</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Üyeler</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Göster veya gizle</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Yeni _herkese açık oda…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Herkesin katılabileceği bir oda oluştur</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Yeni oda…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Özel bir oda oluştur</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>Sonraki _oda</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>_Eski mesajlar</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Geçmişi yükle</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Yetk_i düzeyi…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Bir üyeyi yönetici veya moderatör yap</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>Ö_nceki oda</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>Ç_ıkış</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Çık, oturum korunur</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Kayıt kodları…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Yeni hesapların kayıt olduğu kodlar</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>_Şikâyetler…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Kullanıcıların bildirdikleri</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Oda</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>_Mesaj seç</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Yanıtla, tepki ver, düzenle…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Dosya _gönder…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Buraya dosya yükle</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Sunucu</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>Sunucu _duyurusu…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Sunucu adına bir kullanıcıya mesaj gönder</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>_Odalar…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Sunucunun tüm odaları</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Resi_m belirle…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Odanın resmi</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Ad be_lirle…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Oda adını değiştir</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Ayarlar…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Ayarları görüntüle ve değiştir</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Ko_nu belirle…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Konuyu değiştir</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>Yasa_ğı kaldır…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Yasaklı kullanıcının dönmesine izin ver</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>Bu _cihazı doğrula…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Emoji karşılaştırması</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Görünüm</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>Ki_mdir…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>Bir kullanıcının cihazları ve adresleri</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Mesaj</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [mesaj silindi]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>{0} içinde mesaj</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Mikrofonlar: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, sessiz</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>{0} için ad:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Ne bu cihaz ne de {0} mevcut kimliğinize göre güvenilir; bu yüzden hiçbiri diğerine kefil olamaz.
+
+Bu cihazı güvenilir bir cihazla doğrulayın{1} veya kurtarma anahtarınızı kullanın.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>hiç</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Yeni hesap</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Yeni hesap…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>{0} için yeni parola; cihazlarının oturumu kapatılır:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Yeni herkese açık oda</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Yeni oda</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Yeni kod</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Yeni kod…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Bu sunucu uygulamaların hesap oluşturmasına izin vermiyor.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Çalan arama yok.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Kapatılacak arama yok.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Sesi kapatılacak arama yok.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Oturum açmış cihaz yok.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>süresiz</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} artık sunucu yöneticisi değil.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Burada "{0}" adlı üye yok. @alice:matrix.org gibi bir kullanıcı kimliği girin.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Üye yok.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>yok</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>bulunamadı</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Cihazlarınızın hiçbiri mevcut kimliğinize göre güvenilir değil; bu yüzden hiçbiri bu cihaza kefil olamaz.
+
+Kurtarma anahtarınızı kullanın veya elinizde tuttuğunuz bir cihazda kimliğinizi sıfırlayın.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Kimse engellenmedi.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[önizleme yok]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Bu hesap için henüz kurtarma ayarlanmadı. Ayarlarsanız başkaları bu cihazı doğrulanmış görür ve mesajlarınızı yeni cihazlarda açan bir kurtarma anahtarı alırsınız.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Şikâyet yok.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Oda yok</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Oda bulunamadı</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} bir komut değil. Bkz. Yardım → Komutlar ve tuşlar.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" bir düzey değil; bir sayı ya da admin, moderator veya member girin.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" bir Matrix kullanıcı kimliği değil; @alice:matrix.org gibi görünür.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} bir resim dosyası değil.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" başka bir kullanıcının kimliği değil; @alice:matrix.org gibi görünür.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0}, #matrix:matrix.org gibi bir oda adresi, kimliği veya bağlantısı değil. Bir kullanıcıyla sohbet etmek için /msg kullanın.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0}, #oda veya #oda:{1} gibi bir oda adresi değil.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" bir sunucu adresi değil; https://matrix.example.org gibi görünür.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0}, @alice:matrix.org gibi bir kullanıcı kimliği değil.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" bir kullanıcı kimliği değil; @alice:matrix.org gibi görünür.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" bir kullanıcı kimliği değil; @alice:{1} gibi görünür.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Bağlı değil</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Kapatılacak oturum yok. Bu oturumu sonlandırmak için Dosya → Oturumu kapat'ı kullanın.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>{0} için duyuru; sunucu duyuruları odasına gelir:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [gönderilmedi: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>ayarlanmadı</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Güvenilmiyor</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>doğrulanmadı</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Kullanılabilir anahtar yedeği bulunamadı.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>güvenilir cihazlarınızdan birinde</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Önce bir özel sohbet açın.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Şifreleme penceresi şimdi açılsın mı? Dosya → Şifreleme ve /encryption ile de açılabilir.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>{0} açılıyor</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Önce katıldığınız bir odayı açın.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Bağlantıyı aç</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Başka sunucu</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Adresler yalnızca kendi sunucunuzda oluşturulabilir: {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>{0} parolası:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Parola kabul edilmedi.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>{0} için yeni parola ayarlandı ve cihazlarının oturumu kapatıldı.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Parolalar farklı.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Yetki düzeyi</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>{0} yetki düzeyi (şu an {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Kapatmak için Enter'a basın.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Çıkış</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Tepki ver</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Tepki metni veya emoji:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>{0} için neden (isteğe bağlı):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Taciz veya nefret</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>_Yasa dışı içerik</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>_Diğer</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>_Cinsel veya şiddet içeren içerik</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Spam</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Kurtar</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Kurtarıldı</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Kurtarılıyor</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Anahtarlar kurtarılıyor…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Kurtarma anahtarı</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Kurtarma anahtarı (veya parola ifadesi):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Bu sunucu, bu uygulamanın yapamadığı bir adım gerektiriyor; örneğin captcha veya e-posta. Hesabı sunucunun web sitesinde oluşturun, sonra burada giriş yapın.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Sunucu yöneticisinden alınan kayıt kodu:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Kayıt kodları</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>{0} reddediliyor</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Reddediliyor</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, aktarılan</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Adresi kaldır</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>{0} kaldırıldı</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>{0} kaldırılıyor</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Resim kaldırılıyor</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Cihazı yeniden adlandır</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Cihaz yeniden adlandırılıyor</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} var. Değiştirilsin mi?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[yanıt {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[yanıt] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[yanıt {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Bildir</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>{0} sunucunuzun yöneticilerine bildirildi.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Mesaj sunucunuzun yöneticilerine bildirildi. /ignore göndereni engeller.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Bildiriliyor</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Mesaj bildiriliyor</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" bir kullanıcı kimliği değil; /report @user:server veya bu oda için yalnızca /report.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Şikâyetler</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} şikâyet, en yeni önce:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} şikâyet, en yeni önce:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Şikâyet {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Sunucunuzun yöneticilerine şikâyet: {0}. Neden?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Parolayı sıfırla</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Parolayı sıfırla…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Parola sıfırlanıyor</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Oda resmi</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Oda resmi ayarlandı</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} oda</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} oda</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Oda dizini</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Bu oda şifreli, ancak bu cihazda şifreleme kullanılamıyor.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Oda adının, adresinin veya kimliğinin bir kısmı; boş = tümü:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} oda dizininde listeleniyor</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Oda adı:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} bir sunucu belirtmiyor. Odadaki, üzerinden katılınacak sunucuları girin, ör. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Odalar</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} oda, en kalabalık önce{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} oda, en kalabalık önce{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} artık oda dizininde listelenmiyor</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Aynı parola yeniden:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Farklı kaydet (bir dosya veya kaydedilecek klasör):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>{0} kaydedildi</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Dosyayı kaydet</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Dosya kaydediliyor</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Arama başarısız: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Aranıyor…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Ara:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Ayrıntılar için günlük dosyasına bakın.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Dosya gönder</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>{0} bu odaya gönderilsin mi?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Dosyaları gönder</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>{0} dosya bu odaya gönderilsin mi?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Bu {0} dosya bu odaya gönderilsin mi?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>{0} gönderiliyor</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Duyuru gönderiliyor</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [gönderiliyor…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Doğrulama isteği gönderiliyor…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Sunucu duyurusu gönder…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>{0} gönderildi</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>{0} kullanıcısına sunucu duyurusu gönderildi.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Örneğin bu bilgisayardaki bir sunucu için http://localhost:8008.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Sunucu adresi, yalnızca kullanıcı kimliğinden bulunamıyorsa:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Sunucu:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Sunucu gerekli</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Sunucu duyurusu</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Sunucunun politikaları:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Ad belirle</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Resim ayarlanıyor</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Ad ayarlanıyor</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>{0} yetki düzeyi ayarlanıyor</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Konu ayarlanıyor</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Kurtarma ayarlanıyor…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Konu belirle</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>ayarlandı</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>ayarlandı ve burada güvenilir</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>ayarlandı, burada henüz güvenilir değil</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Kurtarmayı ayarla</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Çapraz imzalama anahtarları, anahtar yedeği ve kurtarma anahtarı oluşturulsun mu?
+
+Kurtarma anahtarıyla yeni bir oturum kendini doğrulayabilir ve eski mesajları okuyabilir. Bir parola gibi güvende tutun.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Kapat</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Kapat…</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} kapatıldı: {1} üye çıkarıldı{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} kapatıldı: {1} üye çıkarıldı{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Bu sunucunun tüm üyeleri {0} odasından çıkarılsın ve buradaki adresleri silinsin mi? Engelleme, yeniden katılmalarını da önler.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Üyelere gösterilecek neden; boş = yok:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Odayı kapat…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Oda kapatılıyor</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Başlamak için tam Matrix kullanıcı kimliğinizi girin; başarılı bir girişten sonra hatırlanır.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Matrix'e giriş yap</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Birisi</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Hoparlörler: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>{0} ile özel sohbet başlatılsın mı?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>{0} ile sohbet başlatılıyor</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat bir terminal uygulamasıdır: bir terminalde başlatın.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Çapraz imzalama:   {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Cihaz:             {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Parmak izi:        {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Anahtar yedeği:    {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Kurtarma anahtarı: {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Bu cihaz:          {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Askıya al</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Askıya al: okuyabilir, gönderemez</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} askıya alındı: odaları okuyabilir ve odalardan ayrılabilir, ancak gönderemez, katılamaz veya davet edemez. /unsuspend {1} bunu bitirir.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Askıya alınıyor</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>{0} askıya al</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>sistem varsayılanı</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Sunucu yöneticisi haklarını al</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Yönetici hakları alınıyor</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Doğrulama iptal edildi.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Bu, kullandığınız cihaz. Cihazlarınızdan başka birini seçin.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>bu mesaj</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>bu oda</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Geçerli olacağı gün sayısı; boş = süresiz:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Sunucu kayıt kodunu kabul etmedi.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Kod; boş = rastgele:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Kayıt kod istediğinde yeni hesapların bunlardan birine ihtiyacı vardır:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>{0:yyyy-MM-dd HH:mm} tarihine kadar</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>{0} kez kullanıldı, sınırsız</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>{1} kullanımdan {0} kullanıldı</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Kaç hesabın kullanabileceği; boş = sınırsız:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Konu:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>çapraz imzalı</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>anahtar yok</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>bu cihaz</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>doğrulanmadı</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>doğrulandı</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} yazıyor…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Yasağı kaldır</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Yasak kaldırılıyor:</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} engeli kaldırıldı.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Engel kaldırılıyor</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>bilinmiyor</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Bilinmeyen komut</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>{0} dizinden kaldırılıyor</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Kilidi aç</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} kilidi açıldı.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Kilit açılıyor</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>{0} yükleniyor…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>Kullanıcı kimliği, ör. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} alınmış; başka birini seçin.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Kullanıcı, ör. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Doğrulama</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Doğrulama iptal edildi</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>{0} ile doğrulama iptal edildi: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>{0} {1} doğrulama isteği yok sayıldı: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Doğrulama isteği</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Doğrulama istendi; {0} kabul edin.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>doğrulandı (çapraz imzalı)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>{0} doğrulandı</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Doğrula</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>{0} kullanıcısının onayı bekleniyor…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>İstemci bağlanana kadar bekleyin.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0}, emoji karşılaştırarak bu cihazı doğrulamak istiyor.
+
+Kabul edilsin mi?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Hangi oda veya kullanıcı?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Kimdir</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Kimdir: cihazlar ve adresler</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>{0} kimdir</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Bu kurtarma anahtarını şimdi bir yere yazın veya kopyalayın ve güvende tutun. Bir daha gösterilmez.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>cihazınız {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>diğer cihazınızda</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Onay için parolanız:</value>
+  </data>
+</root>

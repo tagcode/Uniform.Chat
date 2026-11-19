@@ -1,0 +1,1367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Greek texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Αποδοχή</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>Διάβασα και αποδέχομαι αυτούς τους κανόνες</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>Διαβάστε και αποδεχτείτε τους κανόνες του διακομιστή για να συνεχίσετε.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>Αποδεχτείτε το αίτημα στο {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Λογαριασμός</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>Κωδικός λογαριασμού</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Λογαριασμοί</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>Ο λογαριασμός σας έχει ανασταλεί από τους διαχειριστές του διακομιστή: μπορείτε να διαβάζετε και να αποχωρείτε από δωμάτια, αλλά όχι να στέλνετε μηνύματα, να μπαίνετε σε δωμάτια ή να προσκαλείτε. Δείτε το δωμάτιο ειδοποιήσεων του διακομιστή, αν υπάρχει.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} απέτυχε: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Να επιτρέπονται ειδοποιήσεις…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>Το μήνυμα έχει ήδη σταλεί.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>ένα μήνυμα</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Απάντηση κλήσης</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>Απάντηση με βίντεο</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>Αυτός ο διακομιστής δεν επιτρέπει σε εφαρμογές να δημιουργούν λογαριασμούς.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>Ερώτηση στο {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατό να ανοίξει το μικρόφωνο ή το ηχείο: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Δοκιμή ήχου</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>Η δοκιμή χρειάζεται άδεια για το μικρόφωνο.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Ηχογραφήθηκαν {0:F0} δ, στάλθηκαν με {1:F0} kbit/s.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Μιλήστε: θα ακούσετε τον εαυτό σας ένα δευτερόλεπτο αργότερα. Σιωπή σημαίνει ότι η είσοδος δεν είναι μικρόφωνο.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>Ξεκινήστε και μιλήστε: θα ακούσετε τον εαυτό σας ένα δευτερόλεπτο αργότερα, μέσω του κωδικοποιητή Opus των κλήσεων.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>Πίσω κάμερα</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Φραγή</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>Φραγή του {0}: τα μηνύματα και οι προσκλήσεις του/της δεν εμφανίζονται πια. Άρση φραγής από Ασφάλεια και ανάκτηση.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>Αποκλεισμένοι χρήστες</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>Τα μηνύματα και οι προσκλήσεις τους δεν εμφανίζονται.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Φραγή</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>Φραγή αποστολέα</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Η κλήση τερματίστηκε: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Κλήση…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>Η κλήση απέτυχε: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>Οι κλήσεις χρειάζονται άδεια για το μικρόφωνο.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>Η κάμερα είναι κλειστή</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>Κάμερα ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>Κάμερα ανενεργή</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>Κάμερα ενεργή</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>Ακύρωση (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Ακύρωση αποστολής</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>Οι αλλαγές αποθηκεύονται αμέσως.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>Αλλαγή δικαιωμάτων διαχειριστή</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Συνομιλία</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>Ο έλεγχος κρυπτογράφησης απέτυχε: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>Επιλέξτε Συνομιλία για να ξεκινήσετε συνομιλία με {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>Επιλέξτε Συμμετοχή για να μπείτε στο {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>Επιλέξτε δωμάτιο για να μοιραστείτε {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>Επιλέξτε δωμάτιο για να ξεκινήσετε.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>Συγκρίνετε τα emoji με άλλη συσκευή όπου είστε συνδεδεμένοι, όπως το Element στο τηλέφωνό σας.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Συγκρίνετε με {0}. Εμφανίζουν τα ίδια emoji με την ίδια σειρά;</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Σύνδεση…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Σύνδεση</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>Η σύνδεση χάθηκε, νέα προσπάθεια…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Αντιγραφή</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>Αντιγραφή εικόνας</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>Η αντιγραφή απέτυχε: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>Η αντιγραφή της εικόνας απέτυχε: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Αντιγραφή συνδέσμου</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Αντιγραφή κειμένου</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η συμμετοχή στο {0}.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Δημιουργία</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Δημιουργία λογαριασμού</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>Ο λογαριασμός δημιουργείται στον διακομιστή του αναγνωριστικού χρήστη, αν το επιτρέπει. Επιλέξτε δικό σας κωδικό.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Δημιουργία λογαριασμού</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Δημιουργία λογαριασμού Matrix</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Δημιουργία {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Δημιουργία κωδικού εγγραφής</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>dddd d MMMM</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>Ημέρες· κενό = χωρίς λήξη</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Απενεργοποίηση…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>Οριστική απενεργοποίηση του {0}; Αποχωρεί από όλα τα δωμάτια και δεν μπορεί να συνδεθεί ξανά· το αναγνωριστικό δεν θα δοθεί ξανά.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>Απενεργοποιήθηκε ο/η {0}.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>Απόρριψη {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Διαγραφή λογαριασμού</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Οριστική διαγραφή του λογαριασμού; Αποχωρείτε από όλα τα δωμάτια, το όνομα και η εικόνα σας αφαιρούνται και όλες οι συσκευές αποσυνδέονται. Το αναγνωριστικό δεν μπορεί να ξαναχρησιμοποιηθεί. Πληκτρολογήστε τον κωδικό σας για επιβεβαίωση.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>Διαγραφή λογαριασμού…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>Διαγραφή αναφοράς</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>Η διαγραφή του λογαριασμού απέτυχε: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Διαγραφή του μηνύματος</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Διαγραφή της αναφοράς</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Διαγραφή του κωδικού εγγραφής</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>Επεξεργάστηκε</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>Κρυπτογράφηση</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>Αναγνωριστικό συμβάντος</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>Αναγνωριστικό δωματίου</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Λεπτομέρειες…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>Στάλθηκε</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>Μη αναγνωσμένο</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} συσκευή</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} συσκευές</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1}), τελευταία φορά {2} από {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Συσκευές</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Δημόσια δωμάτια του διακομιστή σας ή άλλου διακομιστή, όπως το matrix.org.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>Διακομιστής, π.χ. matrix.org· κενό για τον δικό σας</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>Η λήψη του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>Ακουστικό</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(επεξεργάστηκε)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>Επεξεργασία μηνύματος</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>Το μήνυμα είχε ήδη σταλεί, οπότε η αλλαγή δεν έγινε.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 Κρυπτογραφημένο</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>Κρυπτογραφημένο μήνυμα</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Αυτό το δωμάτιο είναι κρυπτογραφημένο, αλλά η κρυπτογράφηση δεν είναι διαθέσιμη σε αυτή τη συσκευή: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>απαντήθηκε σε άλλη συσκευή</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>απορρίφθηκε</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>απορρίφθηκε σε άλλη συσκευή</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Η αναστολή του {0} έληξε.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>αναπάντητη</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>καμία απάντηση</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>καμία σύνδεση</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>κάλεσαν ξανά</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Λήξη αναστολής</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>έκλεισαν</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>Κρυπτογράφηση από άκρο σε άκρο</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>απορρίψατε</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>κλείσατε</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>Πληκτρολογήστε τον κωδικό του λογαριασμού για επιβεβαίωση.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>Πληκτρολογήστε το κλειδί ανάκτησης ή τη φράση πρόσβασης που ορίσατε σε αυτή ή άλλη εφαρμογή, όπως το Element.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>Εξωτερική κάμερα</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>Αγαπημένο</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} αρχείο</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} αρχεία</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Φίλτρο</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Εύρεση</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Αποτύπωμα</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>διαχειριστής</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>φραγή</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>απενεργοποιημένος</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>προσκεκλημένος</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>κλειδωμένος</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>σε αναστολή</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>επαληθευμένος</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>Από τον διαχειριστή του διακομιστή</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>Από τον διακομιστή σας</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>Μπροστινή κάμερα</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Τερματισμός κλήσης</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>Τερματισμός</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>Έχω λογαριασμό: σύνδεση</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>Απόκρυψη και νέα προσπάθεια</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Η εικόνα αντιγράφηκε</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>Σε κλήση με {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>Εισερχόμενη κλήση</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>Εισερχόμενες κλήσεις</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>Εισερχόμενη βιντεοκλήση</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>Εισερχόμενη φωνητική κλήση</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>Στο παρασκήνιο</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>Πρόσκληση</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Πρόσκληση</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Στάλθηκε πρόσκληση στον/στην {0}.</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>Έχετε πρόσκληση σε αυτό το δωμάτιο.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} σας προσκάλεσε στο {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>Προσκλήσεις</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Πρόσκληση {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} είναι διαχειριστής του διακομιστή.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} καλεί</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} έχει επαληθευτεί.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Συμμετοχή</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>Συμμετοχή στο {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>Συμμετοχή στο {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>Διατηρεί τη σύνδεση· σύρετε για απόκρυψη.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>Ανακτήθηκε {0} κλειδί μηνυμάτων.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>Ανακτήθηκαν {0} κλειδιά μηνυμάτων.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>Ανακτήθηκε {0} κλειδί μηνυμάτων· αυτή η συσκευή είναι πλέον επαληθευμένη.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>Ανακτήθηκαν {0} κλειδιά μηνυμάτων· αυτή η συσκευή είναι πλέον επαληθευμένη.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Γλώσσα</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Γλώσσα συστήματος</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Μεγάλο</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>τελευταία φορά {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Αποχώρηση από το δωμάτιο</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Αποχώρηση από {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>Άδειες</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>Άδειες…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Το Uniform Chat είναι ελεύθερο λογισμικό με άδεια MIT. Περιλαμβάνει το περιβάλλον .NET και άλλες βιβλιοθήκες, η καθεμία με τη δική της άδεια, τα κείμενα των οποίων ακολουθούν.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>Φόρτωση λογαριασμών</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>Η φόρτωση ιστορικού απέτυχε: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>Φόρτωση αναφορών</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>Φόρτωση κωδικών εγγραφής</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Κλείδωμα</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Κλειδώθηκε ο/η {0}: ο διακομιστής απορρίπτει τις συσκευές του/της μέχρι να ξεκλειδωθεί.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Κλείδωμα</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Αρχεία καταγραφής</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>Αρχεία καταγραφής…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>Η καταγραφή δεν διαβάζεται: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>Νέα αναζήτηση διανομέων</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>Αναζήτηση συσκευών</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>Μεγάφωνο</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>Χαμηλή προτεραιότητα</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Ορισμός ως διαχειριστή</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Σήμανση ως αναγνωσμένο</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} μέλος</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} μέλη</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Μέλη</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}, προσκεκλημένοι: {1}</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>Το μήνυμα διαγράφηκε</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Μήνυμα</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Μηνύματα</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>Τα μηνύματα φτάνουν μέσω {0}· η εφαρμογή δεν χρειάζεται δική της σύνδεση.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>Μηνύματα σε άμεσες συνομιλίες</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>Μηνύματα που σας αναφέρουν</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>Μικρόφωνο ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Σίγαση</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>σε σίγαση</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>Χρειάζεται το κλειδί ανάκτησης</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>Αυτός ο διακομιστής χρειάζεται κωδικό εγγραφής από τον διαχειριστή του.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>ποτέ</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>Νέο μήνυμα</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>Νέος κωδικός· οι συσκευές του/της αποσυνδέονται</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Νέος κωδικός εγγραφής</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>Καμία εφαρμογή δεν ανοίγει το {0} εδώ.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>Καμία εφαρμογή δεν ανοίγει το {0} εδώ· χρησιμοποιήστε την Αποθήκευση….</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>Χωρίς άδεια κάμερας· απάντηση μόνο με φωνή.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>Χωρίς άδεια κάμερας· κλήση μόνο με φωνή.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>Καμία συσκευή δεν είναι συνδεδεμένη.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>Χωρίς κλειδιά κρυπτογράφησης</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>χωρίς λήξη</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>Καμία εγγραφή σε αυτό το επίπεδο.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} δεν είναι πλέον διαχειριστής του διακομιστή.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Καμία αναφορά.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Κανονικό</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν δωμάτια.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>Το "{0}" δεν είναι αναγνωριστικό χρήστη Matrix· μοιάζει με @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>Το {0} δεν είναι αναγνωριστικό χρήστη· αυτά μοιάζουν με @όνομα:διακομιστής.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Μη διαθέσιμο: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>Μη κρυπτογραφημένο</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>Δεν ηχογραφήθηκε τίποτα.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>Στάλθηκε ειδοποίηση διακομιστή στον/στην {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Ειδοποιήσεις</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>Οι ειδοποιήσεις για το Uniform Chat είναι απενεργοποιημένες στις ρυθμίσεις του συστήματος. Οι εισερχόμενες κλήσεις χτυπούν χωρίς να δείχνουν ποιος καλεί και τα μηνύματα δεν ειδοποιούν.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>Όχι τώρα</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Δεν στάλθηκε: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>Δεν έχει ρυθμιστεί</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>Μη επαληθευμένο</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(τώρα)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>Κλήση σε εξέλιξη</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Συνδεδεμένο</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Άνοιγμα</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>Το άνοιγμα του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>ή τους αριθμούς {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>Δική της σύνδεση στο παρασκήνιο</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>Η εφαρμογή διατηρεί δική της σύνδεση, με ειδοποίηση που τη δείχνει.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>Η εφαρμογή διατηρεί δική της σύνδεση, με ειδοποίηση που τη δείχνει. Εγκαταστήστε έναν διανομέα UnifiedPush, όπως το ntfy, για να λαμβάνετε μηνύματα χωρίς αυτήν.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>Μέρος αναγνωριστικού χρήστη ή ονόματος</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Κωδικός πρόσβασης</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Ο κωδικός δεν έγινε δεκτός.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>Ο κωδικός σας χρησιμοποιείται μόνο για σύνδεση· δεν αποθηκεύεται.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Ορίστηκε νέος κωδικός για {0} και αποσυνδέθηκαν οι συσκευές του/της.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>Η επικόλληση απέτυχε: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>Προεπιλογή τηλεφώνου</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>Μικρόφωνο τηλεφώνου</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Πολιτική απορρήτου</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Μηνύματα και κλήσεις του Uniform Chat</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Αντίδραση</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>Παρενόχληση ή μίσος</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Παράνομο περιεχόμενο</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>Αιτία: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>Σεξουαλικό ή βίαιο περιεχόμενο</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>Ανεπιθύμητο</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Επανασύνδεση…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Ανάκτηση</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>Η ανάκτηση απέτυχε: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>Το κλειδί ανάκτησης αντιγράφηκε.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>Σημειώστε το ή αντιγράψτε το σε ασφαλές μέρος τώρα· δεν θα εμφανιστεί ξανά. Με αυτό, μια νέα σύνδεση μπορεί να επαληθευτεί και να διαβάσει παλιά μηνύματα.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>Ο διακομιστής ζητά περισσότερα απ' όσα μπορεί να δώσει η εφαρμογή για τη δημιουργία λογαριασμού.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>Κωδικός εγγραφής</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Κωδικοί εγγραφής</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>Οι νέοι λογαριασμοί χρειάζονται έναν από αυτούς όταν η εγγραφή του διακομιστή ζητά κωδικό.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>Αυτός ο διακομιστής χρειάζεται ένα βήμα που η εφαρμογή δεν υποστηρίζει, όπως captcha ή email. Δημιουργήστε τον λογαριασμό στον ιστότοπο του διακομιστή και μετά συνδεθείτε εδώ.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>μέσω αναμετάδοσης</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>Αφαίρεση από τα αγαπημένα</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>Αφαίρεση χαμηλής προτεραιότητας</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>Απάντηση σε {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>Η αναφορά διαγράφηκε.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} ανέφερε {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Αναφέρθηκε στους διαχειριστές του διακομιστή σας. Μπορείτε επίσης να κάνετε φραγή στον αποστολέα από το μενού του μηνύματος.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>Αναφέρθηκε το {0} στους διαχειριστές του διακομιστή σας.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Αναφορά του μηνύματος</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>Αναφορά του δωματίου</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>Αναφορά του χρήστη</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>Αναφορά μηνύματος</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>Αναφορά δωματίου…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>Αναφορά δωματίου</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>Αναφορά αποστολέα</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Επαναφορά κωδικού</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>Νέα προσπάθεια: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Δωμάτιο</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>Μπείτε σε δωμάτιο με τη διεύθυνση ή τον σύνδεσμό του, συνομιλήστε με χρήστη ή δημιουργήστε ιδιωτικό δωμάτιο</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#δωμάτιο, @χρήστης, σύνδεσμος ή νέο όνομα</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} δωμάτιο</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} δωμάτια</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Κατάλογος δωματίων</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>Κατάλογος δωματίων…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>Δωμάτιο: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Δωμάτια</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>Το δωμάτιο έκλεισε από τους διαχειριστές του διακομιστή</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>Αποθηκεύτηκε το {0}.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>Αποθήκευση…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Αποθήκευση αρχείου</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>Η αποθήκευση του αρχείου απέτυχε: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Η αναζήτηση απέτυχε: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Αναζήτηση…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Ασφάλεια</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>Ασφάλεια και ανάκτηση…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>Αποστολή αρχείου</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0} στο {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Αποστολή…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>Η αποστολή του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Αποστολή της ειδοποίησης</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>Η αποστολή του αρχείου απέτυχε: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>Αποστολή (Enter)· το πεδίο μηνύματος κρατά την εστίαση</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>Διεύθυνση διακομιστή</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Αφήστε το κενό για να βρεθεί ο διακομιστής από το αναγνωριστικό σας. Χρειάζεται για διακομιστές χωρίς ανακάλυψη, όπως http://localhost:8008 σε αυτόν τον υπολογιστή.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>Διαχείριση διακομιστή</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>Διαχείριση διακομιστή…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>Μηνύματα από τους διαχειριστές του διακομιστή σας. Δεν μπορείτε να απαντήσετε εδώ.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>Ειδοποίηση διακομιστή προς αυτόν/αυτήν</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Οι κανόνες του διακομιστή</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>Ο διακομιστής δεν είναι προσβάσιμος: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Ορισμός</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>Ρυθμίσεις…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Ορισμός του θέματος</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>Η ρύθμιση ανάκτησης απέτυχε: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>Ρύθμιση</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>Ρυθμίστηκε και είναι αξιόπιστο εδώ</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>Ρυθμίστηκε</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>Ρυθμίστηκε, όχι ακόμη αξιόπιστο εδώ</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Ρύθμιση ανάκτησης</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>Δημιουργία κλειδιών διασταυρούμενης υπογραφής, αντιγράφου ασφαλείας των κλειδιών μηνυμάτων και κλειδιού ανάκτησης.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>έναν σύνδεσμο</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>ένα κείμενο</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>Κοινοποίηση {0}</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Κοινοποίηση {0} αρχείου</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>Κοινοποίηση {0} αρχείων</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>Η κοινοποίηση του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>Κλείσιμο του {0}; Όλα τα μέλη από αυτόν τον διακομιστή αποχωρούν, οι διευθύνσεις του εδώ διαγράφονται και κανείς από αυτόν τον διακομιστή δεν μπορεί να ξαναμπεί.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Το {0} έκλεισε: αφαιρέθηκε {1} μέλος.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>Το {0} έκλεισε: αφαιρέθηκαν {1} μέλη.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>Κλείσιμο δωματίου…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>Κλείσιμο του δωματίου</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>Αποσυνδέθηκε το {0}.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Σύνδεση</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>Η σύνδεση απέτυχε.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>Σύνδεση στο {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>Η αποσύνδεση του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Σύνδεση στο Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Αποσύνδεση</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>Αποσύνδεση του {0}; Πληκτρολογήστε τον κωδικό του λογαριασμού για επιβεβαίωση.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>Αποσύνδεση…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Μικρό</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Κάποιος</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>Ηχείο ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>Συνομιλήστε</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>Έναρξη συνομιλίας με {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>Έναρξη με {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Διασταυρούμενη υπογραφή</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Συσκευή</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Αντίγραφο κλειδιών</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Κλειδί ανάκτησης</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Διακοπή</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Διακόπηκε: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>Ρυθμίστε την ανάκτηση, ώστε οι άλλοι να βλέπουν αυτή τη συσκευή ως επαληθευμένη και ένα κλειδί ανάκτησης να ξεκλειδώνει τα μηνύματά σας σε νέες συσκευές.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>Επαληθεύστε αυτή τη συσκευή με άλλη δική σας ή με το κλειδί ανάκτησης, ώστε οι άλλοι να τη βλέπουν ως επαληθευμένη και να διαβάζει τα παλαιότερα μηνύματά σας.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Αναστολή</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>Ανεστάλη ο/η {0}: μπορεί να διαβάζει, αλλά όχι να στέλνει, να μπαίνει ή να προσκαλεί.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Αναστολή</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Αναστολή χρήστη</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>Αλλαγή μικροφώνου</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>Αλλαγή ηχείου</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>Προεπιλογή συστήματος</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>Σήμανση του δωματίου</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>Αφαίρεση δικαιωμάτων διαχειριστή</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>Δοκιμή ήχου…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>Μέγεθος κειμένου</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Θέμα</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Σκούρο</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Ανοιχτό</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Συστήματος</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>Δεν ταιριάζουν</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>Ταιριάζουν</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>Αυτή η συσκευή</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>Ο κωδικός αντιγράφηκε.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>Ο κωδικός διαγράφηκε· οι λογαριασμοί που δημιουργήθηκαν με αυτόν παραμένουν.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Ο διακομιστής δεν δέχτηκε τον κωδικό εγγραφής.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>έως {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>χρησιμοποιήθηκε {0} φορές, χωρίς όριο</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>χρησιμοποιήθηκε {0} από {1} φορές</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>Θέμα</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>Απενεργοποίηση κάμερας</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>Ενεργοποίηση κάμερας</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} πληκτρολογεί…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>Αρκετοί πληκτρολογούν…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} και {1} πληκτρολογούν…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Άρση φραγής</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Άρθηκε η φραγή του {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Άρση φραγής</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>Η άρση φραγής του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>άγνωστο</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Ξεκλείδωμα</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Ξεκλειδώθηκε ο/η {0}.</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>Ξεκλείδωμα κρυπτογραφημένου ιστορικού</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Κατάργηση σίγασης</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>Αφαίρεση σήμανσης</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Αναγνωριστικό χρήστη</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>Αυτό το αναγνωριστικό χρησιμοποιείται ήδη· επιλέξτε άλλο.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>Κανόνες χρήσης</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>Συνεχίζοντας αποδέχεστε τους κανόνες χρήσης: κανένα παράνομο, προσβλητικό ή επιβλαβές περιεχόμενο. Αναφέρετέ το και κάντε φραγή σε άτομα από τα μηνύματά τους.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>Χρήσεις· κενό = χωρίς όριο</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Η επαλήθευση ακυρώθηκε.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Η επαλήθευση ακυρώθηκε: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Η επαλήθευση απέτυχε: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Επαληθευμένο</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Επαλήθευση</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>Επαλήθευση συσκευής</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>Η επαλήθευση του {0} απέτυχε: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>Επαλήθευση με άλλη συσκευή</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>Πολύ μεγάλο</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>Πολύ μικρό</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Βίντεο</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Βιντεοκλήση</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Φωνητική κλήση</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>Αναμονή για {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Αναμονή επιβεβαίωσης από {0}…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} θέλει να επαληθεύσει αυτή τη συσκευή με σύγκριση emoji.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>Περί τίνος είναι το δωμάτιο</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>Ενσύρματα ακουστικά</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>Ενσύρματα ακουστικά με μικρόφωνο</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>Ναι, εκτέλεση</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Χθες</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Εσείς</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>η συσκευή σας {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>Το κλειδί ανάκτησής σας</value>
+  </data>
+</root>

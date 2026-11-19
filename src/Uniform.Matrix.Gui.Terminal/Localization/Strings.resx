@@ -85,8 +85,11 @@
   <data name="LevelButton" xml:space="preserve">
     <value>_Level: {0}+</value>
   </data>
-  <data name="LoadedSettings" xml:space="preserve">
-    <value>Loaded {0} setting(s) as edits. Apply or save them to use them.</value>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Loaded {0} setting as an edit. Apply or save it to use it.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Loaded {0} settings as edits. Apply or save them to use them.</value>
   </data>
   <data name="LoadPrompt" xml:space="preserve">
     <value>Settings file to load:</value>
@@ -97,10 +100,16 @@
   <data name="Logs" xml:space="preserve">
     <value>Logs</value>
   </data>
-  <data name="LogStatus" xml:space="preserve">
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} of {1} entry · {2}   Enter: whole entry  Alt+F: filter</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
     <value>{0} of {1} entries · {2}   Enter: whole entry  Alt+F: filter</value>
   </data>
-  <data name="MoreLines" xml:space="preserve">
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} line]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
     <value>  [+{0} lines]</value>
   </data>
   <data name="NewValuePrompt" xml:space="preserve">

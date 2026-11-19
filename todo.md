@@ -93,3 +93,5 @@
 - Translation texts for other languages.
 - European languages: German, Swedish, Norwegian, Danish, Dutch, Polish, Estonian, Latvian, Lithuanian, Hungarian, Romanian, Ukrainian, Serbo-Croatian, Turkish, Greek, Czech, Serbian, Bulgarian, Albanian, Neopolitan, Slovak, Sami
 - World languages: Mandarin Chinese, Hindi, Standard Arabic, French, Bengali, Portuguese, Indonesian, Urdu, Russian, German, Japanese, Egyptian Arabic, Marathi, Vietnamese, Telugu
+
+German, Swedish, Norwegian, Danish, Dutch, Polish, Estonian, Latvian, Lithuanian, Hungarian, Romanian, Ukrainian, Serbo-Croatian, Turkish, Greek, Czech, Serbian, Bulgarian, Albanian, Neopolitan, Slovak, Sami, Mandarin Chinese, Hindi, Standard Arabic, French, Bengali, Portuguese, Indonesian, Urdu, Russian, German, Japanese, Egyptian Arabic, Marathi, Vietnamese, Telugu

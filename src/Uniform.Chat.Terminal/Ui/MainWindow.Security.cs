@@ -143,7 +143,7 @@ public sealed partial class MainWindow
                 RestoreStatus();
                 Dialogs.Info(app, Strings.Recovered, string.Join('\n',
                     result.CrossSigningRestored ? Strings.CrossSigningRestored : Strings.CrossSigningNotStored,
-                    result.BackupRestored ? Texts.Format(Strings.BackupRestored, result.KeysImported) : Strings.NoUsableBackup));
+                    result.BackupRestored ? Texts.Plural(nameof(Strings.BackupRestored_other), result.KeysImported, result.KeysImported) : Strings.NoUsableBackup));
             });
         });
     }

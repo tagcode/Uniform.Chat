@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The languages of the app's texts, for the per-app language of Android 13 and later; the same as Uniform.Matrix.Hosting.Localization.Languages, English first as the default -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+  <locale android:name="en" />
+  <locale android:name="id" />
+  <locale android:name="cs" />
+  <locale android:name="da" />
+  <locale android:name="de" />
+  <locale android:name="fr" />
+  <locale android:name="hu" />
+  <locale android:name="nl" />
+  <locale android:name="nb" />
+  <locale android:name="pl" />
+  <locale android:name="pt" />
+  <locale android:name="ro" />
+  <locale android:name="fi" />
+  <locale android:name="sv" />
+  <locale android:name="vi" />
+  <locale android:name="tr" />
+  <locale android:name="el" />
+  <locale android:name="bg" />
+  <locale android:name="ru" />
+  <locale android:name="uk" />
+  <locale android:name="ur" />
+  <locale android:name="ar" />
+  <locale android:name="mr" />
+  <locale android:name="hi" />
+  <locale android:name="bn" />
+  <locale android:name="te" />
+  <locale android:name="zh-Hans" />
+  <locale android:name="ja" />
+</locale-config>

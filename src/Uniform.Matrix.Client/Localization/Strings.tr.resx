@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} katılmak istedi</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Emoji karşılaştırarak doğrulama istendi</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>{0} kullanıcısından emoji karşılaştırarak doğrulama istendi</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0}, {1} kullanıcısını yasakladı</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} oda resmini değiştirdi</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} konuyu şöyle değiştirdi: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} odayı oluşturdu</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Başlatılmadı.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Kayıtlı şifreleme durumu okunamıyor ({0}). {1} değiştirildi mi?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} daveti reddetti</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Boş oda</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Boş oda (önceden {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Şifreli mesaj; anahtar henüz gelmedi</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>şifreleme kullanılamıyor: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>dosya artık yok</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>resim</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>resim: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0}, {1} kullanıcısını davet etti</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} katıldı</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0}, {1} kullanıcısını çıkardı</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} ayrıldı</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Giriş yapılıyor</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} ve {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} ve {1} kişi daha</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} ve {1} kişi daha</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} artık {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Yerel depolama açılıyor</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Şifreleme hazırlanıyor</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0}, {1} ile tepki verdi</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} oda resmini kaldırdı</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} odanın adını {1} olarak değiştirdi</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; {1:F0} sn sonra yeniden denenecek</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>sürpriz bozan</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>sürpriz bozan: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0}, {1} kullanıcısının yasağını kaldırdı</value>
+  </data>
+</root>

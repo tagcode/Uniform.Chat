@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Portuguese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Aplicado</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Aplicado. Estes valem após reiniciar:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Aplicar</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Cancelar</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Fechar</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Concluído</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Editar</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_xportar…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Carregar…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Não</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Redefinir</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Salvar</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Sim</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Não é possível ler {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Atual: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Padrão: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} não existe.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Vale após reiniciar.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Vale ao aplicar.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (vazio para não definido)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Gravar as configurações atuais em:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Exportar configurações</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Fil_tro:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Nível: {0}+</value>
+  </data>
+  <data name="LoadedSettings_many" xml:space="preserve">
+    <value>{0} configurações carregadas como edições. Aplique ou salve para usá-las.</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} configuração carregada como edição. Aplique ou salve para usá-la.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} configurações carregadas como edições. Aplique ou salve para usá-las.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Arquivo de configurações a carregar:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Carregar configurações</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="LogStatus_many" xml:space="preserve">
+    <value>{0} de {1} registros · {2}   Enter: registro completo  Alt+T: filtro</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} de {1} registro · {2}   Enter: registro completo  Alt+T: filtro</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} de {1} registros · {2}   Enter: registro completo  Alt+T: filtro</value>
+  </data>
+  <data name="MoreLines_many" xml:space="preserve">
+    <value>  [+{0} linhas]</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} linha]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} linhas]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Novo valor{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(não definido)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>agora</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>registro antigo</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Um de: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Tipo: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Definido agora por {0}, que tem precedência sobre o arquivo de configurações.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Redefinir</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvar</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Salvo</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Salvo em {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Este valor é secreto. Informe-o na linha de comando, ou digite-o quando o programa pedir.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sessões</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Arquivo de configurações: {0}    * editado  + aplicado, não salvo  ↻ após reiniciar</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Estes valem após reiniciar:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Algumas alterações não foram salvas no arquivo de configurações. Fechar mesmo assim?
+
+As alterações aplicadas valem até o programa reiniciar.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Configurações não salvas</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} gravado. Segredos não foram incluídos.</value>
+  </data>
+</root>

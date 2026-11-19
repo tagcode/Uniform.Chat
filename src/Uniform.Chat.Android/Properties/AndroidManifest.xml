@@ -28,7 +28,7 @@
       <action android:name="org.unifiedpush.android.distributor.REGISTER" />
     </intent>
   </queries>
-  <application android:label="Uniform Chat" android:icon="@mipmap/icon" android:allowBackup="false" android:networkSecurityConfig="@xml/network_security_config">
+  <application android:label="Uniform Chat" android:icon="@mipmap/icon" android:allowBackup="false" android:networkSecurityConfig="@xml/network_security_config" android:localeConfig="@xml/locales_config">
     <!-- Images copied to the clipboard, which the pasting app reads through a content link -->
     <provider android:name="androidx.core.content.FileProvider" android:authorities="rip.uniform.chat.files" android:exported="false" android:grantUriPermissions="true">
       <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/shared_files" />

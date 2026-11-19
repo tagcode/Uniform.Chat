@@ -133,14 +133,14 @@ public sealed class LogWindow : Dialog
         lineEntries.Clear();
         foreach (LogEntry entry in entries.Where(e => e.Matches(minimum, text)))
         {
-            string more = entry.Lines.Count > 1 ? Texts.Format(Strings.MoreLines, entry.Lines.Count - 1) : "";
+            string more = entry.Lines.Count > 1 ? Texts.Plural(nameof(Strings.MoreLines_other), entry.Lines.Count - 1, entry.Lines.Count - 1) : "";
             lines.Add(entry.Lines[0] + more);
             lineEntries.Add(entry);
         }
 
         // Scroll and count
         if (scrollToEnd && lines.Count > 0) logView.SelectedItem = lines.Count - 1;
-        status.Text = Texts.Format(Strings.LogStatus, lineEntries.Count, entries.Count, shown?.Path);
+        status.Text = Texts.Plural(nameof(Strings.LogStatus_other), entries.Count, lineEntries.Count, entries.Count, shown?.Path);
         logView.SetNeedsDraw();
     }
 

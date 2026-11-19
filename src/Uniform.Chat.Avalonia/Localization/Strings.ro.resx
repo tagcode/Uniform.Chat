@@ -1,0 +1,1391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Romanian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Acceptă</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>Am citit și accept aceste reguli</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>Citiți și acceptați regulile serverului pentru a continua.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>Acceptați cererea pe {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Cont</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>Parola contului</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Conturi</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>Contul dvs. este suspendat de administratorii serverului: puteți citi și părăsi camere, dar nu puteți trimite mesaje, intra în camere sau invita. Verificați camera de anunțuri a serverului, dacă există.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} a eșuat: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Permite notificările…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>Mesajul a fost deja trimis.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>un mesaj</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Răspunde</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Se răspunde</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>Răspunde cu video</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>Acest server nu permite aplicațiilor să creeze conturi.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>Se interoghează {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>Microfonul sau difuzorul nu au putut fi deschise: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Test audio</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>Testul are nevoie de permisiunea pentru microfon.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Înregistrat {0:F0} s, trimis la {1:F0} kbit/s.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Vorbiți: vă auziți după o secundă. Liniștea înseamnă că intrarea nu este un microfon.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>Porniți, apoi vorbiți: vă auziți după o secundă, prin codecul Opus al apelurilor.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Înapoi</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>Camera din spate</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Blochează</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} blocat: mesajele și invitațiile acestei persoane nu mai apar. Deblocați din Securitate și recuperare.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>Utilizatori blocați</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>Mesajele și invitațiile lor nu apar.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Se blochează</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>Blochează expeditorul</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Apel încheiat: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Se apelează…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>Apelul a eșuat: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>Apelurile au nevoie de permisiunea pentru microfon.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>Camera este oprită</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>Camera ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>Cameră oprită</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>Cameră pornită</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anulare</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>Anulare (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Anulează trimiterea</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>Modificările se salvează imediat.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>Se schimbă drepturile de administrator</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>Verificarea criptării a eșuat: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>Alegeți Chat pentru a începe un chat cu {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>Alegeți Alătură-te pentru a intra în {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>Alegeți o cameră în care să partajați {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>Alegeți o cameră pentru a începe.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Închide</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>Comparați emoji cu alt dispozitiv pe care sunteți conectat, de exemplu Element pe telefon.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Comparați cu {0}. Arată aceleași emoji în aceeași ordine?</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Se conectează…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Conexiune</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>Conexiune pierdută, se reîncearcă…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copiază</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>Copiază imaginea</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>Copierea a eșuat: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>Copierea imaginii a eșuat: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Copiază linkul</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Copiază textul</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>Nu s-a putut intra în {0}.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Creează</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Creează cont</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>Contul se creează pe serverul ID-ului de utilizator, dacă acesta permite. Alegeți-vă o parolă proprie.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Creează un cont</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Creează un cont Matrix</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Se creează {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Se creează codul</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>dddd, d MMMM</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>Zile; gol = fără expirare</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Dezactivează…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>Dezactivați definitiv {0}? Persoana părăsește toate camerele și nu se mai poate conecta; ID-ul de utilizator nu va mai fi atribuit.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>{0} a fost dezactivat.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Se dezactivează</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Refuză</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>Se refuză {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>Se refuză</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Șterge</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Șterge contul</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Ștergeți contul definitiv? Părăsiți toate camerele, numele și imaginea vă sunt eliminate și toate dispozitivele sunt deconectate. ID-ul de utilizator nu mai poate fi folosit. Introduceți parola pentru confirmare.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>Șterge contul…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>Șterge raportul</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>Ștergerea contului a eșuat: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Se șterge mesajul</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Se șterge raportul</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Se șterge codul</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>Adresă</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>Editat</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>Criptare</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>ID eveniment</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>De la</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>ID cameră</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalii…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>Trimis</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>Stare</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>Necitit</value>
+  </data>
+  <data name="DeviceCount_few" xml:space="preserve">
+    <value>{0} dispozitive</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} dispozitiv</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} de dispozitive</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1}), văzut ultima dată {2} de la {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Dispozitive</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Camere publice ale serverului dvs. sau ale altui server, cum ar fi matrix.org.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>Server, ex. matrix.org; gol = al dvs.</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>Descărcarea {0} a eșuat: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>Cască telefon</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editează</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(editat)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>Se editează mesajul</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>Mesajul fusese deja trimis, așa că modificarea nu s-a făcut.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 Criptat</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>Mesaj criptat</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Această cameră este criptată, dar criptarea nu este disponibilă pe acest dispozitiv: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>preluat pe alt dispozitiv</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>refuzat</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>refuzat pe alt dispozitiv</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Suspendarea lui {0} a fost încheiată.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>pierdut</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>fără răspuns</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>fără conexiune</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>a sunat din nou</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Încheie suspendarea</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>celălalt a închis</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>Criptat integral</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>ați refuzat</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>ați închis</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>Introduceți parola contului pentru confirmare.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>Introduceți cheia de recuperare sau fraza de acces configurată în această aplicație sau în alta, cum ar fi Element.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>Cameră externă</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>Favorită</value>
+  </data>
+  <data name="FileCount_few" xml:space="preserve">
+    <value>{0} fișiere</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} fișier</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} de fișiere</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtru</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Caută</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Amprentă</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>blocat</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>dezactivat</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>invitat</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>blocat la conectare</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>suspendat</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>verificat</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>De la administratorul serverului</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>De la serverul dvs.</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>Camera frontală</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Se închide</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>Închide</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>Am un cont: conectare</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>Ascunde și reîncearcă</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Imagine copiată</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>În apel cu {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>Apel primit</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>Apeluri primite</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>Apel video primit</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>Apel vocal primit</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>În fundal</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>Invitație</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Invită</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>{0} a fost invitat.</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>Sunteți invitat în această cameră.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} v-a invitat în {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>Invitații</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Se invită {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} este administrator al serverului.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} sună</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} este verificat.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Alătură-te</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>Se intră în {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>Se intră în {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>Menține conexiunea; glisați pentru a ascunde.</value>
+  </data>
+  <data name="KeysRestored_few" xml:space="preserve">
+    <value>S-au restaurat {0} chei de mesaje.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>S-a restaurat {0} cheie de mesaje.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>S-au restaurat {0} de chei de mesaje.</value>
+  </data>
+  <data name="KeysRestoredVerified_few" xml:space="preserve">
+    <value>S-au restaurat {0} chei de mesaje; acest dispozitiv este acum verificat.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>S-a restaurat {0} cheie de mesaje; acest dispozitiv este acum verificat.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>S-au restaurat {0} de chei de mesaje; acest dispozitiv este acum verificat.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Limbă</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Limba sistemului</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Mare</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>văzut ultima dată {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Părăsește camera</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Se părăsește {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>Licențe</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>Licențe…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat este software liber sub licența MIT. Include runtime-ul .NET și alte biblioteci, fiecare sub propria licență, ale căror texte urmează.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>Se încarcă conturile</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>Încărcarea istoricului a eșuat: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>Se încarcă rapoartele</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>Se încarcă codurile</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Blochează conectarea</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Conectarea lui {0} a fost blocată: serverul refuză dispozitivele persoanei până la deblocare.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Se blochează conectarea</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Jurnale</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>Jurnale…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>Jurnalul nu poate fi citit: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>Caută din nou distribuitori</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>Se caută dispozitivele</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>Difuzor</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>Prioritate scăzută</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Fă administrator</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Marchează ca citit</value>
+  </data>
+  <data name="MemberCount_few" xml:space="preserve">
+    <value>{0} membri</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} membru</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} de membri</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Membri</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}, {1} invitați</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>Mesaj șters</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Mesaj</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Mesaje</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>Mesajele sosesc prin {0}; aplicația nu are nevoie de o conexiune proprie.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>Mesaje în chaturile directe</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>Mesaje care vă menționează</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>Microfon ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Dezactivează sunetul</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>fără sunet</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>Are nevoie de cheia de recuperare</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>Acest server cere un cod de înregistrare de la administratorul său.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>niciodată</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>Mesaj nou</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>Parolă nouă; dispozitivele persoanei sunt deconectate</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Cod nou</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>Nicio aplicație nu deschide {0} aici.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>Nicio aplicație nu deschide {0} aici; folosiți Salvează….</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>Fără permisiune pentru cameră; se răspunde doar cu voce.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>Fără permisiune pentru cameră; se apelează doar cu voce.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>Niciun dispozitiv nu este conectat.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>Fără chei de criptare</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>fără expirare</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>Nicio intrare la acest nivel.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} nu mai este administrator al serverului.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Niciunul</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Niciun raport.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Nu s-au găsit camere.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" nu este un ID de utilizator Matrix; arată ca @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} nu este un ID de utilizator; acestea arată ca @nume:server.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Indisponibil: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>Necriptat</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>Nu s-a înregistrat nimic.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>S-a trimis un anunț de server către {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notificări</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>Notificările pentru Uniform Chat sunt dezactivate în setările sistemului. Apelurile primite sună fără să arate cine sună, iar mesajele nu notifică.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>Nu acum</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Netrimis: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>Neconfigurat</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>Neverificat</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(acum)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Pornit</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>Apel în curs</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Conectat</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Deschide</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>Deschiderea {0} a eșuat: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>sau numerele {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>Conexiune proprie în fundal</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>Aplicația menține o conexiune proprie, cu o notificare care o arată.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>Aplicația menține o conexiune proprie, cu o notificare care o arată. Instalați un distribuitor UnifiedPush precum ntfy pentru a primi mesaje fără ea.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>O parte din ID-ul de utilizator sau din nume</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Parolă</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Parola nu a fost acceptată.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>Parola se folosește doar la conectare; nu este salvată.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>S-a setat o parolă nouă pentru {0} și s-au deconectat dispozitivele persoanei.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>Lipirea a eșuat: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>Implicit telefon</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>Microfonul telefonului</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Politica de confidențialitate</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Mesaje și apeluri Uniform Chat</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reacționează</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>Hărțuire sau ură</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Conținut ilegal</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>Motiv: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Altceva</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>Conținut sexual sau violent</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Se reconectează…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Recuperează</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>Recuperarea a eșuat: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>Cheia de recuperare a fost copiată.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>Notați-o sau copiați-o acum într-un loc sigur; nu va mai fi afișată. Cu ea, o conectare nouă se poate verifica singură și poate citi mesajele vechi.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Reîmprospătează</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>Serverul cere mai mult decât poate oferi această aplicație pentru a crea un cont.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>Cod de înregistrare</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Coduri de înregistrare</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>Conturile noi au nevoie de unul dintre acestea când înregistrarea pe server cere un cod.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>Acest server cere un pas pe care aplicația nu îl poate face, cum ar fi un captcha sau un e-mail. Creați contul pe site-ul serverului, apoi conectați-vă aici.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>prin releu</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>Elimină din favorite</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>Elimină prioritatea scăzută</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Răspunde</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>Răspuns pentru {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>Raportul a fost șters.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} a raportat {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Raportat administratorilor serverului dvs. Puteți bloca expeditorul și din meniul mesajului.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>{0} a fost raportat administratorilor serverului dvs.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Se raportează mesajul</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>Se raportează camera</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>Se raportează utilizatorul</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>Raportează mesajul</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>Raportează camera…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>Raportează camera</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Rapoarte</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>Raportează expeditorul</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Se resetează parola</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>Reîncercare: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Cameră</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>Intrați într-o cameră după adresă sau link, discutați cu un utilizator sau creați o cameră privată</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#cameră, @utilizator, link sau nume nou</value>
+  </data>
+  <data name="RoomCount_few" xml:space="preserve">
+    <value>{0} camere</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} cameră</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} de camere</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Catalog de camere</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>Catalog de camere…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>Cameră: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Camere</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>Camera a fost închisă de administratorii serverului</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>{0} a fost salvat.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>Salvează…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Salvează fișierul</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>Salvarea fișierului a eșuat: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Caută</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Căutarea a eșuat: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Se caută…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Securitate</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>Securitate și recuperare…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Trimite</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>Trimite un fișier</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0} în {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Se trimite…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>Trimiterea {0} a eșuat: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Se trimite anunțul</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>Trimiterea fișierului a eșuat: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>Trimite (Enter); câmpul de mesaj păstrează focusul</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>Adresa serverului</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Lăsați gol pentru a găsi serverul din ID-ul de utilizator. Necesar pentru servere fără descoperire, cum ar fi http://localhost:8008 pe acest calculator.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>Administrarea serverului</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>Administrarea serverului…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>Mesaje de la administratorii serverului dvs. Nu puteți răspunde aici.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>Anunț de server către persoană</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Regulile serverului</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>Serverul nu poate fi accesat: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Setează</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Setări</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>Setări…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Se setează subiectul</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>Configurarea recuperării a eșuat: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>Configurează</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>Configurat și de încredere aici</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>Configurat</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>Configurat, încă nu de încredere aici</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Configurează recuperarea</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>Creați chei de semnare încrucișată, o copie de rezervă a cheilor de mesaje și o cheie de recuperare.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>un link</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>un text</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>Partajează {0}</value>
+  </data>
+  <data name="ShareFiles_few" xml:space="preserve">
+    <value>Partajează {0} fișiere</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Partajează {0} fișier</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>Partajează {0} de fișiere</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>Partajarea {0} a eșuat: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>Închideți {0}? Toți membrii de pe acest server o părăsesc, adresele ei de aici sunt șterse și nimeni de pe acest server nu mai poate intra.</value>
+  </data>
+  <data name="ShutDownDone_few" xml:space="preserve">
+    <value>{0} închisă: {1} membri eliminați.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} închisă: {1} membru eliminat.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} închisă: {1} de membri eliminați.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>Închide camera…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>Se închide camera</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>{0} a fost deconectat.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Conectare</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>Conectarea a eșuat.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>Conectare la {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>Deconectarea {0} a eșuat: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Conectare la Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Deconectare</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>Deconectați {0}? Introduceți parola contului pentru confirmare.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>Deconectare…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Mic</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Cineva</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>Difuzor ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Pornește</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>Se începe un chat cu {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>Se începe cu {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Semnare încrucișată</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Dispozitiv</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Copie de rezervă a cheilor</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Cheie de recuperare</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Oprește</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Oprit: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>Configurați recuperarea, ca alții să vadă acest dispozitiv ca verificat, iar o cheie de recuperare să vă deblocheze mesajele pe dispozitive noi.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>Verificați acest dispozitiv cu un alt dispozitiv al dvs. sau cu cheia de recuperare, ca alții să-l vadă verificat și să vă poată citi mesajele mai vechi.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Suspendă</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} suspendat: poate citi, dar nu poate trimite, intra sau invita.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Se suspendă</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Suspendă utilizatorul</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>Se schimbă microfonul</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>Se schimbă difuzorul</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>Implicit sistem</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>Se etichetează camera</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>Retrage drepturile de administrator</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>Testează sunetul…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>Mărimea textului</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Temă</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Întunecată</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Luminoasă</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sistem</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>Nu se potrivesc</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>Se potrivesc</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>Acest dispozitiv</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Astăzi</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>Codul a fost copiat.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>Codul a fost șters; conturile create cu el rămân.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Serverul nu a acceptat codul de înregistrare.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>până la {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>folosit de {0} ori, fără limită</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>folosit de {0} ori din {1}</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>Subiect</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>Oprește camera</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>Pornește camera</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} scrie…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>Mai multe persoane scriu…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} și {1} scriu…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Deblochează</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} a fost deblocat.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Se deblochează</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>Deblocarea {0} a eșuat: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>necunoscut</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Deblochează conectarea</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Conectarea lui {0} a fost deblocată.</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>Deblochează istoricul criptat</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Activează sunetul</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>Se elimină eticheta</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>ID utilizator</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>Acest ID de utilizator este ocupat; alegeți altul.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>Regulile de utilizare</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>Continuând, acceptați regulile de utilizare: fără conținut ilegal, abuziv sau dăunător. Raportați-l și blocați persoanele din mesajele lor.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>Utilizări; gol = nelimitat</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Verificare anulată.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Verificare anulată: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Verificarea a eșuat: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Verificat</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Verifică</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>Verifică dispozitivul</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>Verificarea {0} a eșuat: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>Verifică cu alt dispozitiv</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>Foarte mare</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>Foarte mic</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Apel video</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Apel vocal</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>Se așteaptă {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Se așteaptă confirmarea de la {0}…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} vrea să verifice acest dispozitiv comparând emoji.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>Despre ce este camera</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>Căști cu fir</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>Set cască-microfon cu fir</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>Da, fă-o</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Ieri</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Dvs.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>dispozitivul dvs. {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>Cheia dvs. de recuperare</value>
+  </data>
+</root>

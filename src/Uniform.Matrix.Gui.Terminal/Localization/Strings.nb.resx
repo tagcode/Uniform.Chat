@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Norwegian Bokmål texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Tatt i bruk</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Tatt i bruk. Disse gjelder etter omstart:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Bruk</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Bruk</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Avbryt</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>L_ukk</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Ferdig</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Rediger</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_ksporter…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>Les _inn…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nei</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Tilbakestill</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Lagre</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ja</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Kan ikke lese {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Nåværende: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Standard: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} finnes ikke.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Gjelder etter omstart.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Gjelder når den tas i bruk.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (tomt for ikke angitt)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Skriv gjeldende innstillinger til:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Eksporter innstillinger</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filter:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Nivå: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Leste inn {0} innstilling som endring. Ta den i bruk eller lagre den for å bruke den.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Leste inn {0} innstillinger som endringer. Ta dem i bruk eller lagre dem for å bruke dem.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Innstillingsfil som skal leses inn:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Les inn innstillinger</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logger</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} av {1} oppføring · {2}   Enter: hele oppføringen  Alt+F: filter</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} av {1} oppføringer · {2}   Enter: hele oppføringen  Alt+F: filter</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} linje]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} linjer]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Ny verdi{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(ikke angitt)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>nå</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>eldre logg</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Én av: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Type: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Angis nå av {0}, som overstyrer innstillingsfilen.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Tilbakestill</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Lagre</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Lagret</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Lagret i {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Denne verdien er hemmelig. Oppgi den på kommandolinjen, eller skriv den inn når programmet spør.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Økter</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Innstillinger</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Innstillingsfil: {0}    * endret  + tatt i bruk, ikke lagret  ↻ etter omstart</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Disse gjelder etter omstart:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Noen endringer er ikke lagret i innstillingsfilen. Lukke likevel?
+
+Endringer som er tatt i bruk, gjelder til programmet startes på nytt.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Ulagrede innstillinger</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Skrev {0}. Hemmeligheter er ikke med.</value>
+  </data>
+</root>

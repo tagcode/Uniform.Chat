@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Romanian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} a cerut să se alăture</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>A cerut verificarea prin compararea emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>A cerut lui {0} verificarea prin compararea emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} a blocat accesul lui {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} a schimbat imaginea camerei</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} a schimbat subiectul în: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} a creat camera</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Nepornit.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Starea de criptare salvată nu poate fi citită ({0}). A fost înlocuit {1}?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} a refuzat invitația</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Cameră goală</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Cameră goală (fostă {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Mesaj criptat; cheia nu a sosit încă</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>criptare indisponibilă: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>fișierul nu mai există</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>imagine</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>imagine: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} l-a invitat pe {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} s-a alăturat</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} l-a dat afară pe {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} a plecat</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Conectare</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} și {1}</value>
+  </data>
+  <data name="NamesAndOthers_few" xml:space="preserve">
+    <value>{0} și încă {1} persoane</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} și încă {1} persoană</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} și încă {1} de persoane</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} se numește acum {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Se deschide stocarea locală</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Se pregătește criptarea</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} a reacționat cu {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} a eliminat imaginea camerei</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} a redenumit camera în {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; reîncercare în {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} a ridicat blocarea lui {1}</value>
+  </data>
+</root>

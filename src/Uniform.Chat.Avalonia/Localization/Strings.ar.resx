@@ -1,0 +1,1463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Arabic texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>قرأتُ هذه السياسات وأوافق عليها</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>للمتابعة، اقرأ سياسات الخادم ووافق عليها.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>اقبل الطلب على {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>كلمة مرور الحساب</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>الحسابات</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>علّق مشرفو خادمك حسابك: يمكنك قراءة الغرف ومغادرتها، لكن لا يمكنك إرسال الرسائل أو الانضمام إلى الغرف أو دعوة أحد. راجع غرفة إشعارات الخادم إن وُجدت.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>فشل {0}: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>السماح بالإشعارات…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>أُرسلت الرسالة بالفعل.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>رسالة</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>رد</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>جارٍ الرد</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>رد بالفيديو</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>لا يسمح هذا الخادم للتطبيقات بإنشاء حسابات.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>جارٍ سؤال {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>تعذّر فتح الميكروفون أو مكبّر الصوت: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>اختبار الصوت</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>يحتاج الاختبار إلى إذن الميكروفون.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>سُجّلت {0:F0} ثانية وأُرسلت بمعدل {1:F0} kbit/s.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>تحدّث: ستسمع صوتك بعد ثانية. الصمت يعني أن الإدخال ليس ميكروفونًا.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>ابدأ ثم تحدّث: ستسمع صوتك بعد ثانية عبر ترميز Opus المستخدم في المكالمات.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>الكاميرا الخلفية</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>حظر</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>حُظر {0}: لن تظهر رسائله ودعواته بعد الآن. ألغِ الحظر من الأمان والاسترداد.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>المستخدمون المحظورون</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>لا تظهر رسائلهم ودعواتهم.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>جارٍ الحظر</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>حظر المرسل</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>انتهت المكالمة: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>جارٍ الاتصال…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>فشل الاتصال: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>تحتاج المكالمات إلى إذن الميكروفون.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>الكاميرا مطفأة</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>الكاميرا ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>إطفاء الكاميرا</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>تشغيل الكاميرا</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>إلغاء (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>إلغاء الإرسال</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>تُحفظ التغييرات فورًا.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>جارٍ تغيير صلاحيات المشرف</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>دردشة</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>فشل التحقق من التشفير: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>اختر «دردشة» لبدء دردشة مع {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>اختر «انضمام» للانضمام إلى {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>اختر غرفة لمشاركة {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>اختر غرفة للبدء.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>قارن الرموز التعبيرية بجهاز آخر سجّلت الدخول فيه، مثل Element على هاتفك.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>قارن مع {0}. هل تظهر الرموز نفسها بالترتيب نفسه على الجهازين؟</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>جارٍ الاتصال…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>الاتصال</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>انقطع الاتصال، جارٍ إعادة المحاولة…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>نسخ الصورة</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>فشل النسخ: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>فشل نسخ الصورة: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>نسخ الرابط</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>نسخ النص</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>تعذّر الانضمام إلى {0}.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>يُنشأ الحساب على خادم معرّف المستخدم إن سمح بذلك. اختر كلمة المرور بنفسك.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>إنشاء حساب Matrix</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>جارٍ إنشاء {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>جارٍ إنشاء الرمز</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>dddd، d MMMM</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>أيام؛ فارغ = بلا انتهاء</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>تعطيل…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>تعطيل {0} نهائيًا؟ سيغادر كل الغرف ولن يتمكن من تسجيل الدخول مجددًا؛ ولن يُعطى معرّف المستخدم لأحد مرة أخرى.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>عُطّل {0}.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>جارٍ التعطيل</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>جارٍ رفض {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>جارٍ الرفض</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>حذف الحساب</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>حذف الحساب نهائيًا؟ ستغادر كل الغرف، وسيُزال اسمك وصورتك، وستُسجَّل كل الأجهزة خروجًا. لا يمكن استخدام معرّف المستخدم مرة أخرى. أدخل كلمة مرورك للتأكيد.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>حذف الحساب…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>حذف البلاغ</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>فشل حذف الحساب: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>جارٍ حذف الرسالة</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>جارٍ حذف البلاغ</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>جارٍ حذف الرمز</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>عُدّلت</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>التشفير</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>معرّف الحدث</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>معرّف الغرفة</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>التفاصيل…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>أُرسلت</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>غير مقروءة</value>
+  </data>
+  <data name="DeviceCount_few" xml:space="preserve">
+    <value>{0} أجهزة</value>
+  </data>
+  <data name="DeviceCount_many" xml:space="preserve">
+    <value>{0} جهازًا</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} جهاز</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} جهاز</value>
+  </data>
+  <data name="DeviceCount_two" xml:space="preserve">
+    <value>{0} جهازان</value>
+  </data>
+  <data name="DeviceCount_zero" xml:space="preserve">
+    <value>{0} جهاز</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1})، آخر ظهور {2}، من {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>الأجهزة</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>الغرف العامة على خادمك، أو على خادم آخر مثل matrix.org.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>الخادم، مثل matrix.org؛ فارغ = خادمك</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>فشل تنزيل {0}: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>سماعة الأذن</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(مُعدّلة)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>جارٍ تعديل الرسالة</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>كانت الرسالة قد أُرسلت بالفعل، لذا لم يُطبّق التعديل.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 مشفّرة</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>رسالة مشفّرة</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>هذه الغرفة مشفّرة، لكن التشفير غير متاح على هذا الجهاز: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>رُدّ عليها على جهاز آخر</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>مرفوضة</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>رُفضت على جهاز آخر</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>أُنهي تعليق {0}.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>فائتة</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>لا رد</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>لا اتصال</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>اتصلوا مجددًا</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>إنهاء التعليق</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>أنهوا المكالمة</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>مشفّرة من طرف إلى طرف</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>رفضتَ</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>أنهيتَ المكالمة</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>أدخل كلمة مرور حسابك للتأكيد.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>أدخل مفتاح الاسترداد أو عبارة المرور التي أعددتها في هذا التطبيق أو في تطبيق آخر مثل Element.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>كاميرا خارجية</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>مفضّلة</value>
+  </data>
+  <data name="FileCount_few" xml:space="preserve">
+    <value>{0} ملفات</value>
+  </data>
+  <data name="FileCount_many" xml:space="preserve">
+    <value>{0} ملفًا</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} ملف</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} ملف</value>
+  </data>
+  <data name="FileCount_two" xml:space="preserve">
+    <value>{0} ملفان</value>
+  </data>
+  <data name="FileCount_zero" xml:space="preserve">
+    <value>{0} ملف</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>البصمة</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>مشرف</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>محظور</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>مدعو</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>مقفل</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>موثّق</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>من مشرف الخادم</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>من خادمك</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>الكاميرا الأمامية</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>جارٍ إنهاء المكالمة</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>إنهاء المكالمة</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>لديّ حساب: تسجيل الدخول</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>إخفاء والمحاولة مجددًا</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>نُسخت الصورة</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>في مكالمة مع {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>مكالمة واردة</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>المكالمات الواردة</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>مكالمة فيديو واردة</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>مكالمة صوتية واردة</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>في الخلفية</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>دعوة</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>دعوة</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>دُعي {0}.</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>تلقّيت دعوة إلى هذه الغرفة.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>دعاك {0} إلى {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>الدعوات</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>جارٍ دعوة {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} مشرف على الخادم.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} يتصل</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} موثّق.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>انضمام</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>جارٍ الانضمام إلى {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>جارٍ الانضمام إلى {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>يبقي الاتصال قائمًا، اسحب للإزالة.</value>
+  </data>
+  <data name="KeysRestored_few" xml:space="preserve">
+    <value>استُعيدت {0} مفاتيح رسائل.</value>
+  </data>
+  <data name="KeysRestored_many" xml:space="preserve">
+    <value>استُعيد {0} مفتاحًا للرسائل.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل.</value>
+  </data>
+  <data name="KeysRestored_two" xml:space="preserve">
+    <value>استُعيد {0} مفتاحا رسائل.</value>
+  </data>
+  <data name="KeysRestored_zero" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل.</value>
+  </data>
+  <data name="KeysRestoredVerified_few" xml:space="preserve">
+    <value>استُعيدت {0} مفاتيح رسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="KeysRestoredVerified_many" xml:space="preserve">
+    <value>استُعيد {0} مفتاحًا للرسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="KeysRestoredVerified_two" xml:space="preserve">
+    <value>استُعيد {0} مفتاحا رسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="KeysRestoredVerified_zero" xml:space="preserve">
+    <value>استُعيد {0} مفتاح رسائل؛ هذا الجهاز موثّق الآن.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>لغة النظام</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>كبير</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>آخر ظهور {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>مغادرة الغرفة</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>جارٍ مغادرة {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>التراخيص</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>التراخيص…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat برنامج حر مرخّص بموجب ترخيص MIT. ويتضمن بيئة تشغيل .NET ومكتبات أخرى، لكلٍّ منها ترخيصها الخاص، ونصوصها أدناه.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>جارٍ تحميل الحسابات</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>فشل تحميل السجل: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>جارٍ تحميل البلاغات</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>جارٍ تحميل الرموز</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>قفل</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>قُفل {0}: يرفض الخادم أجهزته حتى يُفتح القفل.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>جارٍ القفل</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>السجلات…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>تتعذّر قراءة السجل: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>البحث عن موزّعين مجددًا</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>جارٍ البحث عن الأجهزة</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>مكبّر الصوت</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>أولوية منخفضة</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>جعله مشرفًا</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>تعليم كمقروءة</value>
+  </data>
+  <data name="MemberCount_few" xml:space="preserve">
+    <value>{0} أعضاء</value>
+  </data>
+  <data name="MemberCount_many" xml:space="preserve">
+    <value>{0} عضوًا</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} عضو</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} عضو</value>
+  </data>
+  <data name="MemberCount_two" xml:space="preserve">
+    <value>{0} عضوان</value>
+  </data>
+  <data name="MemberCount_zero" xml:space="preserve">
+    <value>{0} عضو</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>الأعضاء</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}، {1} مدعو</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>حُذفت الرسالة</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>رسالة</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>تصل الرسائل عبر {0}؛ لا يحتاج التطبيق إلى اتصال خاص به.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>الرسائل في الدردشات المباشرة</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>الرسائل التي تذكرك</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>الميكروفون ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>كتم</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>مكتوم</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>يحتاج إلى مفتاح الاسترداد</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>يحتاج هذا الخادم إلى رمز تسجيل من مشرفه.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>أبدًا</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>رسالة جديدة</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>كلمة مرور جديدة؛ ستُسجَّل أجهزته خروجًا</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>رمز جديد</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>لا يوجد تطبيق هنا يفتح {0}.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>لا يوجد تطبيق هنا يفتح {0}؛ استخدم «حفظ…» بدلًا من ذلك.</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>لا إذن للكاميرا؛ جارٍ الرد بالصوت فقط.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>لا إذن للكاميرا؛ جارٍ الاتصال بالصوت فقط.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>لا توجد أجهزة مسجّلة الدخول.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>لا مفاتيح تشفير</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>بلا انتهاء</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>لا إدخالات بهذا المستوى.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>لم يعد {0} مشرفًا على الخادم.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>لا بلاغات.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>عادي</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>لم يُعثر على غرف.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" ليس معرّف مستخدم Matrix؛ يبدو مثل @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} ليس معرّف مستخدم؛ تبدو المعرّفات مثل @الاسم:الخادم.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>غير متاح: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>غير مشفّرة</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>لم يُسجَّل شيء.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>أُرسل إشعار الخادم إلى {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>الإشعارات</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>إشعارات Uniform Chat مطفأة في إعدادات النظام. ترنّ المكالمات الواردة دون إظهار المتصل، ولا تصل إشعارات الرسائل.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>ليس الآن</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>لم تُرسل: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>غير مُعدّ</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>غير موثّق</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(الآن)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>مكالمة جارية</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>متصل</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>فشل فتح {0}: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>أو الأرقام {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>اتصال خاص في الخلفية</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>يحافظ التطبيق على اتصاله الخاص، ويظهر ذلك في إشعار.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>يحافظ التطبيق على اتصاله الخاص، ويظهر ذلك في إشعار. لتلقي الرسائل دونه، ثبّت موزّع UnifiedPush مثل ntfy.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>جزء من معرّف المستخدم أو الاسم</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>لم تُقبل كلمة المرور.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>تُستخدم كلمة مرورك لتسجيل الدخول فقط؛ ولا تُحفظ.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>عُيّنت كلمة مرور جديدة لـ {0} وسُجّلت أجهزته خروجًا.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>فشل اللصق: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>افتراضي الهاتف</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>ميكروفون الهاتف</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سياسة الخصوصية</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>رسائل ومكالمات Uniform Chat</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>تفاعل</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>مضايقة أو كراهية</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>محتوى غير قانوني</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>السبب: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>محتوى جنسي أو عنيف</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>رسائل مزعجة</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>جارٍ إعادة الاتصال…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>استرداد</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>فشل الاسترداد: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>نُسخ مفتاح الاسترداد.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>دوّنه الآن أو انسخه إلى مكان آمن؛ لن يُعرض مرة أخرى. به يستطيع تسجيل دخول جديد التحقق من نفسه وقراءة الرسائل القديمة.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>يطلب الخادم لإنشاء الحساب أكثر مما يستطيعه هذا التطبيق.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>رمز التسجيل</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>رموز التسجيل</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>عندما يتطلب تسجيل الخادم رمزًا، يحتاج كل حساب جديد إلى أحد هذه الرموز.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>يحتاج هذا الخادم إلى خطوة لا يستطيعها هذا التطبيق، مثل اختبار CAPTCHA أو البريد الإلكتروني. أنشئ الحساب على موقع الخادم، ثم سجّل الدخول هنا.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>مُرحّل</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>إزالة من المفضّلة</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>إزالة الأولوية المنخفضة</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>رد</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>رد على {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>حُذف البلاغ.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>أبلغ {0} عن {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>أُبلغ مشرفو خادمك. يمكنك أيضًا حظر المرسل من قائمة الرسالة.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>أُبلغ مشرفو خادمك عن {0}.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>جارٍ الإبلاغ عن الرسالة</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>جارٍ الإبلاغ عن الغرفة</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>جارٍ الإبلاغ عن المستخدم</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>الإبلاغ عن الرسالة</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>الإبلاغ عن الغرفة…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>الإبلاغ عن الغرفة</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>الإبلاغ عن المرسل</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>جارٍ إعادة تعيين كلمة المرور</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>إعادة المحاولة: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>الغرفة</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>انضم إلى غرفة بعنوانها أو رابطها، أو دردش مع مستخدم، أو أنشئ غرفة خاصة</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#غرفة، @مستخدم، رابط أو اسم جديد</value>
+  </data>
+  <data name="RoomCount_few" xml:space="preserve">
+    <value>{0} غرف</value>
+  </data>
+  <data name="RoomCount_many" xml:space="preserve">
+    <value>{0} غرفة</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} غرفة</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} غرفة</value>
+  </data>
+  <data name="RoomCount_two" xml:space="preserve">
+    <value>{0} غرفتان</value>
+  </data>
+  <data name="RoomCount_zero" xml:space="preserve">
+    <value>{0} غرفة</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>دليل الغرف</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>دليل الغرف…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>الغرفة: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>الغرف</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>أغلق مشرفو الخادم الغرفة</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>حُفظ {0}.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>حفظ…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>حفظ الملف</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>فشل حفظ الملف: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>فشل البحث: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>جارٍ البحث…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>الأمان</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>الأمان والاسترداد…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>إرسال ملف</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0} في {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>جارٍ الإرسال…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>فشل إرسال {0}: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>جارٍ إرسال الإشعار</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>فشل إرسال الملف: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>إرسال (Enter)؛ يبقى التركيز في مربع الرسالة</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>عنوان الخادم</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>اتركه فارغًا للعثور على الخادم من معرّف المستخدم. ضروري للخوادم التي لا تدعم الاكتشاف، مثل http://localhost:8008 على هذا الحاسوب.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>إدارة الخادم</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>إدارة الخادم…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>رسائل من مشرفي خادمك. لا يمكنك الرد هنا.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>إشعار خادم إليه</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>سياسات الخادم</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>يتعذّر الوصول إلى الخادم: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>تعيين</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>الإعدادات…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>جارٍ تعيين الموضوع</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>فشل إعداد الاسترداد: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>إعداد</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>مُعدّ وموثوق هنا</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>مُعدّ</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>مُعدّ، وغير موثوق هنا بعد</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>إعداد الاسترداد</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>أنشئ مفاتيح التوقيع المتبادل ونسخة احتياطية لمفاتيح الرسائل ومفتاح استرداد.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>رابط</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>نص</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>مشاركة {0}</value>
+  </data>
+  <data name="ShareFiles_few" xml:space="preserve">
+    <value>مشاركة {0} ملفات</value>
+  </data>
+  <data name="ShareFiles_many" xml:space="preserve">
+    <value>مشاركة {0} ملفًا</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>مشاركة {0} ملف</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>مشاركة {0} ملف</value>
+  </data>
+  <data name="ShareFiles_two" xml:space="preserve">
+    <value>مشاركة {0} ملفين</value>
+  </data>
+  <data name="ShareFiles_zero" xml:space="preserve">
+    <value>مشاركة {0} ملف</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>فشلت مشاركة {0}: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>إغلاق {0}؟ سيغادرها كل أعضاء هذا الخادم، وستُزال عناوينها هنا، ولن يتمكن أحد من هذا الخادم من الانضمام إليها مجددًا.</value>
+  </data>
+  <data name="ShutDownDone_few" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} أعضاء.</value>
+  </data>
+  <data name="ShutDownDone_many" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} عضوًا.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} عضو.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} عضو.</value>
+  </data>
+  <data name="ShutDownDone_two" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} عضوان.</value>
+  </data>
+  <data name="ShutDownDone_zero" xml:space="preserve">
+    <value>أُغلقت {0}: أُزيل {1} عضو.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>إغلاق الغرفة…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>جارٍ إغلاق الغرفة</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>سُجّل خروج {0}.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>فشل تسجيل الدخول.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>جارٍ تسجيل الدخول إلى {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>فشل تسجيل خروج {0}: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>تسجيل الدخول إلى Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>تسجيل خروج {0}؟ أدخل كلمة مرور حسابك للتأكيد.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>تسجيل الخروج…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>صغير</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>شخص ما</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>مكبّر الصوت ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>بدء</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>دردشة</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>جارٍ بدء دردشة مع {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>يبدأ من {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>التوقيع المتبادل</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>الجهاز</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>النسخ الاحتياطي للمفاتيح</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>مفتاح الاسترداد</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>توقّف: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>أعدّ الاسترداد ليرى الآخرون هذا الجهاز موثّقًا، وليفتح مفتاح الاسترداد رسائلك على الأجهزة الجديدة.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>تحقّق من هذا الجهاز بجهاز آخر لك أو بمفتاح الاسترداد، ليراه الآخرون موثّقًا ويتمكن من قراءة رسائلك القديمة.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>تعليق</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>عُلّق {0}: يمكنه القراءة، لكن لا يمكنه الإرسال أو الانضمام أو الدعوة.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>جارٍ التعليق</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>تعليق المستخدم</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>جارٍ تبديل الميكروفون</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>جارٍ تبديل مكبّر الصوت</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>افتراضي النظام</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>جارٍ وسم الغرفة</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>سحب صلاحيات المشرف</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>اختبار الصوت…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>حجم النص</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>السمة</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>داكنة</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>فاتحة</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>النظام</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>غير متطابقة</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>متطابقة</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>هذا الجهاز</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>نُسخ الرمز.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>حُذف الرمز؛ تبقى الحسابات التي أُنشئت به.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>لم يقبل الخادم رمز التسجيل.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>استُخدم {0} مرة، بلا حد</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>استُخدم {0} من {1} مرة</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>إطفاء الكاميرا</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>تشغيل الكاميرا</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} يكتب…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>عدة أشخاص يكتبون…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} و{1} يكتبان…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>إلغاء الحظر</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>أُلغي حظر {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>جارٍ إلغاء الحظر</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>فشل إلغاء حظر {0}: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>فتح القفل</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>فُتح قفل {0}.</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>فتح السجل المشفّر</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>إلغاء الكتم</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>جارٍ إزالة الوسم</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>معرّف المستخدم</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>معرّف المستخدم هذا مأخوذ؛ اختر غيره.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>سياسة المستخدم</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>بالمتابعة توافق على سياسة المستخدم: لا محتوى غير قانوني أو مسيء أو ضار. أبلغ عن مثل هذا المحتوى، واحظر الأشخاص من رسائلهم.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>الاستخدامات؛ فارغ = بلا حد</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>أُلغي التحقق.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>أُلغي التحقق: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>فشل التحقق: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>موثّق</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>تحقّق</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>التحقق من الجهاز</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>فشل التحقق من {0}: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>التحقق بجهاز آخر</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>كبير جدًا</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>صغير جدًا</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>فيديو</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>مكالمة فيديو</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>مكالمة صوتية</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>بانتظار {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>بانتظار تأكيد {0}…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>يريد {0} التحقق من هذا الجهاز بمطابقة الرموز التعبيرية.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>موضوع الغرفة</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>سماعات سلكية</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>سماعة رأس سلكية</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>نعم، نفّذ</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>أمس</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>أنت</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>جهازك {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>مفتاح الاسترداد الخاص بك</value>
+  </data>
+</root>

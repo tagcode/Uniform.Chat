@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Greek texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Εφαρμόστηκε</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Εφαρμόστηκε. Αυτά ισχύουν μετά από επανεκκίνηση:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Εφαρμογή</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>Εφαρ_μογή</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Ακύρωση</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Κ_λείσιμο</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Τέλος</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Επεξεργασία</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>Ε_ξαγωγή…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Φόρτωση…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Όχι</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>Ε_παναφορά</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>Αποθή_κευση</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ναι</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Δεν είναι δυνατή η ανάγνωση του {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Τρέχον: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Προεπιλογή: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>Το {0} δεν υπάρχει.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Ισχύει μετά από επανεκκίνηση.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Ισχύει όταν εφαρμοστεί.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (κενό = δεν έχει οριστεί)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Εγγραφή τρεχουσών ρυθμίσεων σε:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Εξαγωγή ρυθμίσεων</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Φίλτρο:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Επίπεδο: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Φορτώθηκε {0} ρύθμιση ως αλλαγή. Εφαρμόστε ή αποθηκεύστε τη για να τη χρησιμοποιήσετε.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Φορτώθηκαν {0} ρυθμίσεις ως αλλαγές. Εφαρμόστε ή αποθηκεύστε τες για να τις χρησιμοποιήσετε.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Αρχείο ρυθμίσεων για φόρτωση:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Φόρτωση ρυθμίσεων</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Αρχεία καταγραφής</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} από {1} εγγραφή · {2}   Enter: ολόκληρη η εγγραφή  Alt+Φ: φίλτρο</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} από {1} εγγραφές · {2}   Enter: ολόκληρη η εγγραφή  Alt+Φ: φίλτρο</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} γραμμή]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} γραμμές]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Νέα τιμή{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(δεν έχει οριστεί)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>τώρα</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>παλαιότερη καταγραφή</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Ένα από: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Τύπος: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Ορίζεται τώρα από {0}, που υπερισχύει του αρχείου ρυθμίσεων.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Αποθηκεύτηκε</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Αποθηκεύτηκε στο {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Αυτή η τιμή είναι μυστική. Δώστε τη στη γραμμή εντολών ή πληκτρολογήστε τη όταν τη ζητήσει το πρόγραμμα.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Συνεδρίες</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Αρχείο ρυθμίσεων: {0}    * επεξεργάστηκε  + εφαρμόστηκε, δεν αποθηκεύτηκε  ↻ μετά από επανεκκίνηση</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Αυτά ισχύουν μετά από επανεκκίνηση:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Ορισμένες αλλαγές δεν έχουν αποθηκευτεί στο αρχείο ρυθμίσεων. Κλείσιμο παρ' όλα αυτά;
+
+Οι αλλαγές που εφαρμόστηκαν ισχύουν μέχρι την επανεκκίνηση του προγράμματος.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Μη αποθηκευμένες ρυθμίσεις</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Γράφτηκε το {0}. Τα μυστικά δεν περιλαμβάνονται.</value>
+  </data>
+</root>

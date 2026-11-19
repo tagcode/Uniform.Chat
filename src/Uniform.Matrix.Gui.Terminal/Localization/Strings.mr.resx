@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Marathi texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>लागू केले</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>लागू केले. हे पुन्हा सुरू केल्यानंतर लागू होतील:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>लागू करा</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>लागू करा(_A)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>रद्द करा(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>बंद करा(_C)</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>झाले(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>संपादित करा(_E)</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>निर्यात करा(_X)…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>लोड करा(_L)…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>नाही(_N)</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>ठीक आहे(_O)</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>रीसेट करा(_R)</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>जतन करा(_S)</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>हो(_Y)</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} वाचता येत नाही: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>सध्याचे: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> डीफॉल्ट: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} अस्तित्वात नाही.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> पुन्हा सुरू केल्यानंतर लागू.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> लागू केल्यावर प्रभावी.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (रिकामे = सेट नाही)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>सध्याची सेटिंग्ज येथे लिहा:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>सेटिंग्ज निर्यात करा</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>फिल्टर(_F):</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>स्तर(_V): {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} सेटिंग बदल म्हणून लोड केली. वापरण्यासाठी लागू करा किंवा जतन करा.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} सेटिंग्ज बदल म्हणून लोड केल्या. वापरण्यासाठी लागू करा किंवा जतन करा.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>लोड करण्यासाठी सेटिंग्ज फाइल:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>सेटिंग्ज लोड करा</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>लॉग</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{1} पैकी {0} नोंद · {2}   Enter: पूर्ण नोंद  Alt+F: फिल्टर</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{1} पैकी {0} नोंदी · {2}   Enter: पूर्ण नोंद  Alt+F: फिल्टर</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} ओळ]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} ओळी]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+नवीन मूल्य{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(सेट नाही)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>आता</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>जुना लॉग</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> यांपैकी एक: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+प्रकार: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> सध्या {0} ने सेट केलेले, जे सेटिंग्ज फाइलपेक्षा वरचढ आहे.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>रीसेट करा</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>जतन करा</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>जतन केले</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>{0} मध्ये जतन केले.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>हे मूल्य गोपनीय आहे. ते कमांड लाइनवर द्या, किंवा प्रोग्राम विचारेल तेव्हा प्रविष्ट करा.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>सत्रे</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>सेटिंग्ज</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>सेटिंग्ज फाइल: {0}    * संपादित  + लागू, जतन नाही  ↻ पुन्हा सुरू केल्यानंतर</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+हे पुन्हा सुरू केल्यानंतर लागू होतील:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>काही बदल सेटिंग्ज फाइलमध्ये जतन झालेले नाहीत. तरीही बंद करायचे?
+
+लागू केलेले बदल प्रोग्राम पुन्हा सुरू होईपर्यंत राहतात.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>जतन न केलेली सेटिंग्ज</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} लिहिले. गोपनीय मूल्ये समाविष्ट नाहीत.</value>
+  </data>
+</root>

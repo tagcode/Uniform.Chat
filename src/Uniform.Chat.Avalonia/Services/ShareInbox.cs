@@ -17,7 +17,7 @@ public sealed record SharedContent(string? Text, IReadOnlyList<SharedFile> Files
     {
         0 => Text is not null && Uri.TryCreate(Text.Trim(), UriKind.Absolute, out _) ? Strings.ShareALink : Strings.ShareAText,
         1 => Files[0].Name,
-        _ => Translations.Format(Strings.FileCount, Files.Count),
+        _ => Translations.Plural(nameof(Strings.FileCount_other), Files.Count, Files.Count),
     };
 }
 

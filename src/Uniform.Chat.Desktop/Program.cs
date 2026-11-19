@@ -4,6 +4,7 @@ using Uniform.Chat.Desktop.Cameras;
 using global::Avalonia;
 using Uniform.Chat.Desktop.Notifications;
 using Uniform.Chat.Avalonia;
+using Uniform.Chat.Avalonia.Localization;
 using Uniform.Matrix.Hosting;
 
 /// <summary>Desktop entry point of the Uniform Chat app, for Windows and Linux.</summary>
@@ -26,5 +27,5 @@ public static class Program
     }
 
     /// <summary>Configure Avalonia for the desktop; the XAML previewer of editors also calls this.</summary>
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace();
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().WithScriptFonts().LogToTrace();
 }

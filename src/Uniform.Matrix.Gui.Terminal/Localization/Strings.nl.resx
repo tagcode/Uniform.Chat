@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dutch texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Toegepast</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Toegepast. Deze werken pas na een herstart:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Toepassen</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Toepassen</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Annuleren</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Sl_uiten</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Klaar</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Bewerken</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_xporteren…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Laden…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nee</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Herstellen</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Opslaan</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ja</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Kan {0} niet lezen: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Huidig: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Standaard: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} bestaat niet.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Werkt na een herstart.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Werkt na toepassen.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (leeg voor niet ingesteld)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Huidige instellingen schrijven naar:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Instellingen exporteren</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filter:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Niveau: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} instelling als wijziging geladen. Pas deze toe of sla deze op om haar te gebruiken.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} instellingen als wijzigingen geladen. Pas ze toe of sla ze op om ze te gebruiken.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Te laden instellingenbestand:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Instellingen laden</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logboeken</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} van {1} item · {2}   Enter: volledig item  Alt+F: filter</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} van {1} items · {2}   Enter: volledig item  Alt+F: filter</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} regel]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} regels]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Nieuwe waarde{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(niet ingesteld)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>nu</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>ouder logboek</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Een van: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Type: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Nu ingesteld door {0}, die het instellingenbestand overschrijft.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Herstellen</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Opslaan</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Opgeslagen</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Opgeslagen in {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Deze waarde is geheim. Geef haar op de opdrachtregel op, of voer haar in wanneer het programma erom vraagt.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sessies</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Instellingenbestand: {0}    * bewerkt  + toegepast, niet opgeslagen  ↻ na herstart</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Deze werken pas na een herstart:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Sommige wijzigingen zijn niet opgeslagen in het instellingenbestand. Toch sluiten?
+
+Toegepaste wijzigingen gelden tot het programma opnieuw start.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Niet-opgeslagen instellingen</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} geschreven. Geheimen zijn niet opgenomen.</value>
+  </data>
+</root>

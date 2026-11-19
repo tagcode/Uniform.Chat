@@ -53,8 +53,8 @@ public sealed partial class MainWindow
             app.Invoke(() =>
             {
                 List<string> rows = [Strings.NewAccountRow, .. page.Users.Select(Describe)];
-                string more = page.NextToken is null ? "" : Texts.Format(Strings.FirstShown, page.Users.Count);
-                if (Dialogs.PickIndex(app, Strings.Accounts, Texts.Format(Strings.AccountsCount, page.Total, more), rows) is not int index) return;
+                string more = page.NextToken is null ? "" : Texts.Plural(nameof(Strings.FirstShown_other), page.Users.Count, page.Users.Count);
+                if (Dialogs.PickIndex(app, Strings.Accounts, Texts.Plural(nameof(Strings.AccountsCount_other), page.Total, page.Total, more), rows) is not int index) return;
                 if (index == 0) CreateAccount();
                 else ActOnAccount(page.Users[index - 1]);
             });
@@ -68,7 +68,7 @@ public sealed partial class MainWindow
         IEnumerable<string> flags = new[] { account.Admin ? Strings.FlagAdmin : null, account.Suspended ? Strings.FlagSuspended : null, account.Locked ? Strings.FlagLocked : null, account.Deactivated ? Strings.FlagDeactivated : null }.OfType<string>();
         string tags = string.Concat(flags.Select(f => $" [{f}]"));
         // Return line
-        return Texts.Format(Strings.AccountRow, account.Name, account.DisplayName, tags, account.Devices ?? 0, account.JoinedRooms ?? 0);
+        return Texts.Format(Strings.AccountRow, account.Name, account.DisplayName, tags, Texts.Plural(nameof(Strings.DeviceCount_other), account.Devices ?? 0, account.Devices ?? 0), Texts.Plural(nameof(Strings.RoomCount_other), account.JoinedRooms ?? 0, account.JoinedRooms ?? 0));
     }
 
     /// <summary>Ask what to do with <paramref name="account"/>, and do it.</summary>
@@ -251,7 +251,7 @@ public sealed partial class MainWindow
                     Dialogs.Info(app, Strings.Reports, Strings.NoReports);
                     return;
                 }
-                if (Dialogs.PickIndex(app, Strings.Reports, Texts.Format(Strings.ReportsCount, page.Total), [.. page.EventReports.Select(Describe)]) is not int index) return;
+                if (Dialogs.PickIndex(app, Strings.Reports, Texts.Plural(nameof(Strings.ReportsCount_other), page.Total, page.Total), [.. page.EventReports.Select(Describe)]) is not int index) return;
                 ActOnReport(page.EventReports[index]);
             });
         });
@@ -302,8 +302,8 @@ public sealed partial class MainWindow
             AdminRoomsResponse page = await client.GetAdminRoomsAsync(filter.Length > 0 ? filter : null, limit: 500);
             app.Invoke(() =>
             {
-                string more = page.NextBatch is null ? "" : Texts.Format(Strings.FirstShown, page.Rooms.Count);
-                if (Dialogs.PickIndex(app, Strings.Rooms, Texts.Format(Strings.RoomsCount, page.TotalRooms, more), [.. page.Rooms.Select(Describe)]) is not int index) return;
+                string more = page.NextBatch is null ? "" : Texts.Plural(nameof(Strings.FirstShown_other), page.Rooms.Count, page.Rooms.Count);
+                if (Dialogs.PickIndex(app, Strings.Rooms, Texts.Plural(nameof(Strings.RoomsCount_other), page.TotalRooms, page.TotalRooms, more), [.. page.Rooms.Select(Describe)]) is not int index) return;
                 ActOnServerRoom(page.Rooms[index]);
             });
         });
@@ -316,7 +316,7 @@ public sealed partial class MainWindow
         string title = room.Name ?? room.CanonicalAlias ?? room.RoomId;
         string id = title == room.RoomId ? "" : $"  {room.RoomId}";
         // Return line
-        return Texts.Format(Strings.RoomRow, title, id, room.JoinedMembers, (room.Public ? Strings.FlagPublic : ""), (room.Encryption is not null ? Strings.FlagEncrypted : ""));
+        return Texts.Format(Strings.RoomRow, title, id, Texts.Plural(nameof(Strings.MemberCount_other), room.JoinedMembers, room.JoinedMembers), (room.Public ? Strings.FlagPublic : ""), (room.Encryption is not null ? Strings.FlagEncrypted : ""));
     }
 
     /// <summary>Ask what to do with a room of the server: list its members or shut it down.</summary>
@@ -345,8 +345,8 @@ public sealed partial class MainWindow
         _ = RunSafelyAsync(Strings.ShuttingDown, async client =>
         {
             AdminRoomShutdown done = await client.ShutdownRoomAsync(roomId, block: choice == 2, reason.Length > 0 ? reason : null);
-            string failed = done.FailedToKickUsers.Count > 0 ? Texts.Format(Strings.CouldNotRemove, done.FailedToKickUsers.Count) : "";
-            app.Invoke(() => ShowStatus(Texts.Format(Strings.ShutDownDone, roomId, done.KickedUsers.Count, failed, (choice == 2 ? Strings.Blocked : ""))));
+            string failed = done.FailedToKickUsers.Count > 0 ? Texts.Plural(nameof(Strings.CouldNotRemove_other), done.FailedToKickUsers.Count, done.FailedToKickUsers.Count) : "";
+            app.Invoke(() => ShowStatus(Texts.Plural(nameof(Strings.ShutDownDone_other), done.KickedUsers.Count, roomId, done.KickedUsers.Count, failed, (choice == 2 ? Strings.Blocked : ""))));
         });
     }
 }

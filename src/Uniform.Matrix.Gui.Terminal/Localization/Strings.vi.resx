@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vietnamese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Đã áp dụng</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Đã áp dụng. Các mục này có hiệu lực sau khi khởi động lại:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Áp dụng</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>Á_p dụng</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Hủy</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Đón_g</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Xong</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Sửa</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>_Xuất…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Tải…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Không</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>Đặt lạ_i</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Lưu</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Có</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Không đọc được {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Hiện tại: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Mặc định: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} không tồn tại.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Có hiệu lực sau khi khởi động lại.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Có hiệu lực khi áp dụng.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (để trống = chưa đặt)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Ghi cài đặt hiện tại vào:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Xuất cài đặt</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Lọc:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Mức: {0}+</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Đã tải {0} cài đặt dưới dạng chỉnh sửa. Áp dụng hoặc lưu để dùng.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Tệp cài đặt cần tải:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Tải cài đặt</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Nhật ký</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} trên {1} mục · {2}   Enter: toàn bộ mục  Alt+L: lọc</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} dòng]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Giá trị mới{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(chưa đặt)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>bây giờ</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>nhật ký cũ</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Một trong: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Kiểu: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Hiện được đặt bởi {0}, ghi đè tệp cài đặt.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Đặt lại</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Lưu</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Đã lưu</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Đã lưu vào {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Giá trị này là bí mật. Hãy cung cấp trên dòng lệnh, hoặc nhập khi chương trình hỏi.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Phiên</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Cài đặt</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Tệp cài đặt: {0}    * đã sửa  + đã áp dụng, chưa lưu  ↻ sau khi khởi động lại</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Các mục này có hiệu lực sau khi khởi động lại:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Một số thay đổi chưa được lưu vào tệp cài đặt. Vẫn đóng?
+
+Các thay đổi đã áp dụng có hiệu lực đến khi chương trình khởi động lại.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Cài đặt chưa lưu</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Đã ghi {0}. Không bao gồm các bí mật.</value>
+  </data>
+</root>

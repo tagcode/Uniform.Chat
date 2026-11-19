@@ -106,7 +106,7 @@ public sealed class Room
             if (total <= 1) return Texts.Format(Strings.EmptyRoomWas, JoinNames(names));
             int others = total - 1 - names.Count;
             // Return names
-            return others > 0 ? Texts.Format(Strings.NamesAndOthers, string.Join(", ", names), others) : JoinNames(names);
+            return others > 0 ? Texts.Plural(nameof(Strings.NamesAndOthers_other), others, string.Join(", ", names), others) : JoinNames(names);
         }
     }
 

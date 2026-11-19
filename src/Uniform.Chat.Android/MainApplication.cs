@@ -4,6 +4,7 @@ using global::Avalonia;
 using global::Avalonia.Android;
 using Uniform.Chat.Android.Audio;
 using Uniform.Chat.Avalonia;
+using Uniform.Chat.Avalonia.Localization;
 using global::Android.App;
 using global::Android.Runtime;
 
@@ -51,5 +52,5 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
     }
 
     /// <summary>Add the Inter font, as on desktops.</summary>
-    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder) => base.CustomizeAppBuilder(builder).WithInterFont();
+    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder) => base.CustomizeAppBuilder(builder).WithInterFont().WithScriptFonts();
 }

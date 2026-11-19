@@ -1,0 +1,1805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Danish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Om</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+En Matrix-chatklient til terminalen.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Ved at fortsætte accepterer du brugervilkårene: intet ulovligt, krænkende eller skadeligt indhold.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Din konto er slettet.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Del af et bruger-id eller navn; tom for alle:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Konti</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} konto{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} konti{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} mislykkedes: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Tilføj adresse</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Tilføjede {0}</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Tilføjer {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Adresse, f.eks. #rum eller #rum:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Adresse, der skal fjernes, f.eks. #rum:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Dette rum er allerede krypteret.</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> og {0} mere</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> og {0} mere</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Besvarer</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>En adgangskode til {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Spørger {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Lydtest</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Mikrofon: {0}. Højttaler: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Lydtest: intet blev optaget</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Lydtest: {0:F0} s med {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Stilhed betyder, at indgangen ikke er en mikrofon: vælg en i systemets lydindstillinger, eller angiv Audio:Microphone i Indstillinger.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Tal: du hører dig selv et sekund senere, gennem Opus som i et opkald.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Lyd understøttes ikke på denne platform.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>version {0}, kræver gendannelsesnøglen</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>til (version {0})</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Nøglesikkerhedskopien blev gendannet: {0} rumnøgle importeret.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Nøglesikkerhedskopien blev gendannet: {0} rumnøgler importeret.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Udeluk</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Udelukker</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, blokeret</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Blokeret: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>Blokerede {0}: personens beskeder og invitationer vises ikke længere. /unignore {1} ophæver det.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Blokerer</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>Jeg _accepterer dem</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>Bl_oker afsender</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Annuller</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Luk</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Opret konto</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>Sle_t</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>R_ediger</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>_Deltag</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Senere</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Vis</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>Log _ud enheden</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Log ud _alle andre</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Åbn li_nk</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Andet…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>_Afslut</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Reagér</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Gendan</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Afvis</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Omdøb</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Svar</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>Ra_pportér</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>Gem _fil</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Opsæt gendannelse</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Luk ned</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Luk ned og _bloker</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Log ind</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>De stemmer _ikke</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>De _stemmer</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Skjul</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Verificér denne enhed</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>_Verificér valgte</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>Vis _billede</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Opkald</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Opkald: I opkald med {0}{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Opkald: Forbinder til {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Opkald: Opkaldet med {0} sluttede: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Ringer op</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Opkald: Ringer til {0}…  /hangup annullerer</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Opkald: Genopretter forbindelsen til {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Opkald: {0} ringer: /answer eller /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Kan ikke forbinde</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Kan ikke åbne mikrofonen eller højttaleren: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Ændrer visningsnavn</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Kontrollerer kryptering…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Vælg en reaktion:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Kommandoer og taster</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Sammenlign emoji</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Sammenlign med {0}:
+
+{1}
+
+eller tallene {2}
+
+Viser de det samme, i samme rækkefølge?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bekræft</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Forbundet som {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Forbinder…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Forbindelsesproblem: {0}</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0} kunne ikke fjernes</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0} kunne ikke fjernes</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Opret konto</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>Oprettede #{0}:{1}</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>Oprettede {0}.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Opretter kontoen</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Opretter #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Opretter rum</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Opretter koden</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} oprettede dette rum og har ubegrænsede rettigheder, som ikke kan ændres.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Krydssigneringsnøglerne var ikke i det hemmelige lager.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Krydssigneringen blev gendannet; denne enhed er nu verificeret.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Ny dag {0:ddd d. MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deaktiver</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Deaktiver permanent…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>Deaktiverede {0}.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Deaktiver {0} permanent? Personen forlader alle rum og kan ikke logge ind igen; bruger-id'et gives ikke ud igen.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Deaktiverer</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Slet konto</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Slet din konto permanent? Du forlader alle rum, dit navn og billede fjernes, og alle enheder logges ud. Bruger-id'et kan ikke bruges igen.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Slettede rapport {0}.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Slettede koden {0}.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Slet besked</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Slet "{0}" for alle?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Slet rapporten</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Slet kode</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Slet koden {0}? Konti oprettet med den bevares.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Sletter kontoen</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Sletter beskeden</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Sletter rapporten</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Sletter koden</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} enhed</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} enheder</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    sidst set {2} fra {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Denne enhed er ikke verificeret endnu. Verificér den med en anden af dine enheder, eller med din gendannelsesnøgle, så andre ser den som verificeret, og den kan læse dine ældre beskeder.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Enheder</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Enheder ({0}, * = denne enhed)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Direkte besked</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Lad serveren være tom for din egen; Enter i et af felterne søger.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Synlighed i kataloget</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloader {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>End-to-end-kryptering er ikke tilgængelig.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (redigeret)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[redigering] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Slå kryptering til</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Kryptér alle nye beskeder i dette rum? Det kan ikke slås fra senere.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Slår kryptering til</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [krypteret]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [krypteret besked; nøglen er ikke kommet]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Kryptering</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Kryptering er ikke tilgængelig på denne enhed.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>besvaret på en anden enhed</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>de ringede igen</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>afvist</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>afvist på en anden enhed</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Suspenderingen af {0} blev ophævet.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>sluttet</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Ophæver suspenderingen</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>ubesvaret</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>intet svar</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>ingen forbindelse</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Ophæv suspendering</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>de lagde på</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>du afviste</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>du lagde på</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Mislykkedes: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Filen blev gemt</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, den første {0} vises</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, de første {0} vises</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>administrator</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>deaktiveret</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [krypteret]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>låst</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [offentligt]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [behandlet]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>suspenderet</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Angiv et bruger-id som @navn:server.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Angiv dit Matrix-bruger-id for at starte.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Angiv dit bruger-id.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Lægger på</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Hjælp</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**fed** _kursiv_ `kode` ~~gennemstreget~~ [tekst](url)   Markdown sendes formateret
+/plain text     send uden Markdown
+/me text        handling, som * du vinker
+/join #room     deltag i et rum; også !id eller et link, derefter servere at deltage via
+/leave          forlad dette rum
+/topic text     angiv emnet
+/name text      angiv rummets navn
+/avatar [file]  angiv rummets billede; /avatar none fjerner det
+/kick @user [reason]   fjern et medlem
+/ban @user [reason]    fjern et medlem permanent
+/unban @user    lad en udelukket bruger komme tilbage
+/power @user level     angiv et rettighedsniveau: tal, admin, moderator eller member
+/op @user, /deop @user  gør til administrator, eller almindeligt medlem
+/invite @user   invitér en bruger
+/msg @user      start en direkte chat
+/nick name      angiv dit visningsnavn
+/list [server]  gennemse offentlige rum, her eller på en anden server
+/create name    opret et privat rum
+/create #room [name]   opret et offentligt rum med den adresse
+/alias #room, /unalias #room   tilføj eller fjern en adresse til dette rum
+/publish, /unpublish   vis dette rum i det offentlige rumkatalog, eller ej
+/upload         send en fil
+/devices        administrer dine sessioner
+/settings       se og ændr indstillinger
+/logs           læs logfiler for denne og tidligere sessioner
+/audiotest      hør dig selv gennem Opus, for at teste mikrofon og højttaler
+/call           ring til det andet medlem af denne direkte chat
+/answer /reject besvar eller afvis et indgående opkald
+/hangup /mute   afslut opkaldet, eller slå mikrofonen fra og til
+/encryption     nøgler, gendannelse og sikkerhedskopi
+/recover        lås gamle beskeder op med gendannelsesnøglen
+/verify [@user] verificér din anden enhed, eller en bruger, med emoji
+/ignore @user   bloker en bruger: deres beskeder og invitationer vises ikke længere; /ignore alene viser dem
+/unignore @user ophæv blokeringen af en bruger
+/report [@user] rapportér dette rum, eller en bruger, til din servers administratorer; beskeder fra deres handlinger (Enter)
+/quit           afslut
+
+Serveradministratorer, også i menuen Server:
+/whois @user    en brugers enheder og adresser; alle må slå sig selv op
+/accounts [text], /rooms [text]   vis og administrer serverens konti eller rum
+/suspend @user, /unsuspend @user  må læse, men ikke sende, deltage eller invitere
+/lock @user, /unlock @user        serveren afviser deres sessioner
+/notice @user text   send en servermeddelelse
+/tokens, /reports    registreringskoder, brugernes rapporter
+
+Alt+1…9         gå til rum 1…9
+Ctrl+N, Ctrl+P  næste, forrige rum
+Ctrl+O          deltag i et rum
+Ctrl+R          rumkatalog
+PageUp/Down     rul i beskeder
+Ctrl+PageUp     indlæs ældre beskeder
+F2              vis eller skjul medlemmer
+Ctrl+Up, Enter  vælg en besked og gør noget med den
+Tab             fuldfør et kaldenavn
+Esc             annuller svar eller redigering
+F10             åbn menuen</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Billede</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Dette billedformat kan ikke vises. Brug Gem fil for at åbne det i et andet program.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Ugyldig adresse</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Ugyldigt rum</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Ugyldig bruger</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Invitér</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Inviteret til {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Du er inviteret til dette rum. Tryk Enter for at deltage eller afvise.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} inviterede dig til {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Inviterer {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} er serveradministrator.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} er verificeret.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Deltag</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Deltog i {0}</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Deltager i {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Deltag i {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Deltag i rum</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Rummets adresse, id eller link, f.eks. #matrix:matrix.org; servere at deltage via kan følge efter:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> via {0}</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Smid ud</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Smider ud</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Forlad {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Forlad rummet</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Forlader {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Administrator ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Niveau for {0}, 0 til 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Medlem (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Moderator ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Andet…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Henter konti</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Henter medlemmer</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Henter rapporter</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Viser {0} i kataloget</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Henter rum</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Henter registreringskoder</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Vis {0} i det offentlige rumkatalog på {1}? Det ændrer ikke, hvem der må deltage.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Indlæser medlemmer</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Indlæser {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[indlæser forhåndsvisning…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Lås</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Lås: afvis alle sessioner</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Låste {0}: serveren afviser personens sessioner indtil /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Låser</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Logger ud</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Logger enheder ud</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Log ind</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log ud</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Log enheder ud</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>Log {0} enhed ud: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Log {0} enheder ud: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Afslut denne session på serveren? Beskederne bliver i den lokale database.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Slår brugeren op</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Sænk dit eget niveau fra {0} til {1}? Du kan ikke selv hæve det igen.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Gør til serveradministrator</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Lad {0} administrere alle konti og rum på serveren?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Gør til administrator</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} medlem</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} medlemmer</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>Bruger-id eller navn i dette rum:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Medlemmer</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Medlemmer ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Medlemmer af {0}</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Om</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Konti…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Serveradministratorer: vis og administrer konti</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Tilføj _adresse…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>En adresse som #rum:server</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>Lyd_test…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Hør dig selv, for at teste mikrofon og højttaler</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>_Spær…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Fjern et medlem permanent</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>_Ring op</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Taleopkald i denne direkte chat</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Kommandoer og taster</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>_Slet konto…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Deaktiver kontoen permanent</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Enheder…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Se og log sessioner ud</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>Direkte _besked…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Start en chat med en bruger</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>Rum_katalog…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Søg efter offentlige rum</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>S_ynlighed i kataloget…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Vis i det offentlige rumkatalog</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Slå krypterin_g til…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Kryptér dette rum; kan ikke fortrydes</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Kryptering…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Nøgler, gendannelse og sikkerhedskopi</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Filer</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>_Læg på</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Afslut opkaldet</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Hjælp</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>Invi_tér…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Invitér en bruger hertil</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Deltag…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Deltag via adresse eller id</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>S_mid ud…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Fjern et medlem</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>_Forlad</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Forlad dette rum</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>_Log ud…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Afslut sessionen på serveren</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>_Logfiler…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Denne og tidligere sessioner</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Medlemmer</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Vis eller skjul</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Nyt _offentligt rum…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Opret et rum, som alle kan deltage i</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Nyt rum…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Opret et privat rum</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>_Næste rum</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>_Ældre beskeder</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Indlæs historik</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Rettig_hedsniveau…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Gør et medlem til administrator eller moderator</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>_Forrige rum</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>_Afslut</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Afslut, sessionen bevares</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Registreringskoder…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Koder, som nye konti registrerer sig med</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>Ra_pporter…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Hvad brugere har rapporteret</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Rum</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>_Vælg besked</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Svar, reagér, rediger…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Send f_il…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Upload en fil hertil</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Server</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>Server_meddelelse…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Send en besked til en bruger fra serveren</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>R_um…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Alle serverens rum</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Angiv r_umbillede…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Rummets billede</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Angiv na_vn…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Ændr rummets navn</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Indstillinger…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Se og ændr indstillinger</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Angiv _emne…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Ændr emnet</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>O_phæv spærring…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Lad en udelukket bruger komme tilbage</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Verificér denne enhed…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Sammenligning af emoji</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Vis</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>_Hvem er…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>En brugers enheder og adresser</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Besked</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [beskeden blev slettet]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>besked i {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Mikrofoner: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, lyd fra</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Navn til {0}:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Hverken denne enhed eller {0} er betroet under din nuværende identitet, så ingen af dem kan gå i god for den anden.
+
+Verificér denne enhed med en betroet enhed{1}, eller brug din gendannelsesnøgle.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>aldrig</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Ny konto</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Ny konto…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Ny adgangskode til {0}; personens enheder logges ud:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Nyt offentligt rum</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Nyt rum</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Ny kode</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Ny kode…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Denne server lader ikke apps oprette konti.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Intet opkald ringer.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Intet opkald at lægge på.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Intet opkald at slå lyden fra i.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Ingen enheder er logget ind.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>intet udløb</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} er ikke længere serveradministrator.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Intet medlem "{0}" her. Angiv et bruger-id som @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Ingen medlemmer.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>ingen</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>ingen fundet</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Ingen af dine enheder er betroet under din nuværende identitet, så ingen kan gå i god for denne.
+
+Brug din gendannelsesnøgle, eller nulstil din identitet på en enhed, du beholder.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Ingen er blokeret.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[ingen forhåndsvisning]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Denne konto har endnu ingen gendannelse opsat. Opsætter du den, ser andre denne enhed som verificeret, og du får en gendannelsesnøgle, der låser dine beskeder op på nye enheder.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Ingen rapporter.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Intet rum</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Ingen rum fundet</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} er ikke en kommando. Se Hjælp → Kommandoer og taster.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" er ikke et niveau; angiv et tal, eller admin, moderator eller member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" er ikke et Matrix-bruger-id; det ser ud som @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} er ikke en billedfil.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" er ikke en anden brugers id; det ser ud som @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} er ikke en rumadresse, et id eller et link som #matrix:matrix.org. Brug /msg for at chatte med en bruger.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} er ikke en rumadresse som #rum eller #rum:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" er ikke en serveradresse; den ser ud som https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} er ikke et bruger-id som @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" er ikke et bruger-id; det ser ud som @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" er ikke et bruger-id; det ser ud som @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Ikke forbundet</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Intet at logge ud. Brug Filer → Log ud for at afslutte denne session.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Meddelelse til {0}; den kommer i personens rum for servermeddelelser:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [ikke sendt: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>ikke opsat</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Ikke betroet</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>ikke verificeret</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Ingen brugbar nøglesikkerhedskopi blev fundet.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>en af dine betroede enheder</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Åbn en direkte chat først.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Åbn krypteringsvinduet nu? Det findes også under Filer → Kryptering og /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Åbner {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Åbn først et rum, du deltager i.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Åbn link</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Anden server</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Adresser kan kun oprettes på din egen server, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Adgangskode til {0}:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Adgangskoden blev ikke accepteret.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Satte en ny adgangskode for {0} og loggede personens enheder ud.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Adgangskoderne er forskellige.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Rettighedsniveau</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Rettighedsniveau for {0} (nu {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Tryk Enter for at lukke.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Afslut</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reagér</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Reaktionstekst eller emoji:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Grund til {0} (valgfrit):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Chikane eller had</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>_Ulovligt indhold</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>An_det</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>Se_ksuelt eller voldeligt indhold</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Spam</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Gendan</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Gendannet</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Gendanner</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Gendanner nøgler…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Gendannelsesnøgle</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Gendannelsesnøgle (eller adgangssætning):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Denne server kræver et trin, appen ikke kan udføre, f.eks. en captcha eller en e-mail. Opret kontoen på serverens websted, og log derefter ind her.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Registreringskode fra serverens administrator:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Registreringskoder</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Afviser {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Afviser</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, videresendt</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Fjern adresse</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Fjernede {0}</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Fjerner {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Fjerner billedet</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Omdøb enhed</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Omdøber enheden</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} findes. Erstat den?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[sv. {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[sv.] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[sv. {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Rapportér</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>Rapporterede {0} til administratorerne på din server.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Rapporterede beskeden til administratorerne på din server. /ignore blokerer afsenderen.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Rapporterer</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Rapporterer beskeden</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" er ikke et bruger-id; /report @user:server, eller blot /report for dette rum.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Rapporter</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} rapport, nyeste først:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} rapporter, nyeste først:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Rapport {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Rapport til administratorerne på din server: {0}. Hvorfor?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Nulstil adgangskode</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Nulstil adgangskode…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Nulstiller adgangskoden</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Rummets billede</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Rummets billede blev angivet</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} rum</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} rum</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Rumkatalog</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Dette rum er krypteret, men kryptering er ikke tilgængelig på denne enhed.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Del af et rumnavn, en adresse eller et id; tom for alle:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} vises i rumkataloget</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Rummets navn:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} angiver ingen server. Angiv servere i rummet at deltage via, f.eks. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Rum</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} rum, flest medlemmer først{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} rum, flest medlemmer først{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} vises ikke længere i rumkataloget</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Samme adgangskode igen:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Gem som (en fil, eller en mappe at gemme i):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Gemte {0}</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Gem fil</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Gemmer filen</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Søgningen mislykkedes: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Søger…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Søg:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Se logfilen for detaljer.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Send fil</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Send {0} til dette rum?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Send filer</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>Send {0} fil til dette rum?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Send disse {0} filer til dette rum?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Sender {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Sender meddelelsen</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [sender…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Sender verificeringsanmodning…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Send en servermeddelelse…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>Sendte {0}</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Sendte en servermeddelelse til {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>For eksempel http://localhost:8008 for en server på denne computer.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Serveradresse, kun når den ikke kan findes ud fra bruger-id'et:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Server:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Server påkrævet</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Servermeddelelse</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Serverens vilkår:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Angiv navn</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Angiver billede</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Angiver navn</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Angiver rettighedsniveauet for {0}</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Angiver emne</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Opsætter gendannelse…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Angiv emne</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>opsat</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>opsat og betroet her</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>opsat, endnu ikke betroet her</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Opsæt gendannelse</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Opret krydssigneringsnøgler, en nøglesikkerhedskopi og en gendannelsesnøgle?
+
+Med gendannelsesnøglen kan et nyt login verificere sig selv og læse gamle beskeder. Opbevar den sikkert, som en adgangskode.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Luk ned</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Luk ned…</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Lukkede {0}: {1} medlem fjernet{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>Lukkede {0}: {1} medlemmer fjernet{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Lad alle medlemmer fra denne server forlade {0}, og slet dets adresser her? Blokering forhindrer dem også i at deltage igen.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Grund, der vises for medlemmerne; tom for ingen:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Luk rummet ned…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Lukker rummet</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Angiv dit fulde Matrix-bruger-id for at starte; det huskes efter et vellykket login.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Log ind på Matrix</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Nogen</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Højttalere: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Start en direkte chat med {0}?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Starter chat med {0}</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat er en terminalapp: start den i en terminal.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Krydssignering:       {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Enhed:                 {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Fingeraftryk:          {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Nøglesikkerhedskopi:   {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Gendannelsesnøgle:     {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Denne enhed:           {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Suspendér</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Suspendér: må læse, ikke sende</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>Suspenderede {0}: personen kan læse og forlade rum, men ikke sende, deltage eller invitere. /unsuspend {1} ophæver det.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Suspenderer</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Suspendér {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>systemets standard</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Fjern serveradministratorrettigheder</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Fjerner administratorrettigheder</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Verificeringen blev annulleret.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Det er den enhed, du bruger. Vælg en anden af dine enheder.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>denne besked</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>dette rum</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Antal dage den gælder; tom for intet udløb:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Serveren accepterede ikke registreringskoden.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Kode; tom for en tilfældig:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Nye konti skal bruge en af disse, når registreringen beder om en kode:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>indtil {0:yyyy-MM-dd HH:mm}</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>brugt {0}, ingen grænse</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>brugt {0} af {1}</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Hvor mange konti der må bruge den; tom for ubegrænset:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Emne:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>krydssigneret</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>ingen nøgler</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>denne enhed</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>ikke verificeret</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>verificeret</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} skriver…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Ophæv udelukkelse</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Ophæver udelukkelse</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Ophævede blokeringen af {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Ophæver blokering</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>ukendt</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Ukendt kommando</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Skjuler {0} i kataloget</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Lås op</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Låste {0} op.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Låser op</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Uploader {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>Bruger-id, f.eks. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} er optaget; vælg et andet.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Bruger, f.eks. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Verificering</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Verificeringen blev annulleret</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Verificeringen med {0} blev annulleret: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Verificeringsanmodning fra {0} {1} blev ignoreret: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Verificeringsanmodning</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Verificering anmodet; acceptér den på {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>verificeret (krydssigneret)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>Verificerede {0}</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Verificér</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Venter på, at {0} bekræfter…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Vent, til klienten er forbundet.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} vil verificere denne enhed ved at sammenligne emoji.
+
+Acceptér?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Hvilket rum eller hvilken bruger?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Hvem er</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Hvem er: enheder og adresser</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Hvem er {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Skriv denne gendannelsesnøgle ned, eller kopiér den nu, og opbevar den sikkert. Den vises ikke igen.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>din enhed {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>din anden enhed</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Din adgangskode, for at bekræfte:</value>
+  </data>
+</root>

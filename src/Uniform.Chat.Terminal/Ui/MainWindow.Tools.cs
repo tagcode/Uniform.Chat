@@ -79,6 +79,6 @@ public sealed partial class MainWindow
 
     /// <summary>Return device names for a dialog, the first few of a long list.</summary>
     private static string DeviceNames(IReadOnlyList<AudioDevice> devices) =>
-        devices.Count == 0 ? Strings.NoneFound : string.Join(", ", devices.Take(8).Select(d => d.Name)) + (devices.Count > 8 ? Texts.Format(Strings.AndMore, devices.Count - 8) : "");
+        devices.Count == 0 ? Strings.NoneFound : string.Join(", ", devices.Take(8).Select(d => d.Name)) + (devices.Count > 8 ? Texts.Plural(nameof(Strings.AndMore_other), devices.Count - 8, devices.Count - 8) : "");
 }
 

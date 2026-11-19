@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Telugu texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>వర్తింపజేయబడింది</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>వర్తింపజేయబడింది. ఇవి పునఃప్రారంభం తర్వాత అమలవుతాయి:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>వర్తింపజేయి</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>వర్తింపజేయి(_A)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>రద్దు చేయి(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>మూసివేయి(_C)</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>పూర్తయింది(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>సవరించు(_E)</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>ఎగుమతి చేయి(_X)…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>లోడ్ చేయి(_L)…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>కాదు(_N)</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>సరే(_O)</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>రీసెట్ చేయి(_R)</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>సేవ్ చేయి(_S)</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>అవును(_Y)</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0}ని చదవలేము: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>ప్రస్తుతం: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> డిఫాల్ట్: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} లేదు.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> పునఃప్రారంభం తర్వాత అమలవుతుంది.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> వర్తింపజేసినప్పుడు అమలవుతుంది.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (ఖాళీ = సెట్ చేయలేదు)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>ప్రస్తుత సెట్టింగ్‌లను ఇక్కడ రాయి:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>సెట్టింగ్‌లను ఎగుమతి చేయి</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>ఫిల్టర్(_F):</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>స్థాయి(_V): {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} సెట్టింగ్ మార్పుగా లోడ్ అయింది. ఉపయోగించడానికి వర్తింపజేయండి లేదా సేవ్ చేయండి.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} సెట్టింగ్‌లు మార్పులుగా లోడ్ అయ్యాయి. ఉపయోగించడానికి వర్తింపజేయండి లేదా సేవ్ చేయండి.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>లోడ్ చేయాల్సిన సెట్టింగ్‌ల ఫైల్:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>సెట్టింగ్‌లను లోడ్ చేయి</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>లాగ్‌లు</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{1}లో {0} నమోదు · {2}   Enter: పూర్తి నమోదు  Alt+F: ఫిల్టర్</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{1}లో {0} నమోదులు · {2}   Enter: పూర్తి నమోదు  Alt+F: ఫిల్టర్</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} పంక్తి]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} పంక్తులు]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+కొత్త విలువ{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(సెట్ చేయలేదు)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>ఇప్పుడు</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>పాత లాగ్</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> వీటిలో ఒకటి: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+రకం: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> ప్రస్తుతం {0} ద్వారా సెట్ చేయబడింది, ఇది సెట్టింగ్‌ల ఫైల్ కంటే ప్రాధాన్యం పొందుతుంది.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>రీసెట్ చేయి</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>సేవ్ చేయి</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>సేవ్ అయింది</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>{0}లో సేవ్ అయింది.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>ఈ విలువ రహస్యం. దీన్ని కమాండ్ లైన్‌లో ఇవ్వండి, లేదా ప్రోగ్రామ్ అడిగినప్పుడు నమోదు చేయండి.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>సెషన్‌లు</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>సెట్టింగ్‌లు</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>సెట్టింగ్‌ల ఫైల్: {0}    * సవరించబడింది  + వర్తింపజేయబడింది, సేవ్ కాలేదు  ↻ పునఃప్రారంభం తర్వాత</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+ఇవి పునఃప్రారంభం తర్వాత అమలవుతాయి:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>కొన్ని మార్పులు సెట్టింగ్‌ల ఫైల్‌లో సేవ్ కాలేదు. అయినా మూసివేయాలా?
+
+వర్తింపజేసిన మార్పులు ప్రోగ్రామ్ పునఃప్రారంభమయ్యే వరకు ఉంటాయి.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>సేవ్ చేయని సెట్టింగ్‌లు</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} రాయబడింది. రహస్య విలువలు చేర్చబడలేదు.</value>
+  </data>
+</root>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Arabic texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>طلب {0} الانضمام</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>طلب التحقق بمطابقة الرموز التعبيرية</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>طلب من {0} التحقق بمطابقة الرموز التعبيرية</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>حظر {0} المستخدم {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>غيّر {0} صورة الغرفة</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>غيّر {0} الموضوع إلى: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>أنشأ {0} الغرفة</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>لم يبدأ.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>تتعذّر قراءة حالة التشفير المحفوظة ({0}). هل تغيّر {1}؟</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>رفض {0} الدعوة</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>غرفة فارغة</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>غرفة فارغة (كانت {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>رسالة مشفّرة؛ لم يصل المفتاح بعد</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>التشفير غير متاح: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>لم يعد الملف موجودًا</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>صورة: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>دعا {0} المستخدم {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>انضم {0}</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>أزال {0} المستخدم {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>غادر {0}</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>جارٍ تسجيل الدخول</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} و{1}</value>
+  </data>
+  <data name="NamesAndOthers_few" xml:space="preserve">
+    <value>{0} و{1} آخرين</value>
+  </data>
+  <data name="NamesAndOthers_many" xml:space="preserve">
+    <value>{0} و{1} آخرين</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} و{1} آخر</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} و{1} آخرين</value>
+  </data>
+  <data name="NamesAndOthers_two" xml:space="preserve">
+    <value>{0} و{1} آخران</value>
+  </data>
+  <data name="NamesAndOthers_zero" xml:space="preserve">
+    <value>{0} و{1} آخرين</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>أصبح {0} معروفًا باسم {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>جارٍ فتح التخزين المحلي</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>جارٍ تجهيز التشفير</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>تفاعل {0} بـ {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>أزال {0} صورة الغرفة</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>غيّر {0} اسم الغرفة إلى {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}؛ إعادة المحاولة خلال {1:F0} ثانية</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>محتوى مخفي</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>محتوى مخفي: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>رفع {0} الحظر عن {1}</value>
+  </data>
+</root>

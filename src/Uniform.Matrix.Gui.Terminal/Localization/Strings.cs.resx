@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Czech texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Použito</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Použito. Tato nastavení platí po restartu:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Použít</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Použít</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Zrušit</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Zavřít</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Hotovo</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Upravit</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_xportovat…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Načíst…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Ne</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Resetovat</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>Ul_ožit</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ano</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Nelze přečíst {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Aktuální: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Výchozí: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} neexistuje.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Platí po restartu.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Platí po použití.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (prázdné = nenastaveno)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Zapsat aktuální nastavení do:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Exportovat nastavení</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filtr:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>Ú_roveň: {0}+</value>
+  </data>
+  <data name="LoadedSettings_few" xml:space="preserve">
+    <value>Načtena {0} nastavení jako úpravy. Použijte nebo uložte je, abyste je využili.</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Načteno {0} nastavení jako úprava. Použijte nebo uložte ho, abyste ho využili.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Načteno {0} nastavení jako úpravy. Použijte nebo uložte je, abyste je využili.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Soubor nastavení k načtení:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Načíst nastavení</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Protokoly</value>
+  </data>
+  <data name="LogStatus_few" xml:space="preserve">
+    <value>{0} z {1} záznamů · {2}   Enter: celý záznam  Alt+F: filtr</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} z {1} záznamu · {2}   Enter: celý záznam  Alt+F: filtr</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} z {1} záznamů · {2}   Enter: celý záznam  Alt+F: filtr</value>
+  </data>
+  <data name="MoreLines_few" xml:space="preserve">
+    <value>  [+{0} řádky]</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} řádek]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} řádků]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Nová hodnota{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(nenastaveno)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>nyní</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>starší protokol</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Jedna z: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Typ: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Nyní nastaveno přes {0}, což má přednost před souborem nastavení.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Resetovat</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Uložit</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Uloženo</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Uloženo do {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Tato hodnota je tajná. Zadejte ji na příkazové řádce nebo ji zadejte, až se program zeptá.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Relace</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Soubor nastavení: {0}    * upraveno  + použito, neuloženo  ↻ po restartu</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Tato nastavení platí po restartu:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Některé změny nejsou uloženy v souboru nastavení. Přesto zavřít?
+
+Použité změny platí do restartu programu.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Neuložená nastavení</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Zapsáno {0}. Tajné hodnoty nejsou zahrnuty.</value>
+  </data>
+</root>

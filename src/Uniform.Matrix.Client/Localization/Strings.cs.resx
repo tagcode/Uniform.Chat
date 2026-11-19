@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Czech texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} žádá o připojení</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Požádáno o ověření porovnáním emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Požádáno {0} o ověření porovnáním emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} zakázal(a) přístup {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} změnil(a) obrázek místnosti</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} změnil(a) téma na: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} vytvořil(a) místnost</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Nespuštěno.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Uložený stav šifrování nelze přečíst ({0}). Byl {1} nahrazen?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} odmítl(a) pozvánku</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Prázdná místnost</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Prázdná místnost (dříve {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Šifrovaná zpráva; klíč zatím nedorazil</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>šifrování nedostupné: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>soubor už neexistuje</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>obrázek</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>obrázek: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} pozval(a) {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} se připojil(a)</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} vyhodil(a) {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} odešel(a)</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Přihlašování</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} a {1}</value>
+  </data>
+  <data name="NamesAndOthers_few" xml:space="preserve">
+    <value>{0} a {1} další</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} a {1} další</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} a {1} dalších</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} se nyní jmenuje {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Otevírání místního úložiště</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Příprava šifrování</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} reagoval(a): {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} odstranil(a) obrázek místnosti</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} přejmenoval(a) místnost na {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; nový pokus za {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} zrušil(a) zákaz přístupu {1}</value>
+  </data>
+</root>

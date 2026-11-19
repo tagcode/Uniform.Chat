@@ -1,0 +1,1887 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Russian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+Клиент чата Matrix для терминала.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Продолжая, вы принимаете правила использования: никакого незаконного, оскорбительного или вредного контента.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Ваш аккаунт удалён.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Часть ID пользователя или имени; пусто — все:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Аккаунты</value>
+  </data>
+  <data name="AccountsCount_few" xml:space="preserve">
+    <value>{0} аккаунта{1}:</value>
+  </data>
+  <data name="AccountsCount_many" xml:space="preserve">
+    <value>{0} аккаунтов{1}:</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} аккаунт{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} аккаунта{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0}: ошибка: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Добавить адрес</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Добавлен {0}</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Добавление {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Адрес, например #комната или #комната:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Адрес для удаления, например #комната:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Эта комната уже зашифрована.</value>
+  </data>
+  <data name="AndMore_few" xml:space="preserve">
+    <value> и ещё {0}</value>
+  </data>
+  <data name="AndMore_many" xml:space="preserve">
+    <value> и ещё {0}</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> и ещё {0}</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> и ещё {0}</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Ответ на звонок</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>Пароль для {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Запрос к {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Проверка звука</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Микрофон: {0}. Динамик: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Проверка звука: ничего не записано</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Проверка звука: {0:F0} с при {1:F0} кбит/с</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Тишина означает, что вход — не микрофон: выберите микрофон в настройках звука системы или задайте Audio:Microphone в настройках.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Говорите: вы услышите себя через секунду, через Opus, как в звонке.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Звук не поддерживается на этой платформе.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>версия {0}, нужен ключ восстановления</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>включено (версия {0})</value>
+  </data>
+  <data name="BackupRestored_few" xml:space="preserve">
+    <value>Резервная копия ключей восстановлена: импортировано {0} ключа комнат.</value>
+  </data>
+  <data name="BackupRestored_many" xml:space="preserve">
+    <value>Резервная копия ключей восстановлена: импортировано {0} ключей комнат.</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Резервная копия ключей восстановлена: импортирован {0} ключ комнат.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Резервная копия ключей восстановлена: импортировано {0} ключа комнат.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Запретить вход</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Запрет входа:</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, заблокирован</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Заблокированы: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} заблокирован(а): сообщения и приглашения этого человека больше не показываются. /unignore {1} отменяет это.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Блокировка</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>_Принимаю</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>_Заблокировать отправителя</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Отмена</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>За_крыть</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Создать аккаунт</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>_Удалить</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Изменить</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>Присо_единиться</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Позже</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Показать</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>_Выйти на устройстве</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Выйти на всех _остальных</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Открыть _ссылку</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Другое…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>_Закрыть</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Реакция</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Восстановить</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Отклонить</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Переименовать</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Ответить</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>По_жаловаться</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>Со_хранить файл</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Настроить восстановление</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Закрыть</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Закрыть и заблокирова_ть</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Войти</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>_Не совпадают</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>_Совпадают</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Скрыть</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Подтвердить это устройство</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>Подтвердить в_ыбранное</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>_Показать изображение</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Звонок</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Звонок: Разговор с {0}{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Звонок: Подключение к {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Звонок: Звонок с {0} завершён: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Вызов</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Звонок: Вызов {0}…  /hangup — отменить</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Звонок: Переподключение к {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Звонок: {0} звонит: /answer или /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Не удаётся подключиться</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Не удаётся открыть микрофон или динамик: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Смена отображаемого имени</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Проверка шифрования…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Выберите реакцию:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Команды и клавиши</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Сравнить эмодзи</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Сравните с {0}:
+
+{1}
+
+или числа {2}
+
+Показано одно и то же в том же порядке?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Подтверждение</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Подключено как {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Подключение…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Проблема с соединением: {0}</value>
+  </data>
+  <data name="CouldNotRemove_few" xml:space="preserve">
+    <value>; не удалось удалить {0} человек</value>
+  </data>
+  <data name="CouldNotRemove_many" xml:space="preserve">
+    <value>; не удалось удалить {0} человек</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; не удалось удалить {0} человека</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; не удалось удалить {0} человека</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Создать аккаунт</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>Создан #{0}:{1}</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>Создан {0}.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Создание аккаунта</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Создание #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Создание комнаты</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Создание токена</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} создал(а) эту комнату и имеет неограниченные права, которые нельзя изменить.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Ключей перекрёстной подписи не было в секретном хранилище.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Перекрёстная подпись восстановлена; это устройство теперь подтверждено.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Новый день {0:ddd, d MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Деактивировать</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Деактивировать навсегда…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} деактивирован(а).</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Навсегда деактивировать {0}? Этот человек выйдет из всех комнат и не сможет снова войти; ID пользователя не будет выдан повторно.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Деактивация</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Удалить аккаунт</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Удалить ваш аккаунт навсегда? Вы выйдете из всех комнат, ваше имя и изображение будут удалены, а все устройства — отключены. ID пользователя нельзя будет использовать снова.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Жалоба {0} удалена.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Токен {0} удалён.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Удалить сообщение</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Удалить «{0}» для всех?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Удалить жалобу</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Удалить токен</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Удалить токен {0}? Созданные с ним аккаунты останутся.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Удаление аккаунта</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Удаление сообщения</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Удаление жалобы</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Удаление токена</value>
+  </data>
+  <data name="DeviceCount_few" xml:space="preserve">
+    <value>{0} устройства</value>
+  </data>
+  <data name="DeviceCount_many" xml:space="preserve">
+    <value>{0} устройств</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} устройство</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} устройства</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    последний раз {2} с {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Это устройство ещё не подтверждено. Подтвердите его другим своим устройством или ключом восстановления, чтобы другие видели его подтверждённым и оно могло читать ваши старые сообщения.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Устройства ({0}, * = это устройство)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Личное сообщение</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Оставьте сервер пустым, чтобы искать на своём; Enter в любом поле запускает поиск.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Видимость в каталоге</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Скачивание {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Сквозное шифрование недоступно.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (изменено)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[правка] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Включить шифрование</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Шифровать все новые сообщения в этой комнате? Отключить это потом нельзя.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Включение шифрования</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [зашифровано]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [зашифрованное сообщение; ключ ещё не пришёл]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Шифрование</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Шифрование недоступно на этом устройстве.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>принят на другом устройстве</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>собеседник перезвонил</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>отклонён</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>отклонён на другом устройстве</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Приостановка {0} снята.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>завершён</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Снятие приостановки</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>пропущен</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>нет ответа</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>нет соединения</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Снять приостановку</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>собеседник положил трубку</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>вы отклонили</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>вы положили трубку</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Ошибка: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Файл сохранён</value>
+  </data>
+  <data name="FirstShown_few" xml:space="preserve">
+    <value>, показаны первые {0}</value>
+  </data>
+  <data name="FirstShown_many" xml:space="preserve">
+    <value>, показаны первые {0}</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, показан первый {0}</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, показаны первые {0}</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>админ</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>деактивирован</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [зашифровано]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>вход запрещён</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [публичная]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [рассмотрено]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>приостановлен</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Укажите ID пользователя вида @имя:сервер.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Укажите свой ID пользователя Matrix, чтобы начать.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Укажите свой ID пользователя.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Завершение звонка</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**жирный** _курсив_ `код` ~~зачёркнутый~~ [текст](url)   Markdown отправляется с форматированием
+/plain text     отправить без Markdown
+/me text        действие, например * вы машете
+/join #room     войти в комнату; также !id или ссылка, затем серверы для входа
+/leave          покинуть эту комнату
+/topic text     задать тему
+/name text      задать название комнаты
+/avatar [file]  задать изображение комнаты; /avatar none удаляет его
+/kick @user [reason]   удалить участника
+/ban @user [reason]    удалить участника навсегда
+/unban @user    снова впустить заблокированного пользователя
+/power @user level     задать уровень прав: число, admin, moderator или member
+/op @user, /deop @user  сделать администратором или обычным участником
+/invite @user   пригласить пользователя
+/msg @user      начать личный чат
+/nick name      задать отображаемое имя
+/list [server]  просмотреть публичные комнаты здесь или на другом сервере
+/create name    создать закрытую комнату
+/create #room [name]   создать публичную комнату с этим адресом
+/alias #room, /unalias #room   добавить или удалить адрес этой комнаты
+/publish, /unpublish   показать эту комнату в публичном каталоге или скрыть
+/upload         отправить файл
+/devices        управлять сеансами
+/settings       просмотреть и изменить настройки
+/logs           читать журналы этого и прошлых сеансов
+/audiotest      услышать себя через Opus для проверки микрофона и динамика
+/call           позвонить другому участнику этого личного чата
+/answer /reject ответить на звонок или отклонить его
+/hangup /mute   завершить звонок или выключить и включить микрофон
+/encryption     ключи, восстановление и резервная копия
+/recover        открыть старые сообщения ключом восстановления
+/verify [@user] подтвердить другое своё устройство или пользователя с помощью эмодзи
+/ignore @user   заблокировать пользователя: его сообщения и приглашения больше не видны; /ignore без аргумента показывает список
+/unignore @user разблокировать пользователя
+/report [@user] пожаловаться на эту комнату или пользователя администраторам сервера; на сообщения — из их меню (Enter)
+/quit           выйти
+
+Администраторам сервера, также в меню «Сервер»:
+/whois @user    устройства и адреса пользователя; любой может посмотреть себя
+/accounts [text], /rooms [text]   список аккаунтов или комнат сервера и управление ими
+/suspend @user, /unsuspend @user  может читать, но не отправлять, входить или приглашать
+/lock @user, /unlock @user        сервер отклоняет его сеансы
+/notice @user text   отправить уведомление сервера
+/tokens, /reports    токены регистрации, жалобы пользователей
+
+Alt+1…9         перейти в комнату 1…9
+Ctrl+N, Ctrl+P  следующая, предыдущая комната
+Ctrl+O          войти в комнату
+Ctrl+R          каталог комнат
+PageUp/Down     прокрутка сообщений
+Ctrl+PageUp     загрузить более старые сообщения
+F2              показать или скрыть участников
+Ctrl+Up, Enter  выбрать сообщение и выполнить действие
+Tab             дополнить ник
+Esc             отменить ответ или правку
+F10             открыть меню</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Этот формат изображения не отображается. Используйте «Сохранить файл», чтобы открыть его в другой программе.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Неверный адрес</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Неверная комната</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Неверный пользователь</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Пригласить</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Приглашение в {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Вас пригласили в эту комнату. Нажмите Enter, чтобы войти или отказаться.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} приглашает вас в {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Приглашение {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} — администратор сервера.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} подтверждён(а).</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Присоединиться</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Вход в {0} выполнен</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Вход в {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Войти в {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Войти в комнату</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Адрес, ID или ссылка комнаты, например #matrix:matrix.org; далее можно указать серверы для входа:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> через {0}</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Выгнать</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Удаление</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Покинуть {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Покинуть комнату</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Выход из {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Администратор ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Уровень для {0}, от 0 до 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Участник (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Модератор ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Другой…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Получение аккаунтов</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Получение участников</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Получение жалоб</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Добавление {0} в каталог</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Получение комнат</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Получение токенов регистрации</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Показать {0} в публичном каталоге комнат {1}? Это не меняет, кто может войти.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Загрузка участников</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Загрузка {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[загрузка превью…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Запретить вход</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Запретить вход: отклонять все сеансы</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Вход для {0} запрещён: сервер отклоняет его сеансы до /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Запрет входа</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Выход на устройствах</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Выйти</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Выйти на устройствах</value>
+  </data>
+  <data name="LogOutDevicesQuestion_few" xml:space="preserve">
+    <value>Выйти на {0} устройствах: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_many" xml:space="preserve">
+    <value>Выйти на {0} устройствах: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>Выйти на {0} устройстве: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Выйти на {0} устройства: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Завершить этот сеанс на сервере? Сообщения останутся в локальной базе данных.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Поиск пользователя</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Понизить свой уровень с {0} до {1}? Повысить его обратно сами вы не сможете.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Сделать администратором сервера</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Разрешить {0} управлять всеми аккаунтами и комнатами сервера?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Назначение администратором</value>
+  </data>
+  <data name="MemberCount_few" xml:space="preserve">
+    <value>{0} участника</value>
+  </data>
+  <data name="MemberCount_many" xml:space="preserve">
+    <value>{0} участников</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} участник</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} участника</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>ID пользователя или имя в этой комнате:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Участники</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Участники ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Участники {0}</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_О программе</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Аккаунты…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Администраторам сервера: список аккаунтов и управление</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Добавить а_дрес…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>Адрес вида #комната:сервер</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>_Проверка звука…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Услышать себя для проверки микрофона и динамика</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Запретить в_ход…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Удалить участника навсегда</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>Позв_онить</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Голосовой звонок в этом личном чате</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Команды и клавиши</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>Удалить _аккаунт…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Деактивировать аккаунт навсегда</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Устройства…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Просмотр сеансов и выход из них</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>_Личное сообщение…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Начать чат с пользователем</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>_Каталог комнат…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Искать публичные комнаты</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>_Видимость в каталоге…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Показывать в публичном каталоге комнат</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Включить _шифрование…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Зашифровать эту комнату; отменить нельзя</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Шифрование…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Ключи, восстановление и резервная копия</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Файл</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>_Завершить звонок</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Завершить разговор</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Спр_авка</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>Пригл_асить…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Пригласить сюда пользователя</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Присоединиться…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Войти по адресу или ID</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>Вы_гнать…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Удалить участника</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>Покин_уть комнату</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Выйти из этой комнаты</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>_Выйти из аккаунта…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Завершить сеанс на сервере</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>_Журналы…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Этот и прошлые сеансы</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Участники</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Показать или скрыть</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Новая пу_бличная комната…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Создать комнату, в которую может войти любой</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Новая комната…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Создать закрытую комнату</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>Сле_дующая комната</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>_Старые сообщения</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Загрузить историю</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Уровень п_рав…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Сделать участника администратором или модератором</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>П_редыдущая комната</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>_Закрыть программу</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Выйти, сохранив сеанс</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Токены регистрации…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Токены, с которыми регистрируются новые аккаунты</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>_Жалобы…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>На что пожаловались пользователи</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Комната</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>_Выбрать сообщение</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Ответить, отреагировать, изменить…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Отправить _файл…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Загрузить сюда файл</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Сервер</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>_Уведомление сервера…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Написать пользователю от имени сервера</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>_Комнаты…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Все комнаты сервера</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Задать _изображение…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Изображение комнаты</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Задать названи_е…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Изменить название комнаты</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Настройки…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Просмотр и изменение настроек</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Задать _тему…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Изменить тему</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>_Снять запрет…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Снова впустить заблокированного пользователя</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Подтвердить это устройство…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Сравнение эмодзи</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Вид</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>Кт_о это…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>Устройства и адреса пользователя</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Сообщение</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [сообщение удалено]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>сообщение в {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Микрофоны: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, микрофон выкл.</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Имя для {0}:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Ни этому устройству, ни {0} не доверяет ваша текущая личность, поэтому ни одно не может поручиться за другое.
+
+Подтвердите это устройство доверенным устройством{1} или используйте ключ восстановления.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>никогда</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Новый аккаунт</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Новый аккаунт…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Новый пароль для {0}; устройства этого человека будут отключены:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Новая публичная комната</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Новая комната</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Новый токен</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Новый токен…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Этот сервер не позволяет приложениям создавать аккаунты.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Нет входящего звонка.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Нет звонка для завершения.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Нет звонка, в котором можно выключить микрофон.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Нет устройств с выполненным входом.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>без срока</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} больше не администратор сервера.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Здесь нет участника «{0}». Укажите ID пользователя, например @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Нет участников.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>нет</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>не найдено</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Ни одному из ваших устройств не доверяет ваша текущая личность, поэтому ни одно не может поручиться за это.
+
+Используйте ключ восстановления или сбросьте личность на устройстве, которое останется у вас.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Никто не заблокирован.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[нет превью]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Для этого аккаунта ещё не настроено восстановление. После настройки другие будут видеть это устройство подтверждённым, а вы получите ключ восстановления, открывающий ваши сообщения на новых устройствах.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Нет жалоб.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Нет комнаты</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Комнаты не найдены</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} — не команда. См. Справка → Команды и клавиши.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" — не уровень; укажите число или admin, moderator или member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" — не ID пользователя Matrix; он выглядит как @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} — не файл изображения.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" — не ID другого пользователя; он выглядит как @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} — не адрес, ID или ссылка комнаты вида #matrix:matrix.org. Используйте /msg, чтобы написать пользователю.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} — не адрес комнаты вида #комната или #комната:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" — не адрес сервера; он выглядит как https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} — не ID пользователя вида @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" — не ID пользователя; он выглядит как @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" — не ID пользователя; он выглядит как @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Нет подключения</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Не из чего выходить. Чтобы завершить этот сеанс, используйте Файл → Выйти из аккаунта.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Уведомление для {0}; оно придёт в комнату уведомлений сервера:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [не отправлено: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>не настроено</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Не доверено</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>не подтверждено</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Пригодная резервная копия ключей не найдена.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>одном из ваших доверенных устройств</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Сначала откройте личный чат.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Открыть окно шифрования сейчас? Оно также есть в Файл → Шифрование и по /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Открытие {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Сначала откройте комнату, в которой вы состоите.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Открыть ссылку</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Другой сервер</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Адреса можно создавать только на своём сервере, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Пароль для {0}:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Пароль не принят.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Для {0} задан новый пароль, устройства этого человека отключены.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Пароли не совпадают.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Уровень прав</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Уровень прав {0} (сейчас {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Нажмите Enter, чтобы закрыть.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Реакция</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Текст реакции или эмодзи:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Причина для {0} (необязательно):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Травля или ненависть</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>_Незаконный контент</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>_Другое</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>Се_ксуальный или жестокий контент</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Спам</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Восстановить</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Восстановлено</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Восстановление</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Восстановление ключей…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Ключ восстановления</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Ключ восстановления (или парольная фраза):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Этому серверу нужен шаг, который приложение не поддерживает, например капча или e-mail. Создайте аккаунт на сайте сервера, затем войдите здесь.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Токен регистрации от администратора сервера:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Токены регистрации</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Отклонение {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Отклонение</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, через ретранслятор</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Удалить адрес</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Удалён {0}</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Удаление {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Удаление изображения</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Переименовать устройство</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Переименование устройства</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} уже существует. Заменить?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[отв. {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[отв.] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[отв. {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Жалоба</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>Жалоба на {0} отправлена администраторам вашего сервера.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Жалоба на сообщение отправлена администраторам вашего сервера. /ignore блокирует отправителя.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Отправка жалобы</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Жалоба на сообщение</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" — не ID пользователя; /report @user:server или просто /report для этой комнаты.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Жалобы</value>
+  </data>
+  <data name="ReportsCount_few" xml:space="preserve">
+    <value>{0} жалобы, сначала новые:</value>
+  </data>
+  <data name="ReportsCount_many" xml:space="preserve">
+    <value>{0} жалоб, сначала новые:</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} жалоба, сначала новые:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} жалобы, сначала новые:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Жалоба {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Жалоба администраторам вашего сервера: {0}. Причина?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Сбросить пароль</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Сбросить пароль…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Сброс пароля</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Изображение комнаты</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Изображение комнаты задано</value>
+  </data>
+  <data name="RoomCount_few" xml:space="preserve">
+    <value>{0} комнаты</value>
+  </data>
+  <data name="RoomCount_many" xml:space="preserve">
+    <value>{0} комнат</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} комната</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} комнаты</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Каталог комнат</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Эта комната зашифрована, но шифрование недоступно на этом устройстве.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Часть названия, адреса или ID комнаты; пусто — все:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} есть в каталоге комнат</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Название комнаты:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} не указывает сервер. Укажите серверы в комнате для входа, например /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Комнаты</value>
+  </data>
+  <data name="RoomsCount_few" xml:space="preserve">
+    <value>{0} комнаты, сначала самые большие{1}:</value>
+  </data>
+  <data name="RoomsCount_many" xml:space="preserve">
+    <value>{0} комнат, сначала самые большие{1}:</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} комната, сначала самые большие{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} комнаты, сначала самые большие{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} больше нет в каталоге комнат</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Тот же пароль ещё раз:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Сохранить как (файл или папка для сохранения):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Сохранено: {0}</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Сохранить файл</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Сохранение файла</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Поиск не удался: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Поиск…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Поиск:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Подробности — в файле журнала.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Отправить файл</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Отправить {0} в эту комнату?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Отправить файлы</value>
+  </data>
+  <data name="SendFilesQuestion_few" xml:space="preserve">
+    <value>Отправить эти {0} файла в эту комнату?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_many" xml:space="preserve">
+    <value>Отправить эти {0} файлов в эту комнату?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>Отправить {0} файл в эту комнату?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Отправить эти {0} файла в эту комнату?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Отправка {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Отправка уведомления</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [отправка…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Отправка запроса на подтверждение…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Отправить уведомление сервера…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>Отправлено: {0}</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Уведомление сервера отправлено {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Например http://localhost:8008 для сервера на этом компьютере.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Адрес сервера, только если его нельзя найти по ID пользователя:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Сервер:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Нужен сервер</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Уведомление сервера</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Правила сервера:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Задать название</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Установка изображения</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Установка названия</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Установка уровня прав {0}</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Установка темы</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Настройка восстановления…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Задать тему</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>настроено</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>настроено и доверено здесь</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>настроено, но здесь ещё не доверено</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Настроить восстановление</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Создать ключи перекрёстной подписи, резервную копию ключей и ключ восстановления?
+
+С ключом восстановления новый вход сможет подтвердить себя и прочитать старые сообщения. Храните его надёжно, как пароль.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Закрыть…</value>
+  </data>
+  <data name="ShutDownDone_few" xml:space="preserve">
+    <value>{0} закрыта: удалено {1} участника{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_many" xml:space="preserve">
+    <value>{0} закрыта: удалено {1} участников{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} закрыта: удалён {1} участник{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} закрыта: удалено {1} участника{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Вывести всех участников с этого сервера из {0} и удалить её адреса здесь? Блокировка также не даст им войти снова.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Причина, видимая участникам; пусто — без причины:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Закрыть комнату…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Закрытие комнаты</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Укажите полный ID пользователя Matrix, чтобы начать; он запоминается после успешного входа.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Вход в Matrix</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Кто-то</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Динамики: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Начать личный чат с {0}?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Начинается чат с {0}</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat — терминальное приложение: запустите его в терминале.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Перекрёстная подпись:  {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Устройство:            {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Отпечаток:             {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Копия ключей:          {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Ключ восстановления:   {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Это устройство:        {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Приостановить</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Приостановить: может читать, но не отправлять</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} приостановлен(а): может читать комнаты и выходить из них, но не отправлять, входить или приглашать. /unsuspend {1} снимает это.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Приостановка</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Приостановить {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>по умолчанию системы</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Снять права администратора сервера</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Снятие прав администратора</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Подтверждение отменено.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Это устройство, которым вы пользуетесь. Выберите другое своё устройство.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>это сообщение</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>эта комната</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Срок действия в днях; пусто — без срока:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Сервер не принял токен регистрации.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Токен; пусто — случайный:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Новым аккаунтам нужен один из них, когда регистрация просит токен:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>до {0:yyyy-MM-dd HH:mm}</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>использован {0} раз, без ограничения</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>использован {0} из {1} раз</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Сколько аккаунтов могут им воспользоваться; пусто — без ограничения:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Тема:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>перекрёстно подписано</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>нет ключей</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>это устройство</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>не подтверждено</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>подтверждено</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} печатает…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Снять запрет</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Снятие запрета</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} разблокирован(а).</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Разблокировка</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>неизвестно</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Неизвестная команда</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Удаление {0} из каталога</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Разрешить вход</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Вход для {0} разрешён.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Разрешение входа</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Загрузка {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>ID пользователя, например @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} занят; выберите другой.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Пользователь, например @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Подтверждение</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Подтверждение отменено</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Подтверждение с {0} отменено: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Запрос на подтверждение от {0} {1} проигнорирован: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Запрос на подтверждение</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Подтверждение запрошено; примите его на {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>подтверждено (перекрёстная подпись)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>{0} подтверждён(а)</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Ожидание подтверждения от {0}…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Дождитесь подключения клиента.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} хочет подтвердить это устройство сравнением эмодзи.
+
+Принять?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Какая комната или пользователь?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Кто это</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Кто это: устройства и адреса</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Кто это: {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Запишите или скопируйте этот ключ восстановления сейчас и храните его надёжно. Он больше не будет показан.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>ваше устройство {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>вашем другом устройстве</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Ваш пароль для подтверждения:</value>
+  </data>
+</root>

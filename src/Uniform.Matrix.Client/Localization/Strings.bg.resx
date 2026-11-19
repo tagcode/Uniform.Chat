@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bulgarian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} поиска да се присъедини</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Поискано потвърждение чрез сравняване на емоджи</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Поискано от {0} потвърждение чрез сравняване на емоджи</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} забрани достъпа на {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} смени снимката на стаята</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} смени темата на: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} създаде стаята</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Не е стартирано.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Запазеното състояние на шифроването не може да бъде прочетено ({0}). Сменен ли е {1}?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} отказа поканата</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Празна стая</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Празна стая (беше {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Шифровано съобщение; ключът още не е пристигнал</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>шифроването не е налично: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>файлът вече не съществува</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>изображение</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>изображение: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} покани {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} се присъедини</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} изгони {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} напусна</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Влизане</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} и {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} и още {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} и още {1}</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} вече е {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Отваряне на локалното хранилище</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Подготовка на шифроването</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} реагира с {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} премахна снимката на стаята</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} преименува стаята на {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; нов опит след {1:F0} с</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>спойлер</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>спойлер: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} премахна забраната на {1}</value>
+  </data>
+</root>

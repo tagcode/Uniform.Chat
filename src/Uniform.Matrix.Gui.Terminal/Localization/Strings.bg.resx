@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bulgarian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Приложено</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Приложено. Тези влизат в сила след рестартиране:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Прилагане</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Прилагане</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Отказ</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Зат_варяне</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Готово</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Редактиране</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>Ек_спорт…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>Зар_еждане…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Не</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Нулиране</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Запазване</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Да</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} не може да бъде прочетен: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Текущо: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> По подразбиране: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} не съществува.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Влиза в сила след рестартиране.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Влиза в сила при прилагане.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (празно = не е зададено)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Запис на текущите настройки в:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Експорт на настройките</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Филтър:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Ниво: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Заредена е {0} настройка като промяна. Приложете я или я запазете, за да я използвате.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Заредени са {0} настройки като промени. Приложете ги или ги запазете, за да ги използвате.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Файл с настройки за зареждане:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Зареждане на настройки</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Журнали</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} от {1} запис · {2}   Enter: целият запис  Alt+Ф: филтър</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} от {1} записа · {2}   Enter: целият запис  Alt+Ф: филтър</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} ред]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} реда]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Нова стойност{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(не е зададено)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>сега</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>по-стар журнал</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Една от: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Тип: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> В момента е зададено от {0}, което има предимство пред файла с настройки.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Нулиране</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Запазване</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Запазено</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Запазено в {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Тази стойност е тайна. Подайте я в командния ред или я въведете, когато програмата попита.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Сесии</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Файл с настройки: {0}    * редактирано  + приложено, незапазено  ↻ след рестартиране</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Тези влизат в сила след рестартиране:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Някои промени не са запазени във файла с настройки. Затваряне въпреки това?
+
+Приложените промени важат до рестартиране на програмата.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Незапазени настройки</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Записано: {0}. Тайните не са включени.</value>
+  </data>
+</root>

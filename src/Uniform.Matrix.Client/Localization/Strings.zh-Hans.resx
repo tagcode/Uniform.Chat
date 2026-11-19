@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chinese (Simplified) texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} 请求加入</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>请求通过比较表情符号进行验证</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>已请求 {0} 通过比较表情符号进行验证</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} 封禁了 {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} 更改了房间头像</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} 将主题改为：{1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} 创建了房间</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>未启动。</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>无法读取已保存的加密状态（{0}）。{1} 是否已被替换？</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} 拒绝了邀请</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>空房间</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>空房间（原为 {0}）</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>加密消息；密钥尚未到达</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>加密不可用：{0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>文件已不存在</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>图片</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>图片：{0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} 邀请了 {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} 已加入</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} 移除了 {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} 已离开</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>正在登录</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} 和 {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} 和其他 {1} 人</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} 现在改名为 {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>正在打开本地存储</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>正在准备加密</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} 回应了 {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} 移除了房间头像</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} 将房间重命名为 {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}；{1:F0} 秒后重试</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>剧透</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>剧透：{0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} 解除了对 {1} 的封禁</value>
+  </data>
+</root>

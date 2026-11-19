@@ -26,12 +26,10 @@
         <ComboBoxItem Content="{l:Tr VeryLarge}" />
       </ComboBox>
 
-      <!-- Languages by their own names, the system's in the current one -->
+      <!-- Languages by their own names, the system's in the current one; the code-behind adds the others -->
       <TextBlock Grid.Row="2" Grid.Column="0" Text="{l:Tr Language}" VerticalAlignment="Center" />
-      <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding LanguageIndex}" HorizontalAlignment="Stretch">
+      <ComboBox x:Name="LanguageBox" Grid.Row="2" Grid.Column="1" SelectedIndex="{Binding LanguageIndex}" HorizontalAlignment="Stretch" MaxDropDownHeight="400">
         <ComboBoxItem Content="{l:Tr LanguageSystem}" />
-        <ComboBoxItem Content="English" />
-        <ComboBoxItem Content="Suomi" />
       </ComboBox>
 
     </Grid>

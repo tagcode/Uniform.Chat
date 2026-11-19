@@ -1,0 +1,1764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vietnamese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Giới thiệu</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+Ứng dụng trò chuyện Matrix cho terminal.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Khi tiếp tục, bạn chấp nhận chính sách người dùng: không có nội dung bất hợp pháp, lạm dụng hay có hại.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Tài khoản của bạn đã bị xóa.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Một phần ID người dùng hoặc tên; để trống cho tất cả:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} tài khoản{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} thất bại: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Thêm địa chỉ</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Đã thêm {0}</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Đang thêm {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Địa chỉ, vd. #phòng hoặc #phòng:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Địa chỉ cần xóa, vd. #phòng:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Phòng này đã được mã hóa.</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> và {0} cái khác</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Đang trả lời</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>Mật khẩu cho {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Đang hỏi {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Kiểm tra âm thanh</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Micrô: {0}. Loa: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Kiểm tra âm thanh: không ghi được gì</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Kiểm tra âm thanh: {0:F0} giây ở {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Im lặng nghĩa là đầu vào không phải micrô: hãy chọn micrô trong cài đặt âm thanh của hệ thống, hoặc đặt Audio:Microphone trong Cài đặt.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Hãy nói: bạn sẽ nghe lại mình sau một giây, qua Opus như trong cuộc gọi.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Nền tảng này không hỗ trợ âm thanh.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>phiên bản {0}, cần khóa khôi phục</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>bật (phiên bản {0})</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Đã khôi phục bản sao lưu khóa: nhập {0} khóa phòng.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Chặn vĩnh viễn</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Đang chặn vĩnh viễn</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, đã chặn</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Đã chặn: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>Đã chặn {0}: tin nhắn và lời mời của người này không còn hiển thị. /unignore {1} để hoàn tác.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Đang chặn</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>Tôi _chấp nhận</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>Chặn _người gửi</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Hủy</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Đón_g</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Tạo tài khoản</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>Xó_a</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Sửa</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>Th_am gia</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Để sau</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Liệt kê</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>Đăng _xuất thiết bị</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Đăng xuất tất cả _còn lại</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Mở liên _kết</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Khác…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>Th_oát</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Bày tỏ cảm xúc</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Khôi phục</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Từ chối</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>Đổi _tên</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Trả lời</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>Báo _cáo</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>_Lưu tệp</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Thiết lập khôi phục</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Đóng phòng</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Đóng và _chặn</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>Đăng _nhập</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>Khôn_g khớp</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>_Khớp</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Bỏ liệt kê</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Xác minh thiết bị này</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>Xác _minh mục đã chọn</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>_Xem ảnh</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Cuộc gọi</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Cuộc gọi: Đang gọi với {0}{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Cuộc gọi: Đang kết nối với {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Cuộc gọi: Cuộc gọi với {0} đã kết thúc: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Đang gọi</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Cuộc gọi: Đang gọi {0}…  /hangup để hủy</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Cuộc gọi: Đang kết nối lại với {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Cuộc gọi: {0} đang gọi: /answer hoặc /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Không thể kết nối</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Không mở được micrô hoặc loa: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Đang đổi tên hiển thị</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Đang kiểm tra mã hóa…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Chọn cảm xúc:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Lệnh và phím</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>So sánh emoji</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>So sánh với {0}:
+
+{1}
+
+hoặc các số {2}
+
+Chúng có hiển thị giống nhau, cùng thứ tự không?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Xác nhận</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Đã kết nối với tên {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Đang kết nối…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Sự cố kết nối: {0}</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; không thể loại {0} người</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Tạo tài khoản</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>Đã tạo #{0}:{1}</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>Đã tạo {0}.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Đang tạo tài khoản</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Đang tạo #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Đang tạo phòng</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Đang tạo mã</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} đã tạo phòng này và có quyền không giới hạn, không thể thay đổi.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Khóa ký chéo không có trong bộ nhớ bí mật.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Đã khôi phục ký chéo; thiết bị này giờ đã được xác minh.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Ngày mới {0:ddd, d/M/yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Vô hiệu hóa</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Vô hiệu hóa vĩnh viễn…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>Đã vô hiệu hóa {0}.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Vô hiệu hóa vĩnh viễn {0}? Người này rời mọi phòng và không thể đăng nhập lại; ID người dùng sẽ không được cấp lại.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Đang vô hiệu hóa</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Xóa tài khoản</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Xóa tài khoản của bạn vĩnh viễn? Bạn rời mọi phòng, tên và ảnh của bạn bị xóa, mọi thiết bị bị đăng xuất. Không thể dùng lại ID người dùng.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Đã xóa báo cáo {0}.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Đã xóa mã {0}.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Xóa tin nhắn</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Xóa "{0}" với mọi người?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Xóa báo cáo</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Xóa mã</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Xóa mã {0}? Các tài khoản tạo bằng mã này vẫn còn.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Đang xóa tài khoản</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Đang xóa tin nhắn</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Đang xóa báo cáo</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Đang xóa mã</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} thiết bị</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    thấy lần cuối {2} từ {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Thiết bị này chưa được xác minh. Hãy xác minh bằng một thiết bị khác của bạn, hoặc bằng khóa khôi phục, để người khác thấy nó đã xác minh và nó đọc được tin nhắn cũ của bạn.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Thiết bị</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Thiết bị ({0}, * = thiết bị này)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Tin nhắn trực tiếp</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Để trống máy chủ để dùng máy chủ của bạn; nhấn Enter ở ô nào cũng sẽ tìm.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Hiển thị trong danh bạ</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Đang tải xuống {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Không có mã hóa đầu cuối.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (đã sửa)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[sửa] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Bật mã hóa</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Mã hóa mọi tin nhắn mới trong phòng này? Không thể tắt sau này.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Đang bật mã hóa</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [đã mã hóa]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [tin nhắn mã hóa; khóa chưa đến]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Mã hóa</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Thiết bị này không có mã hóa.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>đã trả lời trên thiết bị khác</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>họ đã gọi lại</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>bị từ chối</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>bị từ chối trên thiết bị khác</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Đã chấm dứt tạm ngưng {0}.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>đã kết thúc</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Đang chấm dứt tạm ngưng</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>nhỡ</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>không trả lời</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>không có kết nối</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Chấm dứt tạm ngưng</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>họ đã gác máy</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>bạn đã từ chối</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>bạn đã gác máy</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Thất bại: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Đã lưu tệp</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, hiện {0} mục đầu</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>quản trị</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>đã vô hiệu hóa</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [đã mã hóa]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>bị khóa</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [công khai]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [đã xử lý]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>bị tạm ngưng</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Hãy nhập ID người dùng như @tên:máychủ.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Nhập ID người dùng Matrix của bạn để bắt đầu.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Nhập ID người dùng của bạn.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Đang gác máy</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Trợ giúp</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**đậm** _nghiêng_ `mã` ~~gạch ngang~~ [văn bản](url)   Markdown được gửi kèm định dạng
+/plain text     gửi không dùng Markdown
+/me text        hành động, như * bạn vẫy tay
+/join #room     tham gia phòng; cũng có thể là !id hoặc liên kết, rồi các máy chủ để tham gia qua
+/leave          rời phòng này
+/topic text     đặt chủ đề
+/name text      đặt tên phòng
+/avatar [file]  đặt ảnh phòng; /avatar none để xóa
+/kick @user [reason]   loại thành viên
+/ban @user [reason]    loại thành viên vĩnh viễn
+/unban @user    cho người dùng bị chặn quay lại
+/power @user level     đặt mức quyền: số, admin, moderator hoặc member
+/op @user, /deop @user  đặt làm quản trị, hoặc thành viên thường
+/invite @user   mời người dùng
+/msg @user      bắt đầu trò chuyện trực tiếp
+/nick name      đặt tên hiển thị của bạn
+/list [server]  duyệt phòng công khai, ở đây hoặc trên máy chủ khác
+/create name    tạo phòng riêng
+/create #room [name]   tạo phòng công khai với địa chỉ đó
+/alias #room, /unalias #room   thêm hoặc xóa địa chỉ của phòng này
+/publish, /unpublish   hiện phòng này trong danh bạ phòng công khai, hoặc không
+/upload         gửi tệp
+/devices        quản lý các phiên
+/settings       xem và đổi cài đặt
+/logs           đọc nhật ký của phiên này và các phiên trước
+/audiotest      nghe lại mình qua Opus, để kiểm tra micrô và loa
+/call           gọi thoại cho thành viên kia của cuộc trò chuyện trực tiếp này
+/answer /reject trả lời hoặc từ chối cuộc gọi đến
+/hangup /mute   kết thúc cuộc gọi, hoặc tắt và bật tiếng micrô
+/encryption     khóa, khôi phục và sao lưu
+/recover        mở khóa tin nhắn cũ bằng khóa khôi phục
+/verify [@user] xác minh thiết bị khác của bạn, hoặc một người dùng, bằng emoji
+/ignore @user   chặn người dùng: tin nhắn và lời mời của họ không còn hiển thị; /ignore một mình để liệt kê
+/unignore @user bỏ chặn người dùng
+/report [@user] báo cáo phòng này, hoặc người dùng, với quản trị viên máy chủ; tin nhắn thì từ menu của chúng (Enter)
+/quit           thoát
+
+Quản trị viên máy chủ, cũng có trong menu Máy chủ:
+/whois @user    thiết bị và địa chỉ của người dùng; ai cũng có thể xem của chính mình
+/accounts [text], /rooms [text]   liệt kê và quản lý tài khoản hoặc phòng của máy chủ
+/suspend @user, /unsuspend @user  có thể đọc nhưng không gửi, tham gia hay mời
+/lock @user, /unlock @user        máy chủ từ chối các phiên của họ
+/notice @user text   gửi thông báo máy chủ
+/tokens, /reports    mã đăng ký, báo cáo của người dùng
+
+Alt+1…9         đi đến phòng 1…9
+Ctrl+N, Ctrl+P  phòng sau, phòng trước
+Ctrl+O          tham gia phòng
+Ctrl+R          danh bạ phòng
+PageUp/Down     cuộn tin nhắn
+Ctrl+PageUp     tải tin nhắn cũ hơn
+F2              hiện hoặc ẩn thành viên
+Ctrl+Up, Enter  chọn tin nhắn rồi thao tác
+Tab             hoàn thành biệt danh
+Esc             hủy trả lời hoặc chỉnh sửa
+F10             mở menu</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Ảnh</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Không thể hiển thị định dạng ảnh này. Dùng Lưu tệp để mở bằng chương trình khác.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Địa chỉ không hợp lệ</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Phòng không hợp lệ</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Người dùng không hợp lệ</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Mời</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Được mời vào {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Bạn được mời vào phòng này. Nhấn Enter để tham gia hoặc từ chối.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} đã mời bạn vào {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Đang mời {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} là quản trị viên máy chủ.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} đã được xác minh.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Tham gia</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Đã tham gia {0}</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Đang tham gia {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Tham gia {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Tham gia phòng</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Địa chỉ, ID hoặc liên kết phòng, vd. #matrix:matrix.org; có thể thêm các máy chủ để tham gia qua:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> qua {0}</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Loại</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Đang loại</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Rời {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Rời phòng</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Đang rời {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Quản trị ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Mức cho {0}, từ 0 đến 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Thành viên (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Điều hành viên ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Khác…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Đang lấy tài khoản</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Đang lấy thành viên</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Đang lấy báo cáo</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Đang hiển thị {0} trong danh bạ</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Đang lấy phòng</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Đang lấy mã đăng ký</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Hiển thị {0} trong danh bạ phòng công khai của {1}? Việc này không thay đổi ai được tham gia.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Đang tải thành viên</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Đang tải {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[đang tải bản xem trước…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Khóa</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Khóa: từ chối mọi phiên</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Đã khóa {0}: máy chủ từ chối các phiên của người này cho đến /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Đang khóa</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Đang đăng xuất</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Đang đăng xuất thiết bị</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Đăng xuất thiết bị</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Đăng xuất {0} thiết bị: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Kết thúc phiên này trên máy chủ? Tin nhắn vẫn nằm trong cơ sở dữ liệu cục bộ.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Đang tra cứu người dùng</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Hạ mức của chính bạn từ {0} xuống {1}? Bạn không thể tự nâng lại.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Đặt làm quản trị máy chủ</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Cho phép {0} quản lý mọi tài khoản và phòng của máy chủ?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Đang đặt làm quản trị</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} thành viên</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>ID người dùng hoặc tên trong phòng này:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Thành viên</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Thành viên ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Thành viên của {0}</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Giới thiệu</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Tài khoản…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Quản trị máy chủ: liệt kê và quản lý tài khoản</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Thêm đị_a chỉ…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>Địa chỉ như #phòng:máychủ</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>Kiểm tra â_m thanh…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Nghe lại mình, để kiểm tra micrô và loa</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Chặn vĩnh _viễn…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Loại thành viên vĩnh viễn</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>Gọi th_oại</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Gọi thoại trong cuộc trò chuyện trực tiếp này</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Lệnh và phím</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>Xóa tài _khoản…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Vô hiệu hóa tài khoản vĩnh viễn</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Thiết bị…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Xem và đăng xuất các phiên</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>Tin _nhắn trực tiếp…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Bắt đầu trò chuyện với người dùng</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>_Danh bạ phòng…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Tìm phòng công khai</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>Hiển thị trong danh bạ…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Hiện trong danh bạ phòng công khai</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Mã hóa phòng nà_y…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Mã hóa phòng này; không thể hoàn tác</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>Mã _hóa…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Khóa, khôi phục và sao lưu</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Tệp</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>_Kết thúc cuộc gọi</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Kết thúc cuộc gọi</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Trợ _giúp</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>Mờ_i…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Mời người dùng vào đây</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Tham gia…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Tham gia bằng địa chỉ hoặc ID</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>_Loại khỏi phòng…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Loại thành viên</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>_Rời phòng</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Rời phòng này</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>Đă_ng xuất…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Kết thúc phiên trên máy chủ</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>Nhật _ký…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Phiên này và các phiên trước</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Thành viên</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Hiện hoặc ẩn</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Phòng _công khai mới…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Tạo phòng ai cũng có thể tham gia</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>Phòng _mới…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Tạo phòng riêng</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>Phòng _sau</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>Tin nhắn _cũ</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Tải lịch sử</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Mức _quyền…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Đặt thành viên làm quản trị hoặc điều hành viên</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>Phòng t_rước</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>Th_oát</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Thoát, giữ phiên</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Mã đăng ký…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Mã mà tài khoản mới dùng để đăng ký</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>_Báo cáo…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Những gì người dùng đã báo cáo</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Phòng</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>Chọn tin _nhắn</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Trả lời, bày tỏ cảm xúc, sửa…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>_Gửi tệp…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Tải tệp lên đây</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Máy chủ</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>Thôn_g báo máy chủ…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Nhắn cho người dùng thay mặt máy chủ</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>_Phòng…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Mọi phòng của máy chủ</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Đặt _hình đại diện…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Ảnh của phòng</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Đặt tên _phòng…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Đổi tên phòng</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Cài đặt…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Xem và đổi cài đặt</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Đặt chủ _đề…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Đổi chủ đề</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>_Bỏ cấm…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Cho người dùng bị chặn quay lại</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Xác minh thiết bị này…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>So sánh emoji</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Xem</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>_Ai đây…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>Thiết bị và địa chỉ của người dùng</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Tin nhắn</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [tin nhắn đã bị xóa]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>tin nhắn trong {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Micrô: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, đã tắt tiếng</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Tên cho {0}:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Cả thiết bị này lẫn {0} đều không được danh tính hiện tại của bạn tin cậy, nên không cái nào bảo đảm được cho cái kia.
+
+Hãy xác minh thiết bị này bằng một thiết bị đáng tin cậy{1}, hoặc dùng khóa khôi phục.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>chưa bao giờ</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Tài khoản mới</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Tài khoản mới…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Mật khẩu mới cho {0}; các thiết bị của người này bị đăng xuất:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Phòng công khai mới</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Phòng mới</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Mã mới</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Mã mới…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Máy chủ này không cho phép ứng dụng tạo tài khoản.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Không có cuộc gọi nào đang đổ chuông.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Không có cuộc gọi để gác máy.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Không có cuộc gọi để tắt tiếng.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Không có thiết bị nào đăng nhập.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>không hết hạn</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} không còn là quản trị viên máy chủ.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Không có thành viên "{0}" ở đây. Hãy nhập ID người dùng như @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Không có thành viên.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>không có</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>không tìm thấy</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Không thiết bị nào của bạn được danh tính hiện tại tin cậy, nên không cái nào bảo đảm được cho thiết bị này.
+
+Hãy dùng khóa khôi phục, hoặc đặt lại danh tính trên một thiết bị bạn giữ.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Không ai bị chặn.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[không có bản xem trước]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Tài khoản này chưa thiết lập khôi phục. Khi thiết lập, người khác sẽ thấy thiết bị này đã xác minh, và bạn nhận được khóa khôi phục mở được tin nhắn trên thiết bị mới.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Không có báo cáo.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Không có phòng</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Không tìm thấy phòng</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} không phải là lệnh. Xem Trợ giúp → Lệnh và phím.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" không phải là mức; hãy nhập số, hoặc admin, moderator hay member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" không phải ID người dùng Matrix; ID trông như @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} không phải tệp ảnh.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" không phải ID của người dùng khác; ID trông như @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} không phải địa chỉ, ID hay liên kết phòng như #matrix:matrix.org. Dùng /msg để trò chuyện với người dùng.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} không phải địa chỉ phòng như #phòng hoặc #phòng:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" không phải địa chỉ máy chủ; địa chỉ trông như https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} không phải ID người dùng như @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" không phải ID người dùng; ID trông như @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" không phải ID người dùng; ID trông như @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Chưa kết nối</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Không có gì để đăng xuất. Dùng Tệp → Đăng xuất để kết thúc phiên này.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Thông báo cho {0}; sẽ đến phòng thông báo máy chủ của họ:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [chưa gửi: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>chưa thiết lập</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Không tin cậy</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>chưa xác minh</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Không tìm thấy bản sao lưu khóa dùng được.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>một trong các thiết bị tin cậy của bạn</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Hãy mở một cuộc trò chuyện trực tiếp trước.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Mở cửa sổ mã hóa ngay? Cửa sổ này cũng có trong Tệp → Mã hóa, và /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Đang mở {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Hãy mở một phòng bạn đã tham gia trước.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Mở liên kết</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Máy chủ khác</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Chỉ có thể tạo địa chỉ trên máy chủ của bạn, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Mật khẩu của {0}:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Mật khẩu không được chấp nhận.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Đã đặt mật khẩu mới cho {0} và đăng xuất các thiết bị của người này.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Mật khẩu không giống nhau.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Mức quyền</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Mức quyền của {0} (hiện là {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Nhấn Enter để đóng.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Thoát</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Bày tỏ cảm xúc</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Văn bản hoặc emoji cảm xúc:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Lý do cho {0} (không bắt buộc):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Quấy rối hoặc thù ghét</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Nội dung _bất hợp pháp</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Khá_c</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>Nội dung _khiêu dâm hoặc bạo lực</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Thư rác</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Khôi phục</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Đã khôi phục</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Đang khôi phục</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Đang khôi phục khóa…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Khóa khôi phục</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Khóa khôi phục (hoặc cụm mật khẩu):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Máy chủ này cần một bước mà ứng dụng không làm được, như captcha hoặc email. Hãy tạo tài khoản trên trang web của máy chủ, rồi đăng nhập ở đây.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Mã đăng ký từ quản trị viên máy chủ:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Mã đăng ký</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Đang từ chối {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Đang từ chối</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, chuyển tiếp</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Xóa địa chỉ</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Đã xóa {0}</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Đang xóa {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Đang xóa ảnh</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Đổi tên thiết bị</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Đang đổi tên thiết bị</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} đã tồn tại. Thay thế?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[trả lời {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[trả lời] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[trả lời {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Báo cáo</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>Đã báo cáo {0} với quản trị viên máy chủ của bạn.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Đã báo cáo tin nhắn với quản trị viên máy chủ của bạn. /ignore để chặn người gửi.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Đang báo cáo</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Đang báo cáo tin nhắn</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" không phải ID người dùng; /report @user:server, hoặc chỉ /report cho phòng này.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Báo cáo</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} báo cáo, mới nhất trước:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Báo cáo {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Báo cáo với quản trị viên máy chủ của bạn: {0}. Lý do?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Đặt lại mật khẩu</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Đặt lại mật khẩu…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Đang đặt lại mật khẩu</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Ảnh phòng</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Đã đặt ảnh phòng</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} phòng</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Danh bạ phòng</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Phòng này được mã hóa, nhưng thiết bị này không có mã hóa.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Một phần tên, địa chỉ hoặc ID phòng; để trống cho tất cả:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} được hiển thị trong danh bạ phòng</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Tên phòng:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} không chỉ định máy chủ. Hãy nhập các máy chủ trong phòng để tham gia qua, vd. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Phòng</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} phòng, đông thành viên nhất trước{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} không còn hiển thị trong danh bạ phòng</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Nhập lại mật khẩu:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Lưu thành (tệp, hoặc thư mục để lưu vào):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Đã lưu {0}</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Lưu tệp</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Đang lưu tệp</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Tìm kiếm thất bại: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Đang tìm…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Tìm:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Xem tệp nhật ký để biết chi tiết.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Gửi tệp</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Gửi {0} vào phòng này?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Gửi tệp</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Gửi {0} tệp này vào phòng này?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Đang gửi {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Đang gửi thông báo</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [đang gửi…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Đang gửi yêu cầu xác minh…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Gửi thông báo máy chủ…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>Đã gửi {0}</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Đã gửi thông báo máy chủ đến {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Ví dụ http://localhost:8008 cho máy chủ trên máy tính này.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Địa chỉ máy chủ, chỉ khi không tìm được từ ID người dùng:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Máy chủ:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Cần máy chủ</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Thông báo máy chủ</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Chính sách của máy chủ:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Đặt tên</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Đang đặt ảnh</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Đang đặt tên</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Đang đặt mức quyền của {0}</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Đang đặt chủ đề</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Đang thiết lập khôi phục…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Đặt chủ đề</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>đã thiết lập</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>đã thiết lập và được tin cậy ở đây</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>đã thiết lập, chưa được tin cậy ở đây</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Thiết lập khôi phục</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Tạo khóa ký chéo, bản sao lưu khóa và khóa khôi phục?
+
+Với khóa khôi phục, lần đăng nhập mới có thể tự xác minh và đọc tin nhắn cũ. Hãy giữ an toàn như mật khẩu.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Đóng</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Đóng…</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>Đã đóng {0}: loại {1} thành viên{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Cho mọi thành viên của máy chủ này rời {0}, và xóa địa chỉ của phòng ở đây? Chặn cũng ngăn họ tham gia lại.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Lý do hiển thị cho thành viên; để trống nếu không có:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Đóng phòng…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Đang đóng phòng</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Nhập đầy đủ ID người dùng Matrix của bạn để bắt đầu; ID sẽ được ghi nhớ sau khi đăng nhập thành công.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Đăng nhập Matrix</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Ai đó</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Loa: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Bắt đầu trò chuyện trực tiếp với {0}?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Đang bắt đầu trò chuyện với {0}</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat là ứng dụng terminal: hãy chạy nó trong terminal.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Ký chéo:          {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Thiết bị:         {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Dấu vân tay:      {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Sao lưu khóa:     {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Khóa khôi phục:   {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Thiết bị này:     {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Tạm ngưng</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Tạm ngưng: được đọc, không được gửi</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>Đã tạm ngưng {0}: có thể đọc và rời phòng, nhưng không gửi, tham gia hay mời được. /unsuspend {1} để chấm dứt.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Đang tạm ngưng</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Tạm ngưng {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>mặc định hệ thống</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Thu hồi quyền quản trị máy chủ</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Đang thu hồi quyền quản trị</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Xác minh đã bị hủy.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Đây là thiết bị bạn đang dùng. Hãy chọn một thiết bị khác của bạn.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>tin nhắn này</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>phòng này</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Số ngày hiệu lực; để trống = không hết hạn:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Máy chủ không chấp nhận mã đăng ký.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Mã; để trống để tạo ngẫu nhiên:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Tài khoản mới cần một trong các mã này khi đăng ký yêu cầu mã:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>đến {0:yyyy-MM-dd HH:mm}</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>đã dùng {0} lần, không giới hạn</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>đã dùng {0} trên {1} lần</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Bao nhiêu tài khoản được dùng; để trống = không giới hạn:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Chủ đề:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>đã ký chéo</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>không có khóa</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>thiết bị này</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>chưa xác minh</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>đã xác minh</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} đang nhập…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Bỏ cấm</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Đang bỏ cấm</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Đã bỏ chặn {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Đang bỏ chặn</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>không rõ</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Lệnh không xác định</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Đang ẩn {0} khỏi danh bạ</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Mở khóa</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Đã mở khóa {0}.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Đang mở khóa</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Đang tải lên {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>ID người dùng, vd. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} đã có người dùng; hãy chọn ID khác.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Người dùng, vd. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Xác minh</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Đã hủy xác minh</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Xác minh với {0} đã bị hủy: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Đã bỏ qua yêu cầu xác minh của {0} {1}: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Yêu cầu xác minh</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Đã yêu cầu xác minh; hãy chấp nhận trên {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>đã xác minh (ký chéo)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>Đã xác minh {0}</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Xác minh</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Đang chờ {0} xác nhận…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Hãy đợi đến khi ứng dụng kết nối.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} muốn xác minh thiết bị này bằng cách so sánh emoji.
+
+Chấp nhận?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Phòng hoặc người dùng nào?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Ai đây</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Ai đây: thiết bị và địa chỉ</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Ai đây: {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Hãy ghi lại hoặc sao chép khóa khôi phục này ngay và giữ an toàn. Khóa sẽ không hiện lại.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>thiết bị {0} của bạn</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>thiết bị khác của bạn</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Mật khẩu của bạn, để xác nhận:</value>
+  </data>
+</root>

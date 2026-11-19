@@ -304,7 +304,10 @@
   <data name="DetailUnread" xml:space="preserve">
     <value>Unread</value>
   </data>
-  <data name="DeviceCount" xml:space="preserve">
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} device</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
     <value>{0} devices</value>
   </data>
   <data name="DeviceLine" xml:space="preserve">
@@ -397,7 +400,10 @@
   <data name="Favourite" xml:space="preserve">
     <value>Favourite</value>
   </data>
-  <data name="FileCount" xml:space="preserve">
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} file</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
     <value>{0} files</value>
   </data>
   <data name="Filter" xml:space="preserve">
@@ -514,10 +520,16 @@
   <data name="KeepsConnected" xml:space="preserve">
     <value>Keeps connected, swipe to dismiss.</value>
   </data>
-  <data name="KeysRestored" xml:space="preserve">
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>{0} message key restored.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
     <value>{0} message keys restored.</value>
   </data>
-  <data name="KeysRestoredVerified" xml:space="preserve">
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>{0} message key restored; this device is now verified.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
     <value>{0} message keys restored; this device is now verified.</value>
   </data>
   <data name="Language" xml:space="preserve">
@@ -595,11 +607,11 @@
   <data name="MarkAsRead" xml:space="preserve">
     <value>Mark as read</value>
   </data>
-  <data name="MemberCount" xml:space="preserve">
-    <value>{0} members</value>
-  </data>
-  <data name="MemberCountOne" xml:space="preserve">
+  <data name="MemberCount_one" xml:space="preserve">
     <value>{0} member</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} members</value>
   </data>
   <data name="Members" xml:space="preserve">
     <value>Members</value>
@@ -907,7 +919,10 @@
   <data name="RoomBoxPlaceholder" xml:space="preserve">
     <value>#room, @user, link or new name</value>
   </data>
-  <data name="RoomCount" xml:space="preserve">
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} room</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
     <value>{0} rooms</value>
   </data>
   <data name="RoomDirectory" xml:space="preserve">
@@ -1042,7 +1057,10 @@
   <data name="ShareFile" xml:space="preserve">
     <value>Share {0}</value>
   </data>
-  <data name="ShareFiles" xml:space="preserve">
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Share {0} files</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
     <value>Share {0} files</value>
   </data>
   <data name="SharingFailed" xml:space="preserve">
@@ -1051,7 +1069,10 @@
   <data name="ShutDownConfirm" xml:space="preserve">
     <value>Shut down {0}? Every member from this server leaves it, its addresses here are deleted, and nobody from this server can join it again.</value>
   </data>
-  <data name="ShutDownDone" xml:space="preserve">
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Shut down {0}: {1} member removed.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
     <value>Shut down {0}: {1} members removed.</value>
   </data>
   <data name="ShutRoomDown" xml:space="preserve">

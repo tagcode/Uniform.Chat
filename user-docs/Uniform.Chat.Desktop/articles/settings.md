@@ -4,11 +4,23 @@ uid: Uniform.Chat.Desktop.Settings.Article
 ---
 # Settings
 
-*⋮ → Settings* at the top of the room list sets the language (follow the system, English or Finnish), the theme (follow the system, light or dark), the text size (very small to very large, for the whole window: titles, messages and the message field), and which notifications to show; see Notifications. Changes are saved right away.
+*⋮ → Settings* at the top of the room list sets the language (follow the system, or one of 28 languages), the theme (follow the system, light or dark), the text size (very small to very large, for the whole window: titles, messages and the message field), and which notifications to show; see Notifications. Changes are saved right away.
 
 ## Language
 
-*Language* follows the system by default: Finnish on a Finnish system, English otherwise. Choosing *English* or *Suomi* switches the texts at once, without a restart; times and dates follow the chosen language too.
+*Language* follows the system by default: the system's language if the app has it, English otherwise. Choosing a language switches the texts at once, without a restart; times and dates follow the chosen language too. The list shows each language by its own name:
+
+- Bahasa Indonesia, Čeština, Dansk, Deutsch, English, Français, Magyar, Nederlands, Norsk bokmål, Polski, Português, Română, Suomi, Svenska, Tiếng Việt, Türkçe
+- Ελληνικά, Български, Русский, Українська
+- اردو (Urdu), العربية (Arabic)
+- मराठी, हिन्दी, বাংলা, తెలుగు
+- 中文（简体）, 日本語
+
+Arabic and Urdu read right to left, and the whole window turns to match. The app brings its own fonts for Arabic, Devanagari, Bengali and Telugu; Chinese and Japanese use the system's fonts.
+
+On Android 13 and later, the system's settings for the app (*Settings → Apps → Uniform Chat → Language*) offer the same languages.
+
+The translations other than English and Finnish are machine-written and not yet reviewed by native speakers.
 
 ## Audio test
 

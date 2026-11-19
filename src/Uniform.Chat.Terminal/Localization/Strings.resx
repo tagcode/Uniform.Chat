@@ -25,12 +25,15 @@ https://spec.matrix.org</value>
     <value>Part of a user ID or name; empty for all:</value>
   </data>
   <data name="AccountRow" xml:space="preserve">
-    <value>{0}  {1}{2}  {3} devices, {4} rooms</value>
+    <value>{0}  {1}{2}  {3}, {4}</value>
   </data>
   <data name="Accounts" xml:space="preserve">
     <value>Accounts</value>
   </data>
-  <data name="AccountsCount" xml:space="preserve">
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} account{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
     <value>{0} accounts{1}:</value>
   </data>
   <data name="ActionFailed" xml:space="preserve">
@@ -54,7 +57,10 @@ https://spec.matrix.org</value>
   <data name="AlreadyEncrypted" xml:space="preserve">
     <value>This room is already encrypted.</value>
   </data>
-  <data name="AndMore" xml:space="preserve">
+  <data name="AndMore_one" xml:space="preserve">
+    <value> and {0} more</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
     <value> and {0} more</value>
   </data>
   <data name="Answering" xml:space="preserve">
@@ -93,7 +99,10 @@ https://spec.matrix.org</value>
   <data name="BackupOn" xml:space="preserve">
     <value>on (version {0})</value>
   </data>
-  <data name="BackupRestored" xml:space="preserve">
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Key backup restored: {0} room key imported.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
     <value>Key backup restored: {0} room keys imported.</value>
   </data>
   <data name="Ban" xml:space="preserve">
@@ -276,7 +285,10 @@ Do they show the same, in the same order?</value>
   <data name="ConnectionProblem" xml:space="preserve">
     <value>Connection problem: {0}</value>
   </data>
-  <data name="CouldNotRemove" xml:space="preserve">
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0} could not be removed</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
     <value>; {0} could not be removed</value>
   </data>
   <data name="CreateAccount" xml:space="preserve">
@@ -365,6 +377,12 @@ Do they show the same, in the same order?</value>
   </data>
   <data name="DeletingToken" xml:space="preserve">
     <value>Deleting the token</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} device</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} devices</value>
   </data>
   <data name="DeviceLastSeen" xml:space="preserve">
     <value>{0}  {1}
@@ -473,7 +491,10 @@ Do they show the same, in the same order?</value>
   <data name="FileSaved" xml:space="preserve">
     <value>File saved</value>
   </data>
-  <data name="FirstShown" xml:space="preserve">
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, first {0} shown</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
     <value>, first {0} shown</value>
   </data>
   <data name="FlagAdmin" xml:space="preserve">
@@ -716,8 +737,11 @@ F10             open the menu</value>
   <data name="LogOutDevices" xml:space="preserve">
     <value>Log out devices</value>
   </data>
-  <data name="LogOutDevicesQuestion" xml:space="preserve">
-    <value>Log out {0} device(s): {1}?</value>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>Log out {0} device: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Log out {0} devices: {1}?</value>
   </data>
   <data name="LogOutQuestion" xml:space="preserve">
     <value>End this session on the server? Messages stay in the local database.</value>
@@ -736,6 +760,12 @@ F10             open the menu</value>
   </data>
   <data name="MakingAdmin" xml:space="preserve">
     <value>Making admin</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} member</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} members</value>
   </data>
   <data name="MemberPrompt" xml:space="preserve">
     <value>User ID or name in this room:</value>
@@ -816,7 +846,7 @@ F10             open the menu</value>
     <value>List in the public room directory</value>
   </data>
   <data name="MenuEnableEncryption" xml:space="preserve">
-    <value>Enable en_cryption…</value>
+    <value>Enable encr_yption…</value>
   </data>
   <data name="MenuEnableEncryptionHelp" xml:space="preserve">
     <value>Encrypt this room; cannot be undone</value>
@@ -1327,7 +1357,10 @@ Open the encryption window now? It is also in File → Encryption, and /encrypti
   <data name="Reports" xml:space="preserve">
     <value>Reports</value>
   </data>
-  <data name="ReportsCount" xml:space="preserve">
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} report, newest first:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
     <value>{0} reports, newest first:</value>
   </data>
   <data name="ReportTitle" xml:space="preserve">
@@ -1351,6 +1384,12 @@ Open the encryption window now? It is also in File → Encryption, and /encrypti
   <data name="RoomAvatarSet" xml:space="preserve">
     <value>Room avatar set</value>
   </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} room</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} rooms</value>
+  </data>
   <data name="RoomDirectory" xml:space="preserve">
     <value>Room directory</value>
   </data>
@@ -1372,12 +1411,15 @@ Open the encryption window now? It is also in File → Encryption, and /encrypti
     <value>{0} does not name a server. Give servers in the room to join through, e.g. /join {1} matrix.org.</value>
   </data>
   <data name="RoomRow" xml:space="preserve">
-    <value>{0}{1}  {2} members{3}{4}</value>
+    <value>{0}{1}  {2}{3}{4}</value>
   </data>
   <data name="Rooms" xml:space="preserve">
     <value>Rooms</value>
   </data>
-  <data name="RoomsCount" xml:space="preserve">
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} room, most members first{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
     <value>{0} rooms, most members first{1}:</value>
   </data>
   <data name="RoomUnlisted" xml:space="preserve">
@@ -1421,7 +1463,12 @@ See the log file for details.</value>
   <data name="SendFiles" xml:space="preserve">
     <value>Send files</value>
   </data>
-  <data name="SendFilesQuestion" xml:space="preserve">
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>Send these {0} files to this room?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
     <value>Send these {0} files to this room?
 
 {1}</value>
@@ -1510,7 +1557,10 @@ With the recovery key, a new login can verify itself and read old messages. Keep
   <data name="ShutDownAction" xml:space="preserve">
     <value>Shut down…</value>
   </data>
-  <data name="ShutDownDone" xml:space="preserve">
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Shut {0} down: {1} member removed{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
     <value>Shut {0} down: {1} members removed{2}{3}.</value>
   </data>
   <data name="ShutDownQuestion" xml:space="preserve">

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indonesian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} meminta bergabung</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Meminta verifikasi dengan membandingkan emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Meminta {0} memverifikasi dengan membandingkan emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} mencekal {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} mengubah gambar ruang</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} mengubah topik menjadi: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} membuat ruang</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Belum dimulai.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Status enkripsi yang tersimpan tidak dapat dibaca ({0}). Apakah {1} diganti?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} menolak undangan</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Ruang kosong</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Ruang kosong (sebelumnya {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Pesan terenkripsi; kuncinya belum tiba</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>enkripsi tidak tersedia: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>berkas sudah tidak ada</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>gambar</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>gambar: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} mengundang {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} bergabung</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} mengeluarkan {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} keluar</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Masuk</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} dan {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} dan {1} lainnya</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} sekarang bernama {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Membuka penyimpanan lokal</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Menyiapkan enkripsi</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} bereaksi dengan {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} menghapus gambar ruang</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} mengganti nama ruang menjadi {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; mencoba lagi dalam {1:F0} dtk</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} mencabut cekal {1}</value>
+  </data>
+</root>

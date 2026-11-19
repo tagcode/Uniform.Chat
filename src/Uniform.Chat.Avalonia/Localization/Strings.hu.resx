@@ -1,0 +1,1367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hungarian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Elfogadás</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>Elolvastam és elfogadom ezeket a szabályzatokat</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>A folytatáshoz olvassa el és fogadja el a szerver szabályzatait.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>Fogadja el a kérést itt: {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Fiók</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>Fiók jelszava</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Fiókok</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>Fiókját a szerver adminisztrátorai felfüggesztették: olvashat és kiléphet szobákból, de nem küldhet üzenetet, nem csatlakozhat szobához és nem hívhat meg senkit. Nézze meg a szerverértesítések szobáját, ha van ilyen.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} sikertelen: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Értesítések engedélyezése…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>Az üzenet már el lett küldve.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>egy üzenet</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Fogadás</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Hívás fogadása</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>Fogadás videóval</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>Ez a szerver nem engedi, hogy alkalmazások fiókot hozzanak létre.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>{0} lekérdezése…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>A mikrofon vagy a hangszóró nem nyitható meg: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Hangteszt</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>A teszthez mikrofonengedély kell.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>{0:F0} mp rögzítve, {1:F0} kbit/s sebességgel elküldve.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Beszéljen: egy másodperccel később hallja magát. A csend azt jelenti, hogy a bemenet nem mikrofon.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>Indítsa el, és beszéljen: egy másodperccel később hallja magát, a hívások Opus kodekjén keresztül.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Vissza</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>Hátsó kamera</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Letiltás</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} letiltva: üzenetei és meghívásai már nem jelennek meg. A letiltást a Biztonság és helyreállítás menüben oldhatja fel.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>Letiltott felhasználók</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>Üzeneteik és meghívásaik nem jelennek meg.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Letiltás</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>Küldő letiltása</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>A hívás véget ért: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Hívás…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>A hívás sikertelen: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>A hívásokhoz mikrofonengedély kell.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>A kamera ki van kapcsolva</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>Kamera ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>Kamera ki</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>Kamera be</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>Mégse (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Küldés megszakítása</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>A módosítások azonnal mentődnek.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>Adminisztrátori jogok módosítása</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Csevegés</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>A titkosítás ellenőrzése sikertelen: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>Válassza a Csevegés lehetőséget a csevegés indításához vele: {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>Válassza a Csatlakozás lehetőséget a csatlakozáshoz: {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>Válasszon szobát, ahová megosztja: {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>Válasszon szobát a kezdéshez.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Bezárás</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>Hasonlítsa össze az emojikat egy másik eszközzel, ahol be van jelentkezve, például a telefonján lévő Elementtel.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Hasonlítsa össze ezzel: {0}. Ugyanazok az emojik látszanak ugyanabban a sorrendben?</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Kapcsolódás…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Kapcsolat</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>A kapcsolat megszakadt, újrapróbálkozás…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Másolás</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>Kép másolása</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>A másolás sikertelen: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>A kép másolása sikertelen: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Hivatkozás másolása</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Szöveg másolása</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>Nem sikerült csatlakozni: {0}.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Létrehozás</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Fiók létrehozása</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>A fiók a felhasználói azonosító szerverén jön létre, ha az engedi. Válasszon saját jelszót.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Fiók létrehozása</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Matrix-fiók létrehozása</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>{0} létrehozása</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Kód létrehozása</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>yyyy. MMMM d.</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>MMMM d., dddd</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>Napok; üres = nem jár le</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deaktiválás…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>Véglegesen deaktiválja ezt: {0}? Kilép minden szobából, és többé nem jelentkezhet be; a felhasználói azonosítót nem adják ki újra.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>{0} deaktiválva.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Deaktiválás</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Elutasítás</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>{0} elutasítása</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>Elutasítás</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Törlés</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Fiók törlése</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Véglegesen törli a fiókot? Kilép minden szobából, a neve és a képe törlődik, és minden eszköze kijelentkezik. A felhasználói azonosító nem használható újra. A megerősítéshez írja be a jelszavát.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>Fiók törlése…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>Bejelentés törlése</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>A fiók törlése sikertelen: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Üzenet törlése</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Bejelentés törlése</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Kód törlése</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>Cím</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>Szerkesztve</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>Titkosítás</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>Eseményazonosító</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>Feladó</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>Szobaazonosító</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Részletek…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>Elküldve</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>Állapot</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>Olvasatlan</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} eszköz</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} eszköz</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1}), utoljára {2}, innen: {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Eszközök</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Saját szervere vagy egy másik szerver, például a matrix.org nyilvános szobái.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>Szerver, pl. matrix.org; üres = a sajátja</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>{0} letöltése sikertelen: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>Fülhallgató</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Szerkesztés</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(szerkesztve)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>Üzenet szerkesztése</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>Az üzenet már el lett küldve, ezért a módosítás nem történt meg.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 Titkosított</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>Titkosított üzenet</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Ez a szoba titkosított, de ezen az eszközön nem érhető el titkosítás: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>másik eszközön fogadva</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>elutasítva</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>másik eszközön elutasítva</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>{0} felfüggesztése megszűnt.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>nem fogadott</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>nincs válasz</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>nincs kapcsolat</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>újra hívtak</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Felfüggesztés megszüntetése</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>a másik fél letette</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>Végpontok közötti titkosítás</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>ön elutasította</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>ön letette</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>A megerősítéshez írja be a fiók jelszavát.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>Írja be a helyreállítási kulcsot vagy jelmondatot, amelyet ebben vagy egy másik alkalmazásban, például az Elementben állított be.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>Külső kamera</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>Kedvenc</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} fájl</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} fájl</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Szűrő</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Ujjlenyomat</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>letiltva</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>deaktiválva</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>meghívva</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>zárolva</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>felfüggesztve</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>ellenőrizve</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>A szerver adminisztrátorától</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>Az ön szerverétől</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>Előlapi kamera</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Bontás</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>Bontás</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>Van fiókom: bejelentkezés</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>Elrejtés és újrapróbálkozás</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Kép másolva</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>Hívásban vele: {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>Bejövő hívás</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>Bejövő hívások</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>Bejövő videohívás</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>Bejövő hanghívás</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>A háttérben</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>Meghívás</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Meghívás</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>{0} meghívva.</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>Meghívást kapott ebbe a szobába.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} meghívta ide: {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>Meghívások</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>{0} meghívása</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} a szerver adminisztrátora.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} hív</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} ellenőrizve.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Csatlakozás</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>Csatlakozás ide: {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>Csatlakozás ide: {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>Fenntartja a kapcsolatot; elrejtéshez húzza el.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>{0} üzenetkulcs visszaállítva.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>{0} üzenetkulcs visszaállítva.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>{0} üzenetkulcs visszaállítva; ez az eszköz most már ellenőrzött.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>{0} üzenetkulcs visszaállítva; ez az eszköz most már ellenőrzött.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Nyelv</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Rendszer nyelve</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Nagy</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>utoljára látva: {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Kilépés a szobából</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Kilépés innen: {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>Licencek</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>Licencek…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>A Uniform Chat MIT-licencű szabad szoftver. Tartalmazza a .NET futtatókörnyezetet és más könyvtárakat, mindegyiket a saját licencével; ezek szövege alább olvasható.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>Fiókok betöltése</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>Az előzmények betöltése sikertelen: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>Bejelentések betöltése</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>Kódok betöltése</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Zárolás</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} zárolva: a szerver elutasítja az eszközeit, amíg a zárolást fel nem oldják.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Zárolás</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Naplók</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>Naplók…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>A napló nem olvasható: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>Terjesztők keresése újra</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>Eszközök lekérdezése</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>Kihangosító</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>Alacsony prioritás</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Adminná tétel</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Megjelölés olvasottként</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} tag</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} tag</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Tagok</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}, {1} meghívott</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>Üzenet törölve</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Üzenet</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Üzenetek</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>Az üzenetek ezen keresztül érkeznek: {0}; az alkalmazásnak nincs szüksége saját kapcsolatra.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>Közvetlen csevegések üzenetei</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>Önt említő üzenetek</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>Mikrofon ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Némítás</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>némítva</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>Helyreállítási kulcs szükséges</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>Ennek a szervernek regisztrációs kód kell az adminisztrátorától.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>soha</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>Új üzenet</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>Új jelszó; az eszközei kijelentkeznek</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Új kód</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>Itt egy alkalmazás sem nyitja meg ezt: {0}.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>Itt egy alkalmazás sem nyitja meg ezt: {0}; használja inkább a Mentés… lehetőséget.</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>Nincs kameraengedély; fogadás csak hanggal.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>Nincs kameraengedély; hívás csak hanggal.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>Egy eszköz sincs bejelentkezve.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>Nincsenek titkosítási kulcsok</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>nem jár le</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>Ezen a szinten nincs bejegyzés.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} már nem a szerver adminisztrátora.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Nincs</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Nincs bejelentés.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normál</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Nem található szoba.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" nem Matrix-felhasználói azonosító; így néz ki: @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} nem felhasználói azonosító; ezek így néznek ki: @név:szerver.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Nem érhető el: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>Nem titkosított</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>Semmi sem lett rögzítve.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>Szerverértesítés elküldve neki: {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Értesítések</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>A Uniform Chat értesítései ki vannak kapcsolva a rendszerbeállításokban. A bejövő hívások úgy csörögnek, hogy nem látszik, ki hív, és az üzenetek nem értesítenek.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>Most nem</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Nincs elküldve: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>Nincs beállítva</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>Nincs ellenőrizve</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(most)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Be</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>Folyamatban lévő hívás</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Kapcsolódva</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Megnyitás</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>{0} megnyitása sikertelen: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>vagy a számok: {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>Saját háttérkapcsolat</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>Az alkalmazás saját kapcsolatot tart fenn, egy azt jelző értesítéssel.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>Az alkalmazás saját kapcsolatot tart fenn, egy azt jelző értesítéssel. Telepítsen egy UnifiedPush-terjesztőt, például az ntfy-t, hogy nélküle is kapjon üzeneteket.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>Felhasználói azonosító vagy név része</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Jelszó</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>A jelszót nem fogadta el.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>A jelszót csak bejelentkezéshez használjuk; nem mentjük el.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Új jelszó beállítva neki: {0}, és az eszközei kijelentkeztek.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>A beillesztés sikertelen: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>Telefon alapértelmezése</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>Telefon mikrofonja</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Adatvédelmi irányelvek</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Uniform Chat üzenetek és hívások</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reakció</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>Zaklatás vagy gyűlölet</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Illegális tartalom</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>Ok: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Egyéb</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>Szexuális vagy erőszakos tartalom</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Újrakapcsolódás…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Helyreállítás</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>A helyreállítás sikertelen: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>Helyreállítási kulcs másolva.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>Írja le, vagy másolja most biztonságos helyre; többé nem jelenik meg. Ezzel egy új bejelentkezés ellenőrizheti magát, és olvashatja a régi üzeneteket.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Frissítés</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>A szerver több mindent kér a fiók létrehozásához, mint amennyit ez az alkalmazás meg tud adni.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>Regisztrációs kód</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Regisztrációs kódok</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>Az új fiókoknak ezek közül egyre szükségük van, amikor a szerver regisztrációja kódot kér.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>Ez a szerver olyan lépést kér, amelyet ez az alkalmazás nem tud elvégezni, például captchát vagy e-mailt. Hozza létre a fiókot a szerver weboldalán, majd jelentkezzen be itt.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>továbbítva</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>Eltávolítás a kedvencek közül</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>Alacsony prioritás eltávolítása</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Válasz</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>Válasz neki: {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>Bejelentés törölve.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} bejelentette: {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Bejelentve a szerver adminisztrátorainak. A küldőt az üzenet menüjéből is letilthatja.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>{0} bejelentve a szerver adminisztrátorainak.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Üzenet bejelentése</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>Szoba bejelentése</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>Felhasználó bejelentése</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>Üzenet bejelentése</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>Szoba bejelentése…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>Szoba bejelentése</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Bejelentések</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>Küldő bejelentése</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Jelszó visszaállítása</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>Újrapróbálkozás: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Szoba</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>Csatlakozzon szobához címmel vagy hivatkozással, csevegjen egy felhasználóval, vagy hozzon létre privát szobát</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#szoba, @felhasználó, hivatkozás vagy új név</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} szoba</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} szoba</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Szobakatalógus</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>Szobakatalógus…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>Szoba: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Szobák</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>A szobát a szerver adminisztrátorai bezárták</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>{0} mentve.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>Mentés…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Fájl mentése</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>A fájl mentése sikertelen: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Keresés</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>A keresés sikertelen: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Keresés…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Biztonság</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>Biztonság és helyreállítás…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Küldés</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>Fájl küldése</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0}, itt: {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Küldés…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>{0} küldése sikertelen: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Értesítés küldése</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>A fájl küldése sikertelen: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>Küldés (Enter); az üzenetmező megtartja a fókuszt</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>Szervercím</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Hagyja üresen, hogy a szervert a felhasználói azonosítóból találja meg. Felderítés nélküli szerverekhez kell, például http://localhost:8008 ezen a gépen.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>Szerver adminisztrálása</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>Szerver adminisztrálása…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>A szerver adminisztrátorainak üzenetei. Itt nem válaszolhat.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>Szerverértesítés neki</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>A szerver szabályzatai</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>A szerver nem érhető el: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Beállítás</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Beállítások</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>Beállítások…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Téma beállítása</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>A helyreállítás beállítása sikertelen: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>Beállítás</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>Beállítva és itt megbízható</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>Beállítva</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>Beállítva, itt még nem megbízható</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Helyreállítás beállítása</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>Kereszt-aláírási kulcsok, az üzenetkulcsok biztonsági mentése és helyreállítási kulcs létrehozása.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>egy hivatkozást</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>egy szöveget</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>{0} megosztása</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>{0} fájl megosztása</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>{0} fájl megosztása</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>{0} megosztása sikertelen: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>Bezárja ezt: {0}? A szerver összes tagja kilép belőle, az itteni címei törlődnek, és erről a szerverről senki sem csatlakozhat újra.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} bezárva: {1} tag eltávolítva.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} bezárva: {1} tag eltávolítva.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>Szoba bezárása…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>Szoba bezárása</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>{0} kijelentkeztetve.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Bejelentkezés</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>A bejelentkezés sikertelen.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>Bejelentkezés ide: {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>{0} kijelentkeztetése sikertelen: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Bejelentkezés a Matrixba</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Kijelentkezés</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>Kijelentkezteti ezt: {0}? A megerősítéshez írja be a fiók jelszavát.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>Kijelentkezés…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Kicsi</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Valaki</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>Hangszóró ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Indítás</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>Csevegés</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>Csevegés indítása vele: {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>Indítás ezzel: {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Kereszt-aláírás</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Eszköz</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Kulcsmentés</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Helyreállítási kulcs</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Leállítás</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Leállítva: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>Állítsa be a helyreállítást, hogy mások ellenőrzöttnek lássák ezt az eszközt, és egy helyreállítási kulcs feloldja üzeneteit az új eszközökön.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>Ellenőrizze ezt az eszközt egy másik eszközével vagy a helyreállítási kulccsal, hogy mások ellenőrzöttnek lássák, és olvashassa régebbi üzeneteit.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Felfüggesztés</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} felfüggesztve: olvashat, de nem küldhet, nem csatlakozhat és nem hívhat meg.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Felfüggesztés</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Felhasználó felfüggesztése</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>Mikrofon váltása</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>Hangszóró váltása</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>Rendszer alapértelmezése</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>Szoba címkézése</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>Adminjogok elvétele</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>Hang tesztelése…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>Szövegméret</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Téma</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Sötét</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Világos</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Rendszer</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>Nem egyeznek</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>Egyeznek</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>Ez az eszköz</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Ma</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>Kód másolva.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>Kód törölve; a vele létrehozott fiókok megmaradnak.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>A szerver nem fogadta el a regisztrációs kódot.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>eddig: {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>{0} használat, korlát nélkül</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>{0}/{1} használat</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>Téma</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>Kamera kikapcsolása</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>Kamera bekapcsolása</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} ír…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>Többen írnak…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} és {1} ír…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Letiltás feloldása</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} letiltása feloldva.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Letiltás feloldása</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>{0} letiltásának feloldása sikertelen: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>ismeretlen</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Zárolás feloldása</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} zárolása feloldva.</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>Titkosított előzmények feloldása</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Némítás feloldása</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>Címke eltávolítása</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Felhasználói azonosító</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>Ez a felhasználói azonosító foglalt; válasszon másikat.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>Felhasználási szabályzat</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>A folytatással elfogadja a felhasználási szabályzatot: nincs illegális, bántó vagy ártalmas tartalom. Jelentse be az ilyet, és tiltsa le az embereket az üzeneteikből.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>Használatok; üres = korlátlan</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Az ellenőrzés megszakítva.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Az ellenőrzés megszakítva: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Az ellenőrzés sikertelen: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Ellenőrizve</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Ellenőrzés</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>Eszköz ellenőrzése</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>{0} ellenőrzése sikertelen: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>Ellenőrzés másik eszközzel</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>Nagyon nagy</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>Nagyon kicsi</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Videó</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Videohívás</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Hanghívás</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>Várakozás erre: {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Várakozás {0} megerősítésére…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} emojik összehasonlításával szeretné ellenőrizni ezt az eszközt.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>Miről szól a szoba</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>Vezetékes fejhallgató</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>Vezetékes headset</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Igen</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>Igen, mehet</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Tegnap</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Ön</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>az ön eszköze: {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>Az ön helyreállítási kulcsa</value>
+  </data>
+</root>

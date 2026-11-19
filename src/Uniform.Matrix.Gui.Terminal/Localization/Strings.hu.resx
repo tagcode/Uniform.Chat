@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hungarian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Alkalmazva</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Alkalmazva. Ezek újraindítás után lépnek életbe:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Alkalmaz</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Alkalmaz</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Mégse</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Be_zárás</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Kész</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Szerkesztés</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_xportálás…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Betöltés…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nem</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Visszaállítás</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Mentés</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Igen</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} nem olvasható: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Jelenlegi: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Alapértelmezett: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} nem létezik.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Újraindítás után lép életbe.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Alkalmazáskor lép életbe.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (üres = nincs beállítva)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Jelenlegi beállítások írása ide:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Beállítások exportálása</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Szűrő:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>Szi_nt: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} beállítás betöltve módosításként. Alkalmazza vagy mentse a használathoz.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} beállítás betöltve módosításként. Alkalmazza vagy mentse a használathoz.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Betöltendő beállításfájl:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Beállítások betöltése</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Naplók</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0}/{1} bejegyzés · {2}   Enter: teljes bejegyzés  Alt+S: szűrő</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0}/{1} bejegyzés · {2}   Enter: teljes bejegyzés  Alt+S: szűrő</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} sor]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} sor]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Új érték{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(nincs beállítva)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>most</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>régebbi napló</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Egyike ezeknek: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Típus: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Jelenleg ez állítja be: {0}, ami felülírja a beállításfájlt.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Visszaállítás</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Mentés</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Mentve</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Mentve ide: {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Ez az érték titkos. Adja meg a parancssorban, vagy írja be, amikor a program kéri.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Munkamenetek</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Beállítások</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Beállításfájl: {0}    * szerkesztve  + alkalmazva, nincs mentve  ↻ újraindítás után</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Ezek újraindítás után lépnek életbe:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Néhány módosítás nincs elmentve a beállításfájlba. Mégis bezárja?
+
+Az alkalmazott módosítások a program újraindításáig érvényesek.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Nem mentett beállítások</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} kiírva. A titkos értékek nincsenek benne.</value>
+  </data>
+</root>

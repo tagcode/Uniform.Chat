@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Japanese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>適用しました</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>適用しました。次の設定は再起動後に有効になります：
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>適用(_A)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>キャンセル(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>閉じる(_C)</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>完了(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>編集(_E)</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>エクスポート(_X)…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>読み込み(_L)…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>いいえ(_N)</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>OK(_O)</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>リセット(_R)</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>保存(_S)</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>はい(_Y)</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} を読み取れません：{1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>現在：{0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> 既定値：{0}。</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} は存在しません。</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> 再起動後に有効になります。</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> 適用すると有効になります。</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> （空欄で未設定）</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>現在の設定の書き込み先：</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>設定をエクスポート</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>フィルター(_F)：</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>レベル(_V)：{0}+</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} 件の設定を変更として読み込みました。使うには適用または保存してください。</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>読み込む設定ファイル：</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>設定を読み込む</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0}/{1} 件 · {2}   Enter：記録全体  Alt+F：フィルター</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} 行]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+新しい値{1}：</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>（未設定）</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>現在</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>以前のログ</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> 次のいずれか：{0}。</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}：{1}
+型：{2}。{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> 現在 {0} で設定されており、設定ファイルより優先されます。</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>保存しました</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>{0} に保存しました。{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>この値は秘密です。コマンドラインで指定するか、プログラムに求められたときに入力してください。</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>セッション</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>設定ファイル：{0}    * 編集済み  + 適用済み・未保存  ↻ 再起動後</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+次の設定は再起動後に有効になります：
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>一部の変更は設定ファイルに保存されていません。閉じますか？
+
+適用した変更はプログラムを再起動するまで有効です。</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>未保存の設定</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} に書き込みました。秘密の値は含まれていません。</value>
+  </data>
+</root>

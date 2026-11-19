@@ -30,4 +30,8 @@
     <Compile Include="..\Uniform.Matrix.Protocol.Tests\StubHandler.cs" Link="StubHandler.cs" />
   </ItemGroup>
 
+  <!-- Checks of translations, shared by the test projects of projects with texts -->
+  <ItemGroup>
+    <Compile Include="..\Shared\LocalizationChecks.cs" Link="LocalizationChecks.cs" />
+  </ItemGroup>
 </Project>

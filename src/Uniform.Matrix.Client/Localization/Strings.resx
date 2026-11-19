@@ -74,7 +74,10 @@
   <data name="NamesAnd" xml:space="preserve">
     <value>{0} and {1}</value>
   </data>
-  <data name="NamesAndOthers" xml:space="preserve">
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} and {1} other</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
     <value>{0} and {1} others</value>
   </data>
   <data name="NowKnownAs" xml:space="preserve">

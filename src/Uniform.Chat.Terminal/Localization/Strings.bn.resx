@@ -1,0 +1,1805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bengali texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>পরিচিতি</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+টার্মিনালের জন্য Matrix চ্যাট ক্লায়েন্ট।
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>চালিয়ে গেলে আপনি ব্যবহারকারী নীতি মেনে নিচ্ছেন: কোনো অবৈধ, আপত্তিকর বা ক্ষতিকর বিষয়বস্তু নয়।
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>আপনার অ্যাকাউন্ট মুছে ফেলা হয়েছে।</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>ব্যবহারকারী আইডি বা নামের অংশ; সবার জন্য খালি:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>অ্যাকাউন্ট</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0}টি অ্যাকাউন্ট{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0}টি অ্যাকাউন্ট{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} ব্যর্থ: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>ঠিকানা যোগ করুন</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>{0} যোগ হয়েছে</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>{0} যোগ হচ্ছে</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>ঠিকানা, যেমন #রুম বা #রুম:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>সরানোর ঠিকানা, যেমন #রুম:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>এই রুমটি ইতিমধ্যে এনক্রিপ্ট করা।</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> ও আরও {0}টি</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> ও আরও {0}টি</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>উত্তর দেওয়া হচ্ছে</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>{0}-এর জন্য পাসওয়ার্ড:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>{0}-কে জিজ্ঞেস করা হচ্ছে…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>অডিও পরীক্ষা</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>মাইক্রোফোন: {0}। স্পিকার: {1}।</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>অডিও পরীক্ষা: কিছুই রেকর্ড হয়নি</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>অডিও পরীক্ষা: {0:F0} সেকেন্ড, {1:F0} kbit/s-এ</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>নীরবতা মানে ইনপুট মাইক্রোফোন নেই: সিস্টেমের সাউন্ড সেটিংসে একটি বেছে নিন, বা সেটিংসে Audio:Microphone সেট করুন।</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>কথা বলুন: কলের মতো Opus দিয়ে এক সেকেন্ড পরে আপনি নিজের কণ্ঠ শুনবেন।</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>এই প্ল্যাটফর্মে অডিও সমর্থিত নয়।</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>সংস্করণ {0}, পুনরুদ্ধার কী দরকার</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>চালু (সংস্করণ {0})</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>কী ব্যাকআপ পুনরুদ্ধার হয়েছে: {0}টি রুম কী আমদানি হয়েছে।</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>কী ব্যাকআপ পুনরুদ্ধার হয়েছে: {0}টি রুম কী আমদানি হয়েছে।</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>নিষিদ্ধ করুন</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>নিষিদ্ধ করা হচ্ছে</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, ব্লক করা</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>ব্লক করা: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} ব্লক করা হয়েছে: তাঁদের বার্তা ও আমন্ত্রণ আর দেখা যাবে না। /unignore {1} এটি ফিরিয়ে দেয়।</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>ব্লক করা হচ্ছে</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>আমি মেনে নিচ্ছি(_A)</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>প্রেরককে ব্লক করুন(_B)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>বাতিল(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>বন্ধ করুন(_C)</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট তৈরি করুন(_C)</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>মুছুন(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>সম্পাদনা(_E)</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>যোগ দিন(_J)</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>পরে(_L)</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>তালিকাভুক্ত করুন(_L)</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>ডিভাইস লগ আউট করুন(_L)</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>বাকি সব লগ আউট করুন(_A)</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>লিংক খুলুন(_L)</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>অন্যান্য(_O)…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>প্রস্থান(_Q)</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>প্রতিক্রিয়া জানান(_A)</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>পুনরুদ্ধার করুন(_R)</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>প্রত্যাখ্যান করুন(_R)</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>নাম বদলান(_R)</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>উত্তর দিন(_R)</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>রিপোর্ট করুন(_P)</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>ফাইল সংরক্ষণ করুন(_S)</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>পুনরুদ্ধার সেট আপ করুন(_U)</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>বন্ধ করুন(_D)</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>বন্ধ ও ব্লক করুন(_B)</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>সাইন ইন করুন(_S)</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>মেলে না(_D)</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>মেলে(_M)</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>তালিকা থেকে সরান(_U)</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>এই ডিভাইস যাচাই করুন(_V)</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>নির্বাচিতটি যাচাই করুন(_V)</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>ছবি দেখুন(_V)</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>কল</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>কল: {0}-এর সঙ্গে কলে{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>কল: {0}-এর সঙ্গে সংযোগ হচ্ছে…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>কল: {0}-এর সঙ্গে কল শেষ: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>কল করা হচ্ছে</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>কল: {0}-কে কল করা হচ্ছে…  বাতিল করতে /hangup</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>কল: {0}-এর সঙ্গে আবার সংযোগ হচ্ছে…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>কল: {0} কল করছেন: /answer বা /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>সংযোগ করা যাচ্ছে না</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>মাইক্রোফোন বা স্পিকার খোলা যাচ্ছে না: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>প্রদর্শিত নাম বদলানো হচ্ছে</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>এনক্রিপশন যাচাই হচ্ছে…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>প্রতিক্রিয়া বেছে নিন:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>কমান্ড ও কী</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>ইমোজি মেলান</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>{0}-এর সঙ্গে মেলান:
+
+{1}
+
+অথবা সংখ্যাগুলো {2}
+
+দুটিতেই কি একই ক্রমে একই জিনিস দেখা যাচ্ছে?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>নিশ্চিত করুন</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>{0} হিসেবে সংযুক্ত</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>সংযোগ হচ্ছে…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>সংযোগ সমস্যা: {0}</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0}টি সরানো যায়নি</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0}টি সরানো যায়নি</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট তৈরি করুন</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>#{0}:{1} তৈরি হয়েছে</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>{0} তৈরি হয়েছে।</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট তৈরি হচ্ছে</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>#{0}:{1} তৈরি হচ্ছে</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>রুম তৈরি হচ্ছে</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>টোকেন তৈরি হচ্ছে</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} এই রুমটি তৈরি করেছেন এবং তাঁর সীমাহীন অধিকার আছে, যা বদলানো যায় না।</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>ক্রস-সাইনিং কী গোপন স্টোরেজে ছিল না।</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>ক্রস-সাইনিং পুনরুদ্ধার হয়েছে; এই ডিভাইস এখন যাচাইকৃত।</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- দিন বদলেছে {0:ddd, d MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>নিষ্ক্রিয় করুন</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>স্থায়ীভাবে নিষ্ক্রিয় করুন…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} নিষ্ক্রিয় করা হয়েছে।</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>{0}-কে স্থায়ীভাবে নিষ্ক্রিয় করবেন? তাঁরা সব রুম ছেড়ে দেবেন এবং আর লগ ইন করতে পারবেন না; ব্যবহারকারী আইডিটি আর কাউকে দেওয়া হবে না।</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>নিষ্ক্রিয় করা হচ্ছে</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট মুছুন</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>আপনার অ্যাকাউন্ট স্থায়ীভাবে মুছবেন? আপনি সব রুম ছেড়ে দেবেন, আপনার নাম ও ছবি সরানো হবে এবং সব ডিভাইস সাইন আউট হবে। ব্যবহারকারী আইডিটি আর ব্যবহার করা যাবে না।</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>রিপোর্ট {0} মোছা হয়েছে।</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>টোকেন {0} মোছা হয়েছে।</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>বার্তা মুছুন</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>"{0}" সবার জন্য মুছবেন?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>রিপোর্ট মুছুন</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>টোকেন মুছুন</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>টোকেন {0} মুছবেন? এটি দিয়ে তৈরি অ্যাকাউন্টগুলো থাকবে।</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট মোছা হচ্ছে</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>বার্তা মোছা হচ্ছে</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>রিপোর্ট মোছা হচ্ছে</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>টোকেন মোছা হচ্ছে</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0}টি ডিভাইস</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0}টি ডিভাইস</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    শেষ দেখা {2}, {3} থেকে</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>এই ডিভাইসটি এখনও যাচাইকৃত নয়। এটি আপনার অন্য ডিভাইস বা পুনরুদ্ধার কী দিয়ে যাচাই করুন, যাতে অন্যরা এটিকে যাচাইকৃত দেখেন এবং এটি আপনার পুরোনো বার্তা পড়তে পারে।</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>ডিভাইস</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>ডিভাইস ({0}, * = এই ডিভাইস)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>সরাসরি বার্তা</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>আপনার সার্ভারের জন্য সার্ভার খালি রাখুন; যেকোনো ঘরে Enter খোঁজে।</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>ডিরেক্টরিতে তালিকা</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>{0} ডাউনলোড হচ্ছে…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>এন্ড-টু-এন্ড এনক্রিপশন উপলব্ধ নয়।
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (সম্পাদিত)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[সম্পাদনা] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>এনক্রিপশন চালু করুন</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>এই রুমের সব নতুন বার্তা এনক্রিপ্ট করবেন? এটি পরে বন্ধ করা যাবে না।</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>এনক্রিপশন চালু হচ্ছে</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [এনক্রিপ্ট করা]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [এনক্রিপ্ট করা বার্তা; কী এখনও আসেনি]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>এনক্রিপশন</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>এই ডিভাইসে এনক্রিপশন উপলব্ধ নয়।
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>অন্য ডিভাইসে উত্তর দেওয়া হয়েছে</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>তাঁরা আবার কল করেছেন</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>প্রত্যাখ্যাত</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>অন্য ডিভাইসে প্রত্যাখ্যাত</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>{0}-এর স্থগিতাদেশ শেষ করা হয়েছে।</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>শেষ</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>স্থগিতাদেশ শেষ করা হচ্ছে</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>মিসড</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>উত্তর নেই</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>সংযোগ নেই</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>স্থগিতাদেশ শেষ করুন</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>তাঁরা কল কেটে দিয়েছেন</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>আপনি প্রত্যাখ্যান করেছেন</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>আপনি কল কেটে দিয়েছেন</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>ব্যর্থ: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>ফাইল সংরক্ষিত হয়েছে</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, প্রথম {0}টি দেখানো হয়েছে</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, প্রথম {0}টি দেখানো হয়েছে</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>অ্যাডমিন</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>নিষ্ক্রিয়</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [এনক্রিপ্ট করা]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>লক করা</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [পাবলিক]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [নিষ্পন্ন]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>স্থগিত</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>@নাম:সার্ভার-এর মতো ব্যবহারকারী আইডি দিন।</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>শুরু করতে আপনার Matrix ব্যবহারকারী আইডি দিন।
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>আপনার ব্যবহারকারী আইডি দিন।</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>কল কাটা হচ্ছে</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>সাহায্য</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**মোটা** _বাঁকা_ `কোড` ~~কাটা~~ [লেখা](url)   Markdown ফরম্যাট করে পাঠানো হয়
+/plain text     Markdown ছাড়া পাঠান
+/me text        কাজ, যেমন * আপনি হাত নাড়েন
+/join #room     রুমে যোগ দিন; !id বা লিংকও, তারপর যে সার্ভারগুলোর মাধ্যমে যোগ দেবেন
+/leave          এই রুম ছাড়ুন
+/topic text     বিষয় সেট করুন
+/name text      রুমের নাম সেট করুন
+/avatar [file]  রুমের ছবি সেট করুন; /avatar none এটি সরায়
+/kick @user [reason]   সদস্যকে সরান
+/ban @user [reason]    সদস্যকে স্থায়ীভাবে সরান
+/unban @user    নিষিদ্ধ ব্যবহারকারীকে ফিরতে দিন
+/power @user level     অধিকার স্তর সেট করুন: সংখ্যা, admin, moderator বা member
+/op @user, /deop @user  অ্যাডমিন বানান, বা সাধারণ সদস্য
+/invite @user   ব্যবহারকারীকে আমন্ত্রণ জানান
+/msg @user      সরাসরি চ্যাট শুরু করুন
+/nick name      আপনার প্রদর্শিত নাম সেট করুন
+/list [server]  পাবলিক রুম দেখুন, এখানে বা অন্য সার্ভারে
+/create name    ব্যক্তিগত রুম তৈরি করুন
+/create #room [name]   সেই ঠিকানায় পাবলিক রুম তৈরি করুন
+/alias #room, /unalias #room   এই রুমের ঠিকানা যোগ করুন বা সরান
+/publish, /unpublish   এই রুমটি পাবলিক রুম ডিরেক্টরিতে দেখান, বা না
+/upload         ফাইল পাঠান
+/devices        আপনার সেশন পরিচালনা করুন
+/settings       সেটিংস দেখুন ও বদলান
+/logs           এই ও আগের সেশনের লগ পড়ুন
+/audiotest      মাইক্রোফোন ও স্পিকার যাচাই করতে Opus দিয়ে নিজের কণ্ঠ শুনুন
+/call           এই সরাসরি চ্যাটের অন্য সদস্যকে ভয়েস কল করুন
+/answer /reject আসা কলের উত্তর দিন বা প্রত্যাখ্যান করুন
+/hangup /mute   কল শেষ করুন, বা মাইক্রোফোন মিউট ও আনমিউট করুন
+/encryption     কী, পুনরুদ্ধার ও ব্যাকআপ
+/recover        পুনরুদ্ধার কী দিয়ে পুরোনো বার্তা খুলুন
+/verify [@user] আপনার অন্য ডিভাইস বা কোনো ব্যবহারকারীকে ইমোজি দিয়ে যাচাই করুন
+/ignore @user   ব্যবহারকারীকে ব্লক করুন: তাঁদের বার্তা ও আমন্ত্রণ আর দেখা যায় না; শুধু /ignore তালিকা দেখায়
+/unignore @user ব্যবহারকারীকে আনব্লক করুন
+/report [@user] এই রুম বা কোনো ব্যবহারকারীকে সার্ভার অ্যাডমিনদের কাছে রিপোর্ট করুন; বার্তা তাদের মেনু থেকে (Enter)
+/quit           প্রস্থান
+
+সার্ভার অ্যাডমিন, সার্ভার মেনুতেও:
+/whois @user    ব্যবহারকারীর ডিভাইস ও ঠিকানা; যে কেউ নিজেকে দেখতে পারেন
+/accounts [text], /rooms [text]   সার্ভারের অ্যাকাউন্ট বা রুম তালিকা ও পরিচালনা করুন
+/suspend @user, /unsuspend @user  পড়তে পারেন কিন্তু পাঠাতে, যোগ দিতে বা আমন্ত্রণ জানাতে পারেন না
+/lock @user, /unlock @user        সার্ভার তাঁদের সেশন প্রত্যাখ্যান করে
+/notice @user text   সার্ভার নোটিশ পাঠান
+/tokens, /reports    নিবন্ধন টোকেন, ব্যবহারকারীদের রিপোর্ট
+
+Alt+1…9         রুম 1…9-এ যান
+Ctrl+N, Ctrl+P  পরের, আগের রুম
+Ctrl+O          রুমে যোগ দিন
+Ctrl+R          রুম ডিরেক্টরি
+PageUp/Down     বার্তা স্ক্রল করুন
+Ctrl+PageUp     পুরোনো বার্তা লোড করুন
+F2              সদস্য দেখান বা লুকান
+Ctrl+Up, Enter  বার্তা বেছে নিন, তারপর তাতে কাজ করুন
+Tab             ডাকনাম পূর্ণ করুন
+Esc             উত্তর বা সম্পাদনা বাতিল করুন
+F10             মেনু খুলুন</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>ছবি</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>এই ছবির ফরম্যাট দেখানো যায় না। অন্য প্রোগ্রামে খুলতে ফাইল সংরক্ষণ করুন ব্যবহার করুন।</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>অবৈধ ঠিকানা</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>অবৈধ রুম</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>অবৈধ ব্যবহারকারী</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>আমন্ত্রণ জানান</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>{0}-এ আমন্ত্রিত</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- আপনাকে এই রুমে আমন্ত্রণ জানানো হয়েছে। যোগ দিতে বা প্রত্যাখ্যান করতে Enter চাপুন।</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} আপনাকে {1}-এ আমন্ত্রণ জানিয়েছেন।</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>{0}-কে আমন্ত্রণ জানানো হচ্ছে</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} সার্ভার অ্যাডমিন।</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} যাচাইকৃত।</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>যোগ দিন</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>{0}-এ যোগ দিয়েছেন</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>{0}-এ যোগ দেওয়া হচ্ছে</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>{0}{1}-এ যোগ দেবেন?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>রুমে যোগ দিন</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>রুমের ঠিকানা, আইডি বা লিংক, যেমন #matrix:matrix.org; যে সার্ভারগুলোর মাধ্যমে যোগ দেবেন সেগুলো পরে দিতে পারেন:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> ({0}-এর মাধ্যমে)</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>সরান</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>সরানো হচ্ছে</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>{0} ছাড়বেন?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>রুম ছাড়ুন</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>{0} ছাড়া হচ্ছে</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>অ্যাডমিন ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>{0}-এর স্তর, 0 থেকে 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>সদস্য (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>মডারেটর ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>অন্যান্য…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>অ্যাকাউন্ট আনা হচ্ছে</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>সদস্য আনা হচ্ছে</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>রিপোর্ট আনা হচ্ছে</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>{0} ডিরেক্টরিতে যোগ হচ্ছে</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>রুম আনা হচ্ছে</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>নিবন্ধন টোকেন আনা হচ্ছে</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>{0}-কে {1}-এর পাবলিক রুম ডিরেক্টরিতে দেখাবেন? এতে কে যোগ দিতে পারেন তা বদলায় না।</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>সদস্য লোড হচ্ছে</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>{0} লোড হচ্ছে…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[প্রিভিউ লোড হচ্ছে…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>লক করুন</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>লক করুন: সব সেশন প্রত্যাখ্যান করুন</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} লক করা হয়েছে: /unlock {1} পর্যন্ত সার্ভার তাঁদের সেশন প্রত্যাখ্যান করে।</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>লক করা হচ্ছে</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>লগ আউট হচ্ছে</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>ডিভাইস লগ আউট হচ্ছে</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>লগ ইন করুন</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>লগ আউট করুন</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>ডিভাইস লগ আউট করুন</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>{0}টি ডিভাইস লগ আউট করবেন: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>{0}টি ডিভাইস লগ আউট করবেন: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>সার্ভারে এই সেশনটি শেষ করবেন? বার্তা স্থানীয় ডেটাবেসে থাকবে।</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>ব্যবহারকারী খোঁজা হচ্ছে</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>আপনার স্তর {0} থেকে {1} করবেন? আপনি নিজে এটি আর বাড়াতে পারবেন না।</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>সার্ভার অ্যাডমিন বানান</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>{0}-কে সার্ভারের সব অ্যাকাউন্ট ও রুম পরিচালনা করতে দেবেন?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>অ্যাডমিন বানানো হচ্ছে</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} জন সদস্য</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} জন সদস্য</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>এই রুমে ব্যবহারকারী আইডি বা নাম:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>সদস্য</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>সদস্য ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>{0}-এর সদস্য</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>পরিচিতি(_A)</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>অ্যাকাউন্ট(_A)…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>সার্ভার অ্যাডমিন: অ্যাকাউন্ট তালিকা ও পরিচালনা</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>ঠিকানা যোগ করুন(_S)…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>#রুম:সার্ভার-এর মতো ঠিকানা</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>অডিও পরীক্ষা(_A)…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>মাইক্রোফোন ও স্পিকার যাচাই করতে নিজের কণ্ঠ শুনুন</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>নিষিদ্ধ করুন(_B)…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>সদস্যকে স্থায়ীভাবে সরান</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>কল করুন(_C)</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>এই সরাসরি চ্যাটে ভয়েস কল</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>কমান্ড ও কী(_C)</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট মুছুন(_A)…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>অ্যাকাউন্ট স্থায়ীভাবে নিষ্ক্রিয় করুন</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>ডিভাইস(_D)…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>সেশন দেখুন ও লগ আউট করুন</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>সরাসরি বার্তা(_M)…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>কোনো ব্যবহারকারীর সঙ্গে চ্যাট শুরু করুন</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>রুম ডিরেক্টরি(_D)…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>পাবলিক রুম খুঁজুন</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>ডিরেক্টরিতে তালিকা(_G)…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>পাবলিক রুম ডিরেক্টরিতে দেখান</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>এনক্রিপশন চালু করুন(_Y)…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>এই রুমটি এনক্রিপ্ট করুন; ফেরানো যায় না</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>এনক্রিপশন(_E)…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>কী, পুনরুদ্ধার ও ব্যাকআপ</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>ফাইল(_F)</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>কল কাটুন(_H)</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>কল শেষ করুন</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>সাহায্য(_H)</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>আমন্ত্রণ জানান(_I)…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>কোনো ব্যবহারকারীকে এখানে আমন্ত্রণ জানান</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>যোগ দিন(_J)…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>ঠিকানা বা আইডি দিয়ে যোগ দিন</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>সরান(_K)…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>সদস্যকে সরান</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>ছাড়ুন(_L)</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>এই রুম ছাড়ুন</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>লগ আউট করুন(_L)…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>সার্ভারে সেশন শেষ করুন</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>লগ(_L)…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>এই ও আগের সেশন</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>সদস্য(_M)</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>দেখান বা লুকান</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>নতুন পাবলিক রুম(_R)…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>এমন রুম তৈরি করুন যাতে যে কেউ যোগ দিতে পারেন</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>নতুন রুম(_N)…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>ব্যক্তিগত রুম তৈরি করুন</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>পরের রুম(_N)</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>পুরোনো বার্তা(_O)</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>ইতিহাস লোড করুন</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>অধিকার স্তর(_P)…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>সদস্যকে অ্যাডমিন বা মডারেটর বানান</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>আগের রুম(_P)</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>প্রস্থান(_Q)</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>প্রস্থান, সেশন থেকে যায়</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>নিবন্ধন টোকেন(_R)…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>যে টোকেন দিয়ে নতুন অ্যাকাউন্ট নিবন্ধন করে</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>রিপোর্ট(_P)…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>ব্যবহারকারীরা কী রিপোর্ট করেছেন</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>রুম(_R)</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>বার্তা বেছে নিন(_S)</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>উত্তর, প্রতিক্রিয়া, সম্পাদনা…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>ফাইল পাঠান(_F)…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>এখানে ফাইল আপলোড করুন</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>সার্ভার(_S)</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>সার্ভার নোটিশ(_N)…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>সার্ভারের পক্ষ থেকে ব্যবহারকারীকে বার্তা</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>রুম(_O)…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>সার্ভারের সব রুম</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>ছবি সেট করুন(_A)…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>রুমের ছবি</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>নাম সেট করুন(_E)…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>রুমের নাম বদলান</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>সেটিংস(_S)…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>সেটিংস দেখুন ও বদলান</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>বিষয় সেট করুন(_T)…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>বিষয় বদলান</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>নিষেধাজ্ঞা তুলুন(_U)…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>নিষিদ্ধ ব্যবহারকারীকে ফিরতে দিন</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>এই ডিভাইস যাচাই করুন(_V)…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>ইমোজি তুলনা</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>দৃশ্য(_V)</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>কে(_W)…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>ব্যবহারকারীর ডিভাইস ও ঠিকানা</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>বার্তা</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [বার্তা মোছা হয়েছে]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>{0}-এ বার্তা</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>মাইক্রোফোন: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, মিউট</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>{0}-এর নাম:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>আপনার বর্তমান পরিচয় এই ডিভাইস বা {0}, কোনোটিকেই বিশ্বাস করে না, তাই কেউ অন্যটির নিশ্চয়তা দিতে পারে না।
+
+এই ডিভাইসটি কোনো বিশ্বস্ত ডিভাইস থেকে যাচাই করুন{1}, অথবা আপনার পুনরুদ্ধার কী ব্যবহার করুন।</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>কখনও না</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>নতুন অ্যাকাউন্ট</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ নতুন অ্যাকাউন্ট…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>{0}-এর নতুন পাসওয়ার্ড; তাঁদের ডিভাইস লগ আউট হবে:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>নতুন পাবলিক রুম</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>নতুন রুম</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>নতুন টোকেন</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ নতুন টোকেন…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>এই সার্ভার অ্যাপকে অ্যাকাউন্ট তৈরি করতে দেয় না।</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>কোনো কল বাজছে না।</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>কাটার মতো কোনো কল নেই।</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>মিউট করার মতো কোনো কল নেই।</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>কোনো ডিভাইস লগ ইন নেই।</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>কখনও মেয়াদ শেষ হয় না</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} আর সার্ভার অ্যাডমিন নন।</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>এখানে "{0}" নামে কোনো সদস্য নেই। @alice:matrix.org-এর মতো ব্যবহারকারী আইডি দিন।</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>কোনো সদস্য নেই।</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>কোনোটি নয়</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>কিছু পাওয়া যায়নি</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>আপনার বর্তমান পরিচয় আপনার কোনো ডিভাইসকেই বিশ্বাস করে না, তাই কেউ এই ডিভাইসের নিশ্চয়তা দিতে পারে না।
+
+আপনার পুনরুদ্ধার কী ব্যবহার করুন, অথবা যে ডিভাইসটি রাখছেন তাতে আপনার পরিচয় রিসেট করুন।</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>কেউ ব্লক করা নেই।</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[প্রিভিউ নেই]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>এই অ্যাকাউন্টে এখনও পুনরুদ্ধার সেট আপ করা নেই। সেট আপ করলে অন্যরা এই ডিভাইসকে যাচাইকৃত দেখবেন, এবং আপনি একটি পুনরুদ্ধার কী পাবেন যা নতুন ডিভাইসে আপনার বার্তা খোলে।</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>কোনো রিপোর্ট নেই।</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>কোনো রুম নেই</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>কোনো রুম পাওয়া যায়নি</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} কোনো কমান্ড নয়। সাহায্য → কমান্ড ও কী দেখুন।</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" কোনো স্তর নয়; একটি সংখ্যা দিন, অথবা admin, moderator বা member।</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" Matrix ব্যবহারকারী আইডি নয়; এটি দেখতে @alice:matrix.org-এর মতো।
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} ছবির ফাইল নয়।</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" অন্য কোনো ব্যবহারকারীর আইডি নয়; এটি দেখতে @alice:matrix.org-এর মতো।</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} #matrix:matrix.org-এর মতো রুমের ঠিকানা, আইডি বা লিংক নয়। কোনো ব্যবহারকারীর সঙ্গে চ্যাটের জন্য /msg ব্যবহার করুন।</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} #রুম বা #রুম:{1}-এর মতো রুমের ঠিকানা নয়।</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" সার্ভারের ঠিকানা নয়; এটি দেখতে https://matrix.example.org-এর মতো।</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} @alice:matrix.org-এর মতো ব্যবহারকারী আইডি নয়।</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" ব্যবহারকারী আইডি নয়; এটি দেখতে @alice:matrix.org-এর মতো।</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" ব্যবহারকারী আইডি নয়; এটি দেখতে @alice:{1}-এর মতো।</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>সংযুক্ত নয়</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>লগ আউট করার কিছু নেই। এই সেশন শেষ করতে ফাইল → লগ আউট করুন ব্যবহার করুন।</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>{0}-এর জন্য নোটিশ; এটি তাঁদের সার্ভার নোটিশ রুমে পৌঁছাবে:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [পাঠানো হয়নি: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>সেট আপ করা নেই</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>বিশ্বস্ত নয়</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>যাচাইকৃত নয়</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>ব্যবহারযোগ্য কোনো কী ব্যাকআপ পাওয়া যায়নি।</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>আপনার কোনো বিশ্বস্ত ডিভাইস</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>আগে একটি সরাসরি চ্যাট খুলুন।</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+এনক্রিপশন উইন্ডো এখন খুলবেন? এটি ফাইল → এনক্রিপশন ও /encryption-এও আছে।</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>{0} খোলা হচ্ছে</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>আগে এমন একটি রুম খুলুন যাতে আপনি যোগ দিয়েছেন।</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>লিংক খুলুন</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>অন্য সার্ভার</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>ঠিকানা শুধু আপনার নিজের সার্ভার {0}-এ তৈরি করা যায়।</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>{0}-এর পাসওয়ার্ড:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>পাসওয়ার্ড গৃহীত হয়নি।</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>{0}-এর জন্য নতুন পাসওয়ার্ড সেট করা হয়েছে এবং তাঁদের ডিভাইস লগ আউট করা হয়েছে।</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>পাসওয়ার্ড দুটি আলাদা।</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>অধিকার স্তর</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>{0}-এর অধিকার স্তর (এখন {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>বন্ধ করতে Enter চাপুন।</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>প্রস্থান</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>প্রতিক্রিয়া জানান</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>প্রতিক্রিয়ার লেখা বা ইমোজি:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>{0}-এর কারণ (ঐচ্ছিক):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>হয়রানি বা ঘৃণা(_H)</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>অবৈধ বিষয়বস্তু(_I)</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>অন্যান্য(_O)</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>যৌন বা সহিংস বিষয়বস্তু(_X)</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>স্প্যাম(_S)</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>পুনরুদ্ধার করুন</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>পুনরুদ্ধার হয়েছে</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>পুনরুদ্ধার হচ্ছে</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>কী পুনরুদ্ধার হচ্ছে…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>পুনরুদ্ধার কী</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>পুনরুদ্ধার কী (বা পাসফ্রেজ):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>এই সার্ভারের এমন একটি ধাপ দরকার যা এই অ্যাপ করতে পারে না, যেমন ক্যাপচা বা ইমেল। সার্ভারের ওয়েবসাইটে অ্যাকাউন্ট তৈরি করুন, তারপর এখানে সাইন ইন করুন।</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>সার্ভার অ্যাডমিনের কাছ থেকে পাওয়া নিবন্ধন টোকেন:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>নিবন্ধন টোকেন</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>{0} প্রত্যাখ্যান করা হচ্ছে</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>প্রত্যাখ্যান করা হচ্ছে</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, রিলে</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>ঠিকানা সরান</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>{0} সরানো হয়েছে</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>{0} সরানো হচ্ছে</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>ছবি সরানো হচ্ছে</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>ডিভাইসের নাম বদলান</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>ডিভাইসের নাম বদলানো হচ্ছে</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} আছে। প্রতিস্থাপন করবেন?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[উত্তর {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[উত্তর] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[উত্তর {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>রিপোর্ট করুন</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>{0}-এর বিরুদ্ধে আপনার সার্ভারের অ্যাডমিনদের কাছে রিপোর্ট করা হয়েছে।</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>বার্তাটি আপনার সার্ভারের অ্যাডমিনদের কাছে রিপোর্ট করা হয়েছে। /ignore প্রেরককে ব্লক করে।</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>রিপোর্ট করা হচ্ছে</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>বার্তা রিপোর্ট করা হচ্ছে</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" ব্যবহারকারী আইডি নয়; /report @user:server, অথবা এই রুমের জন্য শুধু /report।</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>রিপোর্ট</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0}টি রিপোর্ট, নতুনগুলো আগে:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0}টি রিপোর্ট, নতুনগুলো আগে:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>রিপোর্ট {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>আপনার সার্ভারের অ্যাডমিনদের কাছে রিপোর্ট: {0}। কেন?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>পাসওয়ার্ড রিসেট করুন</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>পাসওয়ার্ড রিসেট করুন…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>পাসওয়ার্ড রিসেট হচ্ছে</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>রুমের ছবি</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>রুমের ছবি সেট হয়েছে</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0}টি রুম</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0}টি রুম</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>রুম ডিরেক্টরি</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>এই রুমটি এনক্রিপ্ট করা, কিন্তু এই ডিভাইসে এনক্রিপশন উপলব্ধ নয়।
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>রুমের নাম, ঠিকানা বা আইডির অংশ; সবার জন্য খালি:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} রুম ডিরেক্টরিতে তালিকাভুক্ত</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>রুমের নাম:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} কোনো সার্ভারের নাম বলে না। রুমের যে সার্ভারগুলোর মাধ্যমে যোগ দেবেন সেগুলো দিন, যেমন /join {1} matrix.org।</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>রুম</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0}টি রুম, সবচেয়ে বেশি সদস্য আগে{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0}টি রুম, সবচেয়ে বেশি সদস্য আগে{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} আর রুম ডিরেক্টরিতে তালিকাভুক্ত নয়</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>একই পাসওয়ার্ড আবার:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>এভাবে সংরক্ষণ করুন (ফাইল, বা যে ফোল্ডারে সংরক্ষণ করবেন):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>{0} সংরক্ষিত হয়েছে</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>ফাইল সংরক্ষণ করুন</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>ফাইল সংরক্ষণ হচ্ছে</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>খোঁজা ব্যর্থ: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>খোঁজা হচ্ছে…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>খুঁজুন:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+বিস্তারিত জানতে লগ ফাইল দেখুন।</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>ফাইল পাঠান</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>{0} এই রুমে পাঠাবেন?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>ফাইল পাঠান</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>এই {0}টি ফাইল এই রুমে পাঠাবেন?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>এই {0}টি ফাইল এই রুমে পাঠাবেন?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>{0} পাঠানো হচ্ছে</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>নোটিশ পাঠানো হচ্ছে</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [পাঠানো হচ্ছে…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>যাচাইয়ের অনুরোধ পাঠানো হচ্ছে…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>সার্ভার নোটিশ পাঠান…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>{0} পাঠানো হয়েছে</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>{0}-কে সার্ভার নোটিশ পাঠানো হয়েছে।</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>যেমন, এই কম্পিউটারের সার্ভারের জন্য http://localhost:8008।</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>সার্ভারের ঠিকানা, শুধু যদি ব্যবহারকারী আইডি থেকে পাওয়া না যায়:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>সার্ভার:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>সার্ভার দরকার</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>সার্ভার নোটিশ</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>সার্ভারের নীতি:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>নাম সেট করুন</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>ছবি সেট হচ্ছে</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>নাম সেট হচ্ছে</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>{0}-এর অধিকার স্তর সেট হচ্ছে</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>বিষয় সেট হচ্ছে</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>পুনরুদ্ধার সেট আপ হচ্ছে…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>বিষয় সেট করুন</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>সেট আপ করা</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>সেট আপ করা এবং এখানে বিশ্বস্ত</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>সেট আপ করা, এখানে এখনও বিশ্বস্ত নয়</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>পুনরুদ্ধার সেট আপ করুন</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>ক্রস-সাইনিং কী, কী ব্যাকআপ ও পুনরুদ্ধার কী তৈরি করবেন?
+
+পুনরুদ্ধার কী দিয়ে নতুন লগ ইন নিজেকে যাচাই করতে ও পুরোনো বার্তা পড়তে পারে। এটি পাসওয়ার্ডের মতো নিরাপদে রাখুন।</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>বন্ধ করুন</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>বন্ধ করুন…</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} বন্ধ করা হয়েছে: {1} জন সদস্যকে সরানো হয়েছে{2}{3}।</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} বন্ধ করা হয়েছে: {1} জন সদস্যকে সরানো হয়েছে{2}{3}।</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>এই সার্ভারের সব সদস্যকে {0} ছাড়াবেন, এবং এখানে এর ঠিকানাগুলো সরাবেন? ব্লক করলে তাঁরা আর যোগও দিতে পারবেন না।</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>সদস্যদের দেখানো কারণ; কারণ না থাকলে খালি:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>রুম বন্ধ করুন…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>রুম বন্ধ হচ্ছে</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>শুরু করতে আপনার পুরো Matrix ব্যবহারকারী আইডি দিন; সফল লগ ইনের পরে এটি মনে রাখা হয়।</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Matrix-এ সাইন ইন করুন</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>কেউ</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>স্পিকার: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>{0}-এর সঙ্গে সরাসরি চ্যাট শুরু করবেন?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>{0}-এর সঙ্গে চ্যাট শুরু হচ্ছে</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat একটি টার্মিনাল অ্যাপ: এটি টার্মিনালে চালু করুন।</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>ক্রস-সাইনিং:         {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>ডিভাইস:              {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>ফিঙ্গারপ্রিন্ট:         {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>কী ব্যাকআপ:          {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>পুনরুদ্ধার কী:       {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>এই ডিভাইস:           {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>স্থগিত করুন</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>স্থগিত করুন: পড়তে পারেন, পাঠাতে পারেন না</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} স্থগিত করা হয়েছে: তাঁরা রুম পড়তে ও ছাড়তে পারেন, কিন্তু পাঠাতে, যোগ দিতে বা আমন্ত্রণ জানাতে পারেন না। /unsuspend {1} এটি শেষ করে।</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>স্থগিত করা হচ্ছে</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>{0} স্থগিত করুন</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>সিস্টেম ডিফল্ট</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>সার্ভার অ্যাডমিন অধিকার সরান</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>অ্যাডমিন অধিকার সরানো হচ্ছে</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>যাচাই বাতিল হয়েছে।</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>এটিই আপনি যে ডিভাইস ব্যবহার করছেন। আপনার অন্য একটি ডিভাইস বেছে নিন।</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>এই বার্তা</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>এই রুম</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>বৈধ দিনের সংখ্যা; কখনও মেয়াদ শেষ না হলে খালি:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>সার্ভার নিবন্ধন টোকেন গ্রহণ করেনি।</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>টোকেন; এলোমেলোর জন্য খালি:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>নিবন্ধনে টোকেন লাগলে নতুন অ্যাকাউন্টের এগুলোর একটি দরকার:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>{0:yyyy-MM-dd HH:mm} পর্যন্ত</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>{0} বার ব্যবহৃত, কোনো সীমা নেই</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>{1} বারের মধ্যে {0} বার ব্যবহৃত</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>কতগুলো অ্যাকাউন্ট এটি ব্যবহার করতে পারে; সীমাহীনের জন্য খালি:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>বিষয়:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>ক্রস-সাইন করা</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>কোনো কী নেই</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>এই ডিভাইস</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>যাচাইকৃত নয়</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>যাচাইকৃত</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} লিখছেন…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>নিষেধাজ্ঞা তুলুন</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>নিষেধাজ্ঞা তোলা হচ্ছে</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} আনব্লক করা হয়েছে।</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>আনব্লক করা হচ্ছে</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>অজানা</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>অজানা কমান্ড</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>{0} ডিরেক্টরি থেকে সরানো হচ্ছে</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>আনলক করুন</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} আনলক করা হয়েছে।</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>আনলক করা হচ্ছে</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>{0} আপলোড হচ্ছে…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>ব্যবহারকারী আইডি, যেমন @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} ইতিমধ্যে নেওয়া হয়েছে; অন্য একটি বেছে নিন।</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>ব্যবহারকারী, যেমন @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>যাচাই</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>যাচাই বাতিল</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>{0}-এর সঙ্গে যাচাই বাতিল: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>{0} {1}-এর যাচাই অনুরোধ উপেক্ষা করা হয়েছে: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>যাচাই অনুরোধ</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>যাচাইয়ের অনুরোধ করা হয়েছে; {0}-এ এটি গ্রহণ করুন।</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>যাচাইকৃত (ক্রস-সাইন করা)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>{0} যাচাইকৃত</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>যাচাই করুন</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>{0}-এর নিশ্চিতকরণের অপেক্ষা…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>ক্লায়েন্ট সংযুক্ত হওয়া পর্যন্ত অপেক্ষা করুন।</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} ইমোজি মিলিয়ে এই ডিভাইসটি যাচাই করতে চান।
+
+গ্রহণ করবেন?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>কোন রুম বা ব্যবহারকারী?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>কে</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>কে: ডিভাইস ও ঠিকানা</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>{0} কে</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>এই পুনরুদ্ধার কী এখনই লিখে রাখুন বা কপি করুন এবং নিরাপদে রাখুন। এটি আর দেখানো হবে না।</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>আপনার ডিভাইস {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>আপনার অন্য ডিভাইস</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>নিশ্চিত করতে আপনার পাসওয়ার্ড:</value>
+  </data>
+</root>

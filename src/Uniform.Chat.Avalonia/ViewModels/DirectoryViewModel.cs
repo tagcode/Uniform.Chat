@@ -22,7 +22,7 @@ public sealed record PublicRoomItem(PublicRoom Room, string Server, bool IsJoine
     public string Title => Room.Name ?? Room.CanonicalAlias ?? Room.RoomId;
 
     /// <summary>Alias and member count.</summary>
-    public string Details => string.Join(" · ", new[] { Room.CanonicalAlias, Translations.Format(Room.NumJoinedMembers == 1 ? Strings.MemberCountOne : Strings.MemberCount, Room.NumJoinedMembers) }.OfType<string>());
+    public string Details => string.Join(" · ", new[] { Room.CanonicalAlias, Translations.Plural(nameof(Strings.MemberCount_other), Room.NumJoinedMembers, Room.NumJoinedMembers) }.OfType<string>());
 
     /// <summary>Topic, or empty.</summary>
     public string Topic => Room.Topic ?? "";

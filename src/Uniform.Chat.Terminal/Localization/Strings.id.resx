@@ -1,0 +1,1764 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Indonesian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Tentang</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+Klien obrolan Matrix untuk terminal.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Dengan melanjutkan, Anda menerima kebijakan pengguna: tanpa konten ilegal, kasar, atau berbahaya.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Akun Anda telah dihapus.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Bagian dari ID pengguna atau nama; kosong untuk semua:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Akun</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} akun{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} gagal: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Tambah alamat</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>{0} ditambahkan</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Menambahkan {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Alamat, mis. #ruang atau #ruang:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Alamat yang dihapus, mis. #ruang:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Ruang ini sudah terenkripsi.</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> dan {0} lainnya</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Menjawab</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>Kata sandi untuk {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Menanyakan {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Uji audio</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Mikrofon: {0}. Speaker: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Uji audio: tidak ada yang direkam</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Uji audio: {0:F0} dtk pada {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Hening berarti input bukan mikrofon: pilih mikrofon di pengaturan suara sistem, atau atur Audio:Microphone di Pengaturan.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Bicaralah: Anda mendengar diri sendiri sedetik kemudian, melalui Opus seperti dalam panggilan.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Audio tidak didukung di platform ini.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>versi {0}, memerlukan kunci pemulihan</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>aktif (versi {0})</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Cadangan kunci dipulihkan: {0} kunci ruang diimpor.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Cekal</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Mencekal</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, diblokir</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Diblokir: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} diblokir: pesan dan undangannya tidak lagi ditampilkan. /unignore {1} membatalkannya.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Memblokir</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>Saya _menerimanya</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>Blokir _pengirim</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Batal</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>T_utup</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Buat akun</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>_Hapus</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Edit</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>_Gabung</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Nanti</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Tampilkan</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>_Keluarkan perangkat</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Keluarkan _semua lainnya</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Buka _tautan</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Lainnya…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>_Tutup</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Reaksi</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Pulihkan</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Tolak</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Ganti nama</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Balas</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>Lap_orkan</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>_Simpan berkas</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Siapkan pemulihan</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Tutup</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Tutup dan bl_okir</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Masuk</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>_Tidak cocok</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>_Cocok</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Sembunyikan</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Verifikasi perangkat ini</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>_Verifikasi yang dipilih</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>_Lihat gambar</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Panggilan</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Panggilan: Dalam panggilan dengan {0}{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Panggilan: Menghubungkan ke {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Panggilan: Panggilan dengan {0} berakhir: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Memanggil</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Panggilan: Memanggil {0}…  /hangup untuk membatalkan</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Panggilan: Menghubungkan ulang ke {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Panggilan: {0} menelepon: /answer atau /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Tidak dapat terhubung</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Tidak dapat membuka mikrofon atau speaker: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Mengubah nama tampilan</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Memeriksa enkripsi…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Pilih reaksi:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Perintah dan tombol</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Bandingkan emoji</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Bandingkan dengan {0}:
+
+{1}
+
+atau angka {2}
+
+Apakah tampilannya sama, dalam urutan yang sama?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Konfirmasi</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Terhubung sebagai {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Menghubungkan…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Masalah koneksi: {0}</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0} tidak dapat dikeluarkan</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Buat akun</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>#{0}:{1} dibuat</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>{0} dibuat.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Membuat akun</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Membuat #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Membuat ruang</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Membuat kode</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} membuat ruang ini dan memiliki kuasa tak terbatas yang tidak dapat diubah.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Kunci penandatanganan silang tidak ada di penyimpanan rahasia.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Penandatanganan silang dipulihkan; perangkat ini sekarang terverifikasi.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Hari berganti {0:ddd, d MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Nonaktifkan</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Nonaktifkan permanen…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} dinonaktifkan.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Nonaktifkan {0} secara permanen? Orang ini keluar dari semua ruang dan tidak dapat masuk lagi; ID penggunanya tidak akan diberikan lagi.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Menonaktifkan</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Hapus akun</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Hapus akun Anda secara permanen? Anda keluar dari semua ruang, nama dan gambar Anda dihapus, dan semua perangkat dikeluarkan. ID pengguna tidak dapat digunakan lagi.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Laporan {0} dihapus.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Kode {0} dihapus.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Hapus pesan</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Hapus "{0}" untuk semua orang?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Hapus laporan</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Hapus kode</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Hapus kode {0}? Akun yang dibuat dengannya tetap ada.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Menghapus akun</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Menghapus pesan</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Menghapus laporan</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Menghapus kode</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} perangkat</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    terakhir terlihat {2} dari {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Perangkat ini belum terverifikasi. Verifikasi dengan perangkat Anda yang lain, atau dengan kunci pemulihan, agar orang lain melihatnya terverifikasi dan perangkat ini dapat membaca pesan lama Anda.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Perangkat</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Perangkat ({0}, * = perangkat ini)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Pesan langsung</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Kosongkan server untuk server Anda sendiri; Enter di salah satu kolom akan mencari.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Visibilitas di direktori</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Mengunduh {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Enkripsi ujung ke ujung tidak tersedia.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (disunting)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[sunting] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Aktifkan enkripsi</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Enkripsi semua pesan baru di ruang ini? Ini tidak dapat dimatikan nanti.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Mengaktifkan enkripsi</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [terenkripsi]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [pesan terenkripsi; kuncinya belum tiba]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Enkripsi</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Enkripsi tidak tersedia di perangkat ini.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>dijawab di perangkat lain</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>mereka menelepon lagi</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>ditolak</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>ditolak di perangkat lain</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Penangguhan {0} diakhiri.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>berakhir</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Mengakhiri penangguhan</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>tak terjawab</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>tidak ada jawaban</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>tidak ada koneksi</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Akhiri penangguhan</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>mereka menutup panggilan</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>Anda menolak</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>Anda menutup panggilan</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Gagal: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Berkas disimpan</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, {0} pertama ditampilkan</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>dinonaktifkan</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [terenkripsi]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>dikunci</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [publik]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [selesai]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>ditangguhkan</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Berikan ID pengguna seperti @nama:server.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Berikan ID pengguna Matrix Anda untuk memulai.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Berikan ID pengguna Anda.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Menutup panggilan</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Bantuan</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**tebal** _miring_ `kode` ~~coret~~ [teks](url)   Markdown dikirim terformat
+/plain text     kirim tanpa Markdown
+/me text        tindakan, seperti * Anda melambai
+/join #room     bergabung ke ruang; juga !id atau tautan, lalu server untuk bergabung
+/leave          tinggalkan ruang ini
+/topic text     atur topik
+/name text      atur nama ruang
+/avatar [file]  atur gambar ruang; /avatar none menghapusnya
+/kick @user [reason]   keluarkan anggota
+/ban @user [reason]    keluarkan anggota secara permanen
+/unban @user    izinkan pengguna yang dicekal kembali
+/power @user level     atur tingkat kuasa: angka, admin, moderator, atau member
+/op @user, /deop @user  jadikan admin, atau anggota biasa
+/invite @user   undang pengguna
+/msg @user      mulai obrolan langsung
+/nick name      atur nama tampilan Anda
+/list [server]  jelajahi ruang publik, di sini atau di server lain
+/create name    buat ruang pribadi
+/create #room [name]   buat ruang publik dengan alamat itu
+/alias #room, /unalias #room   tambah atau hapus alamat ruang ini
+/publish, /unpublish   tampilkan ruang ini di direktori ruang publik, atau tidak
+/upload         kirim berkas
+/devices        kelola sesi Anda
+/settings       lihat dan ubah pengaturan
+/logs           baca log sesi ini dan sebelumnya
+/audiotest      dengar diri Anda melalui Opus, untuk menguji mikrofon dan speaker
+/call           panggil anggota lain di obrolan langsung ini
+/answer /reject jawab atau tolak panggilan masuk
+/hangup /mute   akhiri panggilan, atau bisukan dan bunyikan mikrofon
+/encryption     kunci, pemulihan, dan cadangan
+/recover        buka pesan lama dengan kunci pemulihan
+/verify [@user] verifikasi perangkat Anda yang lain, atau pengguna, dengan emoji
+/ignore @user   blokir pengguna: pesan dan undangannya tidak lagi ditampilkan; /ignore saja menampilkan daftarnya
+/unignore @user buka blokir pengguna
+/report [@user] laporkan ruang ini, atau pengguna, ke admin server Anda; pesan dari menunya (Enter)
+/quit           keluar
+
+Admin server, juga di menu Server:
+/whois @user    perangkat dan alamat pengguna; siapa pun boleh melihat dirinya sendiri
+/accounts [text], /rooms [text]   daftar dan kelola akun atau ruang server
+/suspend @user, /unsuspend @user  boleh membaca tetapi tidak mengirim, bergabung, atau mengundang
+/lock @user, /unlock @user        server menolak sesinya
+/notice @user text   kirim pemberitahuan server
+/tokens, /reports    kode pendaftaran, laporan pengguna
+
+Alt+1…9         pergi ke ruang 1…9
+Ctrl+N, Ctrl+P  ruang berikutnya, sebelumnya
+Ctrl+O          bergabung ke ruang
+Ctrl+R          direktori ruang
+PageUp/Down     gulir pesan
+Ctrl+PageUp     muat pesan lama
+F2              tampilkan atau sembunyikan anggota
+Ctrl+Up, Enter  pilih pesan, lalu lakukan tindakan
+Tab             lengkapi nama panggilan
+Esc             batalkan balasan atau suntingan
+F10             buka menu</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Gambar</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Format gambar ini tidak dapat ditampilkan. Gunakan Simpan berkas untuk membukanya di program lain.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Alamat tidak valid</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Ruang tidak valid</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Pengguna tidak valid</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Undang</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Diundang ke {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Anda diundang ke ruang ini. Tekan Enter untuk bergabung atau menolak.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} mengundang Anda ke {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Mengundang {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} adalah admin server.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} terverifikasi.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Gabung</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Bergabung ke {0}</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Bergabung ke {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Bergabung ke {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Gabung ke ruang</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Alamat, ID, atau tautan ruang, mis. #matrix:matrix.org; server untuk bergabung boleh menyusul:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> melalui {0}</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Keluarkan</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Mengeluarkan</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Tinggalkan {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Tinggalkan ruang</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Meninggalkan {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Admin ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Tingkat untuk {0}, 0 sampai 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Anggota (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Moderator ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Lainnya…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Mengambil akun</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Mengambil anggota</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Mengambil laporan</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Menampilkan {0} di direktori</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Mengambil ruang</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Mengambil kode pendaftaran</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Tampilkan {0} di direktori ruang publik {1}? Ini tidak mengubah siapa yang boleh bergabung.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Memuat anggota</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Memuat {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[memuat pratinjau…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Kunci</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Kunci: tolak semua sesi</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} dikunci: server menolak sesinya sampai /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Mengunci</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Keluar</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Mengeluarkan perangkat</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Masuk</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Keluar</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Keluarkan perangkat</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Keluarkan {0} perangkat: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Akhiri sesi ini di server? Pesan tetap ada di basis data lokal.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Mencari pengguna</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Turunkan tingkat Anda sendiri dari {0} ke {1}? Anda tidak dapat menaikkannya kembali sendiri.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Jadikan admin server</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Izinkan {0} mengelola semua akun dan ruang server?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Menjadikan admin</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} anggota</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>ID pengguna atau nama di ruang ini:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Anggota</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Anggota ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Anggota {0}</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Tentang</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Akun…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Admin server: daftar dan kelola akun</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Tamba_h alamat…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>Alamat seperti #ruang:server</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>_Uji audio…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Dengar diri Anda, untuk menguji mikrofon dan speaker</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>_Cekal…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Keluarkan anggota secara permanen</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>Pa_nggil</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Panggilan suara di obrolan langsung ini</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Perintah dan tombol</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>_Hapus akun…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Nonaktifkan akun secara permanen</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Perangkat…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Lihat dan keluarkan sesi</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>Pesan _langsung…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Mulai obrolan dengan pengguna</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>_Direktori ruang…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Cari ruang publik</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>_Visibilitas di direktori…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Tampilkan di direktori ruang publik</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Aktifkan enkrip_si…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Enkripsi ruang ini; tidak dapat dibatalkan</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Enkripsi…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Kunci, pemulihan, dan cadangan</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Berkas</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>_Akhiri panggilan</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Akhiri panggilan</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>B_antuan</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>_Undang…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Undang pengguna ke sini</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Gabung…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Bergabung lewat alamat atau ID</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>K_eluarkan…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Keluarkan anggota</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>Tinggalkan ruang</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Tinggalkan ruang ini</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>_Keluar akun…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Akhiri sesi di server</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>L_og…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Sesi ini dan sebelumnya</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Anggota</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Tampilkan atau sembunyikan</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Ruang _publik baru…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Buat ruang yang dapat diikuti siapa saja</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Ruang baru…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Buat ruang pribadi</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>Ruang _berikutnya</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>Pesan _lama</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Muat riwayat</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Tingkat _kuasa…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Jadikan anggota admin atau moderator</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>Ruang _sebelumnya</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>_Tutup</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Keluar, sesi tetap tersimpan</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Kode pendaftaran…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Kode yang dipakai akun baru untuk mendaftar</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>_Laporan…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Apa yang dilaporkan pengguna</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Ruang</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>_Pilih pesan</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Balas, bereaksi, sunting…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Kirim _berkas…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Unggah berkas ke sini</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Server</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>_Pemberitahuan server…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Kirim pesan ke pengguna atas nama server</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>_Ruang…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Semua ruang di server</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Atur _foto…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Gambar ruang</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Atur na_ma…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Ubah nama ruang</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Pen_gaturan…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Lihat dan ubah pengaturan</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Atur _topik…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Ubah topik</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>_Izinkan kembali…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Izinkan pengguna yang dicekal kembali</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Verifikasi perangkat ini…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Perbandingan emoji</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Tampilan</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>_Siapa…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>Perangkat dan alamat pengguna</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Pesan</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [pesan dihapus]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>pesan di {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Mikrofon: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, dibisukan</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Nama untuk {0}:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Baik perangkat ini maupun {0} tidak dipercaya oleh identitas Anda saat ini, jadi tidak ada yang dapat menjamin yang lain.
+
+Verifikasi perangkat ini dengan perangkat yang dipercaya{1}, atau gunakan kunci pemulihan.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>tidak pernah</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Akun baru</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Akun baru…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Kata sandi baru untuk {0}; perangkatnya dikeluarkan:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Ruang publik baru</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Ruang baru</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Kode baru</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Kode baru…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Server ini tidak mengizinkan aplikasi membuat akun.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Tidak ada panggilan yang berdering.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Tidak ada panggilan untuk ditutup.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Tidak ada panggilan untuk dibisukan.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Tidak ada perangkat yang masuk.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>tanpa kedaluwarsa</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} bukan lagi admin server.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Tidak ada anggota "{0}" di sini. Berikan ID pengguna seperti @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Tidak ada anggota.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>tidak ada</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>tidak ditemukan</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Tidak ada perangkat Anda yang dipercaya oleh identitas Anda saat ini, jadi tidak ada yang dapat menjamin perangkat ini.
+
+Gunakan kunci pemulihan, atau atur ulang identitas Anda di perangkat yang Anda simpan.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Tidak ada yang diblokir.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[tidak ada pratinjau]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Akun ini belum menyiapkan pemulihan. Jika disiapkan, orang lain melihat perangkat ini terverifikasi, dan Anda mendapat kunci pemulihan yang membuka pesan Anda di perangkat baru.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Tidak ada laporan.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Tidak ada ruang</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Tidak ada ruang ditemukan</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} bukan perintah. Lihat Bantuan → Perintah dan tombol.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" bukan tingkat; berikan angka, atau admin, moderator, atau member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" bukan ID pengguna Matrix; bentuknya seperti @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} bukan berkas gambar.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" bukan ID pengguna lain; bentuknya seperti @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} bukan alamat, ID, atau tautan ruang seperti #matrix:matrix.org. Gunakan /msg untuk mengobrol dengan pengguna.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} bukan alamat ruang seperti #ruang atau #ruang:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" bukan alamat server; bentuknya seperti https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} bukan ID pengguna seperti @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" bukan ID pengguna; bentuknya seperti @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" bukan ID pengguna; bentuknya seperti @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Tidak terhubung</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Tidak ada yang perlu dikeluarkan. Gunakan Berkas → Keluar akun untuk mengakhiri sesi ini.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Pemberitahuan untuk {0}; tiba di ruang pemberitahuan servernya:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [tidak terkirim: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>belum disiapkan</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Tidak dipercaya</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>belum terverifikasi</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Tidak ditemukan cadangan kunci yang dapat dipakai.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>salah satu perangkat tepercaya Anda</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Buka obrolan langsung terlebih dahulu.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Buka jendela enkripsi sekarang? Jendela ini juga ada di Berkas → Enkripsi, dan /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Membuka {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Buka dulu ruang yang sudah Anda ikuti.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Buka tautan</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Server lain</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Alamat hanya dapat dibuat di server Anda sendiri, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Kata sandi untuk {0}:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Kata sandi tidak diterima.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Kata sandi baru diatur untuk {0} dan perangkatnya dikeluarkan.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Kata sandi berbeda.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Tingkat kuasa</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Tingkat kuasa {0} (sekarang {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Tekan Enter untuk menutup.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Tutup</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Bereaksi</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Teks reaksi atau emoji:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Alasan untuk {0} (opsional):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Pelecehan atau kebencian</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Konten _ilegal</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>_Lainnya</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>Konten se_ksual atau kekerasan</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Spam</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Pulihkan</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Dipulihkan</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Memulihkan</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Memulihkan kunci…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Kunci pemulihan</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Kunci pemulihan (atau frasa sandi):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Server ini memerlukan langkah yang tidak dapat dilakukan aplikasi ini, seperti captcha atau email. Buat akun di situs web server, lalu masuk di sini.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Kode pendaftaran dari admin server:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Kode pendaftaran</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Menolak {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Menolak</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, diteruskan</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Hapus alamat</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>{0} dihapus</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Menghapus {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Menghapus gambar</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Ganti nama perangkat</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Mengganti nama perangkat</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} sudah ada. Ganti?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[balas {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[balas] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[balas {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Laporkan</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>{0} dilaporkan ke admin server Anda.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Pesan dilaporkan ke admin server Anda. /ignore memblokir pengirimnya.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Melaporkan</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Melaporkan pesan</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" bukan ID pengguna; /report @user:server, atau /report saja untuk ruang ini.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Laporan</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} laporan, terbaru lebih dulu:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Laporan {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Laporan ke admin server Anda: {0}. Mengapa?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Atur ulang kata sandi</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Atur ulang kata sandi…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Mengatur ulang kata sandi</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Gambar ruang</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Gambar ruang diatur</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} ruang</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Direktori ruang</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Ruang ini terenkripsi, tetapi enkripsi tidak tersedia di perangkat ini.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Bagian dari nama, alamat, atau ID ruang; kosong untuk semua:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} ditampilkan di direktori ruang</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Nama ruang:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} tidak menyebut server. Berikan server di ruang untuk bergabung, mis. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Ruang</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} ruang, anggota terbanyak lebih dulu{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} tidak lagi ditampilkan di direktori ruang</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Kata sandi yang sama lagi:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Simpan sebagai (berkas, atau folder untuk menyimpan):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>{0} disimpan</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Simpan berkas</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Menyimpan berkas</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Pencarian gagal: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Mencari…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Cari:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Lihat berkas log untuk detail.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Kirim berkas</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Kirim {0} ke ruang ini?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Kirim berkas</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Kirim {0} berkas ini ke ruang ini?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Mengirim {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Mengirim pemberitahuan</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [mengirim…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Mengirim permintaan verifikasi…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Kirim pemberitahuan server…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>{0} terkirim</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Pemberitahuan server terkirim ke {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Misalnya http://localhost:8008 untuk server di komputer ini.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Alamat server, hanya jika tidak dapat ditemukan dari ID pengguna:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Server:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Perlu server</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Pemberitahuan server</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Kebijakan server:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Atur nama</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Mengatur gambar</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Mengatur nama</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Mengatur tingkat kuasa {0}</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Mengatur topik</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Menyiapkan pemulihan…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Atur topik</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>disiapkan</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>disiapkan dan dipercaya di sini</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>disiapkan, belum dipercaya di sini</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Siapkan pemulihan</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Buat kunci penandatanganan silang, cadangan kunci, dan kunci pemulihan?
+
+Dengan kunci pemulihan, login baru dapat memverifikasi dirinya dan membaca pesan lama. Simpan dengan aman, seperti kata sandi.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Tutup</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Tutup…</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} ditutup: {1} anggota dikeluarkan{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Keluarkan semua anggota dari server ini dari {0}, dan hapus alamatnya di sini? Pemblokiran juga mencegah mereka bergabung lagi.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Alasan yang ditampilkan kepada anggota; kosong untuk tidak ada:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Tutup ruang…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Menutup ruang</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Berikan ID pengguna Matrix lengkap Anda untuk memulai; ID ini diingat setelah berhasil masuk.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Masuk ke Matrix</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Seseorang</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Speaker: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Mulai obrolan langsung dengan {0}?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Memulai obrolan dengan {0}</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat adalah aplikasi terminal: jalankan di terminal.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Penandatanganan silang:  {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Perangkat:               {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Sidik jari:             {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Cadangan kunci:         {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Kunci pemulihan:        {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Perangkat ini:          {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Tangguhkan</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Tangguhkan: boleh membaca, tidak mengirim</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} ditangguhkan: bisa membaca dan meninggalkan ruang, tetapi tidak mengirim, bergabung, atau mengundang. /unsuspend {1} mengakhirinya.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Menangguhkan</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Tangguhkan {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>bawaan sistem</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Cabut hak admin server</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Mencabut hak admin</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Verifikasi dibatalkan.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Ini adalah perangkat yang sedang Anda gunakan. Pilih perangkat Anda yang lain.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>pesan ini</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>ruang ini</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Masa berlaku dalam hari; kosong untuk tanpa kedaluwarsa:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Server tidak menerima kode pendaftaran.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Kode; kosong untuk acak:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Akun baru memerlukan salah satunya saat pendaftaran meminta kode:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>sampai {0:yyyy-MM-dd HH:mm}</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>dipakai {0} kali, tanpa batas</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>dipakai {0} dari {1} kali</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Berapa akun yang boleh memakainya; kosong untuk tanpa batas:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Topik:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>ditandatangani silang</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>tanpa kunci</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>perangkat ini</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>belum terverifikasi</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>terverifikasi</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} sedang mengetik…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Cabut cekal</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Mencabut cekal</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} tidak diblokir lagi.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Membuka blokir</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>tidak diketahui</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Perintah tidak dikenal</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Menyembunyikan {0} dari direktori</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Buka kunci</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Kunci {0} dibuka.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Membuka kunci</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Mengunggah {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>ID pengguna, mis. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} sudah dipakai; pilih yang lain.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Pengguna, mis. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Verifikasi</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Verifikasi dibatalkan</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Verifikasi dengan {0} dibatalkan: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Permintaan verifikasi dari {0} {1} diabaikan: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Permintaan verifikasi</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Verifikasi diminta; terima di {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>terverifikasi (ditandatangani silang)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>{0} terverifikasi</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Verifikasi</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Menunggu {0} mengonfirmasi…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Tunggu sampai klien terhubung.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} ingin memverifikasi perangkat ini dengan membandingkan emoji.
+
+Terima?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Ruang atau pengguna mana?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Siapa</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Siapa: perangkat dan alamat</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Siapa {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Tulis atau salin kunci pemulihan ini sekarang dan simpan dengan aman. Kunci ini tidak ditampilkan lagi.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>perangkat Anda {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>perangkat Anda yang lain</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Kata sandi Anda, untuk konfirmasi:</value>
+  </data>
+</root>

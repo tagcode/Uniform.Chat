@@ -34,4 +34,8 @@
     <ProjectReference Include="..\..\src\Uniform.Matrix.Server\Uniform.Matrix.Server.csproj" />
   </ItemGroup>
 
+  <!-- Checks of translations, shared by the test projects of projects with texts -->
+  <ItemGroup>
+    <Compile Include="..\Shared\LocalizationChecks.cs" Link="LocalizationChecks.cs" />
+  </ItemGroup>
 </Project>

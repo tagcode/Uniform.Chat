@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Marathi texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} यांनी सामील होण्याची विनंती केली</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>इमोजी जुळवून पडताळणीची विनंती केली</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>{0} यांना इमोजी जुळवून पडताळणीची विनंती केली</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} यांनी {1} यांच्यावर बंदी घातली</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} यांनी खोलीचे चित्र बदलले</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} यांनी विषय बदलला: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} यांनी खोली तयार केली</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>सुरू झाले नाही.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>जतन केलेली एन्क्रिप्शन स्थिती वाचता येत नाही ({0}). {1} बदलले आहे का?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} यांनी आमंत्रण नाकारले</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>रिकामी खोली</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>रिकामी खोली (पूर्वी {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>एन्क्रिप्टेड संदेश; की अजून आलेली नाही</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>एन्क्रिप्शन उपलब्ध नाही: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>फाइल आता अस्तित्वात नाही</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>चित्र</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>चित्र: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} यांनी {1} यांना आमंत्रित केले</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} सामील झाले</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} यांनी {1} यांना काढले</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} निघून गेले</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>लॉग इन होत आहे</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} आणि {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} आणि आणखी {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} आणि आणखी {1}</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} आता {1} या नावाने ओळखले जातात</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>स्थानिक संग्रह उघडत आहे</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>एन्क्रिप्शन तयार करत आहे</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} यांनी {1} ने प्रतिक्रिया दिली</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} यांनी खोलीचे चित्र काढले</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} यांनी खोलीचे नाव बदलून {1} केले</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; {1:F0} सेकंदांत पुन्हा प्रयत्न</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>स्पॉयलर</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>स्पॉयलर: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} यांनी {1} यांच्यावरील बंदी उठवली</value>
+  </data>
+</root>

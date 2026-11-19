@@ -1,0 +1,1805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Swedish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Om</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+En Matrix-chattklient för terminalen.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Genom att fortsätta godkänner du användarvillkoren: inget olagligt, kränkande eller skadligt innehåll.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Ditt konto är raderat.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Del av ett användar-ID eller namn; tomt för alla:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  {3}, {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Konton</value>
+  </data>
+  <data name="AccountsCount_one" xml:space="preserve">
+    <value>{0} konto{1}:</value>
+  </data>
+  <data name="AccountsCount_other" xml:space="preserve">
+    <value>{0} konton{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} misslyckades: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Lägg till adress</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Lade till {0}</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Lägger till {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Adress, t.ex. #rum eller #rum:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Adress att ta bort, t.ex. #rum:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Det här rummet är redan krypterat.</value>
+  </data>
+  <data name="AndMore_one" xml:space="preserve">
+    <value> och {0} till</value>
+  </data>
+  <data name="AndMore_other" xml:space="preserve">
+    <value> och {0} till</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Svarar</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>Ett lösenord för {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Frågar {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Ljudtest</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Mikrofon: {0}. Högtalare: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Ljudtest: inget spelades in</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Ljudtest: {0:F0} s med {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Tystnad betyder att ingången inte är en mikrofon: välj en i systemets ljudinställningar, eller ange Audio:Microphone i Inställningar.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Tala: du hör dig själv en sekund senare, genom Opus som i ett samtal.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Ljud stöds inte på den här plattformen.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>version {0}, behöver återställningsnyckeln</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>på (version {0})</value>
+  </data>
+  <data name="BackupRestored_one" xml:space="preserve">
+    <value>Nyckelsäkerhetskopian återställdes: {0} rumsnyckel importerades.</value>
+  </data>
+  <data name="BackupRestored_other" xml:space="preserve">
+    <value>Nyckelsäkerhetskopian återställdes: {0} rumsnycklar importerades.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Porta</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Portar</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, blockerat</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Blockerade: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>Blockerade {0}: deras meddelanden och inbjudningar visas inte längre. /unignore {1} häver det.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Blockerar</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>Jag _godkänner dem</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>Bl_ockera avsändaren</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Avbryt</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>S_täng</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Skapa konto</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>R_adera</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>R_edigera</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>_Gå med</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Senare</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Visa</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>_Logga ut enheten</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Logga ut _alla andra</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Öppna _länk</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Annat…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>_Avsluta</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Reagera</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Återställ</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Avböj</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Byt namn</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Svara</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>A_nmäl</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>Spara _fil</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Konfigurera återställning</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Stäng</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Stäng och _blockera</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Logga in</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>De stämmer _inte</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>De _stämmer</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Dölj</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Verifiera den här enheten</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>_Verifiera vald</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>Visa _bild</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Samtal</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Samtal: I samtal med {0}{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Samtal: Ansluter till {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Samtal: Samtalet med {0} avslutades: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Ringer</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Samtal: Ringer {0}…  /hangup avbryter</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Samtal: Återansluter till {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Samtal: {0} ringer: /answer eller /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Kan inte ansluta</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Kan inte öppna mikrofonen eller högtalaren: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Byter visningsnamn</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Kontrollerar kryptering…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Välj en reaktion:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Kommandon och tangenter</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Jämför emoji</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Jämför med {0}:
+
+{1}
+
+eller siffrorna {2}
+
+Visar de samma, i samma ordning?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bekräfta</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Ansluten som {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Ansluter…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Anslutningsproblem: {0}</value>
+  </data>
+  <data name="CouldNotRemove_one" xml:space="preserve">
+    <value>; {0} kunde inte tas bort</value>
+  </data>
+  <data name="CouldNotRemove_other" xml:space="preserve">
+    <value>; {0} kunde inte tas bort</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Skapa konto</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>Skapade #{0}:{1}</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>Skapade {0}.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Skapar kontot</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Skapar #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Skapar rum</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Skapar token</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} skapade det här rummet och har obegränsade rättigheter, som inte kan ändras.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Korssigneringsnycklarna fanns inte i den hemliga lagringen.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Korssigneringen återställdes; den här enheten är nu verifierad.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Ny dag {0:ddd d MMM yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Inaktivera</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Inaktivera för gott…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>Inaktiverade {0}.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Inaktivera {0} för gott? Personen lämnar alla rum och kan inte logga in igen; användar-ID:t delas inte ut igen.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Inaktiverar</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Radera konto</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Radera ditt konto för gott? Du lämnar alla rum, ditt namn och din bild tas bort och alla enheter loggas ut. Användar-ID:t kan inte användas igen.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Raderade anmälan {0}.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Raderade token {0}.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Radera meddelande</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Radera "{0}" för alla?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Radera anmälan</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Radera token</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Radera token {0}? Konton som skapats med den finns kvar.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Raderar kontot</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Raderar meddelande</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Raderar anmälan</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Raderar token</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} enhet</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} enheter</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    senast sedd {2} från {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Den här enheten är inte verifierad än. Verifiera den med en annan av dina enheter, eller med din återställningsnyckel, så att andra ser den som verifierad och den kan läsa dina äldre meddelanden.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Enheter ({0}, * = den här enheten)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Direktmeddelande</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Lämna servern tom för din egen; Enter i något av fälten söker.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Synlighet i katalogen</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Laddar ned {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Totalsträckskryptering är inte tillgänglig.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (redigerat)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[redigering] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Aktivera kryptering</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Kryptera alla nya meddelanden i det här rummet? Det kan inte stängas av senare.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Aktiverar kryptering</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [krypterat]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [krypterat meddelande; nyckeln har inte kommit]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Kryptering</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Kryptering är inte tillgänglig på den här enheten.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>besvarat på en annan enhet</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>de ringde igen</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>avböjt</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>avböjt på en annan enhet</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Avstängningen av {0} upphävdes.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>avslutat</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Häver avstängningen</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>missat</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>inget svar</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>ingen anslutning</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Häv avstängningen</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>de lade på</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>du avböjde</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>du lade på</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Misslyckades: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Filen sparades</value>
+  </data>
+  <data name="FirstShown_one" xml:space="preserve">
+    <value>, den första {0} visas</value>
+  </data>
+  <data name="FirstShown_other" xml:space="preserve">
+    <value>, de första {0} visas</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>administratör</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>inaktiverad</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [krypterat]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>låst</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [offentligt]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [åtgärdad]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>avstängd</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Ange ett användar-ID som @namn:server.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Ange ditt Matrix-användar-ID för att starta.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Ange ditt användar-ID.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Lägger på</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Hjälp</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**fet** _kursiv_ `kod` ~~genomstruken~~ [text](url)   Markdown skickas formaterat
+/plain text     skicka utan Markdown
+/me text        handling, som * du vinkar
+/join #room     gå med i ett rum; även !id eller en länk, sedan servrar att gå med via
+/leave          lämna det här rummet
+/topic text     ange ämnet
+/name text      ange rummets namn
+/avatar [file]  ange rummets bild; /avatar none tar bort den
+/kick @user [reason]   ta bort en medlem
+/ban @user [reason]    ta bort en medlem för gott
+/unban @user    släpp tillbaka en portad användare
+/power @user level     ange en behörighetsnivå: tal, admin, moderator eller member
+/op @user, /deop @user  gör till administratör, eller vanlig medlem
+/invite @user   bjud in en användare
+/msg @user      börja en direktchatt
+/nick name      ange ditt visningsnamn
+/list [server]  bläddra bland offentliga rum, här eller på en annan server
+/create name    skapa ett privat rum
+/create #room [name]   skapa ett offentligt rum med den adressen
+/alias #room, /unalias #room   lägg till eller ta bort en adress till det här rummet
+/publish, /unpublish   visa det här rummet i den offentliga rumskatalogen, eller inte
+/upload         skicka en fil
+/devices        hantera dina sessioner
+/settings       visa och ändra inställningar
+/logs           läs loggar för den här och tidigare sessioner
+/audiotest      hör dig själv genom Opus, för att testa mikrofon och högtalare
+/call           ring den andra medlemmen i den här direktchatten
+/answer /reject svara på eller avböj ett ringande samtal
+/hangup /mute   avsluta samtalet, eller stäng av och slå på mikrofonen
+/encryption     nycklar, återställning och säkerhetskopia
+/recover        lås upp gamla meddelanden med återställningsnyckeln
+/verify [@user] verifiera din andra enhet, eller en användare, med emoji
+/ignore @user   blockera en användare: deras meddelanden och inbjudningar visas inte längre; /ignore ensamt listar dem
+/unignore @user häv blockeringen av en användare
+/report [@user] anmäl det här rummet, eller en användare, till din servers administratörer; meddelanden från deras åtgärder (Enter)
+/quit           avsluta
+
+Serveradministratörer, även i menyn Server:
+/whois @user    en användares enheter och adresser; vem som helst får slå upp sig själv
+/accounts [text], /rooms [text]   lista och hantera serverns konton eller rum
+/suspend @user, /unsuspend @user  får läsa men inte skicka, gå med eller bjuda in
+/lock @user, /unlock @user        servern avvisar deras sessioner
+/notice @user text   skicka ett servermeddelande
+/tokens, /reports    registreringstoken, användarnas anmälningar
+
+Alt+1…9         gå till rum 1…9
+Ctrl+N, Ctrl+P  nästa, föregående rum
+Ctrl+O          gå med i ett rum
+Ctrl+R          rumskatalog
+PageUp/Down     bläddra bland meddelanden
+Ctrl+PageUp     läs in äldre meddelanden
+F2              visa eller dölj medlemmar
+Ctrl+Up, Enter  välj ett meddelande och agera på det
+Tab             komplettera ett smeknamn
+Esc             avbryt svar eller redigering
+F10             öppna menyn</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Det här bildformatet kan inte visas. Använd Spara fil för att öppna den i ett annat program.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Ogiltig adress</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Ogiltigt rum</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Ogiltig användare</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Bjud in</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Inbjuden till {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Du är inbjuden till det här rummet. Tryck Enter för att gå med eller avböja.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} bjöd in dig till {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Bjuder in {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} är serveradministratör.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} är verifierad.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Gå med</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Gick med i {0}</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Går med i {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Gå med i {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Gå med i rum</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Rummets adress, ID eller länk, t.ex. #matrix:matrix.org; servrar att gå med via kan följa:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> via {0}</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Sparka ut</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Sparkar ut</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Lämna {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Lämna rummet</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Lämnar {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Administratör ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Nivå för {0}, 0 till 100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Medlem (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Moderator ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Annan…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Listar konton</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Listar medlemmar</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Listar anmälningar</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Visar {0} i katalogen</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Listar rum</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Listar registreringstoken</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Visa {0} i den offentliga rumskatalogen på {1}? Det ändrar inte vem som får gå med.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Läser in medlemmar</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Läser in {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[läser in förhandsvisning…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Lås</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Lås: avvisa alla sessioner</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Låste {0}: servern avvisar personens sessioner tills /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Låser</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Loggar ut</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Loggar ut enheter</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Logga in</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Logga ut</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Logga ut enheter</value>
+  </data>
+  <data name="LogOutDevicesQuestion_one" xml:space="preserve">
+    <value>Logga ut {0} enhet: {1}?</value>
+  </data>
+  <data name="LogOutDevicesQuestion_other" xml:space="preserve">
+    <value>Logga ut {0} enheter: {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Avsluta den här sessionen på servern? Meddelandena finns kvar i den lokala databasen.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Slår upp användaren</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Sänk din egen nivå från {0} till {1}? Du kan inte höja den igen själv.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Gör till serveradministratör</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Låt {0} hantera alla konton och rum på servern?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Gör till administratör</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} medlem</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} medlemmar</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>Användar-ID eller namn i det här rummet:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Medlemmar ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Medlemmar i {0}</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Om</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Konton…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Serveradministratörer: lista och hantera konton</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Lägg till _adress…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>En adress som #rum:server</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>Ljud_test…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Hör dig själv, för att testa mikrofon och högtalare</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Por_ta…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Ta bort en medlem för gott</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>_Ring</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Röstsamtal i den här direktchatten</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Kommandon och tangenter</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>_Radera konto…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Inaktivera kontot för gott</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Enheter…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Visa och logga ut sessioner</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>_Direktmeddelande…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Börja en chatt med en användare</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>Rums_katalog…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Sök offentliga rum</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>Katalogs_ynlighet…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Visa i den offentliga rumskatalogen</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Aktiv_era kryptering…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Kryptera det här rummet; kan inte ångras</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Kryptering…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Nycklar, återställning och säkerhetskopia</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Arkiv</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>Lägg _på</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Avsluta samtalet</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Hjälp</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>_Bjud in…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Bjud in en användare hit</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Gå med…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Gå med via adress eller ID</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>_Sparka ut…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Ta bort en medlem</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>_Lämna</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Lämna det här rummet</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>_Logga ut…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Avsluta sessionen på servern</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>_Loggar…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Den här och tidigare sessioner</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Medlemmar</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Visa eller dölj</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Nytt _offentligt rum…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Skapa ett rum som vem som helst kan gå med i</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Nytt rum…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Skapa ett privat rum</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>_Nästa rum</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>_Äldre meddelanden</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Läs in historik</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Be_hörighetsnivå…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Gör en medlem till administratör eller moderator</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>_Föregående rum</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>_Avsluta</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Avsluta, sessionen behålls</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Registreringstoken…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Token som nya konton registrerar sig med</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>Ra_pporter…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Vad användare har anmält</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Rum</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>_Välj meddelande</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Svara, reagera, redigera…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Skicka _fil…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Ladda upp en fil hit</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Server</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>Server_meddelande…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Skriv till en användare från servern</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>R_um…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Alla rum på servern</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Ange b_ild…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Rummets bild</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Ange na_mn…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Ändra rummets namn</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Inställningar…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Visa och ändra inställningar</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Ange _ämne…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Ändra ämnet</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>Hä_v portning…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Släpp tillbaka en portad användare</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Verifiera den här enheten…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Jämförelse av emoji</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Visa</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>_Vem är…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>En användares enheter och adresser</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Meddelande</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [meddelandet raderat]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>meddelande i {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Mikrofoner: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, ljud av</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Namn för {0}:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Varken den här enheten eller {0} är betrodd under din nuvarande identitet, så ingen av dem kan gå i god för den andra.
+
+Verifiera den här enheten med en betrodd enhet{1}, eller använd din återställningsnyckel.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>aldrig</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Nytt konto</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Nytt konto…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Nytt lösenord för {0}; personens enheter loggas ut:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Nytt offentligt rum</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Nytt rum</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Ny token</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Ny token…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Den här servern låter inte appar skapa konton.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Inget samtal ringer.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Inget samtal att lägga på.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Inget samtal att stänga av ljudet för.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Inga enheter är inloggade.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>ingen utgång</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} är inte längre serveradministratör.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Ingen medlem "{0}" här. Ange ett användar-ID som @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Inga medlemmar.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>ingen</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>inga hittades</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Ingen av dina enheter är betrodd under din nuvarande identitet, så ingen kan gå i god för den här.
+
+Använd din återställningsnyckel, eller återställ din identitet på en enhet du behåller.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Ingen är blockerad.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[ingen förhandsvisning]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Det här kontot har ingen återställning konfigurerad än. Konfigurerar du den ser andra den här enheten som verifierad, och du får en återställningsnyckel som låser upp dina meddelanden på nya enheter.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Inga anmälningar.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Inget rum</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Inga rum hittades</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} är inget kommando. Se Hjälp → Kommandon och tangenter.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" är ingen nivå; ange ett tal, eller admin, moderator eller member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" är inte ett Matrix-användar-ID; det ser ut som @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} är ingen bildfil.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" är inte en annan användares ID; det ser ut som @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} är inte en rumsadress, ett ID eller en länk som #matrix:matrix.org. Använd /msg för att chatta med en användare.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} är ingen rumsadress som #rum eller #rum:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" är ingen serveradress; den ser ut som https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} är inget användar-ID som @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" är inget användar-ID; det ser ut som @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" är inget användar-ID; det ser ut som @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Inte ansluten</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Inget att logga ut. Använd Arkiv → Logga ut för att avsluta den här sessionen.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Meddelande till {0}; det kommer i personens rum för servermeddelanden:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [inte skickat: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>inte konfigurerat</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Inte betrodd</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>inte verifierad</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Ingen användbar nyckelsäkerhetskopia hittades.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>en av dina betrodda enheter</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Öppna en direktchatt först.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Öppna krypteringsfönstret nu? Det finns också under Arkiv → Kryptering och /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Öppnar {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Öppna först ett rum som du har gått med i.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Öppna länk</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Annan server</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Adresser kan bara skapas på din egen server, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Lösenord för {0}:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Lösenordet godtogs inte.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Satte ett nytt lösenord för {0} och loggade ut personens enheter.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Lösenorden skiljer sig.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Behörighetsnivå</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Behörighetsnivå för {0} (nu {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Tryck Enter för att stänga.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Avsluta</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reagera</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Reaktionstext eller emoji:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Anledning för {0} (valfritt):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Trakasserier eller hat</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>_Olagligt innehåll</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>A_nnat</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>Se_xuellt eller våldsamt innehåll</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Skräppost</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Återställt</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Återställer</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Återställer nycklar…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Återställningsnyckel</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Återställningsnyckel (eller lösenfras):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Den här servern kräver ett steg som appen inte klarar, till exempel en captcha eller ett e-postmeddelande. Skapa kontot på serverns webbplats och logga sedan in här.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Registreringstoken från serverns administratör:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Registreringstoken</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Avböjer {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Avböjer</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, vidarebefordrat</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Ta bort adress</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Tog bort {0}</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Tar bort {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Tar bort bilden</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Byt namn på enheten</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Byter namn på enheten</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} finns. Ersätt den?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[sv. {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[sv.] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[sv. {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Anmäl</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>Anmälde {0} till administratörerna på din server.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Anmälde meddelandet till administratörerna på din server. /ignore blockerar avsändaren.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Anmäler</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Anmäler meddelandet</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" är inget användar-ID; /report @user:server, eller bara /report för det här rummet.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Anmälningar</value>
+  </data>
+  <data name="ReportsCount_one" xml:space="preserve">
+    <value>{0} anmälan, nyaste först:</value>
+  </data>
+  <data name="ReportsCount_other" xml:space="preserve">
+    <value>{0} anmälningar, nyaste först:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Anmälan {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Anmälan till administratörerna på din server: {0}. Varför?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Återställ lösenord</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Återställ lösenord…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Återställer lösenordet</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Rummets bild</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Rummets bild angavs</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} rum</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} rum</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Rumskatalog</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Det här rummet är krypterat, men kryptering är inte tillgänglig på den här enheten.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Del av ett rumsnamn, en adress eller ett ID; tomt för alla:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} visas i rumskatalogen</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Rummets namn:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} anger ingen server. Ange servrar i rummet att gå med via, t.ex. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Rum</value>
+  </data>
+  <data name="RoomsCount_one" xml:space="preserve">
+    <value>{0} rum, flest medlemmar först{1}:</value>
+  </data>
+  <data name="RoomsCount_other" xml:space="preserve">
+    <value>{0} rum, flest medlemmar först{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} visas inte längre i rumskatalogen</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Samma lösenord igen:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Spara som (en fil, eller en mapp att spara i):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sparade {0}</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Spara fil</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Sparar fil</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Sökningen misslyckades: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Söker…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Sök:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Se loggfilen för detaljer.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Skicka fil</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Skicka {0} till det här rummet?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Skicka filer</value>
+  </data>
+  <data name="SendFilesQuestion_one" xml:space="preserve">
+    <value>Skicka {0} fil till det här rummet?
+
+{1}</value>
+  </data>
+  <data name="SendFilesQuestion_other" xml:space="preserve">
+    <value>Skicka dessa {0} filer till det här rummet?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Skickar {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Skickar meddelandet</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [skickar…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Skickar verifieringsbegäran…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Skicka ett servermeddelande…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>Skickade {0}</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Skickade ett servermeddelande till {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Till exempel http://localhost:8008 för en server på den här datorn.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Serveradress, bara när den inte kan hittas från användar-ID:t:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Server:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Server behövs</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Servermeddelande</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Serverns villkor:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Ange namn</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Anger bild</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Anger namn</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Anger behörighetsnivån för {0}</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Anger ämne</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Konfigurerar återställning…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Ange ämne</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>konfigurerat</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>konfigurerat och betrott här</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>konfigurerat, ännu inte betrott här</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Konfigurera återställning</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Skapa korssigneringsnycklar, en nyckelsäkerhetskopia och en återställningsnyckel?
+
+Med återställningsnyckeln kan en ny inloggning verifiera sig själv och läsa gamla meddelanden. Förvara den säkert, som ett lösenord.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Stäng…</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Stängde {0}: {1} medlem togs bort{2}{3}.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>Stängde {0}: {1} medlemmar togs bort{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Låt alla medlemmar från den här servern lämna {0} och radera dess adresser här? Blockering hindrar dem också från att gå med igen.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Anledning som visas för medlemmarna; tomt för ingen:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Stäng rummet…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Stänger rummet</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Ange hela ditt Matrix-användar-ID för att börja; det sparas efter en lyckad inloggning.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Logga in på Matrix</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Någon</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Högtalare: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Börja en direktchatt med {0}?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Börjar chatt med {0}</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat är en terminalapp: starta den i en terminal.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Korssignering:        {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Enhet:                 {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Fingeravtryck:         {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Nyckelsäkerhetskopia:  {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Återställningsnyckel:  {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Den här enheten:      {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Stäng av</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Stäng av: får läsa, inte skicka</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>Stängde av {0}: personen kan läsa och lämna rum, men inte skicka, gå med eller bjuda in. /unsuspend {1} häver det.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Stänger av</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Stäng av {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>systemets standard</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Ta bort serveradministratörsrättigheter</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Tar bort administratörsrättigheter</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Verifieringen avbröts.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Det här är enheten du använder. Välj en annan av dina enheter.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>det här meddelandet</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>det här rummet</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Antal dagar den gäller; tomt för ingen utgång:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Servern godtog inte registreringstoken.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Token; tomt för en slumpmässig:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Nya konton behöver en av dessa när registreringen frågar efter en token:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>till {0:yyyy-MM-dd HH:mm}</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>använd {0}, ingen gräns</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>använd {0} av {1}</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Hur många konton som får använda den; tomt för obegränsat:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Ämne:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>korssignerad</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>inga nycklar</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>den här enheten</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>overifierad</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>verifierad</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} skriver…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Häv portning</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Häver portning</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Hävde blockeringen av {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Häver blockering</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>okänd</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Okänt kommando</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Döljer {0} i katalogen</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Lås upp</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Låste upp {0}.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Låser upp</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Laddar upp {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>Användar-ID, t.ex. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} är upptaget; välj ett annat.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Användare, t.ex. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Verifiering</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Verifieringen avbröts</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Verifieringen med {0} avbröts: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Verifieringsbegäran från {0} {1} ignorerades: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Verifieringsbegäran</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Verifiering begärd; acceptera den på {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>verifierad (korssignerad)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>Verifierade {0}</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Verifiera</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Väntar på att {0} bekräftar…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Vänta tills klienten är ansluten.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} vill verifiera den här enheten genom att jämföra emoji.
+
+Acceptera?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Vilket rum eller vilken användare?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Vem är</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Vem är: enheter och adresser</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Vem är {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Skriv ner eller kopiera den här återställningsnyckeln nu och förvara den säkert. Den visas inte igen.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>din enhet {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>din andra enhet</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Ditt lösenord, för att bekräfta:</value>
+  </data>
+</root>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Norwegian Bokmål texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} ba om å bli med</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Ba om verifisering ved å sammenligne emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Ba {0} om å verifisere ved å sammenligne emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} utestengte {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} endret rommets bilde</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} endret emnet til: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} opprettet rommet</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Ikke startet.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Den lagrede krypteringstilstanden kan ikke leses ({0}). Er {1} byttet ut?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} avslo invitasjonen</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Tomt rom</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Tomt rom (var {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Kryptert melding; nøkkelen har ikke kommet</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>kryptering ikke tilgjengelig: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>filen finnes ikke lenger</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>bilde</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>bilde: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} inviterte {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} ble med</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} kastet ut {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} forlot rommet</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Logger inn</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} og {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} og {1} annen</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} og {1} andre</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} heter nå {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Åpner lokal lagring</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Forbereder kryptering</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} reagerte med {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} fjernet rommets bilde</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} ga rommet nytt navn: {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; prøver igjen om {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} opphevet utestengingen av {1}</value>
+  </data>
+</root>

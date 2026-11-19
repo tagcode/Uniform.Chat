@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ukrainian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} просить приєднатися</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Запит на підтвердження порівнянням емодзі</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Запит до {0} на підтвердження порівнянням емодзі</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} заблокував(-ла) {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} змінив(-ла) зображення кімнати</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} змінив(-ла) тему: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} створив(-ла) кімнату</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Не запущено.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Не вдається прочитати збережений стан шифрування ({0}). Чи було замінено {1}?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} відхилив(-ла) запрошення</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Порожня кімната</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Порожня кімната (була {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Зашифроване повідомлення; ключ ще не надійшов</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>шифрування недоступне: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>файлу більше немає</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>зображення</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>зображення: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} запросив(-ла) {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} приєднався(-лася)</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} вигнав(-ла) {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} вийшов(-ла)</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Вхід</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} і {1}</value>
+  </data>
+  <data name="NamesAndOthers_few" xml:space="preserve">
+    <value>{0} і ще {1} особи</value>
+  </data>
+  <data name="NamesAndOthers_many" xml:space="preserve">
+    <value>{0} і ще {1} осіб</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} і ще {1} особа</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} і ще {1} особи</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} тепер {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Відкриття локального сховища</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Підготовка шифрування</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} відреагував(-ла): {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} видалив(-ла) зображення кімнати</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} перейменував(-ла) кімнату на {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; повтор через {1:F0} с</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>спойлер</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>спойлер: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} розблокував(-ла) {1}</value>
+  </data>
+</root>

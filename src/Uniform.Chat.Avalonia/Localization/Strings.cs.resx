@@ -1,0 +1,1391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Czech texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Přijmout</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>Přečetl(a) jsem si tato pravidla a souhlasím s nimi</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>Pro pokračování si přečtěte a přijměte pravidla serveru.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>Přijměte žádost na {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Účet</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>Heslo k účtu</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Účty</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>Váš účet byl pozastaven správci vašeho serveru: můžete číst místnosti a odcházet z nich, ale nemůžete posílat zprávy, připojovat se k místnostem ani zvát. Podívejte se do místnosti oznámení serveru, pokud existuje.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} selhalo: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Povolit oznámení…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>Zpráva již byla odeslána.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>zprávu</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Přijmout</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Přijímání hovoru</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>Přijmout s videem</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>Tento server nedovoluje aplikacím vytvářet účty.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>Dotazování {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>Mikrofon nebo reproduktor nelze otevřít: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Test zvuku</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>Test vyžaduje oprávnění k mikrofonu.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Nahráno {0:F0} s, odesláno rychlostí {1:F0} kbit/s.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Mluvte: uslyšíte se o sekundu později. Ticho znamená, že vstup není mikrofon.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>Spusťte a mluvte: uslyšíte se o sekundu později, přes kodek Opus jako v hovorech.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Zpět</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>Zadní kamera</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Blokovat</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} zablokován(a): zprávy a pozvánky této osoby se už nezobrazují. Odblokovat lze v části Zabezpečení a obnovení.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>Blokovaní uživatelé</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>Jejich zprávy a pozvánky se nezobrazují.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Blokování</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>Blokovat odesílatele</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Hovor ukončen: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Volání…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>Volání selhalo: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>Hovory vyžadují oprávnění k mikrofonu.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>Kamera je vypnutá</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>Kamera ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>Kamera vyp.</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>Kamera zap.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Zrušit</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>Zrušit (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Zrušit odeslání</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>Změny se ukládají okamžitě.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>Změna správcovských práv</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>Kontrola šifrování selhala: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>Zvolte Chatovat a začněte chat s {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>Zvolte Připojit se a připojte se k {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>Zvolte místnost, kam sdílet {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>Zvolte místnost a začněte.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zavřít</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>Porovnejte emoji s jiným zařízením, kde jste přihlášeni, například s Elementem v telefonu.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Porovnejte s {0}. Zobrazují stejné emoji ve stejném pořadí?</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Připojování…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Připojení</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>Spojení ztraceno, nový pokus…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Kopírovat</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>Kopírovat obrázek</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>Kopírování selhalo: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>Kopírování obrázku selhalo: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Kopírovat odkaz</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Kopírovat text</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>K {0} se nepodařilo připojit.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Vytvořit</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Vytvořit účet</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>Účet se vytvoří na serveru z ID uživatele, pokud to server dovoluje. Zvolte si vlastní heslo.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Vytvořit účet</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Vytvořit účet Matrix</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Vytváření {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Vytváření tokenu</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>d. MMMM yyyy</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>dddd d. MMMM</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>Dny; prázdné = bez vypršení</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Deaktivovat…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>Trvale deaktivovat {0}? Osoba opustí všechny místnosti a nebude se moci znovu přihlásit; ID uživatele nebude znovu přiděleno.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>{0} deaktivován(a).</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Deaktivace</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Odmítnout</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>Odmítání {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>Odmítání</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Smazat</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Smazat účet</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Trvale smazat účet? Opustíte všechny místnosti, vaše jméno a obrázek budou odstraněny a všechna zařízení odhlášena. ID uživatele nebude možné znovu použít. Pro potvrzení zadejte heslo.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>Smazat účet…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>Smazat hlášení</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>Smazání účtu selhalo: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Mazání zprávy</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Mazání hlášení</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Mazání tokenu</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>Adresa</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>Upraveno</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>Šifrování</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>ID události</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>ID místnosti</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Podrobnosti…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>Odesláno</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>Stav</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>Nepřečteno</value>
+  </data>
+  <data name="DeviceCount_few" xml:space="preserve">
+    <value>{0} zařízení</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} zařízení</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} zařízení</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1}), naposledy {2} z {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Zařízení</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Veřejné místnosti vašeho serveru nebo jiného serveru, například matrix.org.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>Server, např. matrix.org; prázdné = váš</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>Stažení {0} selhalo: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>Sluchátko</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Upravit</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(upraveno)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>Úprava zprávy</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>Zpráva už byla odeslána, takže změna nebyla provedena.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 Šifrováno</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>Šifrovaná zpráva</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Tato místnost je šifrovaná, ale šifrování není na tomto zařízení dostupné: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>přijato na jiném zařízení</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>odmítnuto</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>odmítnuto na jiném zařízení</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Pozastavení {0} ukončeno.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>zmeškáno</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>bez odpovědi</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>bez připojení</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>protistrana volala znovu</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Ukončit pozastavení</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>protistrana zavěsila</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>Koncově šifrováno</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>odmítli jste</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>zavěsili jste</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>Pro potvrzení zadejte heslo k účtu.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>Zadejte klíč pro obnovení nebo heslovou frázi, kterou jste nastavili v této nebo jiné aplikaci, například v Elementu.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>Externí kamera</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>Oblíbené</value>
+  </data>
+  <data name="FileCount_few" xml:space="preserve">
+    <value>{0} soubory</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} soubor</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} souborů</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Najít</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Otisk</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>správce</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>blokován</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>deaktivován</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>pozván</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>uzamčen</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>pozastaven</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>ověřen</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>Od správce serveru</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>Od vašeho serveru</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>Přední kamera</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Zavěšování</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>Zavěsit</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>Mám účet: přihlásit se</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>Skrýt a zkusit znovu</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Obrázek zkopírován</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>V hovoru s {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>Příchozí hovor</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>Příchozí hovory</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>Příchozí videohovor</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>Příchozí hlasový hovor</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>Na pozadí</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>Pozvánka</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Pozvat</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>{0} pozván(a).</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>Jste pozváni do této místnosti.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} vás zve do {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>Pozvánky</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Zvaní {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} je správcem serveru.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} volá</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} je ověřen(a).</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Připojit se</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>Připojování k {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>Připojování k {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>Udržuje připojení, přejetím skryjete.</value>
+  </data>
+  <data name="KeysRestored_few" xml:space="preserve">
+    <value>Obnoveny {0} klíče zpráv.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>Obnoven {0} klíč zpráv.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>Obnoveno {0} klíčů zpráv.</value>
+  </data>
+  <data name="KeysRestoredVerified_few" xml:space="preserve">
+    <value>Obnoveny {0} klíče zpráv; toto zařízení je nyní ověřené.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>Obnoven {0} klíč zpráv; toto zařízení je nyní ověřené.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>Obnoveno {0} klíčů zpráv; toto zařízení je nyní ověřené.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Jazyk</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Jazyk systému</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Velké</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>naposledy {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Opustit místnost</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Odchod z {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>Licence…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat je svobodný software pod licencí MIT. Obsahuje prostředí .NET a další knihovny, každou pod vlastní licencí, jejichž texty následují.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>Načítání účtů</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>Načtení historie selhalo: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>Načítání hlášení</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>Načítání tokenů</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Uzamknout</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} uzamčen(a): server odmítá zařízení této osoby, dokud se zámek nezruší.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Zamykání</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Protokoly</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>Protokoly…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>Protokol nelze přečíst: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>Znovu hledat distributory</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>Vyhledávání zařízení</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>Hlasitý odposlech</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>Nízká priorita</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Udělat správcem</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Označit jako přečtené</value>
+  </data>
+  <data name="MemberCount_few" xml:space="preserve">
+    <value>{0} členové</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} člen</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} členů</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Členové</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}, pozváno: {1}</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>Zpráva smazána</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Zpráva</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Zprávy</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>Zprávy přicházejí přes {0}; aplikace nepotřebuje vlastní připojení.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>Zprávy v přímých chatech</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>Zprávy, které vás zmiňují</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>Mikrofon ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Ztlumit</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>ztlumeno</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>Vyžaduje klíč pro obnovení</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>Tento server vyžaduje registrační token od svého správce.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>nikdy</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>Nová zpráva</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>Nové heslo; zařízení této osoby budou odhlášena</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Nový token</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>Žádná aplikace zde neotevře {0}.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>Žádná aplikace zde neotevře {0}; použijte raději Uložit….</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>Bez oprávnění ke kameře; přijímáte jen hlasem.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>Bez oprávnění ke kameře; voláte jen hlasem.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>Žádná zařízení nejsou přihlášena.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>Žádné šifrovací klíče</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>bez vypršení</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>Na této úrovni nejsou žádné záznamy.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} už není správcem serveru.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Žádné</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Žádná hlášení.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normální</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Nebyly nalezeny žádné místnosti.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" není ID uživatele Matrix; vypadá jako @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} není ID uživatele; ta vypadají jako @jméno:server.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Nedostupné: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>Nešifrováno</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>Nic nebylo nahráno.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>Oznámení serveru odesláno {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Oznámení</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>Oznámení Uniform Chat jsou vypnutá v nastavení systému. Příchozí hovory zvoní bez zobrazení volajícího a zprávy neupozorňují.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>Teď ne</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Neodesláno: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>Nenastaveno</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>Neověřeno</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(nyní)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Zap.</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>Probíhající hovor</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Připojeno</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Otevřít</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>Otevření {0} selhalo: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>nebo čísla {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>Vlastní připojení na pozadí</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>Aplikace udržuje vlastní připojení s oznámením, které ho zobrazuje.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>Aplikace udržuje vlastní připojení s oznámením, které ho zobrazuje. Nainstalujte distributor UnifiedPush, například ntfy, abyste dostávali zprávy bez něj.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>Část ID uživatele nebo jména</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Heslo</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Heslo nebylo přijato.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>Heslo se používá jen k přihlášení; neukládá se.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Pro {0} nastaveno nové heslo a jeho zařízení odhlášena.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>Vložení selhalo: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>Výchozí v telefonu</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>Mikrofon telefonu</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Zásady ochrany soukromí</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Zprávy a hovory Uniform Chat</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reagovat</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>Obtěžování nebo nenávist</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Nezákonný obsah</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>Důvod: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Jiné</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>Sexuální nebo násilný obsah</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Opětovné připojování…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>Obnovení selhalo: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>Klíč pro obnovení zkopírován.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>Zapište si ho nebo ho teď zkopírujte na bezpečné místo; znovu se nezobrazí. S ním se nové přihlášení může samo ověřit a číst staré zprávy.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Obnovit</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>Server k vytvoření účtu požaduje víc, než tato aplikace dokáže poskytnout.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>Registrační token</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Registrační tokeny</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>Nové účty potřebují jeden z nich, když registrace serveru žádá o token.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>Tento server vyžaduje krok, který aplikace nezvládne, například captchu nebo e-mail. Vytvořte účet na webu serveru a pak se přihlaste zde.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>přes relé</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>Odebrat z oblíbených</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>Odebrat nízkou prioritu</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Odpovědět</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>Odpověď {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>Hlášení smazáno.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} nahlásil(a) {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Nahlášeno správcům vašeho serveru. Odesílatele můžete také zablokovat z nabídky zprávy.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>{0} nahlášen(a) správcům vašeho serveru.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Nahlašování zprávy</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>Nahlašování místnosti</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>Nahlašování uživatele</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>Nahlásit zprávu</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>Nahlásit místnost…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>Nahlásit místnost</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Hlášení</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>Nahlásit odesílatele</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Resetování hesla</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>Nový pokus: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Místnost</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>Připojte se k místnosti přes adresu nebo odkaz, napište uživateli nebo vytvořte soukromou místnost</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#místnost, @uživatel, odkaz nebo nový název</value>
+  </data>
+  <data name="RoomCount_few" xml:space="preserve">
+    <value>{0} místnosti</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} místnost</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} místností</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Adresář místností</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>Adresář místností…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>Místnost: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Místnosti</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>Místnost uzavřeli správci serveru</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>{0} uloženo.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>Uložit…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Uložit soubor</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>Uložení souboru selhalo: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Hledat</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Hledání selhalo: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Hledání…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Zabezpečení</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>Zabezpečení a obnovení…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Odeslat</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>Odeslat soubor</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0} v {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Odesílání…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>Odeslání {0} selhalo: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Odesílání oznámení</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>Odeslání souboru selhalo: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>Odeslat (Enter); pole zprávy si ponechá fokus</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>Adresa serveru</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Ponechte prázdné, aby se server našel podle vašeho ID uživatele. Nutné pro servery bez zjišťování, například http://localhost:8008 na tomto počítači.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>Správa serveru</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>Správa serveru…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>Zprávy od správců vašeho serveru. Zde nemůžete odpovídat.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>Oznámení serveru této osobě</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Pravidla serveru</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>Server je nedostupný: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Nastavit</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>Nastavení…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Nastavování tématu</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>Nastavení obnovení selhalo: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>Nastavit</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>Nastaveno a zde důvěryhodné</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>Nastaveno</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>Nastaveno, zde zatím nedůvěryhodné</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Nastavit obnovení</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>Vytvořit klíče křížového podepisování, zálohu klíčů zpráv a klíč pro obnovení.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>odkaz</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>text</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>Sdílet {0}</value>
+  </data>
+  <data name="ShareFiles_few" xml:space="preserve">
+    <value>Sdílet {0} soubory</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Sdílet {0} soubor</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>Sdílet {0} souborů</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>Sdílení {0} selhalo: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>Uzavřít {0}? Všichni členové z tohoto serveru ji opustí, její adresy zde budou smazány a nikdo z tohoto serveru se nebude moci znovu připojit.</value>
+  </data>
+  <data name="ShutDownDone_few" xml:space="preserve">
+    <value>{0} uzavřena: odstraněni {1} členové.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} uzavřena: odstraněn {1} člen.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} uzavřena: odstraněno {1} členů.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>Uzavřít místnost…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>Uzavírání místnosti</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>{0} odhlášeno.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Přihlásit se</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>Přihlášení selhalo.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>Přihlašování k {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>Odhlášení {0} selhalo: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Přihlásit se do Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Odhlásit</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>Odhlásit {0}? Pro potvrzení zadejte heslo k účtu.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>Odhlásit…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Malé</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Někdo</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>Reproduktor ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Spustit</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>Chatovat</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>Zahajování chatu s {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>Začínáme s {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Křížové podepisování</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Zařízení</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Záloha klíčů</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Klíč pro obnovení</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Zastavit</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Zastaveno: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>Nastavte obnovení, aby ostatní viděli toto zařízení jako ověřené a klíč pro obnovení odemkl vaše zprávy na nových zařízeních.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>Ověřte toto zařízení jiným svým zařízením nebo klíčem pro obnovení, aby ho ostatní viděli jako ověřené a mohlo číst vaše starší zprávy.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Pozastavit</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} pozastaven(a): může číst, ale nemůže posílat, připojovat se ani zvát.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Pozastavování</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Pozastavit uživatele</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>Přepínání mikrofonu</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>Přepínání reproduktoru</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>Výchozí systému</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>Označování místnosti</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>Odebrat správcovská práva</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>Otestovat zvuk…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>Velikost textu</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Motiv</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Tmavý</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Světlý</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Systémový</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>Neshodují se</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>Shodují se</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>Toto zařízení</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Dnes</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>Token zkopírován.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>Token smazán; účty vytvořené s ním zůstávají.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Server registrační token nepřijal.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>do {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>použito {0}×, bez omezení</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>použito {0} z {1}</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>Téma</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>Vypnout kameru</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>Zapnout kameru</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} píše…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>Několik lidí píše…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} a {1} píší…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Odblokovat</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} odblokován(a).</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Odblokování</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>Odblokování {0} selhalo: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>neznámé</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Odemknout</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} odemčen(a).</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>Odemknout šifrovanou historii</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Zrušit ztlumení</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>Odebírání označení</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>ID uživatele</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>Toto ID uživatele je obsazené; zvolte jiné.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>Pravidla používání</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>Pokračováním přijímáte pravidla používání: žádný nezákonný, urážlivý ani škodlivý obsah. Nahlašujte ho a blokujte lidi z nabídky jejich zpráv.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>Použití; prázdné = bez omezení</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Ověření zrušeno.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Ověření zrušeno: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Ověření selhalo: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Ověřeno</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Ověřit</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>Ověřit zařízení</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>Ověření {0} selhalo: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>Ověřit jiným zařízením</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>Velmi velké</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>Velmi malé</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Videohovor</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Hlasový hovor</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>Čekání na {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Čekání na potvrzení od {0}…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} chce ověřit toto zařízení porovnáním emoji.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>O čem místnost je</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>Drátová sluchátka</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>Drátová náhlavní souprava</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ano</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>Ano, provést</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Včera</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Vy</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>vaše zařízení {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>Váš klíč pro obnovení</value>
+  </data>
+</root>

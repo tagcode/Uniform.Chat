@@ -188,7 +188,7 @@ public sealed partial class AdminViewModel : ViewModelBase
         Ask(Translations.Format(Strings.ShutDownConfirm, roomId), () => RunAsync(Strings.ShuttingRoomDown, async client =>
         {
             AdminRoomShutdown done = await client.ShutdownRoomAsync(roomId, block: true, Strings.RoomShutDownReason);
-            Message = Translations.Format(Strings.ShutDownDone, roomId, done.KickedUsers.Count);
+            Message = Translations.Plural(nameof(Strings.ShutDownDone_other), done.KickedUsers.Count, roomId, done.KickedUsers.Count);
         }));
     }
 
@@ -385,7 +385,7 @@ public sealed partial class AdminViewModel : ViewModelBase
         // Name, flags, use
         IEnumerable<string> flags = new[] { account.Admin ? Strings.FlagAdmin : null, account.Suspended ? Strings.FlagSuspended : null, account.Locked ? Strings.FlagLocked : null, account.Deactivated ? Strings.FlagDeactivated : null }.OfType<string>();
         // Return line
-        List<string?> parts = [account.DisplayName, .. flags, Translations.Format(Strings.DeviceCount, account.Devices ?? 0), Translations.Format(Strings.RoomCount, account.JoinedRooms ?? 0)];
+        List<string?> parts = [account.DisplayName, .. flags, Translations.Plural(nameof(Strings.DeviceCount_other), account.Devices ?? 0, account.Devices ?? 0), Translations.Plural(nameof(Strings.RoomCount_other), account.JoinedRooms ?? 0, account.JoinedRooms ?? 0)];
         return string.Join(" · ", parts.OfType<string>());
     }
 

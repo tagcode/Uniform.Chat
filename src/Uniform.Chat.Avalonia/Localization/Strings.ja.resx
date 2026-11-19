@@ -1,0 +1,1343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Japanese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>承認</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>これらのポリシーを読み、同意します</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>続けるにはサーバーのポリシーを読んで同意してください。</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>{0} でリクエストを承認してください。</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>アカウントのパスワード</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>あなたのアカウントはサーバーの管理者によって一時停止されています。ルームの閲覧や退出はできますが、メッセージの送信、ルームへの参加、招待はできません。サーバー通知ルームがあれば確認してください。</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} に失敗しました：{1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>通知を許可…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>メッセージは既に送信されています。</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>応答</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>応答中</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>ビデオで応答</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>このサーバーではアプリからアカウントを作成できません。</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>{0} に問い合わせています…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>マイクまたはスピーカーを開けませんでした：{0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>音声テスト</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>テストにはマイクの許可が必要です。</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>{0:F0} 秒録音し、{1:F0} kbit/s で送信しました。</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>話してください：1 秒後に自分の声が聞こえます。無音の場合、入力がマイクではありません。</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>開始して話してください：通話の Opus コーデックを通して 1 秒後に自分の声が聞こえます。</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>背面カメラ</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>ブロック</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} をブロックしました：この人のメッセージと招待は表示されなくなります。「セキュリティと復元」で解除できます。</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>ブロック中のユーザー</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>メッセージと招待は表示されません。</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>ブロック中</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>送信者をブロック</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>通話が終了しました：{0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>発信中…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>発信に失敗しました：{0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>通話にはマイクの許可が必要です。</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>カメラはオフです</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>カメラ ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>カメラ オフ</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>カメラ オン</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>キャンセル（Esc）</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>送信をキャンセル</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>変更はすぐに保存されます。</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>管理者権限を変更しています</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>チャット</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>暗号化の確認に失敗しました：{0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>{0} とチャットを始めるには「チャット」を選んでください。</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>{0} に参加するには「参加」を選んでください。</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>{0} を共有するルームを選んでください。</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>始めるにはルームを選んでください。</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>サインインしている別の端末（スマートフォンの Element など）と絵文字を比較してください。</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>{0} と比較してください。同じ絵文字が同じ順番で表示されていますか？</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>接続中…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>接続が切れました。再試行しています…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>画像をコピー</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>コピーに失敗しました：{0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>画像のコピーに失敗しました：{0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>リンクをコピー</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>テキストをコピー</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>{0} に参加できませんでした。</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>アカウントを作成</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>アカウントはユーザー ID のサーバーに作成されます（サーバーが許可する場合）。パスワードはご自分で決めてください。</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>アカウントを作成</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Matrix アカウントを作成</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>{0} を作成しています</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>トークンを作成しています</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>yyyy年M月d日</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>M月d日 dddd</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>日数（空欄で無期限）</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>無効化…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>{0} を完全に無効化しますか？すべてのルームから退出し、二度とログインできなくなります。このユーザー ID は再発行されません。</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>{0} を無効化しました。</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>無効化しています</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>辞退</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>{0} を辞退しています</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>辞退しています</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>アカウントを削除</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>アカウントを完全に削除しますか？すべてのルームから退出し、名前と画像が削除され、すべての端末がサインアウトされます。このユーザー ID は再利用できません。確認のためパスワードを入力してください。</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>アカウントを削除…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>報告を削除</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>アカウントの削除に失敗しました：{0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>メッセージを削除しています</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>報告を削除しています</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>トークンを削除しています</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>アドレス</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>編集済み</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>暗号化</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>イベント ID</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>送信者</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>ルーム ID</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>詳細…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>送信日時</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>未読</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} 台の端末</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0}（{1}）、最終使用 {2}、{3} から</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>端末</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>あなたのサーバー、または matrix.org など他のサーバーの公開ルーム。</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>サーバー（例：matrix.org）。空欄で自分のサーバー</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>{0} のダウンロードに失敗しました：{1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>受話口</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>（編集済み）</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>メッセージを編集中</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>メッセージは既に送信されていたため、変更は行われませんでした。</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 暗号化済み</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>暗号化されたメッセージ</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>このルームは暗号化されていますが、この端末では暗号化を使用できません：{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>別の端末で応答</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>辞退</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>別の端末で辞退</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>{0} の一時停止を解除しました。</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>不在着信</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>応答なし</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>接続なし</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>相手がかけ直しました</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>一時停止を解除</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>相手が切りました</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>エンドツーエンド暗号化</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>あなたが辞退しました</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>あなたが切りました</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>確認のためアカウントのパスワードを入力してください。</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>このアプリまたは Element など他のアプリで設定した復元キーかパスフレーズを入力してください。</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>外部カメラ</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} 個のファイル</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>フィルター</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>フィンガープリント</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>管理者</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>ブロック中</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>無効化済み</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>招待済み</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>ロック中</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>一時停止中</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>確認済み</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>サーバー管理者から</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>あなたのサーバーから</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>前面カメラ</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>通話を終了しています</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>アカウントを持っています：サインイン</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>隠して再試行</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>画像をコピーしました</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>{0} と通話中</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>着信</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>着信</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>ビデオ通話の着信</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>音声通話の着信</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>バックグラウンドで</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>招待</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>招待</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>{0} を招待しました。</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>このルームに招待されています。</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} があなたを {1} に招待しました</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>招待</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>{0} を招待しています</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} はサーバー管理者です。</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} から着信中</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} は確認済みです。</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>参加</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>{0} に参加しています</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>{0} に参加しています…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>接続を維持します。スワイプで閉じられます。</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>{0} 個のメッセージ鍵を復元しました。</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>{0} 個のメッセージ鍵を復元しました。この端末は確認済みになりました。</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>システムの言語</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>大</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>最終使用 {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>ルームから退出</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>{0} から退出しています</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>ライセンス</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>ライセンス…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat は MIT ライセンスのフリーソフトウェアです。.NET ランタイムとその他のライブラリを含み、それぞれ独自のライセンスに従います。その本文を以下に示します。</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>アカウントを読み込んでいます</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>履歴の読み込みに失敗しました：{0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>報告を読み込んでいます</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>トークンを読み込んでいます</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>ロック</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} をロックしました：ロックを解除するまで、サーバーはこの人の端末を拒否します。</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>ロックしています</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>ログ…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>ログを読み取れません：{0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>ディストリビューターを再検索</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>端末を照会しています</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>スピーカー</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>低優先度</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>管理者にする</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>既読にする</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} 人のメンバー</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>メンバー</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}、招待中 {1} 人</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>メッセージは削除されました</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>メッセージは {0} 経由で届きます。アプリ独自の接続は不要です。</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>ダイレクトチャットのメッセージ</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>あなたへのメンション</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>マイク ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>ミュート</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>ミュート中</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>復元キーが必要です</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>このサーバーでは管理者が発行する登録トークンが必要です。</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>新しいメッセージ</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>新しいパスワード。この人の端末はサインアウトされます</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>新しいトークン</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>ここには {0} を開けるアプリがありません。</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>ここには {0} を開けるアプリがありません。代わりに「保存…」を使ってください。</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>カメラの許可がありません。音声のみで応答します。</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>カメラの許可がありません。音声のみで発信します。</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>サインイン中の端末はありません。</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>暗号鍵がありません</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>無期限</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>このレベルの記録はありません。</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} はサーバー管理者ではなくなりました。</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>報告はありません。</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>ルームが見つかりません。</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>「{0}」は Matrix のユーザー ID ではありません。@alice:matrix.org のような形式です。</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} はユーザー ID ではありません。@名前:サーバー のような形式です。</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>使用できません：{0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>暗号化なし</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>何も録音されませんでした。</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>{0} にサーバー通知を送信しました。</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>システム設定で Uniform Chat の通知がオフになっています。着信は相手を表示せずに鳴り、メッセージは通知されません。</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>後で</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>未送信：{0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>未設定</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>未確認</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>（現在）</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>通話中</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>オンライン</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>{0} を開けませんでした：{1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>または数字 {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>独自のバックグラウンド接続</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>アプリは独自の接続を維持し、それを通知で表示します。</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>アプリは独自の接続を維持し、それを通知で表示します。ntfy などの UnifiedPush ディストリビューターを入れると、この接続なしでメッセージを受け取れます。</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>ユーザー ID または名前の一部</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>パスワードが受け付けられませんでした。</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>パスワードはサインインにのみ使われ、保存されません。</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>{0} に新しいパスワードを設定し、その端末をサインアウトしました。</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>貼り付けに失敗しました：{0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>スマートフォンの既定</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>スマートフォンのマイク</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>プライバシーポリシー</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Uniform Chat のメッセージと通話</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>リアクション</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>嫌がらせまたは憎悪</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>違法なコンテンツ</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>理由：{0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>性的または暴力的なコンテンツ</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>スパム</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>再接続中…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>復元</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>復元に失敗しました：{0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>復元キーをコピーしました。</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>今すぐ書き留めるか安全な場所にコピーしてください。再表示されません。このキーがあれば、新しいサインインが自身を確認し、過去のメッセージを読めます。</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>アカウントの作成に、このアプリが提供できる以上のものをサーバーが求めています。</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>登録トークン</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>登録トークン</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>サーバーの登録でトークンが求められたとき、新しいアカウントにはこのいずれかが必要です。</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>このサーバーでは、CAPTCHA やメールなど、このアプリでは行えない手順が必要です。サーバーのウェブサイトでアカウントを作成してから、ここでサインインしてください。</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>中継</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>お気に入りから削除</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>低優先度を解除</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>返信</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>{0} に返信：{1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>報告を削除しました。</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} が {1} を報告 · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>サーバーの管理者に報告しました。メッセージのメニューから送信者をブロックすることもできます。</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>{0} をサーバーの管理者に報告しました。</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>メッセージを報告しています</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>ルームを報告しています</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>ユーザーを報告しています</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>メッセージを報告</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>ルームを報告…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>ルームを報告</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>報告</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>送信者を報告</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>パスワードをリセットしています</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>再試行：{0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>ルーム</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>アドレスやリンクでルームに参加、ユーザーとチャット、または非公開ルームを作成</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#ルーム、@ユーザー、リンク、または新しい名前</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} 個のルーム</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>ルーム一覧</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>ルーム一覧…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>ルーム：{0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>ルーム</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>ルームはサーバーの管理者によって閉鎖されました</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>{0} を保存しました。</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>保存…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>ファイルを保存</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>ファイルの保存に失敗しました：{0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>検索に失敗しました：{0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>検索中…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>セキュリティ</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>セキュリティと復元…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>送信</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>ファイルを送信</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{1} の {0}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>送信中…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>{0} の送信に失敗しました：{1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>通知を送信しています</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>ファイルの送信に失敗しました：{0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>送信（Enter）。入力欄にフォーカスが残ります</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>サーバーのアドレス</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>ユーザー ID からサーバーを探す場合は空欄のままにします。このコンピューターの http://localhost:8008 など、自動検出に対応していないサーバーでは必要です。</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>サーバー管理</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>サーバー管理…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>サーバーの管理者からのメッセージです。ここでは返信できません。</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>この人へのサーバー通知</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>サーバーのポリシー</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>サーバーに接続できません：{0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>設定…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>トピックを設定しています</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>復元の設定に失敗しました：{0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>設定済み、この端末で信頼済み</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>設定済み</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>設定済み、この端末ではまだ未信頼</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>復元を設定</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>クロス署名鍵、メッセージ鍵のバックアップ、復元キーを作成します。</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>リンク</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>テキスト</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>{0} を共有</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>{0} 個のファイルを共有</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>{0} の共有に失敗しました：{1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>{0} を閉鎖しますか？このサーバーのメンバーは全員退出し、ここでのアドレスは削除され、このサーバーの誰も再び参加できなくなります。</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} を閉鎖しました：{1} 人のメンバーを退出させました。</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>ルームを閉鎖…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>ルームを閉鎖しています</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>{0} をサインアウトしました。</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>サインイン</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>サインインに失敗しました。</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>{0} にサインインしています…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>{0} のサインアウトに失敗しました：{1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Matrix にサインイン</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>サインアウト</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>{0} をサインアウトしますか？確認のためアカウントのパスワードを入力してください。</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>サインアウト…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>小</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>誰か</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>スピーカー ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>チャット</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>{0} とのチャットを開始しています</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>{0} から開始しています…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>クロス署名</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>端末</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>鍵のバックアップ</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>復元キー</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>停止しました：{0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>復元を設定すると、他の人にこの端末が確認済みと表示され、新しい端末でも復元キーでメッセージを読めるようになります。</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>この端末を自分の別の端末か復元キーで確認すると、他の人に確認済みと表示され、過去のメッセージも読めるようになります。</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} を一時停止しました：閲覧はできますが、送信、参加、招待はできません。</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>一時停止しています</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>ユーザーを一時停止</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>マイクを切り替えています</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>スピーカーを切り替えています</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>システムの既定</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>ルームにタグを付けています</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>管理者権限を外す</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>音声をテスト…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>文字サイズ</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>テーマ</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>システム</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>一致しない</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>一致する</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>この端末</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>トークンをコピーしました。</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>トークンを削除しました。これで作成したアカウントは残ります。</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>サーバーが登録トークンを受け付けませんでした。</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>{0} まで</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>{0} 回使用、上限なし</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>{0}/{1} 回使用</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>トピック</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>カメラをオフ</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>カメラをオン</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} が入力中…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>複数の人が入力中…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} と {1} が入力中…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>ブロックを解除</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>{0} のブロックを解除しました。</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>ブロックを解除しています</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>{0} のブロック解除に失敗しました：{1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>ロックを解除</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>{0} のロックを解除しました。</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>暗号化された履歴のロックを解除</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>ミュート解除</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>タグを外しています</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>ユーザー ID</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>そのユーザー ID は使用されています。別の ID を選んでください。</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>利用ポリシー</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>続けると利用ポリシーに同意したことになります：違法、侮辱的、有害なコンテンツは禁止です。そうしたコンテンツはメッセージから報告し、相手をブロックしてください。</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>使用回数（空欄で無制限）</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>確認はキャンセルされました。</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>確認はキャンセルされました：{0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>確認に失敗しました：{0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>確認済み</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>端末を確認</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>{0} の確認に失敗しました：{1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>別の端末で確認</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>特大</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>極小</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>ビデオ</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>ビデオ通話</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>音声通話</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>{0} を待っています…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>{0} の確認を待っています…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} が絵文字の比較でこの端末を確認しようとしています。</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>ルームの内容</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>有線ヘッドホン</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>有線ヘッドセット</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>はい、実行します</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>昨日</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>あなた</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>あなたの端末 {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>あなたの復元キー</value>
+  </data>
+</root>

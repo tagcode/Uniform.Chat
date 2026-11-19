@@ -302,8 +302,11 @@
   <data name="DetailUnread" xml:space="preserve">
     <value>Lukematta</value>
   </data>
-  <data name="DeviceCount" xml:space="preserve">
-    <value>laitteita {0}</value>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} laite</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} laitetta</value>
   </data>
   <data name="DeviceLine" xml:space="preserve">
     <value>{0} ({1}), nähty viimeksi {2} osoitteesta {3}</value>
@@ -395,7 +398,10 @@
   <data name="Favourite" xml:space="preserve">
     <value>Suosikki</value>
   </data>
-  <data name="FileCount" xml:space="preserve">
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} tiedosto</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
     <value>{0} tiedostoa</value>
   </data>
   <data name="Filter" xml:space="preserve">
@@ -512,11 +518,17 @@
   <data name="KeepsConnected" xml:space="preserve">
     <value>Pitää yhteyden, pyyhkäise piiloon.</value>
   </data>
-  <data name="KeysRestored" xml:space="preserve">
-    <value>Viestiavaimia palautettu: {0}.</value>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>{0} viestiavain palautettu.</value>
   </data>
-  <data name="KeysRestoredVerified" xml:space="preserve">
-    <value>Viestiavaimia palautettu: {0}; tämä laite on nyt vahvistettu.</value>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>{0} viestiavainta palautettu.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>{0} viestiavain palautettu; tämä laite on nyt vahvistettu.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>{0} viestiavainta palautettu; tämä laite on nyt vahvistettu.</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Kieli</value>
@@ -593,11 +605,11 @@
   <data name="MarkAsRead" xml:space="preserve">
     <value>Merkitse luetuksi</value>
   </data>
-  <data name="MemberCount" xml:space="preserve">
-    <value>{0} jäsentä</value>
-  </data>
-  <data name="MemberCountOne" xml:space="preserve">
+  <data name="MemberCount_one" xml:space="preserve">
     <value>{0} jäsen</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} jäsentä</value>
   </data>
   <data name="Members" xml:space="preserve">
     <value>Jäsenet</value>
@@ -905,8 +917,11 @@
   <data name="RoomBoxPlaceholder" xml:space="preserve">
     <value>#huone, @käyttäjä, linkki tai uusi nimi</value>
   </data>
-  <data name="RoomCount" xml:space="preserve">
-    <value>huoneita {0}</value>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} huone</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} huonetta</value>
   </data>
   <data name="RoomDirectory" xml:space="preserve">
     <value>Huonehakemisto</value>
@@ -1040,7 +1055,10 @@
   <data name="ShareFile" xml:space="preserve">
     <value>Jaa {0}</value>
   </data>
-  <data name="ShareFiles" xml:space="preserve">
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Jaa {0} tiedosto</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
     <value>Jaa {0} tiedostoa</value>
   </data>
   <data name="SharingFailed" xml:space="preserve">
@@ -1049,8 +1067,11 @@
   <data name="ShutDownConfirm" xml:space="preserve">
     <value>Suljetaanko {0}? Kaikki tämän palvelimen jäsenet poistuvat siitä, sen osoitteet täällä poistetaan, eikä kukaan tältä palvelimelta voi enää liittyä siihen.</value>
   </data>
-  <data name="ShutDownDone" xml:space="preserve">
-    <value>{0} suljettu: poistettuja jäseniä {1}.</value>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>{0} suljettu: {1} jäsen poistettiin.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>{0} suljettu: {1} jäsentä poistettiin.</value>
   </data>
   <data name="ShutRoomDown" xml:space="preserve">
     <value>Sulje huone…</value>

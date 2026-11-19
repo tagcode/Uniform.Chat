@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vietnamese texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} đã xin tham gia</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Đã yêu cầu xác minh bằng cách so sánh emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Đã yêu cầu {0} xác minh bằng cách so sánh emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} đã chặn vĩnh viễn {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} đã đổi ảnh phòng</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} đã đổi chủ đề thành: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} đã tạo phòng</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Chưa khởi động.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>Không đọc được trạng thái mã hóa đã lưu ({0}). {1} có bị thay thế không?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} đã từ chối lời mời</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Phòng trống</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Phòng trống (trước là {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Tin nhắn mã hóa; khóa chưa đến</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>không có mã hóa: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>tệp không còn nữa</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>ảnh</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>ảnh: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} đã mời {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} đã tham gia</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} đã loại {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} đã rời đi</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Đang đăng nhập</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} và {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} và {1} người khác</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} giờ có tên là {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Đang mở bộ nhớ cục bộ</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Đang chuẩn bị mã hóa</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} đã bày tỏ {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} đã xóa ảnh phòng</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} đã đổi tên phòng thành {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; thử lại sau {1:F0} giây</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>tiết lộ nội dung</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>tiết lộ nội dung: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} đã bỏ chặn {1}</value>
+  </data>
+</root>

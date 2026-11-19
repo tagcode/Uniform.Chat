@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Romanian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Aplicat</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Aplicat. Acestea au efect după repornire:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Aplicare</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Aplicare</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Anulare</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Înc_hidere</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Gata</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Editare</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_xport…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Încărcare…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nu</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Resetare</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Salvare</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Da</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} nu poate fi citit: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Curent: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Implicit: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} nu există.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Are efect după repornire.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Are efect la aplicare.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (gol = nesetat)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Scrie setările curente în:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Exportă setările</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filtru:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Nivel: {0}+</value>
+  </data>
+  <data name="LoadedSettings_few" xml:space="preserve">
+    <value>S-au încărcat {0} setări ca modificări. Aplicați-le sau salvați-le pentru a le folosi.</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>S-a încărcat {0} setare ca modificare. Aplicați-o sau salvați-o pentru a o folosi.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>S-au încărcat {0} de setări ca modificări. Aplicați-le sau salvați-le pentru a le folosi.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Fișierul de setări de încărcat:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Încarcă setările</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Jurnale</value>
+  </data>
+  <data name="LogStatus_few" xml:space="preserve">
+    <value>{0} din {1} intrări · {2}   Enter: intrarea întreagă  Alt+F: filtru</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} din {1} intrare · {2}   Enter: intrarea întreagă  Alt+F: filtru</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} din {1} de intrări · {2}   Enter: intrarea întreagă  Alt+F: filtru</value>
+  </data>
+  <data name="MoreLines_few" xml:space="preserve">
+    <value>  [+{0} rânduri]</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} rând]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} de rânduri]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Valoare nouă{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(nesetat)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>acum</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>jurnal mai vechi</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Una dintre: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Tip: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Setat acum de {0}, care are prioritate față de fișierul de setări.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Resetare</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvare</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Salvat</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Salvat în {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Această valoare este secretă. Dați-o în linia de comandă sau introduceți-o când programul o cere.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sesiuni</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Setări</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Fișier de setări: {0}    * editat  + aplicat, nesalvat  ↻ după repornire</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Acestea au efect după repornire:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Unele modificări nu sunt salvate în fișierul de setări. Închideți oricum?
+
+Modificările aplicate sunt valabile până la repornirea programului.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Setări nesalvate</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>S-a scris {0}. Secretele nu sunt incluse.</value>
+  </data>
+</root>

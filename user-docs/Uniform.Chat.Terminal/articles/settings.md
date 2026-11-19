@@ -41,7 +41,7 @@ Every setting can be given on the command line as `--Section:Name=value`. The on
 | `Storage:MediaDirectoryName` | `media` | Media cache directory name inside each account directory. |
 | `Storage:LogDirectoryName` | `logs` | Directory inside DataDirectory with one log file per session. |
 | `Storage:LogFilesKept` | `20` | Session log files to keep; older ones are deleted at start. |
-| `Ui:Language` | not set | The language of the texts, by culture name, e.g. fi or en; the system's when null. |
+| `Ui:Language` | not set | The language of the texts, by culture name, e.g. de or fi; the system's when null. |
 | `Ui:StartRoom` | not set | Room ID or alias to open at start; the first room in the list when null. |
 | `Ui:InlineImages` | `true` | Whether to show ASCII previews of images in the message log. |
 | `Ui:ImagePreviewColumns` | `0` | Widest preview in terminal columns; 0 fills the width of the message log. |
@@ -68,14 +68,25 @@ Edited options are marked `*`, applied but unsaved ones `+`. Values given on the
 
 ## Logs
 
-View → Logs (or `/logs`) shows the log of this run and earlier ones; each run writes its own file, and the oldest beyond `Storage:LogFilesKept` are deleted. Pick a run on the left. **Level** cycles the lowest level shown, Alt+F focuses the text filter (Alt+D in Finnish), and Enter shows a whole entry, such as an error with its stack trace. Warnings are yellow and errors red; the current run's log follows new lines while scrolled to the end.
+View → Logs (or `/logs`) shows the log of this run and earlier ones; each run writes its own file, and the oldest beyond `Storage:LogFilesKept` are deleted. Pick a run on the left. **Level** cycles the lowest level shown, Alt+F focuses the text filter (another letter in some languages, as the status line shows), and Enter shows a whole entry, such as an error with its stack trace. Warnings are yellow and errors red; the current run's log follows new lines while scrolled to the end.
 
 ## Language
 
-The client shows its texts in the language of the system, English or Finnish; other languages fall back to English. `Ui:Language` chooses one, e.g. `fi` or `en`, and takes effect at the next start:
+The client shows its texts in the language of the system, if it has them, and in English otherwise. `Ui:Language` chooses one by its culture name, and takes effect at the next start. To use German:
 
 ```bash
-./Uniform.Chat --Ui:Language=fi
+./Uniform.Chat --Ui:Language=de
 ```
+
+| Languages | Culture names |
+| --- | --- |
+| Bahasa Indonesia, Čeština, Dansk, Deutsch, English, Français, Magyar, Nederlands, Norsk bokmål, Polski, Português, Română, Suomi, Svenska, Tiếng Việt, Türkçe | `id`, `cs`, `da`, `de`, `en`, `fr`, `hu`, `nl`, `nb`, `pl`, `pt`, `ro`, `fi`, `sv`, `vi`, `tr` |
+| Ελληνικά, Български, Русский, Українська | `el`, `bg`, `ru`, `uk` |
+| मराठी, हिन्दी, বাংলা, తెలుగు | `mr`, `hi`, `bn`, `te` |
+| 中文（简体）, 日本語 | `zh-Hans`, `ja` |
+
+Arabic and Urdu, which the desktop and Android apps show, read right to left, which terminals don't lay out, so the terminal client shows English for them. Chinese, Japanese and the Indic scripts need a terminal font with those characters; menus in them keep a Latin letter for the hotkey, as in `文件(_F)`.
+
+The translations other than English and Finnish are machine-written and not yet reviewed by native speakers.
 
 The slash commands, such as `/join`, are the same in every language.

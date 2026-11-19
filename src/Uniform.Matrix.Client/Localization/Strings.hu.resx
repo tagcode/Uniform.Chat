@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hungarian texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} csatlakozást kért</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Ellenőrzést kért emojik összehasonlításával</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>{0} ellenőrzést kért emojik összehasonlításával</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} kitiltotta: {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} megváltoztatta a szoba képét</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} megváltoztatta a témát erre: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} létrehozta a szobát</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Nincs elindítva.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>A mentett titkosítási állapot nem olvasható ({0}). Lecserélték ezt: {1}?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} elutasította a meghívást</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Üres szoba</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Üres szoba (korábban: {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Titkosított üzenet; a kulcs még nem érkezett meg</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>a titkosítás nem érhető el: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>a fájl már nem létezik</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>kép</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>kép: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} meghívta: {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} csatlakozott</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} kidobta: {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} kilépett</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Bejelentkezés</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} és {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} és még {1} személy</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} és még {1} személy</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} új neve: {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Helyi tároló megnyitása</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Titkosítás előkészítése</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} reagált: {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} eltávolította a szoba képét</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} átnevezte a szobát erre: {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; újrapróbálkozás {1:F0} mp múlva</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} feloldotta a kitiltást: {1}</value>
+  </data>
+</root>

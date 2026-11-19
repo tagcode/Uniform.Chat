@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dutch texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} vroeg om deel te nemen</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Vroeg om verificatie door emoji te vergelijken</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Vroeg {0} om te verifiëren door emoji te vergelijken</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} verbande {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} wijzigde de afbeelding van de kamer</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} wijzigde het onderwerp in: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} maakte de kamer aan</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Niet gestart.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>De opgeslagen versleutelingsstatus kan niet worden gelezen ({0}). Is {1} vervangen?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} weigerde de uitnodiging</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Lege kamer</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Lege kamer (was {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Versleuteld bericht; de sleutel is nog niet aangekomen</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>versleuteling niet beschikbaar: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>het bestand bestaat niet meer</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>afbeelding</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>afbeelding: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} nodigde {1} uit</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} nam deel</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} verwijderde {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} vertrok</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Inloggen</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} en {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} en {1} ander</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} en {1} anderen</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} heet nu {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Lokale opslag openen</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Versleuteling voorbereiden</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} reageerde met {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} verwijderde de afbeelding van de kamer</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} hernoemde de kamer naar {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; opnieuw proberen over {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} hief de verbanning van {1} op</value>
+  </data>
+</root>

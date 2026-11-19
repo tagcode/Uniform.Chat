@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- French texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} a demandé à rejoindre</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>A demandé une vérification par comparaison d'émojis</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>A demandé à {0} de vérifier par comparaison d'émojis</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} a banni {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} a changé l'image du salon</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} a changé le sujet : {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} a créé le salon</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Non démarré.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>L'état de chiffrement enregistré est illisible ({0}). {1} a-t-il été remplacé ?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} a refusé l'invitation</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Salon vide</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Salon vide (anciennement {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Message chiffré ; la clé n'est pas encore arrivée</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>chiffrement indisponible : {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>le fichier n'existe plus</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>image</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>image : {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} a invité {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} a rejoint le salon</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} a exclu {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} est parti</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} et {1}</value>
+  </data>
+  <data name="NamesAndOthers_many" xml:space="preserve">
+    <value>{0} et {1} autres</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} et {1} autre</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} et {1} autres</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} s'appelle désormais {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Ouverture du stockage local</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Préparation du chiffrement</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} a réagi avec {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} a supprimé l'image du salon</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} a renommé le salon en {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0} ; nouvel essai dans {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler : {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} a levé le bannissement de {1}</value>
+  </data>
+</root>

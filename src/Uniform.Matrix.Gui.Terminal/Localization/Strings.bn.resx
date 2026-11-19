@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bengali texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>প্রয়োগ হয়েছে</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>প্রয়োগ হয়েছে। এগুলো পুনরায় চালুর পরে কার্যকর হবে:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>প্রয়োগ করুন</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>প্রয়োগ করুন(_A)</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>বাতিল(_C)</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>বন্ধ করুন(_C)</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>সম্পন্ন(_D)</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>সম্পাদনা(_E)</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>রপ্তানি(_X)…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>লোড করুন(_L)…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>না(_N)</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>ঠিক আছে(_O)</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>রিসেট(_R)</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>সংরক্ষণ(_S)</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>হ্যাঁ(_Y)</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} পড়া যাচ্ছে না: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>বর্তমান: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> ডিফল্ট: {0}।</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} নেই।</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> পুনরায় চালুর পরে কার্যকর।</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> প্রয়োগ করলে কার্যকর।</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (খালি = সেট নয়)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>বর্তমান সেটিংস এখানে লিখুন:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>সেটিংস রপ্তানি করুন</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>ফিল্টার(_F):</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>স্তর(_V): {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0}টি সেটিং পরিবর্তন হিসেবে লোড হয়েছে। ব্যবহার করতে প্রয়োগ বা সংরক্ষণ করুন।</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0}টি সেটিং পরিবর্তন হিসেবে লোড হয়েছে। ব্যবহার করতে প্রয়োগ বা সংরক্ষণ করুন।</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>লোড করার সেটিংস ফাইল:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>সেটিংস লোড করুন</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>লগ</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{1}টির মধ্যে {0}টি এন্ট্রি · {2}   Enter: পুরো এন্ট্রি  Alt+F: ফিল্টার</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{1}টির মধ্যে {0}টি এন্ট্রি · {2}   Enter: পুরো এন্ট্রি  Alt+F: ফিল্টার</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} লাইন]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} লাইন]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+নতুন মান{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(সেট নয়)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>এখন</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>পুরোনো লগ</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> এগুলোর একটি: {0}।</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+ধরন: {2}।{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> এখন {0} দ্বারা সেট, যা সেটিংস ফাইলের ওপরে প্রাধান্য পায়।</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>রিসেট</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>সংরক্ষণ</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>সংরক্ষিত</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>{0}-এ সংরক্ষিত।{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>এই মানটি গোপন। এটি কমান্ড লাইনে দিন, অথবা প্রোগ্রাম জিজ্ঞেস করলে লিখুন।</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>সেশন</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>সেটিংস</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>সেটিংস ফাইল: {0}    * সম্পাদিত  + প্রয়োগকৃত, অসংরক্ষিত  ↻ পুনরায় চালুর পরে</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+এগুলো পুনরায় চালুর পরে কার্যকর হবে:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>কিছু পরিবর্তন সেটিংস ফাইলে সংরক্ষিত হয়নি। তবুও বন্ধ করবেন?
+
+প্রয়োগ করা পরিবর্তন প্রোগ্রাম পুনরায় চালু হওয়া পর্যন্ত থাকে।</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>অসংরক্ষিত সেটিংস</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} লেখা হয়েছে। গোপন মান অন্তর্ভুক্ত নয়।</value>
+  </data>
+</root>

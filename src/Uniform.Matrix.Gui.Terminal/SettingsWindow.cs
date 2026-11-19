@@ -211,7 +211,7 @@ public sealed class SettingsWindow : Dialog
             return;
         }
         Refresh();
-        Dialogs.Info(app, Strings.LoadSettings, Texts.Format(Strings.LoadedSettings, count));
+        Dialogs.Info(app, Strings.LoadSettings, Texts.Plural(nameof(Strings.LoadedSettings_other), count, count));
     }
 
     /// <summary>Write the current non-default settings to another file.</summary>

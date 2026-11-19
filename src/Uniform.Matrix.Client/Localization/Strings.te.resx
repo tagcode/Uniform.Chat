@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Telugu texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} చేరడానికి అభ్యర్థించారు</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>ఎమోజీలను పోల్చి ధృవీకరణను అభ్యర్థించారు</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>{0}ని ఎమోజీలను పోల్చి ధృవీకరించమని అభ్యర్థించారు</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} {1}ని నిషేధించారు</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} గది చిత్రాన్ని మార్చారు</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} అంశాన్ని ఇలా మార్చారు: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} గదిని సృష్టించారు</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>ప్రారంభం కాలేదు.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>సేవ్ చేసిన ఎన్‌క్రిప్షన్ స్థితిని చదవలేము ({0}). {1} మారిందా?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} ఆహ్వానాన్ని తిరస్కరించారు</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>ఖాళీ గది</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>ఖాళీ గది (ఇంతకు ముందు {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>ఎన్‌క్రిప్ట్ చేసిన సందేశం; కీ ఇంకా రాలేదు</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్ అందుబాటులో లేదు: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>ఫైల్ ఇక లేదు</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>చిత్రం</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>చిత్రం: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} {1}ని ఆహ్వానించారు</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} చేరారు</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} {1}ని తొలగించారు</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} వెళ్లిపోయారు</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>లాగిన్ అవుతోంది</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} మరియు {1}</value>
+  </data>
+  <data name="NamesAndOthers_one" xml:space="preserve">
+    <value>{0} మరియు మరో {1}</value>
+  </data>
+  <data name="NamesAndOthers_other" xml:space="preserve">
+    <value>{0} మరియు మరో {1} మంది</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} ఇప్పుడు {1}గా పిలవబడుతున్నారు</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>స్థానిక నిల్వను తెరుస్తోంది</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>ఎన్‌క్రిప్షన్‌ను సిద్ధం చేస్తోంది</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} {1}తో స్పందించారు</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} గది చిత్రాన్ని తొలగించారు</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} గది పేరును {1}గా మార్చారు</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; {1:F0} సెకన్లలో మళ్లీ ప్రయత్నిస్తుంది</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>స్పాయిలర్</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>స్పాయిలర్: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} {1}పై నిషేధాన్ని ఎత్తివేశారు</value>
+  </data>
+</root>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Danish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Anvendt</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Anvendt. Disse træder i kraft efter genstart:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Anvend</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Anvend</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Annuller</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Luk</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Færdig</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Rediger</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>E_ksportér…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Indlæs…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Nej</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Nulstil</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Gem</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Ja</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Kan ikke læse {0}: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Nuværende: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Standard: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} findes ikke.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Træder i kraft efter genstart.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Træder i kraft, når den anvendes.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (tom for ikke angivet)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Skriv de nuværende indstillinger til:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Eksportér indstillinger</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filter:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Niveau: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>Indlæste {0} indstilling som ændring. Anvend eller gem den for at bruge den.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>Indlæste {0} indstillinger som ændringer. Anvend eller gem dem for at bruge dem.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Indstillingsfil, der skal indlæses:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Indlæs indstillinger</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logfiler</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0} af {1} post · {2}   Enter: hele posten  Alt+F: filter</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0} af {1} poster · {2}   Enter: hele posten  Alt+F: filter</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} linje]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} linjer]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Ny værdi{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(ikke angivet)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>nu</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>ældre log</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> En af: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Type: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Angives nu af {0}, som tilsidesætter indstillingsfilen.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Nulstil</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Gem</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Gemt</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Gemt i {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Denne værdi er hemmelig. Angiv den på kommandolinjen, eller indtast den, når programmet spørger.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Sessioner</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Indstillinger</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Indstillingsfil: {0}    * redigeret  + anvendt, ikke gemt  ↻ efter genstart</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Disse træder i kraft efter genstart:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Nogle ændringer er ikke gemt i indstillingsfilen. Luk alligevel?
+
+Anvendte ændringer gælder, indtil programmet genstartes.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Ikke-gemte indstillinger</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Skrev {0}. Hemmeligheder er ikke med.</value>
+  </data>
+</root>

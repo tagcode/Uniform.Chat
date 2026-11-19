@@ -1,0 +1,1415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Polish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Accept" xml:space="preserve">
+    <value>Akceptuj</value>
+  </data>
+  <data name="AcceptPolicies" xml:space="preserve">
+    <value>Przeczytałem(-am) i akceptuję te zasady</value>
+  </data>
+  <data name="AcceptPoliciesToContinue" xml:space="preserve">
+    <value>Przeczytaj i zaakceptuj zasady serwera, aby kontynuować.</value>
+  </data>
+  <data name="AcceptRequestOn" xml:space="preserve">
+    <value>Zaakceptuj prośbę na {0}.</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Konto</value>
+  </data>
+  <data name="AccountPassword" xml:space="preserve">
+    <value>Hasło do konta</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Konta</value>
+  </data>
+  <data name="AccountSuspendedHint" xml:space="preserve">
+    <value>Twoje konto zostało zawieszone przez administratorów serwera: możesz czytać i opuszczać pokoje, ale nie możesz wysyłać wiadomości, dołączać do pokoi ani zapraszać. Sprawdź pokój ogłoszeń serwera, jeśli istnieje.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} — niepowodzenie: {1}</value>
+  </data>
+  <data name="AllowNotifications" xml:space="preserve">
+    <value>Zezwól na powiadomienia…</value>
+  </data>
+  <data name="AlreadySent" xml:space="preserve">
+    <value>Wiadomość została już wysłana.</value>
+  </data>
+  <data name="AMessage" xml:space="preserve">
+    <value>wiadomość</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Odbierz</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Odbieranie</value>
+  </data>
+  <data name="AnswerWithVideo" xml:space="preserve">
+    <value>Odbierz z wideo</value>
+  </data>
+  <data name="AppsCannotRegister" xml:space="preserve">
+    <value>Ten serwer nie pozwala aplikacjom tworzyć kont.</value>
+  </data>
+  <data name="AskingServer" xml:space="preserve">
+    <value>Odpytywanie {0}…</value>
+  </data>
+  <data name="AudioDevicesFailed" xml:space="preserve">
+    <value>Nie udało się otworzyć mikrofonu ani głośnika: {0}</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Test dźwięku</value>
+  </data>
+  <data name="AudioTestNeedsPermission" xml:space="preserve">
+    <value>Test wymaga uprawnienia do mikrofonu.</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Nagrano {0:F0} s, wysłano z {1:F0} kbit/s.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Mów: usłyszysz siebie sekundę później. Cisza oznacza, że wejście nie jest mikrofonem.</value>
+  </data>
+  <data name="AudioTestStart" xml:space="preserve">
+    <value>Rozpocznij i mów: usłyszysz siebie sekundę później, przez kodek Opus używany w rozmowach.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="BackCamera" xml:space="preserve">
+    <value>Tylny aparat</value>
+  </data>
+  <data name="Block" xml:space="preserve">
+    <value>Zablokuj</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>Zablokowano {0}: wiadomości i zaproszenia tej osoby nie są już wyświetlane. Odblokuj w Bezpieczeństwo i odzyskiwanie.</value>
+  </data>
+  <data name="BlockedUsers" xml:space="preserve">
+    <value>Zablokowani użytkownicy</value>
+  </data>
+  <data name="BlockedUsersHint" xml:space="preserve">
+    <value>Ich wiadomości i zaproszenia nie są wyświetlane.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Blokowanie</value>
+  </data>
+  <data name="BlockSender" xml:space="preserve">
+    <value>Zablokuj nadawcę</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Rozmowa zakończona: {0}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Dzwonienie…</value>
+  </data>
+  <data name="CallingFailed" xml:space="preserve">
+    <value>Nie udało się zadzwonić: {0}</value>
+  </data>
+  <data name="CallsNeedMicrophone" xml:space="preserve">
+    <value>Rozmowy wymagają uprawnienia do mikrofonu.</value>
+  </data>
+  <data name="CameraIsOff" xml:space="preserve">
+    <value>Kamera jest wyłączona</value>
+  </data>
+  <data name="CameraMenu" xml:space="preserve">
+    <value>Kamera ▽</value>
+  </data>
+  <data name="CameraOff" xml:space="preserve">
+    <value>Kamera wył.</value>
+  </data>
+  <data name="CameraOn" xml:space="preserve">
+    <value>Kamera wł.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="CancelEsc" xml:space="preserve">
+    <value>Anuluj (Esc)</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Anuluj wysyłanie</value>
+  </data>
+  <data name="ChangesSavedRightAway" xml:space="preserve">
+    <value>Zmiany są zapisywane od razu.</value>
+  </data>
+  <data name="ChangingAdminRights" xml:space="preserve">
+    <value>Zmiana uprawnień administratora</value>
+  </data>
+  <data name="Chat" xml:space="preserve">
+    <value>Czat</value>
+  </data>
+  <data name="CheckingEncryptionFailed" xml:space="preserve">
+    <value>Nie udało się sprawdzić szyfrowania: {0}</value>
+  </data>
+  <data name="ChooseChatWith" xml:space="preserve">
+    <value>Wybierz Czatuj, aby rozpocząć czat z {0}.</value>
+  </data>
+  <data name="ChooseJoin" xml:space="preserve">
+    <value>Wybierz Dołącz, aby dołączyć do {0}.</value>
+  </data>
+  <data name="ChooseRoomToShare" xml:space="preserve">
+    <value>Wybierz pokój, w którym udostępnić {0}.</value>
+  </data>
+  <data name="ChooseRoomToStart" xml:space="preserve">
+    <value>Wybierz pokój, aby zacząć.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+  <data name="CompareEmojiHint" xml:space="preserve">
+    <value>Porównaj emoji z innym urządzeniem, na którym jesteś zalogowany(-a), np. Elementem na telefonie.</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Porównaj z {0}. Czy pokazują te same emoji w tej samej kolejności?</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Łączenie…</value>
+  </data>
+  <data name="Connection" xml:space="preserve">
+    <value>Połączenie</value>
+  </data>
+  <data name="ConnectionLostRetrying" xml:space="preserve">
+    <value>Utracono połączenie, ponowna próba…</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Kopiuj</value>
+  </data>
+  <data name="CopyImage" xml:space="preserve">
+    <value>Kopiuj obraz</value>
+  </data>
+  <data name="CopyingFailed" xml:space="preserve">
+    <value>Nie udało się skopiować: {0}</value>
+  </data>
+  <data name="CopyingImageFailed" xml:space="preserve">
+    <value>Nie udało się skopiować obrazu: {0}</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Kopiuj link</value>
+  </data>
+  <data name="CopyText" xml:space="preserve">
+    <value>Kopiuj tekst</value>
+  </data>
+  <data name="CouldNotJoin" xml:space="preserve">
+    <value>Nie udało się dołączyć do {0}.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Utwórz</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Utwórz konto</value>
+  </data>
+  <data name="CreateAccountHint" xml:space="preserve">
+    <value>Konto zostanie utworzone na serwerze z identyfikatora użytkownika, jeśli na to pozwala. Wybierz własne hasło.</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Utwórz konto</value>
+  </data>
+  <data name="CreateMatrixAccount" xml:space="preserve">
+    <value>Utwórz konto Matrix</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Tworzenie {0}</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Tworzenie tokenu</value>
+  </data>
+  <data name="DayFormatOtherYear" xml:space="preserve">
+    <value>d MMMM yyyy</value>
+  </data>
+  <data name="DayFormatThisYear" xml:space="preserve">
+    <value>dddd, d MMMM</value>
+  </data>
+  <data name="DaysEmptyNoExpiry" xml:space="preserve">
+    <value>Dni; puste = bez wygaśnięcia</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Dezaktywuj…</value>
+  </data>
+  <data name="DeactivateConfirm" xml:space="preserve">
+    <value>Trwale dezaktywować {0}? Osoba opuści wszystkie pokoje i nie będzie mogła się ponownie zalogować; identyfikator nie zostanie ponownie przydzielony.</value>
+  </data>
+  <data name="Deactivated" xml:space="preserve">
+    <value>Dezaktywowano {0}.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Dezaktywowanie</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="Declining" xml:space="preserve">
+    <value>Odrzucanie {0}</value>
+  </data>
+  <data name="DecliningCall" xml:space="preserve">
+    <value>Odrzucanie</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Usuń konto</value>
+  </data>
+  <data name="DeleteAccountConfirm" xml:space="preserve">
+    <value>Trwale usunąć konto? Opuścisz wszystkie pokoje, Twoja nazwa i obraz zostaną usunięte, a wszystkie urządzenia wylogowane. Identyfikatora nie będzie można użyć ponownie. Wpisz hasło, aby potwierdzić.</value>
+  </data>
+  <data name="DeleteAccountEllipsis" xml:space="preserve">
+    <value>Usuń konto…</value>
+  </data>
+  <data name="DeleteReport" xml:space="preserve">
+    <value>Usuń zgłoszenie</value>
+  </data>
+  <data name="DeletingAccountFailed" xml:space="preserve">
+    <value>Nie udało się usunąć konta: {0}</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Usuwanie wiadomości</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Usuwanie zgłoszenia</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Usuwanie tokenu</value>
+  </data>
+  <data name="DetailAddress" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="DetailEdited" xml:space="preserve">
+    <value>Edytowano</value>
+  </data>
+  <data name="DetailEncryption" xml:space="preserve">
+    <value>Szyfrowanie</value>
+  </data>
+  <data name="DetailEventId" xml:space="preserve">
+    <value>ID zdarzenia</value>
+  </data>
+  <data name="DetailFrom" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="DetailRoomId" xml:space="preserve">
+    <value>ID pokoju</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Szczegóły…</value>
+  </data>
+  <data name="DetailSent" xml:space="preserve">
+    <value>Wysłano</value>
+  </data>
+  <data name="DetailState" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="DetailUnread" xml:space="preserve">
+    <value>Nieprzeczytane</value>
+  </data>
+  <data name="DeviceCount_few" xml:space="preserve">
+    <value>{0} urządzenia</value>
+  </data>
+  <data name="DeviceCount_many" xml:space="preserve">
+    <value>{0} urządzeń</value>
+  </data>
+  <data name="DeviceCount_one" xml:space="preserve">
+    <value>{0} urządzenie</value>
+  </data>
+  <data name="DeviceCount_other" xml:space="preserve">
+    <value>{0} urządzenia</value>
+  </data>
+  <data name="DeviceLine" xml:space="preserve">
+    <value>{0} ({1}), ostatnio widziane {2} z {3}</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Urządzenia</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Publiczne pokoje Twojego serwera lub innego serwera, np. matrix.org.</value>
+  </data>
+  <data name="DirectoryServerPlaceholder" xml:space="preserve">
+    <value>Serwer, np. matrix.org; puste = Twój</value>
+  </data>
+  <data name="DownloadFailed" xml:space="preserve">
+    <value>Nie udało się pobrać {0}: {1}</value>
+  </data>
+  <data name="Earpiece" xml:space="preserve">
+    <value>Słuchawka</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>(edytowano)</value>
+  </data>
+  <data name="EditingMessage" xml:space="preserve">
+    <value>Edytowanie wiadomości</value>
+  </data>
+  <data name="EditTooLate" xml:space="preserve">
+    <value>Wiadomość została już wysłana, więc zmiany nie wprowadzono.</value>
+  </data>
+  <data name="EncryptedBadge" xml:space="preserve">
+    <value>🔒 Zaszyfrowany</value>
+  </data>
+  <data name="EncryptedMessage" xml:space="preserve">
+    <value>Zaszyfrowana wiadomość</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Ten pokój jest szyfrowany, ale szyfrowanie nie jest dostępne na tym urządzeniu: {0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>odebrano na innym urządzeniu</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>odrzucono</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>odrzucono na innym urządzeniu</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Zakończono zawieszenie {0}.</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>nieodebrane</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>brak odpowiedzi</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>brak połączenia</value>
+  </data>
+  <data name="EndReplaced" xml:space="preserve">
+    <value>ponowne połączenie od rozmówcy</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Zakończ zawieszenie</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>rozmówca się rozłączył</value>
+  </data>
+  <data name="EndToEndEncrypted" xml:space="preserve">
+    <value>Szyfrowanie end-to-end</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>odrzucono przez Ciebie</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>rozłączono przez Ciebie</value>
+  </data>
+  <data name="EnterPasswordToConfirm" xml:space="preserve">
+    <value>Wpisz hasło do konta, aby potwierdzić.</value>
+  </data>
+  <data name="EnterRecoveryKeyHint" xml:space="preserve">
+    <value>Wpisz klucz odzyskiwania lub hasło skonfigurowane w tej lub innej aplikacji, np. Element.</value>
+  </data>
+  <data name="ExternalCamera" xml:space="preserve">
+    <value>Kamera zewnętrzna</value>
+  </data>
+  <data name="Favourite" xml:space="preserve">
+    <value>Ulubione</value>
+  </data>
+  <data name="FileCount_few" xml:space="preserve">
+    <value>{0} pliki</value>
+  </data>
+  <data name="FileCount_many" xml:space="preserve">
+    <value>{0} plików</value>
+  </data>
+  <data name="FileCount_one" xml:space="preserve">
+    <value>{0} plik</value>
+  </data>
+  <data name="FileCount_other" xml:space="preserve">
+    <value>{0} pliku</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtr</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Znajdź</value>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Odcisk</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="FlagBlocked" xml:space="preserve">
+    <value>zablokowany</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>dezaktywowany</value>
+  </data>
+  <data name="FlagInvited" xml:space="preserve">
+    <value>zaproszony</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>zablokowane logowanie</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>zawieszony</value>
+  </data>
+  <data name="FlagVerified" xml:space="preserve">
+    <value>zweryfikowany</value>
+  </data>
+  <data name="FromServerAdmin" xml:space="preserve">
+    <value>Od administratora serwera</value>
+  </data>
+  <data name="FromYourServer" xml:space="preserve">
+    <value>Od Twojego serwera</value>
+  </data>
+  <data name="FrontCamera" xml:space="preserve">
+    <value>Przedni aparat</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Rozłączanie</value>
+  </data>
+  <data name="HangUp" xml:space="preserve">
+    <value>Rozłącz</value>
+  </data>
+  <data name="HaveAccountSignIn" xml:space="preserve">
+    <value>Mam konto: zaloguj się</value>
+  </data>
+  <data name="HideAndTryAgain" xml:space="preserve">
+    <value>Ukryj i spróbuj ponownie</value>
+  </data>
+  <data name="ImageCopied" xml:space="preserve">
+    <value>Skopiowano obraz</value>
+  </data>
+  <data name="InACallWith" xml:space="preserve">
+    <value>Rozmowa z {0}</value>
+  </data>
+  <data name="IncomingCall" xml:space="preserve">
+    <value>Połączenie przychodzące</value>
+  </data>
+  <data name="IncomingCalls" xml:space="preserve">
+    <value>Połączenia przychodzące</value>
+  </data>
+  <data name="IncomingVideoCall" xml:space="preserve">
+    <value>Przychodzące połączenie wideo</value>
+  </data>
+  <data name="IncomingVoiceCall" xml:space="preserve">
+    <value>Przychodzące połączenie głosowe</value>
+  </data>
+  <data name="InTheBackground" xml:space="preserve">
+    <value>W tle</value>
+  </data>
+  <data name="Invitation" xml:space="preserve">
+    <value>Zaproszenie</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Zaproś</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Zaproszono {0}.</value>
+  </data>
+  <data name="InvitedToRoom" xml:space="preserve">
+    <value>Masz zaproszenie do tego pokoju.</value>
+  </data>
+  <data name="InvitedYouTo" xml:space="preserve">
+    <value>{0} zaprasza Cię do {1}</value>
+  </data>
+  <data name="Invites" xml:space="preserve">
+    <value>Zaproszenia</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Zapraszanie {0}</value>
+  </data>
+  <data name="IsAdmin" xml:space="preserve">
+    <value>{0} jest administratorem serwera.</value>
+  </data>
+  <data name="IsCalling" xml:space="preserve">
+    <value>{0} dzwoni</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} jest zweryfikowany(-a).</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Dołącz</value>
+  </data>
+  <data name="Joining" xml:space="preserve">
+    <value>Dołączanie do {0}</value>
+  </data>
+  <data name="JoiningEllipsis" xml:space="preserve">
+    <value>Dołączanie do {0}…</value>
+  </data>
+  <data name="KeepsConnected" xml:space="preserve">
+    <value>Utrzymuje połączenie, przesuń, aby ukryć.</value>
+  </data>
+  <data name="KeysRestored_few" xml:space="preserve">
+    <value>Przywrócono {0} klucze wiadomości.</value>
+  </data>
+  <data name="KeysRestored_many" xml:space="preserve">
+    <value>Przywrócono {0} kluczy wiadomości.</value>
+  </data>
+  <data name="KeysRestored_one" xml:space="preserve">
+    <value>Przywrócono {0} klucz wiadomości.</value>
+  </data>
+  <data name="KeysRestored_other" xml:space="preserve">
+    <value>Przywrócono {0} klucza wiadomości.</value>
+  </data>
+  <data name="KeysRestoredVerified_few" xml:space="preserve">
+    <value>Przywrócono {0} klucze wiadomości; to urządzenie jest teraz zweryfikowane.</value>
+  </data>
+  <data name="KeysRestoredVerified_many" xml:space="preserve">
+    <value>Przywrócono {0} kluczy wiadomości; to urządzenie jest teraz zweryfikowane.</value>
+  </data>
+  <data name="KeysRestoredVerified_one" xml:space="preserve">
+    <value>Przywrócono {0} klucz wiadomości; to urządzenie jest teraz zweryfikowane.</value>
+  </data>
+  <data name="KeysRestoredVerified_other" xml:space="preserve">
+    <value>Przywrócono {0} klucza wiadomości; to urządzenie jest teraz zweryfikowane.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Język</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Język systemu</value>
+  </data>
+  <data name="Large" xml:space="preserve">
+    <value>Duży</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>ostatnio widziany {0}</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Opuść pokój</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Opuszczanie {0}</value>
+  </data>
+  <data name="Licences" xml:space="preserve">
+    <value>Licencje</value>
+  </data>
+  <data name="LicencesEllipsis" xml:space="preserve">
+    <value>Licencje…</value>
+  </data>
+  <data name="LicencesIntro" xml:space="preserve">
+    <value>Uniform Chat to wolne oprogramowanie na licencji MIT. Zawiera środowisko .NET i inne biblioteki, każdą na własnej licencji, których teksty znajdują się poniżej.</value>
+  </data>
+  <data name="LoadingAccounts" xml:space="preserve">
+    <value>Wczytywanie kont</value>
+  </data>
+  <data name="LoadingHistoryFailed" xml:space="preserve">
+    <value>Nie udało się wczytać historii: {0}</value>
+  </data>
+  <data name="LoadingReports" xml:space="preserve">
+    <value>Wczytywanie zgłoszeń</value>
+  </data>
+  <data name="LoadingTokens" xml:space="preserve">
+    <value>Wczytywanie tokenów</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Zablokuj logowanie</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>Zablokowano logowanie {0}: serwer odrzuca urządzenia tej osoby do odblokowania.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Blokowanie logowania</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Dzienniki</value>
+  </data>
+  <data name="LogsEllipsis" xml:space="preserve">
+    <value>Dzienniki…</value>
+  </data>
+  <data name="LogUnreadable" xml:space="preserve">
+    <value>Nie można odczytać dziennika: {0}</value>
+  </data>
+  <data name="LookForDistributors" xml:space="preserve">
+    <value>Wyszukaj dystrybutorów ponownie</value>
+  </data>
+  <data name="LookingUpDevices" xml:space="preserve">
+    <value>Wyszukiwanie urządzeń</value>
+  </data>
+  <data name="Loudspeaker" xml:space="preserve">
+    <value>Głośnik</value>
+  </data>
+  <data name="LowPriority" xml:space="preserve">
+    <value>Niski priorytet</value>
+  </data>
+  <data name="MakeAdmin" xml:space="preserve">
+    <value>Nadaj uprawnienia administratora</value>
+  </data>
+  <data name="MarkAsRead" xml:space="preserve">
+    <value>Oznacz jako przeczytane</value>
+  </data>
+  <data name="MemberCount_few" xml:space="preserve">
+    <value>{0} członków</value>
+  </data>
+  <data name="MemberCount_many" xml:space="preserve">
+    <value>{0} członków</value>
+  </data>
+  <data name="MemberCount_one" xml:space="preserve">
+    <value>{0} członek</value>
+  </data>
+  <data name="MemberCount_other" xml:space="preserve">
+    <value>{0} członka</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Członkowie</value>
+  </data>
+  <data name="MembersAndInvited" xml:space="preserve">
+    <value>{0}, zaproszeni: {1}</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>Wiadomość usunięta</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Wiadomość</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Wiadomości</value>
+  </data>
+  <data name="MessagesArriveThrough" xml:space="preserve">
+    <value>Wiadomości przychodzą przez {0}; aplikacja nie potrzebuje własnego połączenia.</value>
+  </data>
+  <data name="MessagesInDirectChats" xml:space="preserve">
+    <value>Wiadomości w czatach prywatnych</value>
+  </data>
+  <data name="MessagesThatMentionYou" xml:space="preserve">
+    <value>Wiadomości, które Cię wspominają</value>
+  </data>
+  <data name="MicrophoneMenu" xml:space="preserve">
+    <value>Mikrofon ▽</value>
+  </data>
+  <data name="Mute" xml:space="preserve">
+    <value>Wycisz</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>wyciszony</value>
+  </data>
+  <data name="NeedsRecoveryKey" xml:space="preserve">
+    <value>Wymaga klucza odzyskiwania</value>
+  </data>
+  <data name="NeedsRegistrationToken" xml:space="preserve">
+    <value>Ten serwer wymaga tokenu rejestracji od administratora.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>nigdy</value>
+  </data>
+  <data name="NewMessage" xml:space="preserve">
+    <value>Nowa wiadomość</value>
+  </data>
+  <data name="NewPasswordLogsOut" xml:space="preserve">
+    <value>Nowe hasło; urządzenia tej osoby zostaną wylogowane</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Nowy token</value>
+  </data>
+  <data name="NoAppOpens" xml:space="preserve">
+    <value>Żadna aplikacja nie otwiera tu {0}.</value>
+  </data>
+  <data name="NoAppOpensUseSave" xml:space="preserve">
+    <value>Żadna aplikacja nie otwiera tu {0}; użyj Zapisz….</value>
+  </data>
+  <data name="NoCameraAnswering" xml:space="preserve">
+    <value>Brak uprawnienia do kamery; odbieranie tylko z dźwiękiem.</value>
+  </data>
+  <data name="NoCameraCalling" xml:space="preserve">
+    <value>Brak uprawnienia do kamery; dzwonienie tylko z dźwiękiem.</value>
+  </data>
+  <data name="NoDevicesSignedIn" xml:space="preserve">
+    <value>Żadne urządzenie nie jest zalogowane.</value>
+  </data>
+  <data name="NoEncryptionKeys" xml:space="preserve">
+    <value>Brak kluczy szyfrowania</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>bez wygaśnięcia</value>
+  </data>
+  <data name="NoLogEntries" xml:space="preserve">
+    <value>Brak wpisów na tym poziomie.</value>
+  </data>
+  <data name="NoLongerAdmin" xml:space="preserve">
+    <value>{0} nie jest już administratorem serwera.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Brak zgłoszeń.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normalny</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Nie znaleziono pokoi.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" nie jest identyfikatorem Matrix; wygląda on np. tak: @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserId" xml:space="preserve">
+    <value>{0} nie jest identyfikatorem użytkownika; wyglądają one tak: @nazwa:serwer.</value>
+  </data>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Niedostępne: {0}</value>
+  </data>
+  <data name="NotEncrypted" xml:space="preserve">
+    <value>Nieszyfrowany</value>
+  </data>
+  <data name="NothingRecorded" xml:space="preserve">
+    <value>Nic nie nagrano.</value>
+  </data>
+  <data name="NoticeSent" xml:space="preserve">
+    <value>Wysłano ogłoszenie serwera do {0}.</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Powiadomienia</value>
+  </data>
+  <data name="NotificationsBlockedHint" xml:space="preserve">
+    <value>Powiadomienia Uniform Chat są wyłączone w ustawieniach systemu. Połączenia przychodzące dzwonią bez pokazywania, kto dzwoni, a wiadomości nie powiadamiają.</value>
+  </data>
+  <data name="NotNow" xml:space="preserve">
+    <value>Nie teraz</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Nie wysłano: {0}</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>Nieskonfigurowane</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>Niezweryfikowane</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>(teraz)</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Wł.</value>
+  </data>
+  <data name="OngoingCall" xml:space="preserve">
+    <value>Trwająca rozmowa</value>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>Połączono</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Otwórz</value>
+  </data>
+  <data name="OpeningFailed" xml:space="preserve">
+    <value>Nie udało się otworzyć {0}: {1}</value>
+  </data>
+  <data name="OrTheNumbers" xml:space="preserve">
+    <value>lub liczby {0}</value>
+  </data>
+  <data name="OwnBackgroundConnection" xml:space="preserve">
+    <value>Własne połączenie w tle</value>
+  </data>
+  <data name="OwnConnection" xml:space="preserve">
+    <value>Aplikacja utrzymuje własne połączenie, z powiadomieniem, które je pokazuje.</value>
+  </data>
+  <data name="OwnConnectionInstallHint" xml:space="preserve">
+    <value>Aplikacja utrzymuje własne połączenie, z powiadomieniem, które je pokazuje. Zainstaluj dystrybutora UnifiedPush, np. ntfy, aby odbierać wiadomości bez niego.</value>
+  </data>
+  <data name="PartOfUserIdOrName" xml:space="preserve">
+    <value>Część identyfikatora lub nazwy</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Hasło</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Hasło nie zostało przyjęte.</value>
+  </data>
+  <data name="PasswordNotSaved" xml:space="preserve">
+    <value>Hasło służy tylko do zalogowania; nie jest zapisywane.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Ustawiono nowe hasło dla {0} i wylogowano urządzenia tej osoby.</value>
+  </data>
+  <data name="PastingFailed" xml:space="preserve">
+    <value>Nie udało się wkleić: {0}</value>
+  </data>
+  <data name="PhoneDefault" xml:space="preserve">
+    <value>Domyślne telefonu</value>
+  </data>
+  <data name="PhoneMicrophone" xml:space="preserve">
+    <value>Mikrofon telefonu</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Polityka prywatności</value>
+  </data>
+  <data name="PushRegistrationPurpose" xml:space="preserve">
+    <value>Wiadomości i rozmowy Uniform Chat</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Zareaguj</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>Nękanie lub nienawiść</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>Nielegalne treści</value>
+  </data>
+  <data name="ReasonLine" xml:space="preserve">
+    <value>Powód: {0}</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>Inne</value>
+  </data>
+  <data name="ReasonSexualOrViolent" xml:space="preserve">
+    <value>Treści seksualne lub brutalne</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="Reconnecting" xml:space="preserve">
+    <value>Ponowne łączenie…</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Odzyskaj</value>
+  </data>
+  <data name="RecoveryFailed" xml:space="preserve">
+    <value>Nie udało się odzyskać: {0}</value>
+  </data>
+  <data name="RecoveryKeyCopied" xml:space="preserve">
+    <value>Skopiowano klucz odzyskiwania.</value>
+  </data>
+  <data name="RecoveryKeyShownOnce" xml:space="preserve">
+    <value>Zapisz go lub skopiuj w bezpieczne miejsce teraz; nie zostanie pokazany ponownie. Dzięki niemu nowe logowanie może się zweryfikować i czytać stare wiadomości.</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Odśwież</value>
+  </data>
+  <data name="RegistrationNeedsMore" xml:space="preserve">
+    <value>Serwer wymaga do utworzenia konta więcej, niż ta aplikacja może podać.</value>
+  </data>
+  <data name="RegistrationToken" xml:space="preserve">
+    <value>Token rejestracji</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Tokeny rejestracji</value>
+  </data>
+  <data name="RegistrationTokensHint" xml:space="preserve">
+    <value>Nowe konta potrzebują jednego z nich, gdy rejestracja na serwerze prosi o token.</value>
+  </data>
+  <data name="RegistrationUnsupported" xml:space="preserve">
+    <value>Ten serwer wymaga kroku, którego ta aplikacja nie obsługuje, np. captcha lub e-maila. Utwórz konto na stronie serwera, a następnie zaloguj się tutaj.</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>przekazywane</value>
+  </data>
+  <data name="RemoveFromFavourites" xml:space="preserve">
+    <value>Usuń z ulubionych</value>
+  </data>
+  <data name="RemoveLowPriority" xml:space="preserve">
+    <value>Usuń niski priorytet</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Odpowiedz</value>
+  </data>
+  <data name="ReplyingTo" xml:space="preserve">
+    <value>Odpowiedź do {0}: {1}</value>
+  </data>
+  <data name="ReportDeleted" xml:space="preserve">
+    <value>Usunięto zgłoszenie.</value>
+  </data>
+  <data name="ReportedLine" xml:space="preserve">
+    <value>{0} zgłosił(a) {1} · {2}</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Zgłoszono administratorom Twojego serwera. Możesz też zablokować nadawcę w menu wiadomości.</value>
+  </data>
+  <data name="ReportedTo" xml:space="preserve">
+    <value>Zgłoszono {0} administratorom Twojego serwera.</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Zgłaszanie wiadomości</value>
+  </data>
+  <data name="ReportingRoom" xml:space="preserve">
+    <value>Zgłaszanie pokoju</value>
+  </data>
+  <data name="ReportingUser" xml:space="preserve">
+    <value>Zgłaszanie użytkownika</value>
+  </data>
+  <data name="ReportMessage" xml:space="preserve">
+    <value>Zgłoś wiadomość</value>
+  </data>
+  <data name="ReportRoom" xml:space="preserve">
+    <value>Zgłoś pokój…</value>
+  </data>
+  <data name="ReportRoomAction" xml:space="preserve">
+    <value>Zgłoś pokój</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Zgłoszenia</value>
+  </data>
+  <data name="ReportSender" xml:space="preserve">
+    <value>Zgłoś nadawcę</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Resetowanie hasła</value>
+  </data>
+  <data name="RetryingWith" xml:space="preserve">
+    <value>Ponowna próba: {0}</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Pokój</value>
+  </data>
+  <data name="RoomBoxHint" xml:space="preserve">
+    <value>Dołącz do pokoju przez adres lub link, porozmawiaj z użytkownikiem albo utwórz prywatny pokój</value>
+  </data>
+  <data name="RoomBoxPlaceholder" xml:space="preserve">
+    <value>#pokój, @użytkownik, link lub nowa nazwa</value>
+  </data>
+  <data name="RoomCount_few" xml:space="preserve">
+    <value>{0} pokoje</value>
+  </data>
+  <data name="RoomCount_many" xml:space="preserve">
+    <value>{0} pokoi</value>
+  </data>
+  <data name="RoomCount_one" xml:space="preserve">
+    <value>{0} pokój</value>
+  </data>
+  <data name="RoomCount_other" xml:space="preserve">
+    <value>{0} pokoju</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Katalog pokoi</value>
+  </data>
+  <data name="RoomDirectoryEllipsis" xml:space="preserve">
+    <value>Katalog pokoi…</value>
+  </data>
+  <data name="RoomLine" xml:space="preserve">
+    <value>Pokój: {0}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Pokoje</value>
+  </data>
+  <data name="RoomShutDownReason" xml:space="preserve">
+    <value>Pokój został zamknięty przez administratorów serwera</value>
+  </data>
+  <data name="SavedFile" xml:space="preserve">
+    <value>Zapisano {0}.</value>
+  </data>
+  <data name="SaveEllipsis" xml:space="preserve">
+    <value>Zapisz…</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Zapisz plik</value>
+  </data>
+  <data name="SavingFileFailed" xml:space="preserve">
+    <value>Nie udało się zapisać pliku: {0}</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Szukaj</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Wyszukiwanie nie powiodło się: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Wyszukiwanie…</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Bezpieczeństwo</value>
+  </data>
+  <data name="SecurityAndRecovery" xml:space="preserve">
+    <value>Bezpieczeństwo i odzyskiwanie…</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Wyślij</value>
+  </data>
+  <data name="SendAFile" xml:space="preserve">
+    <value>Wyślij plik</value>
+  </data>
+  <data name="SenderInRoom" xml:space="preserve">
+    <value>{0} w {1}</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Wysyłanie…</value>
+  </data>
+  <data name="SendingFileFailed" xml:space="preserve">
+    <value>Nie udało się wysłać {0}: {1}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Wysyłanie ogłoszenia</value>
+  </data>
+  <data name="SendingTheFileFailed" xml:space="preserve">
+    <value>Nie udało się wysłać pliku: {0}</value>
+  </data>
+  <data name="SendTip" xml:space="preserve">
+    <value>Wyślij (Enter); pole wiadomości zachowuje fokus</value>
+  </data>
+  <data name="ServerAddress" xml:space="preserve">
+    <value>Adres serwera</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Pozostaw puste, aby znaleźć serwer z identyfikatora. Wymagane dla serwerów bez wykrywania, np. http://localhost:8008 na tym komputerze.</value>
+  </data>
+  <data name="ServerAdministration" xml:space="preserve">
+    <value>Administracja serwerem</value>
+  </data>
+  <data name="ServerAdministrationEllipsis" xml:space="preserve">
+    <value>Administracja serwerem…</value>
+  </data>
+  <data name="ServerNoticesHint" xml:space="preserve">
+    <value>Wiadomości od administratorów Twojego serwera. Nie możesz tu odpowiadać.</value>
+  </data>
+  <data name="ServerNoticeToThem" xml:space="preserve">
+    <value>Ogłoszenie serwera do tej osoby</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Zasady serwera</value>
+  </data>
+  <data name="ServerUnreachable" xml:space="preserve">
+    <value>Serwer jest nieosiągalny: {0}</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Ustaw</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="SettingsEllipsis" xml:space="preserve">
+    <value>Ustawienia…</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Ustawianie tematu</value>
+  </data>
+  <data name="SettingUpRecoveryFailed" xml:space="preserve">
+    <value>Nie udało się skonfigurować odzyskiwania: {0}</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>Skonfiguruj</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>Skonfigurowane i zaufane tutaj</value>
+  </data>
+  <data name="SetUpDone" xml:space="preserve">
+    <value>Skonfigurowane</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>Skonfigurowane, jeszcze niezaufane tutaj</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Skonfiguruj odzyskiwanie</value>
+  </data>
+  <data name="SetUpRecoveryHint" xml:space="preserve">
+    <value>Utwórz klucze podpisu krzyżowego, kopię zapasową kluczy wiadomości i klucz odzyskiwania.</value>
+  </data>
+  <data name="ShareALink" xml:space="preserve">
+    <value>link</value>
+  </data>
+  <data name="ShareAText" xml:space="preserve">
+    <value>tekst</value>
+  </data>
+  <data name="ShareFile" xml:space="preserve">
+    <value>Udostępnij {0}</value>
+  </data>
+  <data name="ShareFiles_few" xml:space="preserve">
+    <value>Udostępnij {0} pliki</value>
+  </data>
+  <data name="ShareFiles_many" xml:space="preserve">
+    <value>Udostępnij {0} plików</value>
+  </data>
+  <data name="ShareFiles_one" xml:space="preserve">
+    <value>Udostępnij {0} plik</value>
+  </data>
+  <data name="ShareFiles_other" xml:space="preserve">
+    <value>Udostępnij {0} pliku</value>
+  </data>
+  <data name="SharingFailed" xml:space="preserve">
+    <value>Nie udało się udostępnić {0}: {1}</value>
+  </data>
+  <data name="ShutDownConfirm" xml:space="preserve">
+    <value>Zamknąć {0}? Wszyscy członkowie z tego serwera go opuszczą, jego adresy tutaj zostaną usunięte i nikt z tego serwera nie będzie mógł ponownie dołączyć.</value>
+  </data>
+  <data name="ShutDownDone_few" xml:space="preserve">
+    <value>Zamknięto {0}: usunięto {1} członków.</value>
+  </data>
+  <data name="ShutDownDone_many" xml:space="preserve">
+    <value>Zamknięto {0}: usunięto {1} członków.</value>
+  </data>
+  <data name="ShutDownDone_one" xml:space="preserve">
+    <value>Zamknięto {0}: usunięto {1} członka.</value>
+  </data>
+  <data name="ShutDownDone_other" xml:space="preserve">
+    <value>Zamknięto {0}: usunięto {1} członka.</value>
+  </data>
+  <data name="ShutRoomDown" xml:space="preserve">
+    <value>Zamknij pokój…</value>
+  </data>
+  <data name="ShuttingRoomDown" xml:space="preserve">
+    <value>Zamykanie pokoju</value>
+  </data>
+  <data name="SignedOutDevice" xml:space="preserve">
+    <value>Wylogowano {0}.</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>Zaloguj się</value>
+  </data>
+  <data name="SigningInFailed" xml:space="preserve">
+    <value>Logowanie nie powiodło się.</value>
+  </data>
+  <data name="SigningInTo" xml:space="preserve">
+    <value>Logowanie do {0}…</value>
+  </data>
+  <data name="SigningOutFailed" xml:space="preserve">
+    <value>Nie udało się wylogować {0}: {1}</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Zaloguj się do Matrix</value>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Wyloguj</value>
+  </data>
+  <data name="SignOutConfirm" xml:space="preserve">
+    <value>Wylogować {0}? Wpisz hasło do konta, aby potwierdzić.</value>
+  </data>
+  <data name="SignOutEllipsis" xml:space="preserve">
+    <value>Wyloguj…</value>
+  </data>
+  <data name="Small" xml:space="preserve">
+    <value>Mały</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Ktoś</value>
+  </data>
+  <data name="SpeakerMenu" xml:space="preserve">
+    <value>Głośnik ▽</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="StartChat" xml:space="preserve">
+    <value>Czatuj</value>
+  </data>
+  <data name="StartingChat" xml:space="preserve">
+    <value>Rozpoczynanie czatu z {0}</value>
+  </data>
+  <data name="StartingWith" xml:space="preserve">
+    <value>Rozpoczynanie od {0}…</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Podpis krzyżowy</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Urządzenie</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Kopia kluczy</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Klucz odzyskiwania</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Zatrzymaj</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Zatrzymano: {0}</value>
+  </data>
+  <data name="SuggestSetUpRecovery" xml:space="preserve">
+    <value>Skonfiguruj odzyskiwanie, aby inni widzieli to urządzenie jako zweryfikowane, a klucz odzyskiwania odblokowywał Twoje wiadomości na nowych urządzeniach.</value>
+  </data>
+  <data name="SuggestVerifyDevice" xml:space="preserve">
+    <value>Zweryfikuj to urządzenie innym swoim urządzeniem lub kluczem odzyskiwania, aby inni widzieli je jako zweryfikowane i mogło czytać Twoje starsze wiadomości.</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Zawieś</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>Zawieszono {0}: osoba może czytać, ale nie może wysyłać, dołączać ani zapraszać.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Zawieszanie</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Zawieś użytkownika</value>
+  </data>
+  <data name="SwitchingMicrophone" xml:space="preserve">
+    <value>Przełączanie mikrofonu</value>
+  </data>
+  <data name="SwitchingSpeaker" xml:space="preserve">
+    <value>Przełączanie głośnika</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>Domyślne systemu</value>
+  </data>
+  <data name="TaggingRoom" xml:space="preserve">
+    <value>Oznaczanie pokoju</value>
+  </data>
+  <data name="TakeAdminRights" xml:space="preserve">
+    <value>Odbierz uprawnienia administratora</value>
+  </data>
+  <data name="TestAudio" xml:space="preserve">
+    <value>Testuj dźwięk…</value>
+  </data>
+  <data name="TextSize" xml:space="preserve">
+    <value>Rozmiar tekstu</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Motyw</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Ciemny</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Jasny</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Systemowy</value>
+  </data>
+  <data name="TheyDontMatch" xml:space="preserve">
+    <value>Nie zgadzają się</value>
+  </data>
+  <data name="TheyMatch" xml:space="preserve">
+    <value>Zgadzają się</value>
+  </data>
+  <data name="ThisDevice" xml:space="preserve">
+    <value>To urządzenie</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>Dzisiaj</value>
+  </data>
+  <data name="TokenCopied" xml:space="preserve">
+    <value>Skopiowano token.</value>
+  </data>
+  <data name="TokenDeleted" xml:space="preserve">
+    <value>Usunięto token; konta utworzone przy jego użyciu pozostają.</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Serwer nie przyjął tokenu rejestracji.</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>do {0}</value>
+  </data>
+  <data name="TokenUsedNoLimit" xml:space="preserve">
+    <value>użyto {0}, bez limitu</value>
+  </data>
+  <data name="TokenUsedOf" xml:space="preserve">
+    <value>użyto {0} z {1}</value>
+  </data>
+  <data name="Topic" xml:space="preserve">
+    <value>Temat</value>
+  </data>
+  <data name="TurnCameraOff" xml:space="preserve">
+    <value>Wyłącz kamerę</value>
+  </data>
+  <data name="TurnCameraOn" xml:space="preserve">
+    <value>Włącz kamerę</value>
+  </data>
+  <data name="TypingOne" xml:space="preserve">
+    <value>{0} pisze…</value>
+  </data>
+  <data name="TypingSeveral" xml:space="preserve">
+    <value>Kilka osób pisze…</value>
+  </data>
+  <data name="TypingTwo" xml:space="preserve">
+    <value>{0} i {1} piszą…</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Odblokuj</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Odblokowano {0}.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Odblokowywanie</value>
+  </data>
+  <data name="UnblockingFailed" xml:space="preserve">
+    <value>Nie udało się odblokować {0}: {1}</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>nieznany</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Odblokuj logowanie</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Odblokowano logowanie {0}.</value>
+  </data>
+  <data name="UnlockEncryptedHistory" xml:space="preserve">
+    <value>Odblokuj zaszyfrowaną historię</value>
+  </data>
+  <data name="Unmute" xml:space="preserve">
+    <value>Wyłącz wyciszenie</value>
+  </data>
+  <data name="UntaggingRoom" xml:space="preserve">
+    <value>Usuwanie oznaczenia</value>
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Identyfikator użytkownika</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>Ten identyfikator jest zajęty; wybierz inny.</value>
+  </data>
+  <data name="UserPolicy" xml:space="preserve">
+    <value>Zasady korzystania</value>
+  </data>
+  <data name="UserPolicyNotice" xml:space="preserve">
+    <value>Kontynuując, akceptujesz zasady korzystania: żadnych nielegalnych, obraźliwych ani szkodliwych treści. Zgłaszaj je i blokuj osoby z poziomu ich wiadomości.</value>
+  </data>
+  <data name="UsesEmptyForAny" xml:space="preserve">
+    <value>Użycia; puste = bez limitu</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Anulowano weryfikację.</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Anulowano weryfikację: {0}</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Weryfikacja nie powiodła się: {0}</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Zweryfikowane</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Weryfikuj</value>
+  </data>
+  <data name="VerifyDevice" xml:space="preserve">
+    <value>Zweryfikuj urządzenie</value>
+  </data>
+  <data name="VerifyingFailed" xml:space="preserve">
+    <value>Nie udało się zweryfikować {0}: {1}</value>
+  </data>
+  <data name="VerifyWithAnotherDevice" xml:space="preserve">
+    <value>Zweryfikuj innym urządzeniem</value>
+  </data>
+  <data name="VeryLarge" xml:space="preserve">
+    <value>Bardzo duży</value>
+  </data>
+  <data name="VerySmall" xml:space="preserve">
+    <value>Bardzo mały</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Wideo</value>
+  </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Połączenie wideo</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Połączenie głosowe</value>
+  </data>
+  <data name="WaitingFor" xml:space="preserve">
+    <value>Oczekiwanie na {0}…</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Oczekiwanie na potwierdzenie od {0}…</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} chce zweryfikować to urządzenie przez porównanie emoji.</value>
+  </data>
+  <data name="WhatTheRoomIsAbout" xml:space="preserve">
+    <value>O czym jest ten pokój</value>
+  </data>
+  <data name="WiredHeadphones" xml:space="preserve">
+    <value>Słuchawki przewodowe</value>
+  </data>
+  <data name="WiredHeadset" xml:space="preserve">
+    <value>Zestaw słuchawkowy przewodowy</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="YesDoIt" xml:space="preserve">
+    <value>Tak, wykonaj</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>Wczoraj</value>
+  </data>
+  <data name="You" xml:space="preserve">
+    <value>Ty</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>Twoje urządzenie {0}</value>
+  </data>
+  <data name="YourRecoveryKey" xml:space="preserve">
+    <value>Twój klucz odzyskiwania</value>
+  </data>
+</root>

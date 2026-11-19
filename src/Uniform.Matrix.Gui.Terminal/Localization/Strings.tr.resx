@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Turkish texts, machine-translated by Claude (Anthropic) and not yet reviewed by a native speaker; each key of Strings.resx, plural forms by the language's rules -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Uygulandı</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Uygulandı. Bunlar yeniden başlatmadan sonra geçerli olur:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Uygula</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Uygula</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_İptal</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Ka_pat</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Bitti</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Düzenle</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>Dı_şa aktar…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Yükle…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Hayır</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_Tamam</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Sıfırla</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Kaydet</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Evet</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>{0} okunamıyor: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Geçerli: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Varsayılan: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} yok.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Yeniden başlatmadan sonra geçerli olur.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Uygulandığında geçerli olur.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (boş = ayarlanmamış)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Geçerli ayarları şuraya yaz:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Ayarları dışa aktar</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>_Filtre:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Düzey: {0}+</value>
+  </data>
+  <data name="LoadedSettings_one" xml:space="preserve">
+    <value>{0} ayar düzenleme olarak yüklendi. Kullanmak için uygulayın veya kaydedin.</value>
+  </data>
+  <data name="LoadedSettings_other" xml:space="preserve">
+    <value>{0} ayar düzenleme olarak yüklendi. Kullanmak için uygulayın veya kaydedin.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Yüklenecek ayar dosyası:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Ayarları yükle</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Günlükler</value>
+  </data>
+  <data name="LogStatus_one" xml:space="preserve">
+    <value>{0}/{1} kayıt · {2}   Enter: kaydın tamamı  Alt+F: filtre</value>
+  </data>
+  <data name="LogStatus_other" xml:space="preserve">
+    <value>{0}/{1} kayıt · {2}   Enter: kaydın tamamı  Alt+F: filtre</value>
+  </data>
+  <data name="MoreLines_one" xml:space="preserve">
+    <value>  [+{0} satır]</value>
+  </data>
+  <data name="MoreLines_other" xml:space="preserve">
+    <value>  [+{0} satır]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Yeni değer{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(ayarlanmamış)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>şimdi</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>eski günlük</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Şunlardan biri: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Tür: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Şu anda {0} tarafından ayarlanmış; bu, ayar dosyasının önüne geçer.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Sıfırla</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Kaydet</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Kaydedildi</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>{0} konumuna kaydedildi.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Bu değer gizlidir. Komut satırında verin veya program sorduğunda girin.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Oturumlar</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ayarlar</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Ayar dosyası: {0}    * düzenlendi  + uygulandı, kaydedilmedi  ↻ yeniden başlatmadan sonra</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Bunlar yeniden başlatmadan sonra geçerli olur:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Bazı değişiklikler ayar dosyasına kaydedilmedi. Yine de kapatılsın mı?
+
+Uygulanan değişiklikler program yeniden başlayana kadar geçerlidir.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Kaydedilmemiş ayarlar</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>{0} yazıldı. Gizli değerler dahil değil.</value>
+  </data>
+</root>

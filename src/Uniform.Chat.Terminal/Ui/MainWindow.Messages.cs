@@ -238,7 +238,7 @@ public sealed partial class MainWindow
         IReadOnlyList<string> files = DroppedFiles.Parse(text, File.Exists);
         if (files.Count == 0 || currentRoomId is null) return false;
         string list = string.Join("\n", files.Select(Path.GetFileName));
-        if (!Dialogs.Confirm(app, Strings.SendFiles, files.Count == 1 ? Texts.Format(Strings.SendFileQuestion, list) : Texts.Format(Strings.SendFilesQuestion, files.Count, list)))
+        if (!Dialogs.Confirm(app, Strings.SendFiles, files.Count == 1 ? Texts.Format(Strings.SendFileQuestion, list) : Texts.Plural(nameof(Strings.SendFilesQuestion_other), files.Count, files.Count, list)))
         {
             // Back to the input line, to edit or send as text
             input.Text = text;
@@ -421,7 +421,7 @@ public sealed partial class MainWindow
             Dialogs.Info(app, Strings.Devices, Strings.NothingToLogOut);
             return;
         }
-        if (!Dialogs.Confirm(app, Strings.LogOutDevices, Texts.Format(Strings.LogOutDevicesQuestion, targets.Count, string.Join(", ", targets)))) return;
+        if (!Dialogs.Confirm(app, Strings.LogOutDevices, Texts.Plural(nameof(Strings.LogOutDevicesQuestion_other), targets.Count, targets.Count, string.Join(", ", targets)))) return;
 
         // Delete, answering the password challenge
         string? password = Dialogs.Ask(app, Strings.Confirm, Texts.Format(Strings.PasswordFor, ownUserId), secret: true);
