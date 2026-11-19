@@ -3,6 +3,7 @@ namespace Uniform.Chat.Avalonia.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The audio test: plays the microphone back a second later, through Opus as in a call, to try the microphone and the speaker or earpiece.</summary>
 /// <param name="audio">Opens the platform's devices, given whether to use the loudspeaker.</param>
@@ -27,10 +28,10 @@ public sealed partial class AudioTestViewModel(Func<AudioChoice, IAudioDevices> 
 
     /// <summary>What the test does or did, e.g. the bit rate after a run.</summary>
     [ObservableProperty]
-    public partial string Status { get; set; } = "Start, then speak: you hear yourself a second later, through the Opus codec of calls.";
+    public partial string Status { get; set; } = Strings.AudioTestStart;
 
     /// <summary>Text of the start and stop button.</summary>
-    public string ButtonText => IsRunning ? "Stop" : "Start";
+    public string ButtonText => IsRunning ? Strings.Stop : Strings.Start;
 
     /// <summary>Start the test, asking for the microphone first where needed, or stop it.</summary>
     [RelayCommand]
@@ -46,7 +47,7 @@ public sealed partial class AudioTestViewModel(Func<AudioChoice, IAudioDevices> 
         // Permission, then the devices
         if (requestMicrophone is not null && !await requestMicrophone())
         {
-            Status = "The microphone permission is needed for the test.";
+            Status = Strings.AudioTestNeedsPermission;
             return;
         }
         try
@@ -58,12 +59,12 @@ public sealed partial class AudioTestViewModel(Func<AudioChoice, IAudioDevices> 
         {
             loopback?.Dispose();
             loopback = null;
-            Status = $"The microphone or speaker could not be opened: {ex.Message}";
+            Status = Translations.Format(Strings.AudioDevicesFailed, ex.Message);
             return;
         }
         // Running
         IsRunning = true;
-        Status = "Speak: you hear yourself a second later. Silence means the input is not a microphone.";
+        Status = Strings.AudioTestSpeak;
     }
 
     /// <summary>Stop the test and show what went through.</summary>
@@ -75,7 +76,7 @@ public sealed partial class AudioTestViewModel(Func<AudioChoice, IAudioDevices> 
         running.Dispose();
         IsRunning = false;
         double seconds = running.Frames * VoiceFormat.FrameMilliseconds / 1000.0;
-        Status = seconds > 0 ? $"Recorded {seconds:F0} s, sent at {running.Bytes * 8 / seconds / 1000:F0} kbit/s." : "Nothing was recorded.";
+        Status = seconds > 0 ? Translations.Format(Strings.AudioTestResult, seconds, running.Bytes * 8 / seconds / 1000) : Strings.NothingRecorded;
     }
 
     /// <summary>Stop the test.</summary>

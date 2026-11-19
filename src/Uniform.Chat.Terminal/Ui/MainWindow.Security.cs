@@ -6,6 +6,7 @@ using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
+using Uniform.Chat.Terminal.Localization;
 
 // Encryption status, recovery and device verification.
 public sealed partial class MainWindow
@@ -30,12 +31,12 @@ public sealed partial class MainWindow
         }
 
         // What is missing, offered once
-        string? missing = !status.CrossSigningSetUp ? "This account has no recovery set up yet. Setting it up lets others see this device as verified, and gives you a recovery key that unlocks your messages on new devices."
-            : !status.ThisDeviceCrossSigned ? "This device is not verified yet. Verify it with another of your devices, or with your recovery key, so that others see it as verified and it reads your older messages."
+        string? missing = !status.CrossSigningSetUp ? Strings.NoRecoveryYet
+            : !status.ThisDeviceCrossSigned ? Strings.DeviceNotVerifiedYet
             : null;
         if (missing is null) return;
         // Done
-        app.Invoke(() => { if (Dialogs.Confirm(app, "Encryption", $"{missing}\n\nOpen the encryption window now? It is also in File → Encryption, and /encryption.")) _ = ShowEncryptionAsync(); });
+        app.Invoke(() => { if (Dialogs.Confirm(app, Strings.Encryption, Texts.Format(Strings.OpenEncryptionQuestion, missing))) _ = ShowEncryptionAsync(); });
     }
 
     /// <summary>Show this device's keys and the account's cross-signing, backup and recovery state, offering what is missing.</summary>
@@ -44,12 +45,12 @@ public sealed partial class MainWindow
         // Assert encryption
         if (!crypto.Available || crypto.IdentityKeys is not IdentityKeys keys)
         {
-            Dialogs.Error(app, "Encryption", $"End-to-end encryption is not available.\n\n{crypto.UnavailableReason}");
+            Dialogs.Error(app, Strings.Encryption, Texts.Format(Strings.E2eeUnavailable, crypto.UnavailableReason));
             return;
         }
 
         // Account state from the server
-        ShowStatus("Checking encryption…");
+        ShowStatus(Strings.CheckingEncryption);
         SecurityStatus security;
         try
         {
@@ -58,27 +59,27 @@ public sealed partial class MainWindow
         catch (Exception ex)
         {
             RestoreStatus();
-            Dialogs.Error(app, "Encryption", ex.Message);
+            Dialogs.Error(app, Strings.Encryption, ex.Message);
             return;
         }
         RestoreStatus();
 
         // Describe, then offer the next step
         string text = string.Join('\n',
-            $"Device:         {crypto.DeviceId}",
-            $"Fingerprint:    {CryptoService.FormatFingerprint(keys.Ed25519)}",
+            Texts.Format(Strings.StatusDevice, crypto.DeviceId),
+            Texts.Format(Strings.StatusFingerprint, CryptoService.FormatFingerprint(keys.Ed25519)),
             "",
-            $"Cross-signing:  {(!security.CrossSigningSetUp ? "not set up" : security.IdentityTrusted ? "set up and trusted here" : "set up, not yet trusted here")}",
-            $"This device:    {(security.ThisDeviceCrossSigned ? "verified (cross-signed)" : "not verified")}",
-            $"Key backup:     {(security.BackupVersion is null ? "none" : security.BackupUsable ? $"on (version {security.BackupVersion})" : $"version {security.BackupVersion}, needs the recovery key")}",
-            $"Recovery key:   {(security.SecretStorageSetUp ? "set up" : "not set up")}");
-        List<(string Label, Action Run)> actions = [("_Close", () => { })];
-        if (!security.CrossSigningSetUp) actions.Add(("Set _up recovery", () => _ = SetUpRecoveryAsync()));
-        if (security.SecretStorageSetUp && (!security.HasPrivateKeys || !security.BackupUsable)) actions.Add(("_Recover", RecoverWithKey));
-        if (security.CrossSigningSetUp) actions.Add(("_Verify this device", () => VerifyUser(ownUserId)));
+            Texts.Format(Strings.StatusCrossSigning, (!security.CrossSigningSetUp ? Strings.NotSetUp : security.IdentityTrusted ? Strings.SetUpAndTrusted : Strings.SetUpNotTrusted)),
+            Texts.Format(Strings.StatusThisDevice, (security.ThisDeviceCrossSigned ? Strings.VerifiedCrossSigned : Strings.NotVerified)),
+            Texts.Format(Strings.StatusKeyBackup, (security.BackupVersion is null ? Strings.None : security.BackupUsable ? Texts.Format(Strings.BackupOn, security.BackupVersion) : Texts.Format(Strings.BackupNeedsKey, security.BackupVersion))),
+            Texts.Format(Strings.StatusRecoveryKey, (security.SecretStorageSetUp ? Strings.SetUp : Strings.NotSetUp)));
+        List<(string Label, Action Run)> actions = [(Strings.ButtonClose, () => { })];
+        if (!security.CrossSigningSetUp) actions.Add((Strings.ButtonSetUpRecovery, () => _ = SetUpRecoveryAsync()));
+        if (security.SecretStorageSetUp && (!security.HasPrivateKeys || !security.BackupUsable)) actions.Add((Strings.ButtonRecover, RecoverWithKey));
+        if (security.CrossSigningSetUp) actions.Add((Strings.ButtonVerifyDevice, () => VerifyUser(ownUserId)));
 
         // Follow-up dialogs run after this one closed
-        int? choice = Dialogs.Choose(app, "Encryption", text, [.. actions.Select(a => a.Label)]);
+        int? choice = Dialogs.Choose(app, Strings.Encryption, text, [.. actions.Select(a => a.Label)]);
         if (choice is int index && index > 0) app.Invoke(actions[index].Run);
     }
 
@@ -86,10 +87,10 @@ public sealed partial class MainWindow
     private async Task SetUpRecoveryAsync()
     {
         // Confirm
-        if (!Dialogs.Confirm(app, "Set up recovery", "Create cross-signing keys, a key backup and a recovery key?\n\nWith the recovery key, a new login can verify itself and read old messages. Keep it safe, like a password.")) return;
+        if (!Dialogs.Confirm(app, Strings.SetUpRecovery, Strings.SetUpRecoveryQuestion)) return;
 
         // Set up; the server may want the password first
-        ShowStatus("Setting up recovery…");
+        ShowStatus(Strings.SettingUpRecovery);
         string? recoveryKey = null;
         try
         {
@@ -99,7 +100,7 @@ public sealed partial class MainWindow
             }
             catch (UserInteractiveAuthException ex) when (ex.AcceptsPassword)
             {
-                string? password = Dialogs.Ask(app, "Confirm", $"Password for {ownUserId}:", secret: true);
+                string? password = Dialogs.Ask(app, Strings.Confirm, Texts.Format(Strings.PasswordFor, ownUserId), secret: true);
                 if (password is null) return;
                 recoveryKey = await crypto.SetUpRecoveryAsync(password);
             }
@@ -107,7 +108,7 @@ public sealed partial class MainWindow
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Setting up recovery failed");
-            Dialogs.Error(app, "Set up recovery", ex.Message);
+            Dialogs.Error(app, Strings.SetUpRecovery, ex.Message);
             return;
         }
         finally
@@ -116,7 +117,7 @@ public sealed partial class MainWindow
         }
 
         // Show the key once
-        Dialogs.ShowCopyable(app, "Recovery key", "Write down or copy this recovery key now and keep it safe. It is not shown again.", recoveryKey);
+        Dialogs.ShowCopyable(app, Strings.RecoveryKey, Strings.WriteDownRecoveryKey, recoveryKey);
     }
 
     /// <summary>Ask for the recovery key, restores cross-signing and the key backup, and decrypt stored messages with the restored keys.</summary>
@@ -125,24 +126,24 @@ public sealed partial class MainWindow
         // Assert encryption and ask
         if (!crypto.Available)
         {
-            Dialogs.Error(app, "Recover", $"Encryption is not available on this device.\n\n{crypto.UnavailableReason}");
+            Dialogs.Error(app, Strings.Recover, Texts.Format(Strings.EncryptionUnavailable, crypto.UnavailableReason));
             return;
         }
-        string? recoveryKey = Dialogs.Ask(app, "Recover", "Recovery key (or passphrase):");
+        string? recoveryKey = Dialogs.Ask(app, Strings.Recover, Strings.RecoveryKeyPrompt);
         if (recoveryKey is null) return;
 
         // Restore off the UI thread, then decrypt what waited for keys
-        ShowStatus("Recovering keys…");
-        _ = RunSafelyAsync("Recovering", async _ =>
+        ShowStatus(Strings.RecoveringKeys);
+        _ = RunSafelyAsync(Strings.Recovering, async _ =>
         {
             RecoveryResult result = await crypto.RecoverAsync(recoveryKey);
             await processor.DecryptWithReceivedKeysAsync();
             app.Invoke(() =>
             {
                 RestoreStatus();
-                Dialogs.Info(app, "Recovered", string.Join('\n',
-                    result.CrossSigningRestored ? "Cross-signing restored; this device is now verified." : "Cross-signing keys were not in secret storage.",
-                    result.BackupRestored ? $"Key backup restored: {result.KeysImported} room keys imported." : "No usable key backup was found."));
+                Dialogs.Info(app, Strings.Recovered, string.Join('\n',
+                    result.CrossSigningRestored ? Strings.CrossSigningRestored : Strings.CrossSigningNotStored,
+                    result.BackupRestored ? Texts.Format(Strings.BackupRestored, result.KeysImported) : Strings.NoUsableBackup));
             });
         });
     }
@@ -153,12 +154,12 @@ public sealed partial class MainWindow
         // Assert encryption and a user ID
         if (!crypto.Available)
         {
-            Dialogs.Error(app, "Verify", $"Encryption is not available on this device.\n\n{crypto.UnavailableReason}");
+            Dialogs.Error(app, Strings.Verify, Texts.Format(Strings.EncryptionUnavailable, crypto.UnavailableReason));
             return;
         }
         if (!userId.StartsWith('@'))
         {
-            Dialogs.Error(app, "Verify", "Give a user ID like @name:server.");
+            Dialogs.Error(app, Strings.Verify, Strings.GiveUserId);
             return;
         }
         _ = StartVerificationAsync(userId, deviceId: null);
@@ -189,9 +190,9 @@ public sealed partial class MainWindow
         List<string> trusted = [.. crypto.GetSignedDevices(ownUserId).Where(d => d.DeviceId != crypto.DeviceId).Select(d => d.DisplayName is { Length: > 0 } name ? $"{name} ({d.DeviceId})" : d.DeviceId)];
 
         // A given device must vouch for this one; any trusted device will do otherwise
-        if (deviceId is not null && !crypto.GetSignedDevices(ownUserId).Any(d => d.DeviceId == deviceId)) return $"Neither this device nor {deviceId} is trusted under your current identity, so neither can vouch for the other.\n\nVerify this device with one that is trusted{(trusted.Count > 0 ? $": {string.Join(", ", trusted)}" : "")}, or use your recovery key.";
+        if (deviceId is not null && !crypto.GetSignedDevices(ownUserId).Any(d => d.DeviceId == deviceId)) return Texts.Format(Strings.NeitherTrusted, deviceId, (trusted.Count > 0 ? Texts.Format(Strings.TrustedList, string.Join(", ", trusted)) : ""));
         // Return none, or that no device can
-        return deviceId is null && trusted.Count == 0 ? "None of your devices is trusted under your current identity, so none can vouch for this one.\n\nUse your recovery key, or reset your identity on a device you keep." : null;
+        return deviceId is null && trusted.Count == 0 ? Strings.NoneTrusted : null;
     }
 
     /// <summary>Send a verification request; the other device must accept it.</summary>
@@ -200,18 +201,18 @@ public sealed partial class MainWindow
         // Our own devices only work when one side is trusted
         if (userId == ownUserId && crypto.Available && await CannotVerifyOwnAsync(deviceId) is string reason)
         {
-            Dialogs.Error(app, "Verify", reason);
+            Dialogs.Error(app, Strings.Verify, reason);
             return;
         }
 
         // Request
-        ShowStatus("Sending verification request…");
-        await RunSafelyAsync("Verification", async _ =>
+        ShowStatus(Strings.SendingVerificationRequest);
+        await RunSafelyAsync(Strings.Verification, async _ =>
         {
             await crypto.RequestVerificationAsync(userId, deviceId);
             SecurityStatus security = await crypto.GetSecurityStatusAsync();
-            string where = userId != ownUserId ? userId : security.CrossSigningSetUp && !security.ThisDeviceCrossSigned ? "one of your trusted devices" : "your other device";
-            app.Invoke(() => ShowStatus($"Verification requested; accept it on {where}."));
+            string where = userId != ownUserId ? userId : security.CrossSigningSetUp && !security.ThisDeviceCrossSigned ? Strings.OneOfTrustedDevices : Strings.YourOtherDevice;
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.VerificationRequested, where)));
         });
     }
 
@@ -220,28 +221,28 @@ public sealed partial class MainWindow
     {
         // Each state once
         if (!shownVerificationStates.Add((verification.TransactionId, state))) return;
-        string who = verification.OtherUserId == ownUserId ? $"your device {verification.OtherDeviceId}" : $"{verification.OtherUserId} ({verification.OtherDeviceId})";
+        string who = verification.OtherUserId == ownUserId ? Texts.Format(Strings.YourDevice, verification.OtherDeviceId) : $"{verification.OtherUserId} ({verification.OtherDeviceId})";
 
         // By state
         switch (state)
         {
             case VerificationState.Requested when !verification.WeRequested:
-                bool accept = Dialogs.Confirm(app, "Verification request", $"{who} wants to verify this device by comparing emoji.\n\nAccept?");
-                _ = RunSafelyAsync("Verification", _ => accept ? crypto.AcceptVerificationAsync(verification) : crypto.CancelVerificationAsync(verification));
+                bool accept = Dialogs.Confirm(app, Strings.VerificationRequest, Texts.Format(Strings.WantsToVerify, who));
+                _ = RunSafelyAsync(Strings.Verification, _ => accept ? crypto.AcceptVerificationAsync(verification) : crypto.CancelVerificationAsync(verification));
                 break;
             case VerificationState.ShowingSas:
                 CompareEmoji(verification, who);
                 break;
             case VerificationState.Confirmed:
-                ShowStatus($"Waiting for {who} to confirm…");
+                ShowStatus(Texts.Format(Strings.WaitingToConfirm, who));
                 break;
             case VerificationState.Done:
-                ShowStatus($"Verified {who}");
-                Dialogs.Info(app, "Verified", $"{who} is verified.");
+                ShowStatus(Texts.Format(Strings.VerifiedWho, who));
+                Dialogs.Info(app, "Verified", Texts.Format(Strings.IsVerified, who));
                 break;
             case VerificationState.Cancelled:
-                ShowStatus($"Verification with {who} cancelled: {verification.CancelReason}");
-                if (verification.CancelCode is not ("m.user" or "m.accepted")) Dialogs.Error(app, "Verification cancelled", verification.CancelReason ?? "The verification was cancelled.");
+                ShowStatus(Texts.Format(Strings.VerificationCancelledWith, who, verification.CancelReason));
+                if (verification.CancelCode is not ("m.user" or "m.accepted")) Dialogs.Error(app, Strings.VerificationCancelled, verification.CancelReason ?? Strings.TheVerificationCancelled);
                 break;
         }
     }
@@ -252,26 +253,26 @@ public sealed partial class MainWindow
         // Emoji with names, and the numbers as an alternative
         string emoji = string.Join("   ", verification.Emoji.Select(e => $"{e.Symbol} {e.Name}"));
         string numbers = string.Join(" ", verification.Decimals);
-        string text = $"Compare with {who}:\n\n{emoji}\n\nor the numbers {numbers}\n\nDo they show the same, in the same order?";
+        string text = Texts.Format(Strings.CompareWith, who, emoji, numbers);
 
         // Confirm, deny or stop
-        int? choice = Dialogs.Choose(app, "Compare emoji", text, ["They _match", "They _don't match", "_Cancel"]);
+        int? choice = Dialogs.Choose(app, Strings.CompareEmoji, text, [Strings.ButtonTheyMatch, Strings.ButtonTheyDontMatch, Strings.ButtonCancel]);
         Task action = choice switch
         {
             0 => crypto.ConfirmVerificationAsync(verification),
             1 => crypto.CancelVerificationAsync(verification, "m.mismatched_sas"),
             _ => crypto.CancelVerificationAsync(verification),
         };
-        _ = RunSafelyAsync("Verification", _ => action);
+        _ = RunSafelyAsync(Strings.Verification, _ => action);
     }
 
     /// <summary>Return a short label of a device's trust for lists.</summary>
     private static string TrustLabel(DeviceTrust? trust) => trust switch
     {
-        DeviceTrust.ThisDevice => "this device",
-        DeviceTrust.Verified => "verified",
-        DeviceTrust.CrossSigned => "cross-signed",
-        DeviceTrust.Unverified => "unverified",
-        _ => "no keys",
+        DeviceTrust.ThisDevice => Strings.TrustThisDevice,
+        DeviceTrust.Verified => Strings.TrustVerified,
+        DeviceTrust.CrossSigned => Strings.TrustCrossSigned,
+        DeviceTrust.Unverified => Strings.TrustUnverified,
+        _ => Strings.TrustNoKeys,
     };
 }

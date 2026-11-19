@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Uniform.Matrix.Client.Formatting;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>One room in the room list: name, latest message, unread count, and whether it is an invite, a direct chat or encrypted.</summary>
 public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
@@ -131,13 +132,13 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
             ClientEvent latest = room.Timeline[i];
             string? text = latest.Type switch
             {
-                EventTypes.RoomEncrypted => "Encrypted message",
+                EventTypes.RoomEncrypted => Strings.EncryptedMessage,
                 EventTypes.RoomMessage => EventText.GetText(latest, room.GetMemberDisplayName),
-                EventTypes.CallInvite => "Voice call",
+                EventTypes.CallInvite => Strings.VoiceCall,
                 _ => null,
             };
             if (text is null) continue;
-            string sender = latest.Sender == ownUserId ? "You" : room.GetMemberDisplayName(latest.Sender);
+            string sender = latest.Sender == ownUserId ? Strings.You : room.GetMemberDisplayName(latest.Sender);
             string line = text.ReplaceLineEndings(" ");
             LastMessage = room.IsDirect && latest.Sender != ownUserId ? line : $"{sender}: {line}";
             LastActivity = DateTimeOffset.FromUnixTimeMilliseconds(latest.OriginServerTs);
@@ -206,10 +207,10 @@ public sealed partial class RoomItemViewModel(string roomId) : ViewModelBase
 public sealed record MemberItem(string UserId, string Name, bool IsInvited, bool CanVerify, bool IsVerified = false, bool IsOwn = false, bool IsBlocked = false)
 {
     /// <summary>Get the text of the button that blocks or unblocks them.</summary>
-    public string BlockText => IsBlocked ? "Unblock" : "Block";
+    public string BlockText => IsBlocked ? Strings.Unblock : Strings.Block;
 
     /// <summary>Get the second line, e.g. <c>@bob:example.org · invited</c> or <c>@bob:example.org · verified</c>.</summary>
-    public string Details => string.Join(" · ", new[] { UserId, IsInvited ? "invited" : null, IsVerified ? "verified" : null, IsBlocked ? "blocked" : null }.OfType<string>());
+    public string Details => string.Join(" · ", new[] { UserId, IsInvited ? Strings.FlagInvited : null, IsVerified ? Strings.FlagVerified : null, IsBlocked ? Strings.FlagBlocked : null }.OfType<string>());
 
     /// <summary>Whether to offer verifying: possible, and not done yet.</summary>
     public bool ShowVerify => CanVerify && !IsVerified;

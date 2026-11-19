@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Client.Formatting;
 using System.Text.Json;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>Plain-text descriptions of room events for any user interface: message text as shown, and one-line descriptions of membership and state changes.</summary>
 public static class EventText
@@ -19,7 +20,7 @@ public static class EventText
         if (message.MessageType == EventTypes.KeyVerificationRequest)
         {
             string? to = clientEvent.TryGetContent(out VerificationRequestContent? request) ? request.To : null;
-            return to is null ? "Asked to verify by comparing emoji" : $"Asked {userName?.Invoke(to) ?? to} to verify by comparing emoji";
+            return to is null ? Strings.AskedToVerify : Texts.Format(Strings.AskedUserToVerify, userName?.Invoke(to) ?? to);
         }
 
         // Edits show their new content
@@ -93,13 +94,13 @@ public static class EventText
         // Return description by type
         return clientEvent.Type switch
         {
-            EventTypes.RoomEncrypted => "Encrypted message; the key has not arrived",
+            EventTypes.RoomEncrypted => Strings.EncryptedNoKey,
             EventTypes.RoomMember => DescribeMember(room, clientEvent),
-            EventTypes.RoomTopic => clientEvent.TryGetContent(out TopicContent? topic) ? $"{sender} changed the topic to: {topic.Topic}" : null,
-            EventTypes.RoomName => clientEvent.TryGetContent(out NameContent? name) ? $"{sender} renamed the room to {name.Name}" : null,
-            EventTypes.RoomAvatar => clientEvent.TryGetContent(out RoomAvatarContent? avatar) && avatar.Url is { Length: > 0 } ? $"{sender} changed the room avatar" : $"{sender} removed the room avatar",
-            EventTypes.RoomCreate => $"{sender} created the room",
-            EventTypes.Reaction => clientEvent.TryGetContent(out ReactionContent? reaction) && reaction.RelatesTo?.Key is string key ? $"{sender} reacted {key}" : null,
+            EventTypes.RoomTopic => clientEvent.TryGetContent(out TopicContent? topic) ? Texts.Format(Strings.ChangedTopic, sender, topic.Topic) : null,
+            EventTypes.RoomName => clientEvent.TryGetContent(out NameContent? name) ? Texts.Format(Strings.RenamedRoom, sender, name.Name) : null,
+            EventTypes.RoomAvatar => clientEvent.TryGetContent(out RoomAvatarContent? avatar) && avatar.Url is { Length: > 0 } ? Texts.Format(Strings.ChangedAvatar, sender) : Texts.Format(Strings.RemovedAvatar, sender),
+            EventTypes.RoomCreate => Texts.Format(Strings.CreatedRoom, sender),
+            EventTypes.Reaction => clientEvent.TryGetContent(out ReactionContent? reaction) && reaction.RelatesTo?.Key is string key ? Texts.Format(Strings.Reacted, sender, key) : null,
             _ => null,
         };
     }
@@ -118,17 +119,17 @@ public static class EventText
 
         // Name and avatar changes keep membership
         if (content.Membership == Memberships.Join && previous?.Membership == Memberships.Join)
-            return previous.DisplayName != content.DisplayName ? $"{previous.DisplayName ?? clientEvent.StateKey} is now known as {target}" : null;
+            return previous.DisplayName != content.DisplayName ? Texts.Format(Strings.NowKnownAs, previous.DisplayName ?? clientEvent.StateKey, target) : null;
 
         // Return membership change
         return content.Membership switch
         {
-            Memberships.Join => $"{target} joined",
-            Memberships.Invite => $"{actor} invited {target}",
-            Memberships.Leave when clientEvent.Sender == clientEvent.StateKey => previous?.Membership == Memberships.Invite ? $"{target} declined the invite" : $"{target} left{reason}",
-            Memberships.Leave => previous?.Membership == Memberships.Ban ? $"{actor} unbanned {target}" : $"{actor} kicked {target}{reason}",
-            Memberships.Ban => $"{actor} banned {target}{reason}",
-            Memberships.Knock => $"{target} asked to join{reason}",
+            Memberships.Join => Texts.Format(Strings.Joined, target),
+            Memberships.Invite => Texts.Format(Strings.InvitedUser, actor, target),
+            Memberships.Leave when clientEvent.Sender == clientEvent.StateKey => previous?.Membership == Memberships.Invite ? Texts.Format(Strings.DeclinedInvite, target) : Texts.Format(Strings.Left, target) + reason,
+            Memberships.Leave => previous?.Membership == Memberships.Ban ? Texts.Format(Strings.Unbanned, actor, target) : Texts.Format(Strings.Kicked, actor, target) + reason,
+            Memberships.Ban => Texts.Format(Strings.Banned, actor, target) + reason,
+            Memberships.Knock => Texts.Format(Strings.AskedToJoin, target) + reason,
             _ => null,
         };
     }

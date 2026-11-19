@@ -3,6 +3,7 @@ namespace Uniform.Chat.Android.Audio;
 using global::Android.Content;
 using global::Android.Media;
 using Uniform.Matrix.Audio;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The phone's audio devices as a call chooses them, by names that stay the same across connections: <see cref="AudioChoice.Earpiece"/>, <see cref="AudioChoice.Loudspeaker"/>, <c>microphone</c>, and others by kind and product, e.g. <c>bluetooth:JBL Flip 5</c>.</summary>
 /// <remarks>A Bluetooth device shows once, whether it is connected for calls (SCO or LE audio), for music (A2DP), or both; a call prefers the call connection, which also carries the device's microphone.</remarks>
@@ -17,8 +18,8 @@ internal static class AudioRoutes
         // Built in first, then attached ones, each name once
         AudioDeviceInfo[] outputs = Devices(context, GetDevicesTargets.Outputs);
         List<AudioDevice> list = [];
-        if (outputs.Any(d => d.Type == AudioDeviceType.BuiltinEarpiece)) list.Add(new AudioDevice(AudioChoice.Earpiece, "Earpiece"));
-        if (outputs.Any(d => d.Type == AudioDeviceType.BuiltinSpeaker)) list.Add(new AudioDevice(AudioChoice.Loudspeaker, "Loudspeaker"));
+        if (outputs.Any(d => d.Type == AudioDeviceType.BuiltinEarpiece)) list.Add(new AudioDevice(AudioChoice.Earpiece, Strings.Earpiece));
+        if (outputs.Any(d => d.Type == AudioDeviceType.BuiltinSpeaker)) list.Add(new AudioDevice(AudioChoice.Loudspeaker, Strings.Loudspeaker));
         foreach (AudioDeviceInfo device in outputs)
         {
             if (NameOf(device) is not string name || list.Any(d => d.Name == name)) continue;
@@ -34,7 +35,7 @@ internal static class AudioRoutes
         // Built in first, then attached ones, each name once
         AudioDeviceInfo[] inputs = Devices(context, GetDevicesTargets.Inputs);
         List<AudioDevice> list = [];
-        if (inputs.Any(d => d.Type == AudioDeviceType.BuiltinMic)) list.Add(new AudioDevice(BuiltInMicrophone, "Phone microphone"));
+        if (inputs.Any(d => d.Type == AudioDeviceType.BuiltinMic)) list.Add(new AudioDevice(BuiltInMicrophone, Strings.PhoneMicrophone));
         foreach (AudioDeviceInfo device in inputs)
         {
             if (NameOf(device) is not string name || list.Any(d => d.Name == name)) continue;
@@ -89,8 +90,8 @@ internal static class AudioRoutes
     /// <summary>Return what people see for an attached device, e.g. <c>JBL Flip 5 (Bluetooth)</c>.</summary>
     private static string Describe(AudioDeviceInfo device) => device.Type switch
     {
-        AudioDeviceType.WiredHeadset => "Wired headset",
-        AudioDeviceType.WiredHeadphones => "Wired headphones",
+        AudioDeviceType.WiredHeadset => Strings.WiredHeadset,
+        AudioDeviceType.WiredHeadphones => Strings.WiredHeadphones,
         AudioDeviceType.UsbHeadset or AudioDeviceType.UsbDevice => $"{device.ProductName} (USB)",
         _ => $"{device.ProductName} (Bluetooth)",
     };

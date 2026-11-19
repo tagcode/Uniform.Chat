@@ -8,6 +8,7 @@ using global::Terminal.Gui.App;
 using global::Terminal.Gui.Drawing;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Matrix.Gui.Terminal.Localization;
 
 /// <summary>Log viewer: session logs on the left, the chosen log on the right, filtered by level and text and colored by level.</summary>
 /// <remarks>The current session's log follows new lines while scrolled to the end. Enter shows a whole entry, e.g. with its stack trace.</remarks>
@@ -20,7 +21,7 @@ public sealed class LogWindow : Dialog
     private readonly string currentPath;
     private readonly List<LogFileInfo> files = [];
     private readonly ObservableCollection<string> fileRows = [];
-    private readonly ListView fileList = new() { Title = "Sessions", X = 0, Y = 0, Width = 30, Height = Dim.Fill(1), BorderStyle = LineStyle.Single };
+    private readonly ListView fileList = new() { Title = Strings.Sessions, X = 0, Y = 0, Width = 30, Height = Dim.Fill(1), BorderStyle = LineStyle.Single };
     private readonly TextField filter = new() { Y = 0, Width = Dim.Fill(24) };
     private readonly Button levelButton = new() { Y = 0, X = Pos.AnchorEnd(22) };
     private readonly ObservableCollection<string> lines = [];
@@ -45,16 +46,16 @@ public sealed class LogWindow : Dialog
         this.directory = directory;
         this.currentPath = currentPath;
         this.legacyPath = legacyPath;
-        Title = "Logs";
+        Title = Strings.Logs;
         Width = Dim.Fill(1);
         Height = Dim.Fill(1);
-        Label filterLabel = new() { Text = "_Filter:", X = 31, Y = 0 };
+        Label filterLabel = new() { Text = Strings.FilterLabel, X = 31, Y = 0 };
         filter.X = Pos.Right(filterLabel) + 1;
         fileList.SetSource(fileRows);
         logView.SetSource(lines);
         logView.RowRender += OnRowRender;
         Add(fileList, filterLabel, filter, levelButton, logView, status);
-        AddButton(new Button { Text = "_Close" });
+        AddButton(new Button { Text = Strings.ButtonClose });
 
         // Interaction
         fileList.ValueChanged += (_, _) => ShowSelectedFile();
@@ -89,7 +90,7 @@ public sealed class LogWindow : Dialog
         fileRows.Clear();
         foreach (LogFileInfo file in files)
         {
-            string label = file.Legacy ? "older log" : file.Path == currentPath ? "now" : FormatSize(file.Size);
+            string label = file.Legacy ? Strings.OlderLog : file.Path == currentPath ? Strings.Now : FormatSize(file.Size);
             fileRows.Add($"{file.Started:yyyy-MM-dd HH:mm}  {label}");
         }
     }
@@ -115,7 +116,7 @@ public sealed class LogWindow : Dialog
         }
         catch (IOException ex)
         {
-            entries = [new LogEntry { Lines = [$"Cannot read {shown.Path}: {ex.Message}"] }];
+            entries = [new LogEntry { Lines = [Texts.Format(Strings.CannotRead, shown.Path, ex.Message)] }];
             shownSize = -1;
         }
         Rebuild(scrollToEnd);
@@ -127,19 +128,19 @@ public sealed class LogWindow : Dialog
         // Filter
         LogLevel minimum = Levels[levelIndex];
         string text = filter.Text.Trim();
-        levelButton.Text = $"_Level: {minimum}+";
+        levelButton.Text = Texts.Format(Strings.LevelButton, minimum);
         lines.Clear();
         lineEntries.Clear();
         foreach (LogEntry entry in entries.Where(e => e.Matches(minimum, text)))
         {
-            string more = entry.Lines.Count > 1 ? $"  [+{entry.Lines.Count - 1} lines]" : "";
+            string more = entry.Lines.Count > 1 ? Texts.Format(Strings.MoreLines, entry.Lines.Count - 1) : "";
             lines.Add(entry.Lines[0] + more);
             lineEntries.Add(entry);
         }
 
         // Scroll and count
         if (scrollToEnd && lines.Count > 0) logView.SelectedItem = lines.Count - 1;
-        status.Text = $"{lineEntries.Count} of {entries.Count} entries · {shown?.Path}   Enter: whole entry  Alt+F: filter";
+        status.Text = Texts.Format(Strings.LogStatus, lineEntries.Count, entries.Count, shown?.Path);
         logView.SetNeedsDraw();
     }
 

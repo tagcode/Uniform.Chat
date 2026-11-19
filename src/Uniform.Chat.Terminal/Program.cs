@@ -1,6 +1,7 @@
 using Uniform.Matrix.Calls;
 using Uniform.Chat.Terminal;
 using Uniform.Chat.Terminal.Configuration;
+using Uniform.Chat.Terminal.Localization;
 using Uniform.Chat.Terminal.Ui;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,9 @@ HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicati
 // User settings file below environment and command line, and changes applied in the settings window on top
 builder.AddSettings();
 
+// Texts in the language of the settings, or the system's
+Texts.Apply(builder.Configuration[$"{UiOptions.Section}:{nameof(UiOptions.Language)}"]);
+
 // Help when asked, and without a user ID and a console to ask in, instead of a stack trace
 string userIdKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.UserId)}";
 string homeserverKey = $"{MatrixOptions.Section}:{nameof(MatrixOptions.Homeserver)}";
@@ -31,7 +35,7 @@ if (!askedForHelp && !Usage.CanAsk)
     if (TerminalWindow.TryReopen(args)) return 0;
     if (hasUserId)
     {
-        Console.Error.WriteLine("Uniform Chat is a terminal app: start it in a terminal.");
+        Console.Error.WriteLine(Strings.StartInTerminal);
         return 2;
     }
 }

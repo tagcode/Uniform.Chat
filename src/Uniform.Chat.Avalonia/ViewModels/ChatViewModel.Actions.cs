@@ -4,6 +4,7 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 // The details and actions of a message or a room, for the action sheet and the context menu
 public sealed partial class ChatViewModel
@@ -29,31 +30,31 @@ public sealed partial class ChatViewModel
     {
         // Who sent it and when, and how it went
         RoomItemViewModel? room = SelectedRoom;
-        List<SheetDetail> details = [new("From", message.SenderName == message.SenderId ? message.SenderId : $"{message.SenderName} ({message.SenderId})")];
+        List<SheetDetail> details = [new(Strings.DetailFrom, message.SenderName == message.SenderId ? message.SenderId : $"{message.SenderName} ({message.SenderId})")];
         DateTimeOffset sent = message.Timestamp.ToLocalTime();
-        details.Add(new("Sent", sent.ToString("d", CultureInfo.CurrentCulture) + " " + sent.ToString("HH:mm:ss", CultureInfo.CurrentCulture)));
-        if (message.IsPending) details.Add(new("State", message.SendState));
-        if (message.IsEdited) details.Add(new("Edited", "Yes"));
-        if (room?.IsEncrypted == true) details.Add(new("Encryption", "End-to-end encrypted"));
-        if (message.EventId is not null) details.Add(new("Event ID", message.EventId));
+        details.Add(new(Strings.DetailSent, sent.ToString("d", CultureInfo.CurrentCulture) + " " + sent.ToString("HH:mm:ss", CultureInfo.CurrentCulture)));
+        if (message.IsPending) details.Add(new(Strings.DetailState, message.SendState));
+        if (message.IsEdited) details.Add(new(Strings.DetailEdited, Strings.Yes));
+        if (room?.IsEncrypted == true) details.Add(new(Strings.DetailEncryption, Strings.EndToEndEncrypted));
+        if (message.EventId is not null) details.Add(new(Strings.DetailEventId, message.EventId));
 
         // What applies to this message
         List<SheetAction> actions = [];
-        if (message.CanAnswer) actions.Add(new("Reply", () => { StartReply(message); ComposerFocusRequested?.Invoke(); }));
-        if (message.CanEdit || message.CanEditUnsent) actions.Add(new("Edit", () => { StartEdit(message); ComposerFocusRequested?.Invoke(); }));
-        if (message.CanCancelSending) actions.Add(new("Cancel sending", () => _ = CancelSendingAsync(message), IsDanger: true));
-        if (message.ImageUri is not null) actions.Add(new("Copy image", () => _ = CopyImageAsync(message)));
-        if (message.Text.Length > 0) actions.Add(new("Copy text", () => Copy(message.Text)));
-        if (room is not null && message.EventId is not null && !message.IsPending) actions.Add(new("Copy link", () => Copy(Link(room.RoomId, message.EventId))));
-        if (message.CanDelete) actions.Add(new("Delete", () => _ = DeleteAsync(message), IsDanger: true));
+        if (message.CanAnswer) actions.Add(new(Strings.Reply, () => { StartReply(message); ComposerFocusRequested?.Invoke(); }));
+        if (message.CanEdit || message.CanEditUnsent) actions.Add(new(Strings.Edit, () => { StartEdit(message); ComposerFocusRequested?.Invoke(); }));
+        if (message.CanCancelSending) actions.Add(new(Strings.CancelSending, () => _ = CancelSendingAsync(message), IsDanger: true));
+        if (message.ImageUri is not null) actions.Add(new(Strings.CopyImage, () => _ = CopyImageAsync(message)));
+        if (message.Text.Length > 0) actions.Add(new(Strings.CopyText, () => Copy(message.Text)));
+        if (room is not null && message.EventId is not null && !message.IsPending) actions.Add(new(Strings.CopyLink, () => Copy(Link(room.RoomId, message.EventId))));
+        if (message.CanDelete) actions.Add(new(Strings.Delete, () => _ = DeleteAsync(message), IsDanger: true));
 
         // Others' messages can be reported, and their sender reported or blocked
         if (!message.IsOwn && !message.IsInfo && message.EventId is not null && !message.IsPending)
         {
             string senderId = message.SenderId;
-            actions.Add(new("Report message", null, Reasons(reason => _ = ReportMessageAsync(message, reason))));
-            actions.Add(new("Report sender", null, Reasons(reason => _ = ReportUserAsync(senderId, reason))));
-            actions.Add(new("Block sender", () => _ = SetBlockedAsync(senderId, blocked: true), IsDanger: true));
+            actions.Add(new(Strings.ReportMessage, null, Reasons(reason => _ = ReportMessageAsync(message, reason))));
+            actions.Add(new(Strings.ReportSender, null, Reasons(reason => _ = ReportUserAsync(senderId, reason))));
+            actions.Add(new(Strings.BlockSender, () => _ = SetBlockedAsync(senderId, blocked: true), IsDanger: true));
         }
         // Return sheet, with reactions on what can be answered
         return new ActionSheetViewModel(message.SenderName, details, actions, message.CanAnswer ? QuickReactions : [], message.CanAnswer ? key => _ = ReactAsync(message, key) : null, CloseActionSheet);
@@ -65,30 +66,30 @@ public sealed partial class ChatViewModel
         // Its address, members and encryption, from the stored state
         (string? alias, int members, int invited) = connection.Processor.Read(store => store?.TryGetRoom(room.RoomId, out Room? state) == true ? (state.CanonicalAlias, state.JoinedMemberCount, state.InvitedMemberCount) : (null, 0, 0));
         List<SheetDetail> details = [];
-        if (alias is not null) details.Add(new("Address", alias));
-        if (!string.IsNullOrWhiteSpace(room.Topic)) details.Add(new("Topic", room.Topic));
-        if (!room.IsInvite) details.Add(new("Members", invited > 0 ? $"{members}, {invited} invited" : members.ToString(CultureInfo.CurrentCulture)));
-        if (!room.IsInvite) details.Add(new("Encryption", room.IsEncrypted ? "End-to-end encrypted" : "Not encrypted"));
-        if (room.Unread > 0) details.Add(new("Unread", room.Unread.ToString(CultureInfo.CurrentCulture)));
-        details.Add(new("Room ID", room.RoomId));
+        if (alias is not null) details.Add(new(Strings.DetailAddress, alias));
+        if (!string.IsNullOrWhiteSpace(room.Topic)) details.Add(new(Strings.Topic, room.Topic));
+        if (!room.IsInvite) details.Add(new(Strings.Members, invited > 0 ? Translations.Format(Strings.MembersAndInvited, members, invited) : members.ToString(CultureInfo.CurrentCulture)));
+        if (!room.IsInvite) details.Add(new(Strings.DetailEncryption, room.IsEncrypted ? Strings.EndToEndEncrypted : Strings.NotEncrypted));
+        if (room.Unread > 0) details.Add(new(Strings.DetailUnread, room.Unread.ToString(CultureInfo.CurrentCulture)));
+        details.Add(new(Strings.DetailRoomId, room.RoomId));
 
         // An invite is answered first
         List<SheetAction> actions = [];
         if (room.IsInvite)
         {
-            actions.Add(new("Join", () => _ = AcceptAsync(room)));
-            actions.Add(new("Decline", () => _ = DeclineAsync(room), IsDanger: true));
-            actions.Add(new("Report room", null, Reasons(reason => _ = ReportRoomAsync(room, reason))));
+            actions.Add(new(Strings.Join, () => _ = AcceptAsync(room)));
+            actions.Add(new(Strings.Decline, () => _ = DeclineAsync(room), IsDanger: true));
+            actions.Add(new(Strings.ReportRoomAction, null, Reasons(reason => _ = ReportRoomAsync(room, reason))));
             return new ActionSheetViewModel(room.Name, details, actions, [], null, CloseActionSheet);
         }
 
         // Joined rooms: reading, sorting, sharing, reporting and leaving
-        if (room.Unread > 0) actions.Add(new("Mark as read", () => MarkRoomRead(room)));
-        actions.Add(room.IsFavourite ? new("Remove from favourites", () => _ = SetTagAsync(room, RoomTags.Favourite, on: false)) : new("Favourite", () => _ = SetTagAsync(room, RoomTags.Favourite, on: true)));
-        actions.Add(room.IsLowPriority ? new("Remove low priority", () => _ = SetTagAsync(room, RoomTags.LowPriority, on: false)) : new("Low priority", () => _ = SetTagAsync(room, RoomTags.LowPriority, on: true)));
-        actions.Add(new("Copy link", () => Copy(Link(alias ?? room.RoomId, eventId: null))));
-        if (!room.IsServerNotice) actions.Add(new("Report room", null, Reasons(reason => _ = ReportRoomAsync(room, reason))));
-        actions.Add(new("Leave room", () => _ = LeaveAsync(room), IsDanger: true));
+        if (room.Unread > 0) actions.Add(new(Strings.MarkAsRead, () => MarkRoomRead(room)));
+        actions.Add(room.IsFavourite ? new(Strings.RemoveFromFavourites, () => _ = SetTagAsync(room, RoomTags.Favourite, on: false)) : new(Strings.Favourite, () => _ = SetTagAsync(room, RoomTags.Favourite, on: true)));
+        actions.Add(room.IsLowPriority ? new(Strings.RemoveLowPriority, () => _ = SetTagAsync(room, RoomTags.LowPriority, on: false)) : new(Strings.LowPriority, () => _ = SetTagAsync(room, RoomTags.LowPriority, on: true)));
+        actions.Add(new(Strings.CopyLink, () => Copy(Link(alias ?? room.RoomId, eventId: null))));
+        if (!room.IsServerNotice) actions.Add(new(Strings.ReportRoomAction, null, Reasons(reason => _ = ReportRoomAsync(room, reason))));
+        actions.Add(new(Strings.LeaveRoom, () => _ = LeaveAsync(room), IsDanger: true));
         // Return sheet
         return new ActionSheetViewModel(room.Name, details, actions, [], null, CloseActionSheet);
     }
@@ -103,7 +104,7 @@ public sealed partial class ChatViewModel
     }
 
     /// <summary>Add or remove the tag <paramref name="tag"/> of <paramref name="room"/>; favourite and low priority exclude each other, as in other clients.</summary>
-    public Task SetTagAsync(RoomItemViewModel room, string tag, bool on) => RunAsync(on ? "Tagging the room" : "Untagging the room", async client =>
+    public Task SetTagAsync(RoomItemViewModel room, string tag, bool on) => RunAsync(on ? Strings.TaggingRoom : Strings.UntaggingRoom, async client =>
     {
         // The other of the two goes when one is set
         if (!on)
@@ -132,7 +133,7 @@ public sealed partial class ChatViewModel
     {
         // Gone from the outbox, then from the room
         if (message.OutboxId is not long id || SelectedRoom is not RoomItemViewModel room) return;
-        if (!await connection.Outbox.CancelAsync(id)) Notice = "The message was sent already.";
+        if (!await connection.Outbox.CancelAsync(id)) Notice = Strings.AlreadySent;
         Messages.Items.Remove(message);
         // Done
         await RefreshPendingAsync(room.RoomId);
@@ -147,12 +148,12 @@ public sealed partial class ChatViewModel
         {
             if (await DownloadAsync(message) is not string path) return;
             await copy(path, message.FileName ?? "image.png");
-            Notice = "Image copied";
+            Notice = Strings.ImageCopied;
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
             // On a picture that could not be loaded or copied
-            Notice = $"Copying the image failed: {exception.Message}";
+            Notice = Translations.Format(Strings.CopyingImageFailed, exception.Message);
         }
     }
 

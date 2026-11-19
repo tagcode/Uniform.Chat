@@ -7,6 +7,7 @@ using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.WebRtc.Ice;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The call bar: the voice call that rings or runs, with answering, declining, hanging up, muting and the choice of camera, microphone and speaker, and the caller's video when they send it; it tells about a call for a while after it ends.</summary>
 /// <remarks>Partial files: CallViewModel.cs, and CallViewModel.Devices.cs for the camera, microphone and speaker menus.</remarks>
@@ -98,7 +99,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     public partial bool CameraOff { get; set; }
 
     /// <summary>Text of the camera button.</summary>
-    public string CameraText => CameraOff ? "Camera on" : "Camera off";
+    public string CameraText => CameraOff ? Strings.CameraOn : Strings.CameraOff;
 
     /// <summary>Turn this side's camera off or on; the preview hides while off.</summary>
     [RelayCommand]
@@ -128,7 +129,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     public bool ShowsFullScreen => ShowsVideo && FullScreen;
 
     /// <summary>Text of the button that switches between the full video and the chat.</summary>
-    public string ScreenText => FullScreen ? "Chat" : "Video";
+    public string ScreenText => FullScreen ? Strings.Chat : Strings.Video;
 
     /// <summary>Switch between the video on the whole screen and the chat under the call bar.</summary>
     [RelayCommand]
@@ -163,7 +164,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     public partial bool IsMuted { get; set; }
 
     /// <summary>Text of the mute button.</summary>
-    public string MuteText => IsMuted ? "Unmute" : "Mute";
+    public string MuteText => IsMuted ? Strings.Unmute : Strings.Mute;
 
 
     /// <summary>A failure to show, e.g. a missing microphone permission; empty for none.</summary>
@@ -178,7 +179,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         if (!await HasMicrophoneAsync()) return;
         if (video && platform.RequestCameraAsync is { } request && !await request())
         {
-            Error = "No camera permission; calling with voice only.";
+            Error = Strings.NoCameraCalling;
             video = false;
         }
         try
@@ -188,7 +189,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
             // On a room that cannot be called, or the server
-            Error = $"Calling failed: {ex.Message}";
+            Error = Translations.Format(Strings.CallingFailed, ex.Message);
         }
     }
 
@@ -199,7 +200,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         // Permission, then the answer
         if (Current is not VoiceCall call) return;
         if (!await HasMicrophoneAsync()) return;
-        await RunAsync("Answering", () => call.AnswerAsync());
+        await RunAsync(Strings.Answering, () => call.AnswerAsync());
     }
 
     /// <summary>Answer the ringing call with this device's camera too.</summary>
@@ -210,8 +211,8 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         if (Current is not VoiceCall call) return;
         if (!await HasMicrophoneAsync()) return;
         bool camera = platform.RequestCameraAsync is not { } request || await request();
-        if (!camera) Error = "No camera permission; answering with voice only.";
-        await RunAsync("Answering", () => camera ? call.AnswerWithVideoAsync() : call.AnswerAsync());
+        if (!camera) Error = Strings.NoCameraAnswering;
+        await RunAsync(Strings.Answering, () => camera ? call.AnswerWithVideoAsync() : call.AnswerAsync());
     }
 
     /// <summary>Whether this side sends its camera, to switch it.</summary>
@@ -224,11 +225,11 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
 
     /// <summary>Decline the ringing call.</summary>
     [RelayCommand]
-    private Task RejectAsync() => Current is VoiceCall call ? RunAsync("Declining", () => call.RejectAsync()) : Task.CompletedTask;
+    private Task RejectAsync() => Current is VoiceCall call ? RunAsync(Strings.DecliningCall, () => call.RejectAsync()) : Task.CompletedTask;
 
     /// <summary>Hang up, or cancel a call that rings.</summary>
     [RelayCommand]
-    private Task HangupAsync() => Current is VoiceCall call ? RunAsync("Hanging up", () => call.HangupAsync()) : Task.CompletedTask;
+    private Task HangupAsync() => Current is VoiceCall call ? RunAsync(Strings.HangingUp, () => call.HangupAsync()) : Task.CompletedTask;
 
     /// <summary>Mute or unmute the microphone.</summary>
     [RelayCommand]
@@ -276,7 +277,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Bar, then the notification
         ui.Post(() => Show(call));
-        if ((platform.Ring is null || platform.RingIsSoundOnly) && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync(call.IsVideo ? "Incoming video call" : "Incoming call", $"{nameOf(call.PeerUserId)} is calling");
+        if ((platform.Ring is null || platform.RingIsSoundOnly) && mayRing() && platform.Notifier is INotifier notifier) _ = notifier.ShowAsync(call.IsVideo ? Strings.IncomingVideoCall : Strings.IncomingCall, Translations.Format(Strings.IsCalling, nameOf(call.PeerUserId)));
     }
 
     /// <summary>Follow the shown call's changes; a new call replaces an ended one.</summary>
@@ -371,12 +372,12 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         // Done
         StateText = call.State switch
         {
-            CallState.Ringing => call.IsVideo ? "Incoming video call" : "Incoming voice call",
-            CallState.Inviting => "Calling…",
-            CallState.Connecting => "Connecting…",
-            CallState.Connected => $"{Duration(call)}{(relayed ? " · relayed" : "")}{(call.Muted ? " · muted" : "")}",
-            CallState.Reconnecting => "Reconnecting…",
-            _ => $"Call ended: {EndText(call)}",
+            CallState.Ringing => call.IsVideo ? Strings.IncomingVideoCall : Strings.IncomingVoiceCall,
+            CallState.Inviting => Strings.Calling,
+            CallState.Connecting => Strings.Connecting,
+            CallState.Connected => $"{Duration(call)}{(relayed ? " · " + Strings.Relayed : "")}{(call.Muted ? " · " + Strings.Muted : "")}",
+            CallState.Reconnecting => Strings.Reconnecting,
+            _ => Translations.Format(Strings.CallEnded, EndText(call)),
         };
     }
 
@@ -386,13 +387,13 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     /// <summary>Return why a call ended, for people.</summary>
     private static string EndText(VoiceCall call) => call.EndReason switch
     {
-        "user_hangup" => call.EndedByPeer ? "they hung up" : "you hung up",
-        "rejected" => call.EndedByPeer ? "declined" : "you declined",
-        "invite_timeout" => call.IsIncoming ? "missed" : "no answer",
-        "ice_failed" => "no connection",
-        "answered_elsewhere" => "answered on another device",
-        "rejected_elsewhere" => "declined on another device",
-        "replaced" => "they called again",
+        "user_hangup" => call.EndedByPeer ? Strings.EndTheyHungUp : Strings.EndYouHungUp,
+        "rejected" => call.EndedByPeer ? Strings.EndDeclined : Strings.EndYouDeclined,
+        "invite_timeout" => call.IsIncoming ? Strings.EndMissed : Strings.EndNoAnswer,
+        "ice_failed" => Strings.EndNoConnection,
+        "answered_elsewhere" => Strings.EndAnsweredElsewhere,
+        "rejected_elsewhere" => Strings.EndDeclinedElsewhere,
+        "replaced" => Strings.EndReplaced,
         string reason => reason,
         null => "ended",
     };
@@ -402,7 +403,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
     {
         // Granted, or no permission needed
         if (platform.RequestMicrophoneAsync is not { } request || await request()) return true;
-        Error = "Calls need the microphone permission.";
+        Error = Strings.CallsNeedMicrophone;
         // On refusal
         return false;
     }
@@ -418,7 +419,7 @@ public sealed partial class CallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            Error = $"{what} failed: {ex.Message}";
+            Error = Translations.Format(Strings.ActionFailed, what, ex.Message);
         }
     }
 }

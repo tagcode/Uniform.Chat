@@ -9,6 +9,7 @@ using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>Sends queued messages in order, keeping them in the database until the server accepts them.</summary>
 /// <remarks>Each message keeps its transaction ID across retries and restarts, so the server never stores a resent message twice.</remarks>
@@ -196,14 +197,14 @@ public sealed class OutboxSender
         catch (EncryptionUnavailableException ex)
         {
             logger.LogWarning("Outbox message {Id} to encrypted room {RoomId} not sent: {Error}", message.Id, message.RoomId, ex.Describe());
-            await store.MarkAttemptFailedAsync(message.Id, $"encryption unavailable: {ex.Message}", permanent: true, cancellationToken);
+            await store.MarkAttemptFailedAsync(message.Id, Texts.Format(Strings.EncryptionUnavailableReason, ex.Message), permanent: true, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
             return true;
         }
         catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
             logger.LogWarning("Outbox message {Id} to {RoomId} not sent: its file is gone", message.Id, message.RoomId);
-            await store.MarkAttemptFailedAsync(message.Id, "the file is gone", permanent: true, cancellationToken);
+            await store.MarkAttemptFailedAsync(message.Id, Strings.FileGone, permanent: true, cancellationToken);
             RoomChanged?.Invoke(message.RoomId);
             return true;
         }

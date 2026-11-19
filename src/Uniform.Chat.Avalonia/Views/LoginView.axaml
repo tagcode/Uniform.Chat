@@ -1,4 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:l="using:Uniform.Chat.Avalonia.Localization"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              xmlns:core="using:Uniform.Matrix.Protocol.Core"
@@ -9,30 +10,30 @@
       <Image Source="avares://Uniform.Chat.Avalonia/Assets/logo.png" Width="96" Height="96" />
       <TextBlock Classes="title" HorizontalAlignment="Center" Text="{Binding Title}" />
 
-      <TextBlock Text="User ID" />
+      <TextBlock Text="{l:Tr UserId}" />
       <TextBox x:Name="UserIdBox" Text="{Binding UserId}" PlaceholderText="@alice:matrix.org" />
 
-      <TextBlock Text="Password" />
+      <TextBlock Text="{l:Tr Password}" />
       <TextBox x:Name="PasswordBox" Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" />
 
-      <Expander Header="Server address" HorizontalAlignment="Stretch">
+      <Expander Header="{l:Tr ServerAddress}" HorizontalAlignment="Stretch">
         <StackPanel Spacing="6">
           <TextBox Text="{Binding Homeserver}" PlaceholderText="https://matrix.example.org" />
           <TextBlock Classes="hint" TextWrapping="Wrap"
-                     Text="Leave empty to find the server from your user ID. Needed for servers without discovery, such as http://localhost:8008 on this computer." />
+                     Text="{l:Tr ServerAddressHint}" />
         </StackPanel>
       </Expander>
 
       <!-- Creating an account: what the server asks for -->
       <StackPanel Spacing="6" IsVisible="{Binding IsRegistering}">
         <TextBlock Classes="hint" TextWrapping="Wrap"
-                   Text="The account is created on the server of the user ID, if it allows it. Choose a password of your own." />
+                   Text="{l:Tr CreateAccountHint}" />
         <StackPanel Spacing="6" IsVisible="{Binding NeedsToken}">
-          <TextBlock Text="Registration token" />
-          <TextBox x:Name="TokenBox" Text="{Binding RegistrationToken}" PlaceholderText="From the server's admin" />
+          <TextBlock Text="{l:Tr RegistrationToken}" />
+          <TextBox x:Name="TokenBox" Text="{Binding RegistrationToken}" PlaceholderText="{l:Tr FromServerAdmin}" />
         </StackPanel>
         <StackPanel Spacing="4" IsVisible="{Binding HasPolicies}">
-          <TextBlock Text="The server's policies" />
+          <TextBlock Text="{l:Tr ServerPolicies}" />
           <ItemsControl ItemsSource="{Binding Policies}">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="core:TermsPolicy">
@@ -40,7 +41,7 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-          <CheckBox x:Name="AcceptBox" IsChecked="{Binding AcceptTerms}" Content="I have read and accept these policies" />
+          <CheckBox x:Name="AcceptBox" IsChecked="{Binding AcceptTerms}" Content="{l:Tr AcceptPolicies}" />
         </StackPanel>
       </StackPanel>
 
@@ -50,12 +51,12 @@
       <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
       <Button Classes="link" HorizontalAlignment="Center" Content="{Binding SwitchText}" Command="{Binding SwitchModeCommand}" IsVisible="{Binding CanRegister}" />
       <TextBlock Classes="hint" TextWrapping="Wrap" HorizontalAlignment="Center"
-                 Text="Your password is used only to sign in; it is not saved." />
+                 Text="{l:Tr PasswordNotSaved}" />
       <TextBlock Classes="hint" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"
-                 Text="By continuing you accept the user policy: no illegal, abusive or harmful content. Report it, and block people, from their messages." />
+                 Text="{l:Tr UserPolicyNotice}" />
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16">
-        <Button Classes="link" Content="User policy" Tag="{x:Static vm:LoginViewModel.UserPolicyUrl}" Click="OnLinkClick" />
-        <Button Classes="link" Content="Privacy policy" Tag="{x:Static vm:LoginViewModel.PrivacyPolicyUrl}" Click="OnLinkClick" />
+        <Button Classes="link" Content="{l:Tr UserPolicy}" Tag="{x:Static vm:LoginViewModel.UserPolicyUrl}" Click="OnLinkClick" />
+        <Button Classes="link" Content="{l:Tr PrivacyPolicy}" Tag="{x:Static vm:LoginViewModel.PrivacyPolicyUrl}" Click="OnLinkClick" />
       </StackPanel>
     </StackPanel>
   </ScrollViewer>

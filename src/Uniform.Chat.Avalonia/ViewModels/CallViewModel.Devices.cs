@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
 using Uniform.Matrix.Calls;
+using Uniform.Chat.Avalonia.Localization;
 
 // The camera, microphone and speaker menus of the call bar, and the choices kept for the next call.
 public sealed partial class CallViewModel
@@ -57,9 +58,9 @@ public sealed partial class CallViewModel
         Fill(CameraMenu, CameraItems());
         if (audio is null) return;
         IAudioDevices devices = audio(AudioChoice.Default);
-        Fill(SpeakerMenu, AudioItems(List(devices.ListSpeakers), SpeakerId, HasEarpiece ? "Phone default" : "System default", SelectSpeakerAsync));
+        Fill(SpeakerMenu, AudioItems(List(devices.ListSpeakers), SpeakerId, HasEarpiece ? Strings.PhoneDefault : Strings.SystemDefault, SelectSpeakerAsync));
         // Done
-        Fill(MicrophoneMenu, AudioItems(List(devices.ListMicrophones), MicrophoneId, HasEarpiece ? "Phone default" : "System default", SelectMicrophoneAsync));
+        Fill(MicrophoneMenu, AudioItems(List(devices.ListMicrophones), MicrophoneId, HasEarpiece ? Strings.PhoneDefault : Strings.SystemDefault, SelectMicrophoneAsync));
     }
 
     /// <summary>Return the camera menu: each camera of the call, the one in use checked, then the switch to turn the camera off or on.</summary>
@@ -70,7 +71,7 @@ public sealed partial class CallViewModel
         string? current = call.CameraId;
         List<DeviceMenuItem> items = [.. call.Cameras.Select(c => new DeviceMenuItem(Checked(c.Name, c.Id == current), new RelayCommand(() => SelectCamera(c.Id))))];
         // Return them with the switch
-        items.Add(new DeviceMenuItem(Checked(CameraOff ? "Turn camera on" : "Turn camera off", chosen: false), ToggleCameraCommand));
+        items.Add(new DeviceMenuItem(Checked(CameraOff ? Strings.TurnCameraOn : Strings.TurnCameraOff, chosen: false), ToggleCameraCommand));
         return items;
     }
 
@@ -104,7 +105,7 @@ public sealed partial class CallViewModel
         HoldPlatform(IsRinging, IsActive);
         RefreshDevices();
         // Done
-        if (Current is VoiceCall call) await RunAsync("Switching the speaker", () => call.RestartAudioAsync());
+        if (Current is VoiceCall call) await RunAsync(Strings.SwitchingSpeaker, () => call.RestartAudioAsync());
     }
 
     /// <summary>Record from the microphone of <paramref name="name"/>, null for the default, reopening the devices of a running call, and keep it for the next calls.</summary>
@@ -115,7 +116,7 @@ public sealed partial class CallViewModel
         if (settings is not null) settings.CallMicrophone = name;
         RefreshDevices();
         // Done
-        if (Current is VoiceCall call) await RunAsync("Switching the microphone", () => call.RestartAudioAsync());
+        if (Current is VoiceCall call) await RunAsync(Strings.SwitchingMicrophone, () => call.RestartAudioAsync());
     }
 
     /// <summary>Return a menu label, with a check before the chosen one.</summary>

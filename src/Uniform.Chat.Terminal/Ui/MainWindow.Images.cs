@@ -6,6 +6,7 @@ using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Terminal.Localization;
 
 // Inline ASCII previews of images and the image viewer.
 public sealed partial class MainWindow
@@ -28,9 +29,9 @@ public sealed partial class MainWindow
         if (!thumbnails.TryGetValue(uri, out DecodedImage? image))
         {
             LoadThumbnail(entry, uri);
-            return ["[loading preview…]"];
+            return [Strings.LoadingPreview];
         }
-        if (image is null) return ["[no preview]"];
+        if (image is null) return [Strings.NoPreview];
 
         // Size to the pane unless limited by settings
         int columns = UiOptions.ImagePreviewColumns > 0 ? Math.Min(UiOptions.ImagePreviewColumns, width) : width;
@@ -96,9 +97,9 @@ public sealed partial class MainWindow
     private async Task ViewImageAsync(MessageContent content)
     {
         // Download and decode off the UI thread
-        string name = content.Filename ?? content.Body ?? "Image";
-        ShowStatus($"Loading {name}…");
-        await RunSafelyAsync($"Opening {name}", async client =>
+        string name = content.Filename ?? content.Body ?? Strings.Image;
+        ShowStatus(Texts.Format(Strings.LoadingName, name));
+        await RunSafelyAsync(Texts.Format(Strings.OpeningName, name), async client =>
         {
             StoredMedia media = await mediaCache.GetAsync(client, content);
             string path = mediaCache.GetFullPath(media);
@@ -108,7 +109,7 @@ public sealed partial class MainWindow
             app.Invoke(() =>
             {
                 RestoreStatus();
-                if (image is null) Dialogs.Error(app, name, "This image format cannot be shown. Use Save file to open it in another program.");
+                if (image is null) Dialogs.Error(app, name, Strings.ImageFormatUnsupported);
                 else ClientDialogs.ShowImage(app, name, image);
             });
         });

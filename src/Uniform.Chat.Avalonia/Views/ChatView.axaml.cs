@@ -11,6 +11,7 @@ using global::Avalonia.Platform.Storage;
 using global::Avalonia.Threading;
 using global::Avalonia.VisualTree;
 using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The chat screen: the room list and the open room; the code here handles scrolling, keys and the narrow layout.</summary>
 public partial class ChatView : UserControl
@@ -243,7 +244,7 @@ public partial class ChatView : UserControl
         catch (Exception exception)
         {
             // On error tell
-            model!.Notice = $"Pasting failed: {exception.Message}";
+            model!.Notice = Translations.Format(Strings.PastingFailed, exception.Message);
         }
     }
 
@@ -281,7 +282,7 @@ public partial class ChatView : UserControl
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this
-            model.Notice = $"Pasting failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.PastingFailed, exception.Message);
         }
     }
 
@@ -402,12 +403,12 @@ public partial class ChatView : UserControl
             if ((action.IsDanger || action.HasChoices) && menu.Items.Count > 0 && menu.Items[^1] is MenuItem { Tag: not "danger" }) menu.Items.Add(new Separator());
             menu.Items.Add(CreateMenuItem(action));
             if (menu.Items.Count != 1 || !sheet.HasReactions) continue;
-            MenuItem react = new() { Header = "React" };
+            MenuItem react = new() { Header = Strings.React };
             foreach (string key in sheet.Reactions) react.Items.Add(CreateMenuItem(key, () => sheet.ReactCommand.Execute(key)));
             menu.Items.Add(react);
         }
         menu.Items.Add(new Separator());
-        menu.Items.Add(CreateMenuItem("Details…", () => chat.ActionSheet = sheet));
+        menu.Items.Add(CreateMenuItem(Strings.Details, () => chat.ActionSheet = sheet));
         ContextMenuShown = menu;
         // Done
         menu.ShowAt(anchor, showAtPointer: true);
@@ -476,12 +477,12 @@ public partial class ChatView : UserControl
         if (!Uri.TryCreate(e.Href, UriKind.Absolute, out Uri? uri) || uri.Scheme is not ("https" or "http" or "mailto") || TopLevel.GetTopLevel(this) is not TopLevel top) return;
         try
         {
-            if (!await top.Launcher.LaunchUriAsync(uri)) model.Notice = $"No app opens {e.Href} here.";
+            if (!await top.Launcher.LaunchUriAsync(uri)) model.Notice = Translations.Format(Strings.NoAppOpens, e.Href);
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            model.Notice = $"Opening {e.Href} failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.OpeningFailed, e.Href, exception.Message);
         }
     }
 
@@ -500,7 +501,7 @@ public partial class ChatView : UserControl
         try
         {
             // One message per file
-            IReadOnlyList<IStorageFile> files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions { Title = "Send a file", AllowMultiple = true });
+            IReadOnlyList<IStorageFile> files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions { Title = Strings.SendAFile, AllowMultiple = true });
             foreach (IStorageFile file in files)
             {
                 await using Stream content = await file.OpenReadAsync();
@@ -510,7 +511,7 @@ public partial class ChatView : UserControl
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            model.Notice = $"Sending the file failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.SendingTheFileFailed, exception.Message);
         }
     }
 
@@ -541,12 +542,12 @@ public partial class ChatView : UserControl
             // A copy with the original name, so the system finds an app by its extension
             if (await model.DownloadForOpeningAsync(message) is not string path) return;
             IStorageFile? file = await top.StorageProvider.TryGetFileFromPathAsync(new Uri(path));
-            if (file is null || !await top.Launcher.LaunchFileAsync(file)) model.Notice = $"No app opens {message.FileName} here; use Save… instead.";
+            if (file is null || !await top.Launcher.LaunchFileAsync(file)) model.Notice = Translations.Format(Strings.NoAppOpensUseSave, message.FileName);
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            model.Notice = $"Opening {message.FileName} failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.OpeningFailed, message.FileName, exception.Message);
         }
     }
 
@@ -574,7 +575,7 @@ public partial class ChatView : UserControl
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            model.Notice = $"Sending the file failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.SendingTheFileFailed, exception.Message);
         }
     }
 
@@ -586,17 +587,17 @@ public partial class ChatView : UserControl
         try
         {
             // Copy from the media cache to the chosen file
-            IStorageFile? target = await storage.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "Save file", SuggestedFileName = message.FileName });
+            IStorageFile? target = await storage.SaveFilePickerAsync(new FilePickerSaveOptions { Title = Strings.SaveFile, SuggestedFileName = message.FileName });
             if (target is null || await model.DownloadAsync(message) is not string path) return;
             await using (Stream source = File.OpenRead(path))
             await using (Stream destination = await target.OpenWriteAsync())
                 await source.CopyToAsync(destination);
-            model.Notice = $"Saved {target.Name}.";
+            model.Notice = Translations.Format(Strings.SavedFile, target.Name);
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            model.Notice = $"Saving the file failed: {exception.Message}";
+            model.Notice = Translations.Format(Strings.SavingFileFailed, exception.Message);
         }
     }
 

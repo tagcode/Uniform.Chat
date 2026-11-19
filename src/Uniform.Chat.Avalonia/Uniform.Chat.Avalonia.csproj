@@ -46,4 +46,8 @@
     <InternalsVisibleTo Include="Uniform.Chat.Avalonia.Tests" />
   </ItemGroup>
 
+  <!-- Texts of the app: English in Strings.resx, other languages beside it; a typed class Strings is generated from the English -->
+  <ItemGroup>
+    <EmbeddedResource Update="Localization/Strings.resx" StronglyTypedLanguage="CSharp" StronglyTypedClassName="Strings" StronglyTypedNamespace="Uniform.Chat.Avalonia.Localization" StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs" PublicClass="true" />
+  </ItemGroup>
 </Project>

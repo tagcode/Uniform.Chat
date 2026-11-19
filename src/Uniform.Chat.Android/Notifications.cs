@@ -5,6 +5,7 @@ using global::Android.Content;
 using global::Android.Content.PM;
 using global::Android.OS;
 using Uniform.Chat.Avalonia.Services;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The app's notification channels, and notifications that open the app when tapped.</summary>
 internal static class Notifications
@@ -23,14 +24,14 @@ internal static class Notifications
     {
         // Android 8 and later
         if (!OperatingSystem.IsAndroidVersionAtLeast(26) || context.GetSystemService(Context.NotificationService) is not NotificationManager manager) return;
-        manager.CreateNotificationChannel(new NotificationChannel(Messages, "Messages", NotificationImportance.High));
-        NotificationChannel incoming = new(IncomingCall, "Incoming calls", NotificationImportance.High);
+        manager.CreateNotificationChannel(new NotificationChannel(Messages, Strings.Messages, NotificationImportance.High));
+        NotificationChannel incoming = new(IncomingCall, Strings.IncomingCalls, NotificationImportance.High);
         incoming.SetSound(null, null);
         incoming.EnableVibration(false);
         manager.CreateNotificationChannel(incoming);
-        manager.CreateNotificationChannel(new NotificationChannel(Connection, "Connection", NotificationImportance.Min));
+        manager.CreateNotificationChannel(new NotificationChannel(Connection, Strings.Connection, NotificationImportance.Min));
         // Done
-        manager.CreateNotificationChannel(new NotificationChannel(OngoingCall, "Ongoing call", NotificationImportance.Low));
+        manager.CreateNotificationChannel(new NotificationChannel(OngoingCall, Strings.OngoingCall, NotificationImportance.Low));
     }
 
     /// <summary>Return a notification of a channel that opens the app when tapped; an ongoing one is quiet: silent, alerting at most once, without a time, and on Android 12 and later deferred, so that a service that runs only briefly shows none.</summary>
@@ -64,7 +65,7 @@ internal static class Notifications
 #pragma warning disable CA1422 // The builder without a channel serves Android 7 and older
         Notification.Builder builder = OperatingSystem.IsAndroidVersionAtLeast(26) ? new Notification.Builder(context, IncomingCall) : new Notification.Builder(context);
 #pragma warning restore CA1422
-        builder.SetSmallIcon(Resource.Drawable.notification_icon).SetContentTitle("Incoming call").SetContentText($"{peer} is calling").SetContentIntent(screen).SetFullScreenIntent(screen, true).SetCategory(Notification.CategoryCall).SetOngoing(true);
+        builder.SetSmallIcon(Resource.Drawable.notification_icon).SetContentTitle(Strings.IncomingCall).SetContentText(Translations.Format(Strings.IsCalling, peer)).SetContentIntent(screen).SetFullScreenIntent(screen, true).SetCategory(Notification.CategoryCall).SetOngoing(true);
         // Return notification
         return builder.Build()!;
     }
@@ -130,7 +131,7 @@ public sealed class CallForegroundService : Service
     {
         // Ongoing notification, typed as a call with the microphone where Android asks; Android 10 knows only the call type
         string peer = intent?.GetStringExtra(PeerExtra) ?? "";
-        Notification notification = Notifications.Build(this, Notifications.OngoingCall, "Voice call", $"In a call with {peer}", ongoing: true);
+        Notification notification = Notifications.Build(this, Notifications.OngoingCall, Strings.VoiceCall, Translations.Format(Strings.InACallWith, peer), ongoing: true);
         if (OperatingSystem.IsAndroidVersionAtLeast(30)) StartForeground(NotificationId, notification, ForegroundService.TypePhoneCall | ForegroundService.TypeMicrophone);
         else if (OperatingSystem.IsAndroidVersionAtLeast(29)) StartForeground(NotificationId, notification, ForegroundService.TypePhoneCall);
         else StartForeground(NotificationId, notification);
@@ -172,7 +173,7 @@ public sealed class SyncForegroundService : Service
     }
 
     /// <summary>Return the quiet connection notification.</summary>
-    private static Notification Build(Context context) => Notifications.Build(context, Notifications.Connection, "Uniform Chat", "Keeps connected, swipe to dismiss.", ongoing: true);
+    private static Notification Build(Context context) => Notifications.Build(context, Notifications.Connection, "Uniform Chat", Strings.KeepsConnected, ongoing: true);
 
     /// <summary>Start the service; return what stops it.</summary>
     public static IDisposable Start(Context context)

@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>the SFU's signalling messages, access tokens and their grants, and the MatrixRTC authorization service's messages, room names and participant identities, as Element Call and lk-jwt-service use them.</Description>
-    <PackageTags>livekit;matrixrtc;matrix;jwt;webrtc</PackageTags>
+    <PackageTags>matrixrtc;matrix;jwt;webrtc</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

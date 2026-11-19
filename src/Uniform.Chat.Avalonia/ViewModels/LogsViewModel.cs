@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Uniform.Matrix.Hosting;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>A session log in the list: its file and how it is named there.</summary>
 /// <param name="File">The log file.</param>
@@ -11,7 +12,7 @@ using Uniform.Matrix.Hosting;
 public sealed record LogFileItem(LogFileInfo File, bool IsCurrent)
 {
     /// <summary>Start time and size, with this session marked.</summary>
-    public string Title => $"{File.Started:yyyy-MM-dd HH:mm}{(IsCurrent ? " (now)" : "")} · {File.Size / 1024 + 1} KiB";
+    public string Title => $"{File.Started:yyyy-MM-dd HH:mm}{(IsCurrent ? " " + Strings.Now : "")} · {File.Size / 1024 + 1} KiB";
 }
 
 /// <summary>The app's session logs, as the terminal client's log window shows them: the sessions, and the entries of the chosen one at a level and above, newest first, filtered by text.</summary>
@@ -92,7 +93,7 @@ public sealed partial class LogsViewModel : ViewModelBase
         }
         catch (IOException exception)
         {
-            Text = $"The log cannot be read: {exception.Message}";
+            Text = Translations.Format(Strings.LogUnreadable, exception.Message);
             return;
         }
 
@@ -100,6 +101,6 @@ public sealed partial class LogsViewModel : ViewModelBase
         LogLevel minimum = LevelIndex switch { 0 => LogLevel.Debug, 2 => LogLevel.Warning, 3 => LogLevel.Error, _ => LogLevel.Information };
         string? filter = Filter.Trim() is { Length: > 0 } text ? text : null;
         List<LogEntry> shown = [.. entries.Where(e => e.Matches(minimum, filter)).Reverse().Take(MaxEntries)];
-        Text = shown.Count == 0 ? "No entries at this level." : string.Join("\n\n", shown.Select(e => string.Join("\n", e.Lines)));
+        Text = shown.Count == 0 ? Strings.NoLogEntries : string.Join("\n\n", shown.Select(e => string.Join("\n", e.Lines)));
     }
 }

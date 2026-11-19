@@ -4,6 +4,7 @@ using global::Avalonia.Controls;
 using global::Avalonia.Input.Platform;
 using global::Avalonia.Interactivity;
 using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>Server administration: reports, accounts and registration tokens.</summary>
 public partial class AdminView : UserControl
@@ -57,12 +58,12 @@ public partial class AdminView : UserControl
         try
         {
             await clipboard.SetTextAsync(admin.CreatedToken);
-            admin.Message = "Token copied.";
+            admin.Message = Strings.TokenCopied;
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            admin.Message = $"Copying failed: {exception.Message}";
+            admin.Message = Translations.Format(Strings.CopyingFailed, exception.Message);
         }
     }
 }

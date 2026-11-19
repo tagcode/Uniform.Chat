@@ -1,5 +1,7 @@
 namespace Uniform.Chat.Avalonia.Services;
 
+using Uniform.Chat.Avalonia.Localization;
+
 /// <summary>A file shared to the app, copied where the app may read it.</summary>
 /// <param name="Path">The copy.</param>
 /// <param name="Name">Its name to send, e.g. <c>photo.jpg</c>.</param>
@@ -13,9 +15,9 @@ public sealed record SharedContent(string? Text, IReadOnlyList<SharedFile> Files
     /// <summary>A short description, e.g. <c>a link</c>, <c>photo.jpg</c> or <c>3 files</c>.</summary>
     public string Summary => Files.Count switch
     {
-        0 => Text is not null && Uri.TryCreate(Text.Trim(), UriKind.Absolute, out _) ? "a link" : "a text",
+        0 => Text is not null && Uri.TryCreate(Text.Trim(), UriKind.Absolute, out _) ? Strings.ShareALink : Strings.ShareAText,
         1 => Files[0].Name,
-        _ => $"{Files.Count} files",
+        _ => Translations.Format(Strings.FileCount, Files.Count),
     };
 }
 

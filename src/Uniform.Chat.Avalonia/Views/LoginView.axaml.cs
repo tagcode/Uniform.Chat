@@ -3,6 +3,7 @@ namespace Uniform.Chat.Avalonia.Views;
 using global::Avalonia.Controls;
 using global::Avalonia.Interactivity;
 using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The sign-in form, which also creates accounts.</summary>
 public partial class LoginView : UserControl
@@ -26,12 +27,12 @@ public partial class LoginView : UserControl
         if ((sender as Control)?.Tag is not string address || !Uri.TryCreate(address, UriKind.Absolute, out Uri? uri) || TopLevel.GetTopLevel(this) is not TopLevel top) return;
         try
         {
-            if (!await top.Launcher.LaunchUriAsync(uri) && DataContext is LoginViewModel model) model.ErrorMessage = $"No app opens {address} here.";
+            if (!await top.Launcher.LaunchUriAsync(uri) && DataContext is LoginViewModel model) model.ErrorMessage = Translations.Format(Strings.NoAppOpens, address);
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            if (DataContext is LoginViewModel model) model.ErrorMessage = $"Opening {address} failed: {exception.Message}";
+            if (DataContext is LoginViewModel model) model.ErrorMessage = Translations.Format(Strings.OpeningFailed, address, exception.Message);
         }
     }
 }

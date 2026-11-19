@@ -8,6 +8,7 @@ using global::Terminal.Gui.Drawing;
 using global::Terminal.Gui.Input;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Matrix.Gui.Terminal.Localization;
 
 /// <summary>Settings window: every option with its value, source and description; edit, reset, apply, save, load and export.</summary>
 /// <remarks>Edits stay in the window until applied or saved; see <see cref="SettingsEditor"/>.</remarks>
@@ -26,10 +27,10 @@ public sealed class SettingsWindow : Dialog
         // Layout: file, list, description, actions
         this.app = app;
         this.editor = editor;
-        Title = "Settings";
+        Title = Strings.Settings;
         Width = Dim.Fill(2);
         Height = Dim.Fill(1);
-        Label file = new() { Text = $"Settings file: {editor.SettingsPath}    * edited  + applied, not saved  ↻ after restart", X = 1, Y = 0, Width = Dim.Fill(1) };
+        Label file = new() { Text = Texts.Format(Strings.SettingsFileLegend, editor.SettingsPath), X = 1, Y = 0, Width = Dim.Fill(1) };
         list.SetSource(rows);
         list.RowRender += OnRowRender;
         list.ValueChanged += (_, _) => ShowDescription();
@@ -39,14 +40,14 @@ public sealed class SettingsWindow : Dialog
 
         // Actions that keep the window open, then Close
         View? previous = null;
-        foreach ((string text, Action action) in new (string, Action)[] { ("_Edit", Edit), ("_Reset", Reset), ("_Apply", Apply), ("_Save", Save), ("_Load…", Load), ("E_xport…", Export) })
+        foreach ((string text, Action action) in new (string, Action)[] { (Strings.ButtonEdit, Edit), (Strings.ButtonReset, Reset), (Strings.ButtonApply, Apply), (Strings.ButtonSave, Save), (Strings.ButtonLoad, Load), (Strings.ButtonExport, Export) })
         {
             Button button = new() { Text = text, X = previous is null ? 1 : Pos.Right(previous) + 1, Y = Pos.AnchorEnd(1) };
             button.Accepting += (_, e) => { e.Handled = true; action(); };
             Add(button);
             previous = button;
         }
-        AddButton(new Button { Text = "_Close" });
+        AddButton(new Button { Text = Strings.ButtonClose });
 
         // Fill
         Refresh();
@@ -55,7 +56,7 @@ public sealed class SettingsWindow : Dialog
     }
 
     /// <summary>Whether the user may close: asks when changes are not saved.</summary>
-    public bool ConfirmClose() => !editor.HasUnsavedChanges || Dialogs.Confirm(app, "Unsaved settings", "Some changes are not saved to the settings file. Close anyway?\n\nApplied changes last until the program restarts.");
+    public bool ConfirmClose() => !editor.HasUnsavedChanges || Dialogs.Confirm(app, Strings.UnsavedSettings, Strings.UnsavedQuestion);
 
     /// <summary>Option of the selected row.</summary>
     private OptionInfo? Selected => list.SelectedItem is int index && index < editor.Options.Count ? editor.Options[index] : null;
@@ -90,12 +91,12 @@ public sealed class SettingsWindow : Dialog
 
         // Description and facts
         Type type = Nullable.GetUnderlyingType(option.Type) ?? option.Type;
-        string choices = option.Choices.Count > 0 ? $" One of: {string.Join(", ", option.Choices)}." : "";
-        string defaults = option.Secret ? "" : $" Default: {option.DefaultValue ?? "(not set)"}.";
-        string restart = option.RestartRequired ? " Takes effect after restart." : " Takes effect when applied.";
+        string choices = option.Choices.Count > 0 ? Texts.Format(Strings.OneOf, string.Join(", ", option.Choices)) : "";
+        string defaults = option.Secret ? "" : Texts.Format(Strings.Default, option.DefaultValue ?? Strings.NotSet);
+        string restart = option.RestartRequired ? Strings.EffectAfterRestart : Strings.EffectWhenApplied;
         string source = editor.GetSource(option);
-        string overridden = source is "command line" or "environment" ? $" Currently set by the {source}, which overrides the settings file." : "";
-        descriptionText = $"{option.Key}: {option.Description}\nType: {type.Name}.{choices}{defaults}{restart}{overridden}";
+        string overridden = source is "command line" or "environment" ? Texts.Format(Strings.OverriddenBy, source) : "";
+        descriptionText = Texts.Format(Strings.OptionDescription, option.Key, option.Description, type.Name, choices, defaults, restart, overridden);
         WrapDescription();
     }
 
@@ -114,7 +115,7 @@ public sealed class SettingsWindow : Dialog
         if (Selected is not OptionInfo option) return;
         if (option.Secret)
         {
-            Dialogs.Info(app, option.Key, "This value is secret. Give it on the command line, or enter it when the client asks.");
+            Dialogs.Info(app, option.Key, Strings.SecretValue);
             return;
         }
 
@@ -122,7 +123,7 @@ public sealed class SettingsWindow : Dialog
         string current = editor.GetValue(option) ?? "";
         string? text = option.Choices.Count > 0
             ? Dialogs.PickOne(app, option.Key, option.Choices, current)
-            : Dialogs.AskAllowEmpty(app, option.Key, $"{option.Description}\n\nNew value{(option.Type.IsValueType && Nullable.GetUnderlyingType(option.Type) is null ? "" : " (empty for not set)")}:", current);
+            : Dialogs.AskAllowEmpty(app, option.Key, Texts.Format(Strings.NewValuePrompt, option.Description, (option.Type.IsValueType && Nullable.GetUnderlyingType(option.Type) is null ? "" : Strings.EmptyForNotSet)), current);
         if (text is null) return;
 
         // Validate and show
@@ -145,7 +146,7 @@ public sealed class SettingsWindow : Dialog
         }
         catch (IOException ex)
         {
-            Dialogs.Error(app, "Reset", ex.Message);
+            Dialogs.Error(app, Strings.Reset, ex.Message);
         }
         Refresh();
     }
@@ -161,11 +162,11 @@ public sealed class SettingsWindow : Dialog
         }
         catch (IOException ex)
         {
-            Dialogs.Error(app, "Apply", ex.Message);
+            Dialogs.Error(app, Strings.Apply, ex.Message);
             return;
         }
         Refresh();
-        if (restart.Count > 0) Dialogs.Info(app, "Applied", $"Applied. These take effect after restart:\n\n{string.Join('\n', restart)}");
+        if (restart.Count > 0) Dialogs.Info(app, Strings.Applied, Texts.Format(Strings.AppliedRestart, string.Join('\n', restart)));
     }
 
     /// <summary>Save all changes to the settings file.</summary>
@@ -179,22 +180,22 @@ public sealed class SettingsWindow : Dialog
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Dialogs.Error(app, "Save", ex.Message);
+            Dialogs.Error(app, Strings.Save, ex.Message);
             return;
         }
         Refresh();
-        Dialogs.Info(app, "Saved", $"Saved to {editor.SettingsPath}.{(restart.Count > 0 ? $"\n\nThese take effect after restart:\n\n{string.Join('\n', restart)}" : "")}");
+        Dialogs.Info(app, Strings.Saved, Texts.Format(Strings.SavedTo, editor.SettingsPath, (restart.Count > 0 ? Texts.Format(Strings.TheseAfterRestart, string.Join('\n', restart)) : "")));
     }
 
     /// <summary>Load options from a settings file as edits, to apply or save.</summary>
     private void Load()
     {
         // Pick file
-        string? path = Dialogs.Ask(app, "Load settings", "Settings file to load:", editor.SettingsPath);
+        string? path = Dialogs.Ask(app, Strings.LoadSettings, Strings.LoadPrompt, editor.SettingsPath);
         if (path is null) return;
         if (!File.Exists(path))
         {
-            Dialogs.Error(app, "Load settings", $"{path} does not exist.");
+            Dialogs.Error(app, Strings.LoadSettings, Texts.Format(Strings.DoesNotExist, path));
             return;
         }
 
@@ -206,27 +207,27 @@ public sealed class SettingsWindow : Dialog
         }
         catch (Exception ex) when (ex is IOException or FormatException or InvalidDataException)
         {
-            Dialogs.Error(app, "Load settings", ex.Message);
+            Dialogs.Error(app, Strings.LoadSettings, ex.Message);
             return;
         }
         Refresh();
-        Dialogs.Info(app, "Load settings", $"Loaded {count} setting(s) as edits. Apply or save them to use them.");
+        Dialogs.Info(app, Strings.LoadSettings, Texts.Format(Strings.LoadedSettings, count));
     }
 
     /// <summary>Write the current non-default settings to another file.</summary>
     private void Export()
     {
         // Pick file and write
-        string? path = Dialogs.Ask(app, "Export settings", "Write current settings to:", Path.Combine(Path.GetDirectoryName(editor.SettingsPath)!, "settings-copy.json"));
+        string? path = Dialogs.Ask(app, Strings.ExportSettings, Strings.ExportPrompt, Path.Combine(Path.GetDirectoryName(editor.SettingsPath)!, "settings-copy.json"));
         if (path is null) return;
         try
         {
             editor.Export(path);
-            Dialogs.Info(app, "Export settings", $"Wrote {path}. Secrets are not included.");
+            Dialogs.Info(app, Strings.ExportSettings, Texts.Format(Strings.Wrote, path));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Dialogs.Error(app, "Export settings", ex.Message);
+            Dialogs.Error(app, Strings.ExportSettings, ex.Message);
         }
     }
 

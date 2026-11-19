@@ -7,6 +7,7 @@ using Uniform.Matrix.Protocol.Core;
 using global::Terminal.Gui.Drawing;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Message log of the selected room: entries wrapped to the view width, colored by <see cref="EntryKind"/>, with day separators and pending messages last.</summary>
 /// <remarks>Must be used on the UI thread. Follows new lines while scrolled to the bottom, like irssi. When focused, the selected line marks the message for <see cref="SelectedEntry"/>.</remarks>
@@ -152,7 +153,7 @@ public sealed class TimelinePane : ListView
         foreach (TimelineEntry entry in entries.Concat(pending))
         {
             DateOnly entryDay = DateOnly.FromDateTime(DateTimeOffset.FromUnixTimeMilliseconds(entry.Timestamp).LocalDateTime);
-            if (day is not null && entryDay != day) AddLine(newLines, $"--- Day changed {entryDay:ddd d MMM yyyy} ---", null);
+            if (day is not null && entryDay != day) AddLine(newLines, Texts.Format(Strings.DayChanged, entryDay), null);
             day = entryDay;
             foreach (string line in TextWrapper.Wrap(entry.Text, width, entry.Indent)) AddLine(newLines, line, entry);
             if (entry.ImageUri is not null && PreviewProvider?.Invoke(entry, width - PreviewIndent.Length, Math.Max(1, wrapHeight)) is IReadOnlyList<string> preview)

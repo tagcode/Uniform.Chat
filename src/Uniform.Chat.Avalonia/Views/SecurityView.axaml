@@ -1,10 +1,11 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:l="using:Uniform.Chat.Avalonia.Localization"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              x:Class="Uniform.Chat.Avalonia.Views.SecurityView"
              x:DataType="vm:SecurityViewModel">
   <StackPanel Spacing="10">
-    <TextBlock Classes="title" Text="Security" />
+    <TextBlock Classes="title" Text="{l:Tr Security}" />
     <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
 
     <!-- Status -->
@@ -22,38 +23,38 @@
     <!-- New recovery key, shown once -->
     <Border Classes="notice" IsVisible="{Binding HasNewRecoveryKey}">
       <StackPanel Spacing="6">
-        <TextBlock Classes="subtitle" Text="Your recovery key" />
-        <TextBlock TextWrapping="Wrap" Text="Write it down or copy it somewhere safe now; it is not shown again. With it, a new sign-in can verify itself and read old messages." />
+        <TextBlock Classes="subtitle" Text="{l:Tr YourRecoveryKey}" />
+        <TextBlock TextWrapping="Wrap" Text="{l:Tr RecoveryKeyShownOnce}" />
         <SelectableTextBlock Text="{Binding NewRecoveryKey}" FontFamily="Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace" TextWrapping="Wrap" />
-        <Button Content="Copy" Click="OnCopyClick" HorizontalAlignment="Right" />
+        <Button Content="{l:Tr Copy}" Click="OnCopyClick" HorizontalAlignment="Right" />
       </StackPanel>
     </Border>
 
     <!-- Set up -->
     <StackPanel Spacing="6" IsVisible="{Binding CanSetUp}">
-      <TextBlock Classes="subtitle" Text="Set up recovery" />
-      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Create cross-signing keys, a key backup of message keys, and a recovery key." />
-      <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" IsVisible="{Binding NeedsPassword}" />
-      <Button Classes="accent" Content="Set up" Command="{Binding SetUpCommand}" HorizontalAlignment="Right" />
+      <TextBlock Classes="subtitle" Text="{l:Tr SetUpRecovery}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{l:Tr SetUpRecoveryHint}" />
+      <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="{l:Tr AccountPassword}" IsVisible="{Binding NeedsPassword}" />
+      <Button Classes="accent" Content="{l:Tr SetUp}" Command="{Binding SetUpCommand}" HorizontalAlignment="Right" />
     </StackPanel>
 
     <!-- Recover -->
     <StackPanel Spacing="6" IsVisible="{Binding CanRecover}">
-      <TextBlock Classes="subtitle" Text="Unlock encrypted history" />
-      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Enter the recovery key or passphrase you set up in this or another app, such as Element." />
+      <TextBlock Classes="subtitle" Text="{l:Tr UnlockEncryptedHistory}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{l:Tr EnterRecoveryKeyHint}" />
       <TextBox Classes="revealPasswordButton" Text="{Binding RecoveryInput}" PlaceholderText="EsT…" PasswordChar="•" />
-      <Button Classes="accent" Content="Recover" Command="{Binding RecoverCommand}" HorizontalAlignment="Right" />
+      <Button Classes="accent" Content="{l:Tr Recover}" Command="{Binding RecoverCommand}" HorizontalAlignment="Right" />
     </StackPanel>
 
     <!-- Verify -->
     <StackPanel Spacing="6" IsVisible="{Binding CanVerify}">
-      <TextBlock Classes="subtitle" Text="Verify with another device" />
-      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Compare emoji with another device where you are signed in, such as Element on your phone." />
-      <Button Content="Verify" Command="{Binding VerifyCommand}" HorizontalAlignment="Right" />
+      <TextBlock Classes="subtitle" Text="{l:Tr VerifyWithAnotherDevice}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{l:Tr CompareEmojiHint}" />
+      <Button Content="{l:Tr Verify}" Command="{Binding VerifyCommand}" HorizontalAlignment="Right" />
     </StackPanel>
 
     <!-- Devices -->
-    <TextBlock Classes="subtitle" Text="Devices" IsVisible="{Binding HasDevices}" />
+    <TextBlock Classes="subtitle" Text="{l:Tr Devices}" IsVisible="{Binding HasDevices}" />
     <ItemsControl ItemsSource="{Binding Devices}">
       <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="vm:DeviceItem">
@@ -62,8 +63,8 @@
               <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
               <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
             </StackPanel>
-            <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyDeviceClick" IsVisible="{Binding CanVerify}" />
-            <Button Grid.Column="2" Classes="link" Margin="8,0,0,0" Content="Sign out…" Click="OnSignOutDeviceClick" IsVisible="{Binding CanSignOut}" />
+            <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="{l:Tr Verify}" Click="OnVerifyDeviceClick" IsVisible="{Binding CanVerify}" />
+            <Button Grid.Column="2" Classes="link" Margin="8,0,0,0" Content="{l:Tr SignOutEllipsis}" Click="OnSignOutDeviceClick" IsVisible="{Binding CanSignOut}" />
           </Grid>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
@@ -72,25 +73,25 @@
     <!-- Signing out another device -->
     <Border Classes="notice" IsVisible="{Binding IsSigningOutDevice}">
       <StackPanel Spacing="6">
-        <TextBlock TextWrapping="Wrap" Text="{Binding SigningOut.Name, StringFormat='Sign out {0}? Enter your account password to confirm.', FallbackValue=''}" />
-        <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" />
+        <TextBlock TextWrapping="Wrap" Text="{Binding SignOutQuestion}" />
+        <TextBox Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="{l:Tr AccountPassword}" />
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-          <Button Classes="accent" Content="Sign out" Command="{Binding ConfirmSignOutCommand}" />
-          <Button Content="Cancel" Command="{Binding CancelSignOutCommand}" />
+          <Button Classes="accent" Content="{l:Tr SignOut}" Command="{Binding ConfirmSignOutCommand}" />
+          <Button Content="{l:Tr Cancel}" Command="{Binding CancelSignOutCommand}" />
         </StackPanel>
       </StackPanel>
     </Border>
 
     <!-- Blocked users -->
     <StackPanel Spacing="4" IsVisible="{Binding HasBlockedUsers}">
-      <TextBlock Classes="subtitle" Text="Blocked users" />
-      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Their messages and invites do not show." />
+      <TextBlock Classes="subtitle" Text="{l:Tr BlockedUsers}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{l:Tr BlockedUsersHint}" />
       <ItemsControl ItemsSource="{Binding BlockedUsers}">
         <ItemsControl.ItemTemplate>
           <DataTemplate x:DataType="x:String">
             <Grid ColumnDefinitions="*,Auto" Margin="0,2">
               <TextBlock Grid.Column="0" Text="{Binding}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Unblock" Tag="{Binding}" Click="OnUnblockClick" />
+              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="{l:Tr Unblock}" Tag="{Binding}" Click="OnUnblockClick" />
             </Grid>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
@@ -99,15 +100,15 @@
 
     <!-- Deleting the account -->
     <StackPanel Spacing="6">
-      <TextBlock Classes="subtitle" Text="Account" />
-      <Button Classes="danger" Content="Delete account…" Command="{Binding StartDeleteAccountCommand}" HorizontalAlignment="Left" IsVisible="{Binding !IsDeletingAccount}" />
+      <TextBlock Classes="subtitle" Text="{l:Tr Account}" />
+      <Button Classes="danger" Content="{l:Tr DeleteAccountEllipsis}" Command="{Binding StartDeleteAccountCommand}" HorizontalAlignment="Left" IsVisible="{Binding !IsDeletingAccount}" />
       <Border Classes="notice" IsVisible="{Binding IsDeletingAccount}">
         <StackPanel Spacing="6">
-          <TextBlock TextWrapping="Wrap" Text="Delete the account for good? You leave every room, your name and picture are removed, and every device is signed out. The user ID cannot be used again. Enter your password to confirm." />
-          <TextBox x:Name="DeletePasswordBox" Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="Account password" />
+          <TextBlock TextWrapping="Wrap" Text="{l:Tr DeleteAccountConfirm}" />
+          <TextBox x:Name="DeletePasswordBox" Classes="revealPasswordButton" Text="{Binding Password}" PasswordChar="•" PlaceholderText="{l:Tr AccountPassword}" />
           <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-            <Button Classes="danger" Content="Delete account" Command="{Binding ConfirmDeleteAccountCommand}" />
-            <Button Content="Cancel" Command="{Binding CancelDeleteAccountCommand}" />
+            <Button Classes="danger" Content="{l:Tr DeleteAccount}" Command="{Binding ConfirmDeleteAccountCommand}" />
+            <Button Content="{l:Tr Cancel}" Command="{Binding CancelDeleteAccountCommand}" />
           </StackPanel>
         </StackPanel>
       </Border>

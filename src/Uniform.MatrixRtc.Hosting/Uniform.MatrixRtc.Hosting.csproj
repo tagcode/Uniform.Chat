@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Runs the Uniform.MatrixRtc.Authorization service in an ASP.NET host: settings in section MatrixRtc, endpoints /sfu/get, /get_token and /healthz as lk-jwt-service has them.</Description>
-    <PackageTags>livekit;matrixrtc;matrix;hosting</PackageTags>
+    <PackageTags>matrixrtc;matrix;hosting</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

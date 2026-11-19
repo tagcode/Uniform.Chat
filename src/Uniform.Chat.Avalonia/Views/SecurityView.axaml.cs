@@ -4,6 +4,7 @@ using global::Avalonia.Controls;
 using global::Avalonia.Input.Platform;
 using global::Avalonia.Interactivity;
 using Uniform.Chat.Avalonia.ViewModels;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>Encryption status with recovery set-up, recovery and verification.</summary>
 public partial class SecurityView : UserControl
@@ -33,12 +34,12 @@ public partial class SecurityView : UserControl
         try
         {
             await clipboard.SetTextAsync(security.NewRecoveryKey);
-            security.Message = "Recovery key copied.";
+            security.Message = Strings.RecoveryKeyCopied;
         }
         catch (Exception exception)
         {
             // On error tell, since nothing awaits this handler
-            security.Message = $"Copying failed: {exception.Message}";
+            security.Message = Translations.Format(Strings.CopyingFailed, exception.Message);
         }
     }
 

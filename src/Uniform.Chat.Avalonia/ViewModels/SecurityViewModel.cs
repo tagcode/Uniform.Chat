@@ -1,5 +1,6 @@
 namespace Uniform.Chat.Avalonia.ViewModels;
 
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Chat.Avalonia.Services;
@@ -8,6 +9,7 @@ using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>One labelled line of the security status.</summary>
 /// <param name="Label">What the line is about, e.g. <c>Key backup</c>.</param>
@@ -113,7 +115,11 @@ public sealed partial class SecurityViewModel : ViewModelBase
     /// <summary>Device waiting for the password to be signed out, or null.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSigningOutDevice))]
+    [NotifyPropertyChangedFor(nameof(SignOutQuestion))]
     public partial DeviceItem? SigningOut { get; set; }
+
+    /// <summary>The question asked before signing a device out.</summary>
+    public string SignOutQuestion => SigningOut is DeviceItem device ? Translations.Format(Strings.SignOutConfirm, device.Name) : "";
 
     /// <summary>Get whether <see cref="SigningOut"/> asks for the password.</summary>
     public bool IsSigningOutDevice => SigningOut is not null;
@@ -136,7 +142,7 @@ public sealed partial class SecurityViewModel : ViewModelBase
         // Assert encryption
         if (!connection.Crypto.Available || connection.Crypto.IdentityKeys is not IdentityKeys keys)
         {
-            Lines = [new StatusLine("Encryption", $"Not available: {connection.Crypto.UnavailableReason}")];
+            Lines = [new StatusLine(Strings.DetailEncryption, Translations.Format(Strings.NotAvailable, connection.Crypto.UnavailableReason))];
             CanSetUp = CanRecover = CanVerify = false;
             return;
         }
@@ -148,12 +154,12 @@ public sealed partial class SecurityViewModel : ViewModelBase
             SecurityStatus status = await connection.Crypto.GetSecurityStatusAsync();
             Lines =
             [
-                new StatusLine("Device", connection.Crypto.DeviceId ?? ""),
-                new StatusLine("Fingerprint", CryptoService.FormatFingerprint(keys.Ed25519)),
-                new StatusLine("Cross-signing", !status.CrossSigningSetUp ? "Not set up" : status.IdentityTrusted ? "Set up and trusted here" : "Set up, not yet trusted here"),
-                new StatusLine("This device", status.ThisDeviceCrossSigned ? "Verified" : "Not verified"),
-                new StatusLine("Key backup", status.BackupVersion is null ? "None" : status.BackupUsable ? "On" : "Needs the recovery key"),
-                new StatusLine("Recovery key", status.SecretStorageSetUp ? "Set up" : "Not set up"),
+                new StatusLine(Strings.StatusDevice, connection.Crypto.DeviceId ?? ""),
+                new StatusLine(Strings.Fingerprint, CryptoService.FormatFingerprint(keys.Ed25519)),
+                new StatusLine(Strings.StatusCrossSigning, !status.CrossSigningSetUp ? Strings.NotSetUp : status.IdentityTrusted ? Strings.SetUpAndTrusted : Strings.SetUpNotTrusted),
+                new StatusLine(Strings.ThisDevice, status.ThisDeviceCrossSigned ? Strings.Verified : Strings.NotVerified),
+                new StatusLine(Strings.StatusKeyBackup, status.BackupVersion is null ? Strings.None : status.BackupUsable ? Strings.On : Strings.NeedsRecoveryKey),
+                new StatusLine(Strings.StatusRecoveryKey, status.SecretStorageSetUp ? Strings.SetUpDone : Strings.NotSetUp),
             ];
             CanSetUp = !status.CrossSigningSetUp;
             CanRecover = status.SecretStorageSetUp && (!status.HasPrivateKeys || !status.BackupUsable);
@@ -163,7 +169,7 @@ public sealed partial class SecurityViewModel : ViewModelBase
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error tell
-            Message = $"Checking encryption failed: {exception.Message}";
+            Message = Translations.Format(Strings.CheckingEncryptionFailed, exception.Message);
         }
         finally
         {
@@ -187,13 +193,13 @@ public sealed partial class SecurityViewModel : ViewModelBase
         catch (UserInteractiveAuthException exception) when (exception.AcceptsPassword && !NeedsPassword)
         {
             NeedsPassword = true;
-            Message = "Enter your account password to confirm.";
+            Message = Strings.EnterPasswordToConfirm;
             return;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             connection.Logger.LogWarning(exception, "Setting up recovery failed");
-            Message = $"Setting up recovery failed: {exception.Message}";
+            Message = Translations.Format(Strings.SettingUpRecoveryFailed, exception.Message);
             return;
         }
         finally
@@ -216,12 +222,12 @@ public sealed partial class SecurityViewModel : ViewModelBase
         {
             RecoveryResult result = await connection.Crypto.RecoverAsync(RecoveryInput.Trim());
             RecoveryInput = "";
-            Message = $"{result.KeysImported} message keys restored{(result.CrossSigningRestored ? "; this device is now verified" : "")}.";
+            Message = Translations.Format(result.CrossSigningRestored ? Strings.KeysRestoredVerified : Strings.KeysRestored, result.KeysImported);
             await recovered();
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            Message = $"Recovery failed: {exception.Message}";
+            Message = Translations.Format(Strings.RecoveryFailed, exception.Message);
             return;
         }
         finally
@@ -246,7 +252,7 @@ public sealed partial class SecurityViewModel : ViewModelBase
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error tell
-            Message = $"Verification failed: {exception.Message}";
+            Message = Translations.Format(Strings.VerificationFailed, exception.Message);
         }
     }
 
@@ -262,7 +268,7 @@ public sealed partial class SecurityViewModel : ViewModelBase
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error tell
-            Message = $"Verification failed: {exception.Message}";
+            Message = Translations.Format(Strings.VerificationFailed, exception.Message);
         }
     }
 
@@ -286,13 +292,13 @@ public sealed partial class SecurityViewModel : ViewModelBase
         {
             MatrixClient client = await connection.Session.WhenReady;
             await client.DeleteDevicesAsync([device.DeviceId], Password);
-            Message = $"Signed out {device.Name}.";
+            Message = Translations.Format(Strings.SignedOutDevice, device.Name);
             SigningOut = null;
             Password = "";
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            Message = $"Signing out {device.Name} failed: {exception.Message}";
+            Message = Translations.Format(Strings.SigningOutFailed, device.Name, exception.Message);
             return;
         }
         finally
@@ -321,12 +327,12 @@ public sealed partial class SecurityViewModel : ViewModelBase
         try
         {
             await connection.Processor.SetIgnoredAsync(await connection.Session.WhenReady, userId, ignored: false);
-            Message = $"Unblocked {userId}.";
+            Message = Translations.Format(Strings.UnblockedUser, userId);
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException)
         {
             // On error tell
-            Message = $"Unblocking {userId} failed: {exception.Message}";
+            Message = Translations.Format(Strings.UnblockingFailed, userId, exception.Message);
             return;
         }
         LoadBlockedUsers();
@@ -367,12 +373,12 @@ public sealed partial class SecurityViewModel : ViewModelBase
         }
         catch (UserInteractiveAuthException)
         {
-            Message = "The password was not accepted.";
+            Message = Strings.PasswordNotAccepted;
             return;
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException)
         {
-            Message = $"Deleting the account failed: {exception.Message}";
+            Message = Translations.Format(Strings.DeletingAccountFailed, exception.Message);
             return;
         }
         finally
@@ -398,13 +404,13 @@ public sealed partial class SecurityViewModel : ViewModelBase
             .Select(device =>
             {
                 DeviceTrust? trust = connection.Crypto.GetDeviceTrust(connection.UserId, device.DeviceId);
-                string seen = device.LastSeenTs is long time ? $" · last seen {DateTimeOffset.FromUnixTimeMilliseconds(time).LocalDateTime:d}" : "";
+                string seen = device.LastSeenTs is long time ? " · " + Translations.Format(Strings.LastSeen, DateTimeOffset.FromUnixTimeMilliseconds(time).LocalDateTime.ToString("d", CultureInfo.CurrentCulture)) : "";
                 string label = trust switch
                 {
-                    DeviceTrust.ThisDevice => "This device",
-                    DeviceTrust.Verified or DeviceTrust.CrossSigned => "Verified",
-                    DeviceTrust.Unverified => "Not verified",
-                    _ => "No encryption keys",
+                    DeviceTrust.ThisDevice => Strings.ThisDevice,
+                    DeviceTrust.Verified or DeviceTrust.CrossSigned => Strings.Verified,
+                    DeviceTrust.Unverified => Strings.NotVerified,
+                    _ => Strings.NoEncryptionKeys,
                 };
                 return new DeviceItem(device.DeviceId, device.DisplayName is { Length: > 0 } name ? name : device.DeviceId, $"{label}{seen}", device.DeviceId == connection.Crypto.DeviceId, trust == DeviceTrust.Unverified);
             })

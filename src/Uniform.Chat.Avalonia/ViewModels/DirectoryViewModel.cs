@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>A room of a public room directory.</summary>
 /// <param name="Room">The directory's entry.</param>
@@ -15,13 +16,13 @@ using Uniform.Matrix.Protocol.Core;
 public sealed record PublicRoomItem(PublicRoom Room, string Server, bool IsJoined = false)
 {
     /// <summary>Text of the button: Open for rooms the user is in, else Join.</summary>
-    public string ActionText => IsJoined ? "Open" : "Join";
+    public string ActionText => IsJoined ? Strings.Open : Strings.Join;
 
     /// <summary>Name, else alias, else ID.</summary>
     public string Title => Room.Name ?? Room.CanonicalAlias ?? Room.RoomId;
 
     /// <summary>Alias and member count.</summary>
-    public string Details => string.Join(" · ", new[] { Room.CanonicalAlias, Room.NumJoinedMembers == 1 ? "1 member" : $"{Room.NumJoinedMembers} members" }.OfType<string>());
+    public string Details => string.Join(" · ", new[] { Room.CanonicalAlias, Translations.Format(Room.NumJoinedMembers == 1 ? Strings.MemberCountOne : Strings.MemberCount, Room.NumJoinedMembers) }.OfType<string>());
 
     /// <summary>Topic, or empty.</summary>
     public string Topic => Room.Topic ?? "";
@@ -83,7 +84,7 @@ public sealed partial class DirectoryViewModel : ViewModelBase
         string server = Server.Trim();
         string term = SearchTerm.Trim();
         IsBusy = true;
-        Message = server.Length > 0 ? $"Asking {server}…" : "Searching…";
+        Message = server.Length > 0 ? Translations.Format(Strings.AskingServer, server) : Strings.Searching;
         Rooms.Clear();
 
         // Ask, through the user's server
@@ -93,12 +94,12 @@ public sealed partial class DirectoryViewModel : ViewModelBase
             PublicRoomsResponse page = await client.GetPublicRoomsAsync(server.Length > 0 ? server : null, PageSize, searchTerm: term.Length > 0 ? term : null);
             if (current != generation) return;
             foreach (PublicRoom room in page.Chunk) Rooms.Add(new PublicRoomItem(room, server, isJoined(room.RoomId)));
-            Message = Rooms.Count == 0 ? "No rooms found." : "";
+            Message = Rooms.Count == 0 ? Strings.NoRoomsFound : "";
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
         {
             connection.Logger.LogInformation("Room directory of {Server} failed: {Error}", server.Length > 0 ? server : "this server", exception.Describe());
-            if (current == generation) Message = $"Search failed: {exception.Message}";
+            if (current == generation) Message = Translations.Format(Strings.SearchFailed, exception.Message);
         }
         finally
         {
@@ -111,8 +112,8 @@ public sealed partial class DirectoryViewModel : ViewModelBase
     private async Task JoinAsync(PublicRoomItem room)
     {
         // The chat opens it when it arrives
-        if (!room.IsJoined) Message = $"Joining {room.Title}…";
+        if (!room.IsJoined) Message = Translations.Format(Strings.JoiningEllipsis, room.Title);
         bool joined = await join(room.Link);
-        ui.Post(() => Message = joined ? "" : $"Could not join {room.Title}.");
+        ui.Post(() => Message = joined ? "" : Translations.Format(Strings.CouldNotJoin, room.Title));
     }
 }

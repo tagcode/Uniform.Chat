@@ -8,6 +8,7 @@ using Uniform.Matrix.Protocol.Core;
 using global::Terminal.Gui.App;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Modal dialogs of the client: first sign-in and creating an account, room directory, reactions, devices and the image viewer; call on the UI thread. General dialogs are in <see cref="Dialogs"/>.</summary>
 public static class ClientDialogs
@@ -19,20 +20,20 @@ public static class ClientDialogs
     public static (MatrixLink Room, string Server)? PickPublicRoom(IApplication app, string server, Func<string?, string?, Task<IReadOnlyList<PublicRoom>>> search)
     {
         // Build dialog: server and search fields, results, buttons
-        using Dialog dialog = new() { Title = "Room directory", Width = Dim.Percent(80), Height = Dim.Percent(80) };
-        Label serverHint = new() { Text = "Server:", X = 1, Y = 0 };
+        using Dialog dialog = new() { Title = Strings.RoomDirectory, Width = Dim.Percent(80), Height = Dim.Percent(80) };
+        Label serverHint = new() { Text = Strings.ServerLabel, X = 1, Y = 0 };
         TextField serverField = new() { Text = server, X = Pos.Right(serverHint) + 1, Y = 0, Width = Dim.Percent(35) };
-        Label hint = new() { Text = "Search:", X = Pos.Right(serverField) + 2, Y = 0 };
+        Label hint = new() { Text = Strings.SearchLabel, X = Pos.Right(serverField) + 2, Y = 0 };
         TextField field = new() { X = Pos.Right(hint) + 1, Y = 0, Width = Dim.Fill(1) };
-        Label note = new() { Text = "Leave the server empty for your own; Enter in either field searches.", X = 1, Y = 1, Width = Dim.Fill(1) };
-        ObservableCollection<string> rows = ["Searching…"];
+        Label note = new() { Text = Strings.DirectoryHint, X = 1, Y = 1, Width = Dim.Fill(1) };
+        ObservableCollection<string> rows = [Strings.Searching];
         List<PublicRoom> results = [];
         string shownServer = "";
         ListView list = new() { X = 1, Y = 3, Width = Dim.Fill(1), Height = Dim.Fill(1) };
         list.SetSource(rows);
         dialog.Add(serverHint, serverField, hint, field, note, list);
-        dialog.AddButton(new Button { Text = "_Close" });
-        dialog.AddButton(new Button { Text = "_Join", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonClose });
+        dialog.AddButton(new Button { Text = Strings.ButtonJoin, IsDefault = true });
 
         // Search off the UI thread, then show results; a late answer for another server is dropped
         async void RunSearch()
@@ -42,7 +43,7 @@ public static class ClientDialogs
             shownServer = other;
             results.Clear();
             rows.Clear();
-            rows.Add(other.Length > 0 ? $"Asking {other}…" : "Searching…");
+            rows.Add(other.Length > 0 ? Texts.Format(Strings.Asking, other) : Strings.Searching);
             try
             {
                 IReadOnlyList<PublicRoom> found = await search(other.Length > 0 ? other : null, term.Length > 0 ? term : null);
@@ -50,7 +51,7 @@ public static class ClientDialogs
             }
             catch (Exception ex)
             {
-                app.Invoke(() => { if (shownServer == other) { rows.Clear(); rows.Add($"Search failed: {ex.Message}"); } });
+                app.Invoke(() => { if (shownServer == other) { rows.Clear(); rows.Add(Texts.Format(Strings.SearchFailed, ex.Message)); } });
             }
         }
         void ShowResults(IReadOnlyList<PublicRoom> found)
@@ -59,7 +60,7 @@ public static class ClientDialogs
             results.AddRange(found);
             rows.Clear();
             foreach (PublicRoom room in found) rows.Add($"{room.Name ?? room.CanonicalAlias ?? room.RoomId}  ({room.NumJoinedMembers})  {room.CanonicalAlias}  {room.Topic}".Trim());
-            if (found.Count == 0) rows.Add("No rooms found");
+            if (found.Count == 0) rows.Add(Strings.NoRoomsFound);
         }
 
         // Enter in a field searches instead of closing
@@ -93,12 +94,12 @@ public static class ClientDialogs
             if (button is not (1 or 2)) return null;
             if (!UserId.TryParse(id, out _))
             {
-                problem = id.Length == 0 ? "Give your user ID." : $"\"{id}\" is not a user ID; it looks like @alice:matrix.org.";
+                problem = id.Length == 0 ? Strings.GiveYourUserId : Texts.Format(Strings.NotAUserIdExample, id);
                 continue;
             }
             if (server.Length > 0 && !(Uri.TryCreate(server, UriKind.Absolute, out Uri? uri) && uri.Scheme is "https" or "http"))
             {
-                problem = $"\"{server}\" is not a server address; it looks like https://matrix.example.org.";
+                problem = Texts.Format(Strings.NotAServerAddress, server);
                 continue;
             }
             // Return entries
@@ -110,19 +111,19 @@ public static class ClientDialogs
     private static (int? Button, string UserId, string Homeserver) RunSignIn(IApplication app, string userId, string homeserver, string problem)
     {
         // Fields with a line for problems; the password is asked for after this, when logging in
-        using Dialog dialog = new() { Title = "Sign in to Matrix", Width = Dim.Percent(60) };
-        Label intro = new() { Text = "Give your full Matrix user ID to start; it is remembered after a successful login.", X = 1, Y = 0, Width = Dim.Fill(1) };
-        Label userLabel = new() { Text = "User ID, e.g. @alice:matrix.org:", X = 1, Y = Pos.Bottom(intro) + 1 };
+        using Dialog dialog = new() { Title = Strings.SignInToMatrix, Width = Dim.Percent(60) };
+        Label intro = new() { Text = Strings.SignInIntro, X = 1, Y = 0, Width = Dim.Fill(1) };
+        Label userLabel = new() { Text = Strings.UserIdPrompt, X = 1, Y = Pos.Bottom(intro) + 1 };
         TextField userField = new() { Text = userId, X = 1, Y = Pos.Bottom(userLabel), Width = Dim.Fill(1) };
-        Label serverLabel = new() { Text = "Server address, only when it cannot be found from the user ID:", X = 1, Y = Pos.Bottom(userField) + 1, Width = Dim.Fill(1) };
+        Label serverLabel = new() { Text = Strings.ServerAddressPrompt, X = 1, Y = Pos.Bottom(userField) + 1, Width = Dim.Fill(1) };
         TextField serverField = new() { Text = homeserver, X = 1, Y = Pos.Bottom(serverLabel), Width = Dim.Fill(1) };
-        Label hint = new() { Text = "For example http://localhost:8008 for a server on this computer.", X = 1, Y = Pos.Bottom(serverField), Width = Dim.Fill(1) };
-        Label policy = new() { Text = $"By continuing you accept the user policy: no illegal, abusive or harmful content.\n{UserPolicyUrl}", X = 1, Y = Pos.Bottom(hint) + 1, Width = Dim.Fill(1) };
+        Label hint = new() { Text = Strings.ServerAddressHint, X = 1, Y = Pos.Bottom(serverField), Width = Dim.Fill(1) };
+        Label policy = new() { Text = Texts.Format(Strings.AcceptPolicy, UserPolicyUrl), X = 1, Y = Pos.Bottom(hint) + 1, Width = Dim.Fill(1) };
         Label problemLabel = new() { Text = problem, X = 1, Y = Pos.Bottom(policy) + 1, Width = Dim.Fill(1) };
         dialog.Add(intro, userLabel, userField, serverLabel, serverField, hint, policy, problemLabel);
-        dialog.AddButton(new Button { Text = "_Quit" });
-        dialog.AddButton(new Button { Text = "_Create account" });
-        dialog.AddButton(new Button { Text = "_Sign in", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonQuit });
+        dialog.AddButton(new Button { Text = Strings.ButtonCreateAccount });
+        dialog.AddButton(new Button { Text = Strings.ButtonSignIn, IsDefault = true });
 
         // Run; Enter in a field accepts with the default button
         userField.SetFocus();
@@ -138,10 +139,10 @@ public static class ClientDialogs
     public static string? CreateAccount(IApplication app, string userId, string? homeserver)
     {
         // Password twice
-        if (Dialogs.Ask(app, "Create account", $"A password for {userId}:", secret: true) is not { Length: > 0 } password) return null;
-        if (Dialogs.Ask(app, "Create account", "The same password again:", secret: true) != password)
+        if (Dialogs.Ask(app, Strings.CreateAccount, Texts.Format(Strings.APasswordFor, userId), secret: true) is not { Length: > 0 } password) return null;
+        if (Dialogs.Ask(app, Strings.CreateAccount, Strings.SamePasswordAgain, secret: true) != password)
         {
-            Dialogs.Error(app, "Create account", "The passwords differ.");
+            Dialogs.Error(app, Strings.CreateAccount, Strings.PasswordsDiffer);
             return null;
         }
 
@@ -160,19 +161,19 @@ public static class ClientDialogs
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException)
         {
-            Dialogs.Error(app, "Create account", ex is MatrixException { Errcode: ErrorCodes.Forbidden } ? "This server does not let apps create accounts." : ex.Message);
+            Dialogs.Error(app, Strings.CreateAccount, ex is MatrixException { Errcode: ErrorCodes.Forbidden } ? Strings.NoAppRegistration : ex.Message);
             return null;
         }
         if (!requirements.Supported)
         {
-            Dialogs.Error(app, "Create account", "This server needs a step this app cannot do, such as a captcha or an email. Create the account on the server's website, then sign in here.");
+            Dialogs.Error(app, Strings.CreateAccount, Strings.RegistrationStepUnsupported);
             return null;
         }
 
         // Token and policies when asked for
-        string? token = requirements.NeedsToken ? Dialogs.Ask(app, "Create account", "Registration token from the server's admin:")?.Trim() : null;
+        string? token = requirements.NeedsToken ? Dialogs.Ask(app, Strings.CreateAccount, Strings.RegistrationTokenPrompt)?.Trim() : null;
         if (requirements.NeedsToken && string.IsNullOrEmpty(token)) return null;
-        bool accepted = requirements.Policies.Count == 0 || Dialogs.Choose(app, "Create account", $"The server's policies:\n{string.Join("\n", requirements.Policies.Select(p => $"{p.Name}: {p.Url}"))}", ["_Cancel", "I _accept them"]) == 1;
+        bool accepted = requirements.Policies.Count == 0 || Dialogs.Choose(app, Strings.CreateAccount, Texts.Format(Strings.ServerPolicies, string.Join("\n", requirements.Policies.Select(p => $"{p.Name}: {p.Url}"))), [Strings.ButtonCancel, Strings.ButtonAcceptThem]) == 1;
         if (!accepted) return null;
 
         // Register; the login that follows uses the same password
@@ -182,10 +183,10 @@ public static class ClientDialogs
         }
         catch (Exception ex) when (ex is MatrixException or HttpRequestException or TaskCanceledException or UserInteractiveAuthException)
         {
-            Dialogs.Error(app, "Create account", ex switch
+            Dialogs.Error(app, Strings.CreateAccount, ex switch
             {
-                MatrixException { Errcode: ErrorCodes.UserInUse } => $"{userId} is taken; choose another.",
-                UserInteractiveAuthException => "The server did not accept the registration token.",
+                MatrixException { Errcode: ErrorCodes.UserInUse } => Texts.Format(Strings.UserIdTaken, userId),
+                UserInteractiveAuthException => Strings.TokenNotAccepted,
                 _ => ex.Message,
             });
             return null;
@@ -199,10 +200,10 @@ public static class ClientDialogs
     {
         // Common reactions, then free text
         string[] common = ["👍", "❤️", "😂", "🎉", "👀", "🙏"];
-        int? choice = MessageBox.Query(app, "React", "Choose a reaction:", [.. common, "_Other…", "_Cancel"]);
+        int? choice = MessageBox.Query(app, Strings.React, Strings.ChooseReaction, [.. common, Strings.ButtonOther, Strings.ButtonCancel]);
         if (choice is not int index || index > common.Length) return null;
         // Return emoji or typed reaction
-        return index < common.Length ? common[index] : Dialogs.Ask(app, "React", "Reaction text or emoji:");
+        return index < common.Length ? common[index] : Dialogs.Ask(app, Strings.React, Strings.ReactionPrompt);
     }
 
     /// <summary>Show devices; return the chosen action (1 rename, 2 log out device, 3 log out all others, 4 verify) and device, or null when closed.</summary>
@@ -215,15 +216,15 @@ public static class ClientDialogs
         // List devices, this one first, then by last activity
         List<Device> ordered = [.. devices.OrderByDescending(d => d.DeviceId == ownDeviceId).ThenByDescending(d => d.LastSeenTs ?? 0)];
         ObservableCollection<string> rows = [.. ordered.Select(d => FormatDevice(d, ownDeviceId, trust?.Invoke(d.DeviceId)))];
-        using Dialog dialog = new() { Title = $"Devices ({ordered.Count}, * = this device)", Width = Dim.Percent(80), Height = Dim.Percent(70) };
+        using Dialog dialog = new() { Title = Texts.Format(Strings.DevicesTitle, ordered.Count), Width = Dim.Percent(80), Height = Dim.Percent(70) };
         ListView list = new() { X = 1, Y = 0, Width = Dim.Fill(1), Height = Dim.Fill(1) };
         list.Source = new WarningListSource(rows, WarningListSource.NotTrusted);
         dialog.Add(list);
-        dialog.AddButton(new Button { Text = "_Close" });
-        dialog.AddButton(new Button { Text = "_Rename" });
-        dialog.AddButton(new Button { Text = "_Log out device" });
-        dialog.AddButton(new Button { Text = "Log out _all others" });
-        if (trust is not null) dialog.AddButton(new Button { Text = "_Verify selected" });
+        dialog.AddButton(new Button { Text = Strings.ButtonClose });
+        dialog.AddButton(new Button { Text = Strings.ButtonRename });
+        dialog.AddButton(new Button { Text = Strings.ButtonLogOutDevice });
+        dialog.AddButton(new Button { Text = Strings.ButtonLogOutOthers });
+        if (trust is not null) dialog.AddButton(new Button { Text = Strings.ButtonVerifySelected });
 
         // Run
         list.SetFocus();
@@ -237,7 +238,7 @@ public static class ClientDialogs
     private static string FormatDevice(Device device, string? ownDeviceId, string? trust)
     {
         // Last seen as local time
-        string seen = device.LastSeenTs is long ts ? DateTimeOffset.FromUnixTimeMilliseconds(ts).ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "never";
+        string seen = device.LastSeenTs is long ts ? DateTimeOffset.FromUnixTimeMilliseconds(ts).ToLocalTime().ToString("yyyy-MM-dd HH:mm") : Strings.Never;
         string own = device.DeviceId == ownDeviceId ? "*" : " ";
         // Return row; the mark is first so narrow dialogs keep it
         return trust is null
@@ -252,7 +253,7 @@ public static class ClientDialogs
         using Dialog dialog = new() { Title = $"{title} ({image.Width}×{image.Height})", Width = Dim.Percent(90), Height = Dim.Percent(90) };
         ImageView view = new() { X = 0, Y = 0, Width = Dim.Fill(), Height = Dim.Fill(1), Image = image.ToColors(), UseRasterGraphics = true };
         dialog.Add(view);
-        dialog.AddButton(new Button { Text = "_Close", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonClose, IsDefault = true });
         // Run
         app.Run(dialog);
     }

@@ -1,5 +1,4 @@
 # Look and feel
-
 - Material.Avalonia 
   - https://avaloniacommunity.github.io/Material.Avalonia/
   - https://github.com/AvaloniaCommunity/material.avalonia
@@ -26,22 +25,18 @@
   - edge-to-edge layout with the right system bar colours; the back gesture; the keyboard pushing the composer up;
 
 # UserManagement 
-
 - Separate user management class libraries: Uniform.UserManagement that is agnostic of Uniform.Matrix.*
 - Create Uniform.UserManagement.Gui.Terminal
 - Have Matrix server include Uniform.UserManagement.Gui.Terminal
 
 # Documentations
-
 - Clean up package README.md:s.
 - Rewrite and reorganize documents.
 
 # Android/Flutter
-
 - Prototype flutter GUI with Avalonia. Avalonia Flutter support isn't ready yet, perhaps in 2027.
 
 # Google Play
-
 - Background sync service: The app keeps syncing with the screen off through a foreground service of type remoteMessaging. Play allows that type only for relaying texts to another device, such as a web client paired with the phone. A permanent sync connection doesn't fit, and reviewers check this against a demo video. Ways out:
   - Use push notifications through a push gateway. This is what Play-store Matrix clients do; it's the push work your approved-packages list already allows.
   - Keep the service only in a separate build for direct APK or F-Droid releases.
@@ -55,17 +50,11 @@
 - Registering calls with Android's telephony system (ConnectionService).
 
 # Encryption
-
 - Settings for encryption strength. Key sizes
 
 # Local encryption
-
 - A) SQLCipher (the SQLitePCLRaw.bundle_e_sqlcipher package) encrypts the whole database. The key goes into the Android Keystore, Windows DPAPI, or the Linux Secret Service.
 - B) Own encryption: AES-GCM on the message and outbox contents with a key from the same keystores. No new dependency.
-
-# Uniform.Matrix.Gui.Terminal
-
-Rename to Uniform.Gui.Terminal.
 
 # IzzyOnDroid
   - github releases should include signed .apk:s.
@@ -73,7 +62,6 @@ Rename to Uniform.Gui.Terminal.
      - One APK per processor type, would halve it (40MB). Still not small enough. Cannot be published on IzzyOnDroid.
 
 # Android client 
-
 - Suspended-account banner and server notices
 - F-Droid / IzzyOnDroid store screenshots
 - Admin pages (reports, accounts, tokens)
@@ -85,11 +73,12 @@ Rename to Uniform.Gui.Terminal.
 # MatrixRTC calls
   - Element Call's "Matrix 2.0" mode, with sticky memberships (MSC4354), once Element makes it the default; data channels for reactions and raised hands;
 
-# Database connections
+# Server Database connections
 - Support all the database connections EF supports
 
 # Video player
-- Embedded video player
+- Room embedded video player for a limited video codec and file formats.
+- The currently implemented encoders could be supported.
 
 # Room VOIP
 - MSC3401
@@ -98,3 +87,9 @@ Rename to Uniform.Gui.Terminal.
 - Codebase refactor
   - .NET 11 improvements
   - Remove residual AOT code and replace with JIT decision.
+  - Detect redundant mechanisms
+
+# Localization
+- Translation texts for other languages.
+- European languages: German, Swedish, Norwegian, Danish, Dutch, Polish, Estonian, Latvian, Lithuanian, Hungarian, Romanian, Ukrainian, Serbo-Croatian, Turkish, Greek, Czech, Serbian, Bulgarian, Albanian, Neopolitan, Slovak, Sami
+- World languages: Mandarin Chinese, Hindi, Standard Arabic, French, Bengali, Portuguese, Indonesian, Urdu, Russian, German, Japanese, Egyptian Arabic, Marathi, Vietnamese, Telugu

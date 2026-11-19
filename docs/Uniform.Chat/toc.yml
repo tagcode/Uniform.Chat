@@ -57,5 +57,7 @@ items:
   uid: Uniform.Matrix.Building.Article
 - name: Testing
   uid: Uniform.Matrix.Testing.Article
+- name: Localization
+  uid: Uniform.Matrix.Localization.Article
 - name: Documentation
   uid: Uniform.Matrix.Documentation.Article

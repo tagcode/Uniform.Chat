@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>An SFU client in pure C#: signalling, publishing and subscribing over WebRTC, and the end-to-end encryption of frames; and clients of the SFU's room service and of a MatrixRTC authorization service (lk-jwt-service), which exchanges a Matrix OpenID token for an SFU access token.</Description>
-    <PackageTags>livekit;matrixrtc;matrix;webrtc</PackageTags>
+    <PackageTags>matrixrtc;matrix;webrtc</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>

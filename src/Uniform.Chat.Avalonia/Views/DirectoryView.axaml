@@ -1,16 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:l="using:Uniform.Chat.Avalonia.Localization"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              x:Class="Uniform.Chat.Avalonia.Views.DirectoryView"
              x:DataType="vm:DirectoryViewModel">
   <DockPanel>
     <StackPanel DockPanel.Dock="Top" Spacing="8">
-      <TextBlock Classes="title" Text="Room directory" />
-      <TextBlock Classes="hint" TextWrapping="Wrap" Text="Public rooms of your server, or of another server such as matrix.org." />
-      <TextBox Text="{Binding Server}" PlaceholderText="Server, e.g. matrix.org; empty for yours" x:Name="ServerBox" />
+      <TextBlock Classes="title" Text="{l:Tr RoomDirectory}" />
+      <TextBlock Classes="hint" TextWrapping="Wrap" Text="{l:Tr DirectoryHint}" />
+      <TextBox Text="{Binding Server}" PlaceholderText="{l:Tr DirectoryServerPlaceholder}" x:Name="ServerBox" />
       <Grid ColumnDefinitions="*,Auto">
-        <TextBox Grid.Column="0" Text="{Binding SearchTerm}" PlaceholderText="Search" x:Name="SearchBox" />
-        <Button Grid.Column="1" Margin="6,0,0,0" Classes="accent" Content="Search" Command="{Binding SearchCommand}" IsDefault="True" />
+        <TextBox Grid.Column="0" Text="{Binding SearchTerm}" PlaceholderText="{l:Tr Search}" x:Name="SearchBox" />
+        <Button Grid.Column="1" Margin="6,0,0,0" Classes="accent" Content="{l:Tr Search}" Command="{Binding SearchCommand}" IsDefault="True" />
       </Grid>
       <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
       <TextBlock Classes="hint" Text="{Binding Message}" TextWrapping="Wrap" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />

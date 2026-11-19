@@ -6,6 +6,7 @@ using Uniform.Matrix.Calls;
 using Uniform.Chat.Terminal.Configuration;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.WebRtc.Ice;
+using Uniform.Chat.Terminal.Localization;
 
 // Voice calls: placing, answering and ending them, and their state in the status bar.
 public sealed partial class MainWindow
@@ -25,11 +26,11 @@ public sealed partial class MainWindow
         // A room with one other member
         if (currentRoomId is not string roomId)
         {
-            Dialogs.Error(app, "Call", "Open a direct chat first.");
+            Dialogs.Error(app, Strings.Call, Strings.OpenDirectChatFirst);
             return;
         }
         // Done
-        _ = RunCallActionAsync("Calling", () => calls.PlaceCallAsync(roomId));
+        _ = RunCallActionAsync(Strings.Calling, () => calls.PlaceCallAsync(roomId));
     }
 
     /// <summary>Answer the ringing call, the open room's first.</summary>
@@ -38,11 +39,11 @@ public sealed partial class MainWindow
         // The ringing call
         if (FindCall(CallState.Ringing) is not VoiceCall call)
         {
-            ShowStatus("No call is ringing.");
+            ShowStatus(Strings.NoCallRinging);
             return;
         }
         // Done
-        _ = RunCallActionAsync("Answering", () => call.AnswerAsync());
+        _ = RunCallActionAsync(Strings.Answering, () => call.AnswerAsync());
     }
 
     /// <summary>Decline the ringing call, the open room's first.</summary>
@@ -51,11 +52,11 @@ public sealed partial class MainWindow
         // The ringing call
         if (FindCall(CallState.Ringing) is not VoiceCall call)
         {
-            ShowStatus("No call is ringing.");
+            ShowStatus(Strings.NoCallRinging);
             return;
         }
         // Done
-        _ = RunCallActionAsync("Rejecting", () => call.RejectAsync());
+        _ = RunCallActionAsync(Strings.RejectingCall, () => call.RejectAsync());
     }
 
     /// <summary>End the call, the open room's first.</summary>
@@ -64,11 +65,11 @@ public sealed partial class MainWindow
         // Any call not ended
         if (FindCall(null) is not VoiceCall call)
         {
-            ShowStatus("No call to hang up.");
+            ShowStatus(Strings.NoCallToHangUp);
             return;
         }
         // Done
-        _ = RunCallActionAsync("Hanging up", () => call.IsIncoming && call.State == CallState.Ringing ? call.RejectAsync() : call.HangupAsync());
+        _ = RunCallActionAsync(Strings.HangingUp, () => call.IsIncoming && call.State == CallState.Ringing ? call.RejectAsync() : call.HangupAsync());
     }
 
     /// <summary>Mute or unmute the microphone of the call.</summary>
@@ -77,7 +78,7 @@ public sealed partial class MainWindow
         // Any call not ended
         if (FindCall(null) is not VoiceCall call)
         {
-            ShowStatus("No call to mute.");
+            ShowStatus(Strings.NoCallToMute);
             return;
         }
         // Done
@@ -103,7 +104,7 @@ public sealed partial class MainWindow
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            app.Invoke(() => Dialogs.Error(app, "Call", $"{what} failed: {ex.Message}"));
+            app.Invoke(() => Dialogs.Error(app, Strings.Call, Texts.Format(Strings.ActionFailed, what, ex.Message)));
         }
     }
 
@@ -112,15 +113,15 @@ public sealed partial class MainWindow
     {
         // What it is doing
         string peer = call.PeerUserId;
-        string muted = call.Muted ? ", muted" : "";
+        string muted = call.Muted ? Strings.Muted : "";
         string text = call.State switch
         {
-            CallState.Ringing => $"Call: {peer} is calling: /answer or /reject",
-            CallState.Inviting => $"Call: Calling {peer}…  /hangup to cancel",
-            CallState.Connecting => $"Call: Connecting to {peer}…",
-            CallState.Connected => $"Call: In a call with {peer}{(call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed ? ", relayed" : "")}{muted}  /mute /hangup",
-            CallState.Reconnecting => $"Call: Reconnecting to {peer}…",
-            _ => $"Call: Call with {peer} ended: {CallEndText(call)}",
+            CallState.Ringing => Texts.Format(Strings.CallRinging, peer),
+            CallState.Inviting => Texts.Format(Strings.CallInviting, peer),
+            CallState.Connecting => Texts.Format(Strings.CallConnecting, peer),
+            CallState.Connected => Texts.Format(Strings.CallConnected, peer, (call.Path.Local?.Type == IceCandidateType.Relayed || call.Path.Remote?.Type == IceCandidateType.Relayed ? Strings.Relayed : ""), muted),
+            CallState.Reconnecting => Texts.Format(Strings.CallReconnecting, peer),
+            _ => Texts.Format(Strings.CallEnded, peer, CallEndText(call)),
         };
         // Done
         ShowStatus(text);
@@ -129,14 +130,14 @@ public sealed partial class MainWindow
     /// <summary>Return why a call ended, for people.</summary>
     private static string CallEndText(VoiceCall call) => call.EndReason switch
     {
-        "user_hangup" => call.EndedByPeer ? "they hung up" : "you hung up",
-        "rejected" => call.EndedByPeer ? "declined" : "you declined",
-        "invite_timeout" => call.IsIncoming ? "missed" : "no answer",
-        "ice_failed" => "no connection",
-        "answered_elsewhere" => "answered on another device",
-        "rejected_elsewhere" => "declined on another device",
-        "replaced" => "they called again",
+        "user_hangup" => call.EndedByPeer ? Strings.EndTheyHungUp : Strings.EndYouHungUp,
+        "rejected" => call.EndedByPeer ? Strings.EndDeclined : Strings.EndYouDeclined,
+        "invite_timeout" => call.IsIncoming ? Strings.EndMissed : Strings.EndNoAnswer,
+        "ice_failed" => Strings.EndNoConnection,
+        "answered_elsewhere" => Strings.EndAnsweredElsewhere,
+        "rejected_elsewhere" => Strings.EndDeclinedElsewhere,
+        "replaced" => Strings.EndCalledAgain,
         string reason => reason,
-        null => "ended",
+        null => Strings.EndEnded,
     };
 }

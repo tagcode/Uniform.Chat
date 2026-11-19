@@ -3,6 +3,7 @@ namespace Uniform.Chat.Avalonia.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Chat.Avalonia.Services;
+using Uniform.Chat.Avalonia.Localization;
 
 // Content shared from other apps: the room to share to, then its text in the message box and its files to send.
 public sealed partial class ChatViewModel
@@ -16,7 +17,7 @@ public sealed partial class ChatViewModel
     public bool HasPendingShare => PendingShare is not null;
 
     /// <summary>What to ask while a room is chosen.</summary>
-    public string PendingShareText => PendingShare is null ? "" : $"Choose a room to share {PendingShare.Summary} to.";
+    public string PendingShareText => PendingShare is null ? "" : Translations.Format(Strings.ChooseRoomToShare, PendingShare.Summary);
 
     /// <summary>Shared files that wait to be sent in the open room; null when none do.</summary>
     [ObservableProperty]
@@ -27,7 +28,7 @@ public sealed partial class ChatViewModel
     public bool HasSharedFiles => SharedFiles is { Count: > 0 };
 
     /// <summary>What waits to be sent, e.g. <c>Share photo.jpg</c>.</summary>
-    public string SharedFilesText => SharedFiles is not { Count: > 0 } files ? "" : files.Count == 1 ? $"Share {files[0].Name}" : $"Share {files.Count} files";
+    public string SharedFilesText => SharedFiles is not { Count: > 0 } files ? "" : Translations.Format(files.Count == 1 ? Strings.ShareFile : Strings.ShareFiles, files.Count == 1 ? files[0].Name : files.Count);
 
     /// <summary>Follow the share sheet, and take what was shared before this view existed, e.g. what started the app.</summary>
     private void ListenForShares()
@@ -88,7 +89,7 @@ public sealed partial class ChatViewModel
             catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
             {
                 // On a copy that went missing
-                Notice = $"Sharing {file.Name} failed: {exception.Message}";
+                Notice = Translations.Format(Strings.SharingFailed, file.Name, exception.Message);
             }
         }
         // Done

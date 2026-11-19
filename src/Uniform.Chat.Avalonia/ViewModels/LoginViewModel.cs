@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The sign-in form: user ID, password, and the homeserver address for servers without discovery; it also creates accounts, with the registration token and the server's policies when the server asks for them.</summary>
 /// <param name="signIn">Sign in with the form's values; reports failures in <see cref="ErrorMessage"/>.</param>
@@ -76,13 +77,13 @@ public sealed partial class LoginViewModel(Func<SignIn, Task> signIn, IAccountCr
     public bool HasError => ErrorMessage.Length > 0;
 
     /// <summary>Heading of the form.</summary>
-    public string Title => IsRegistering ? "Create a Matrix account" : "Sign in to Matrix";
+    public string Title => IsRegistering ? Strings.CreateMatrixAccount : Strings.SignInToMatrix;
 
     /// <summary>Text of the main button.</summary>
-    public string ActionText => IsRegistering ? "Create account" : "Sign in";
+    public string ActionText => IsRegistering ? Strings.CreateAccount : Strings.SignIn;
 
     /// <summary>Text of the button that switches between signing in and creating an account.</summary>
-    public string SwitchText => IsRegistering ? "I have an account: sign in" : "Create an account";
+    public string SwitchText => IsRegistering ? Strings.HaveAccountSignIn : Strings.CreateAnAccount;
 
     /// <summary>Forget the server's requirements when the user ID changes.</summary>
     partial void OnUserIdChanged(string value) => ForgetRequirements();
@@ -107,7 +108,7 @@ public sealed partial class LoginViewModel(Func<SignIn, Task> signIn, IAccountCr
         string userId = UserId.Trim();
         if (!Uniform.Matrix.Protocol.Core.UserId.TryParse(userId, out _))
         {
-            ErrorMessage = $"\"{userId}\" is not a Matrix user ID; it looks like @alice:matrix.org.";
+            ErrorMessage = Translations.Format(Strings.NotAMatrixUserId, userId);
             return;
         }
 
@@ -140,9 +141,9 @@ public sealed partial class LoginViewModel(Func<SignIn, Task> signIn, IAccountCr
                 foreach (TermsPolicy policy in requirements.Policies) Policies.Add(policy);
                 HasPolicies = Policies.Count > 0;
             }
-            if (!requirements.Supported) return Fail("This server needs a step this app cannot do, such as a captcha or an email. Create the account on the server's website, then sign in here.");
-            if (NeedsToken && RegistrationToken.Trim().Length == 0) return Fail("This server needs a registration token from its admin.");
-            if (HasPolicies && !AcceptTerms) return Fail("Read and accept the server's policies to continue.");
+            if (!requirements.Supported) return Fail(Strings.RegistrationUnsupported);
+            if (NeedsToken && RegistrationToken.Trim().Length == 0) return Fail(Strings.NeedsRegistrationToken);
+            if (HasPolicies && !AcceptTerms) return Fail(Strings.AcceptPoliciesToContinue);
 
             // Create, then sign in as usual
             await creator!.CreateAsync(form, RegistrationToken.Trim(), AcceptTerms);
@@ -152,20 +153,20 @@ public sealed partial class LoginViewModel(Func<SignIn, Task> signIn, IAccountCr
         }
         catch (UserInteractiveAuthException)
         {
-            return Fail(NeedsToken ? "The server did not accept the registration token." : "The server wants more than this app can give to create an account.");
+            return Fail(NeedsToken ? Strings.TokenNotAccepted : Strings.RegistrationNeedsMore);
         }
         catch (MatrixException exception)
         {
             return Fail(exception.Errcode switch
             {
-                ErrorCodes.UserInUse => "That user ID is taken; choose another.",
-                ErrorCodes.Forbidden => "This server does not let apps create accounts.",
+                ErrorCodes.UserInUse => Strings.UserIdTaken,
+                ErrorCodes.Forbidden => Strings.AppsCannotRegister,
                 _ => MainViewModel.CleanError(exception.Message),
             });
         }
         catch (HttpRequestException exception)
         {
-            return Fail($"The server cannot be reached: {exception.Message}");
+            return Fail(Translations.Format(Strings.ServerUnreachable, exception.Message));
         }
     }
 

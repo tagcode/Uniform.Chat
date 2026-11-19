@@ -43,4 +43,8 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
   </ItemGroup>
 
+  <!-- Texts shown to people, such as event descriptions: English in Strings.resx, other languages beside it; an internal typed class Strings is generated from the English -->
+  <ItemGroup>
+    <EmbeddedResource Update="Localization/Strings.resx" StronglyTypedLanguage="CSharp" StronglyTypedClassName="Strings" StronglyTypedNamespace="Uniform.Matrix.Client.Localization" StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs" />
+  </ItemGroup>
 </Project>

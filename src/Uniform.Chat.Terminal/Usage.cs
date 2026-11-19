@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Hosting;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Command-line help, shown for <c>--help</c>, and instead of starting when the user ID is missing or invalid and the console is not interactive.</summary>
 internal static class Usage
@@ -16,7 +17,7 @@ internal static class Usage
     {
         // Only this process on the console: it was opened for us and closes when we exit
         if (!OperatingSystem.IsWindows() || Console.IsInputRedirected || GetConsoleProcessList(new uint[2], 2) != 1) return;
-        Console.Error.WriteLine("Press Enter to close.");
+        Console.Error.WriteLine(Strings.PressEnterToClose);
         Console.ReadLine();
     }
 
@@ -36,7 +37,7 @@ internal static class Usage
         // Program name as the user typed it, and why help is shown
         string program = Path.GetFileName(Environment.ProcessPath) ?? "Uniform.Chat";
         string section = MatrixOptions.Section;
-        string problem = askedForHelp ? "" : string.IsNullOrWhiteSpace(userId) ? "Give your Matrix user ID to start.\n\n" : $"\"{userId}\" is not a Matrix user ID; it looks like @alice:matrix.org.\n\n";
+        string problem = askedForHelp ? "" : string.IsNullOrWhiteSpace(userId) ? Strings.GiveUserIdToStart : Texts.Format(Strings.NotAMatrixUserId, userId);
 
         // The settings: name, default, then the description wrapped under it
         StringBuilder list = new();

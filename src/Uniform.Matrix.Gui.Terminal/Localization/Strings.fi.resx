@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Finnish texts; each key of Strings.resx, with the same placeholders -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Applied" xml:space="preserve">
+    <value>Käytössä</value>
+  </data>
+  <data name="AppliedRestart" xml:space="preserve">
+    <value>Otettu käyttöön. Nämä tulevat voimaan uudelleenkäynnistyksen jälkeen:
+
+{0}</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Käytä</value>
+  </data>
+  <data name="ButtonApply" xml:space="preserve">
+    <value>_Käytä</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Peruuta</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Sulje</value>
+  </data>
+  <data name="ButtonDone" xml:space="preserve">
+    <value>_Valmis</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Muokkaa</value>
+  </data>
+  <data name="ButtonExport" xml:space="preserve">
+    <value>_Vie…</value>
+  </data>
+  <data name="ButtonLoad" xml:space="preserve">
+    <value>_Lataa…</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>_Ei</value>
+  </data>
+  <data name="ButtonOk" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="ButtonReset" xml:space="preserve">
+    <value>_Nollaa</value>
+  </data>
+  <data name="ButtonSave" xml:space="preserve">
+    <value>_Tallenna</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>_Kyllä</value>
+  </data>
+  <data name="CannotRead" xml:space="preserve">
+    <value>Tiedostoa {0} ei voi lukea: {1}</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Nykyinen: {0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value> Oletus: {0}.</value>
+  </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>{0} ei ole olemassa.</value>
+  </data>
+  <data name="EffectAfterRestart" xml:space="preserve">
+    <value> Tulee voimaan uudelleenkäynnistyksen jälkeen.</value>
+  </data>
+  <data name="EffectWhenApplied" xml:space="preserve">
+    <value> Tulee voimaan, kun otetaan käyttöön.</value>
+  </data>
+  <data name="EmptyForNotSet" xml:space="preserve">
+    <value> (tyhjä poistaa asetuksen)</value>
+  </data>
+  <data name="ExportPrompt" xml:space="preserve">
+    <value>Kirjoita nykyiset asetukset tiedostoon:</value>
+  </data>
+  <data name="ExportSettings" xml:space="preserve">
+    <value>Vie asetukset</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Suo_datin:</value>
+  </data>
+  <data name="LevelButton" xml:space="preserve">
+    <value>_Taso: {0}+</value>
+  </data>
+  <data name="LoadedSettings" xml:space="preserve">
+    <value>Ladattiin asetuksia muokkauksiksi: {0}. Ota ne käyttöön tai tallenna ne käyttääksesi niitä.</value>
+  </data>
+  <data name="LoadPrompt" xml:space="preserve">
+    <value>Ladattava asetustiedosto:</value>
+  </data>
+  <data name="LoadSettings" xml:space="preserve">
+    <value>Lataa asetukset</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Lokit</value>
+  </data>
+  <data name="LogStatus" xml:space="preserve">
+    <value>{0}/{1} merkintää · {2}   Enter: koko merkintä  Alt+D: suodatin</value>
+  </data>
+  <data name="MoreLines" xml:space="preserve">
+    <value>  [+{0} riviä]</value>
+  </data>
+  <data name="NewValuePrompt" xml:space="preserve">
+    <value>{0}
+
+Uusi arvo{1}:</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>(ei asetettu)</value>
+  </data>
+  <data name="Now" xml:space="preserve">
+    <value>nyt</value>
+  </data>
+  <data name="OlderLog" xml:space="preserve">
+    <value>vanhempi loki</value>
+  </data>
+  <data name="OneOf" xml:space="preserve">
+    <value> Yksi näistä: {0}.</value>
+  </data>
+  <data name="OptionDescription" xml:space="preserve">
+    <value>{0}: {1}
+Tyyppi: {2}.{3}{4}{5}{6}</value>
+  </data>
+  <data name="OverriddenBy" xml:space="preserve">
+    <value> Asetettu nyt lähteestä {0}, joka ohittaa asetustiedoston.</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Nollaa</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Tallenna</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Tallennettu</value>
+  </data>
+  <data name="SavedTo" xml:space="preserve">
+    <value>Tallennettu tiedostoon {0}.{1}</value>
+  </data>
+  <data name="SecretValue" xml:space="preserve">
+    <value>Tämä arvo on salainen. Anna se komentorivillä, tai syötä se, kun sovellus kysyy.</value>
+  </data>
+  <data name="Sessions" xml:space="preserve">
+    <value>Istunnot</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Asetukset</value>
+  </data>
+  <data name="SettingsFileLegend" xml:space="preserve">
+    <value>Asetustiedosto: {0}    * muokattu  + käytössä, ei tallennettu  ↻ uudelleenkäynnistyksen jälkeen</value>
+  </data>
+  <data name="TheseAfterRestart" xml:space="preserve">
+    <value>
+
+Nämä tulevat voimaan uudelleenkäynnistyksen jälkeen:
+
+{0}</value>
+  </data>
+  <data name="UnsavedQuestion" xml:space="preserve">
+    <value>Kaikkia muutoksia ei ole tallennettu asetustiedostoon. Suljetaanko silti?
+
+Käyttöön otetut muutokset ovat voimassa, kunnes ohjelma käynnistetään uudelleen.</value>
+  </data>
+  <data name="UnsavedSettings" xml:space="preserve">
+    <value>Tallentamattomia asetuksia</value>
+  </data>
+  <data name="Wrote" xml:space="preserve">
+    <value>Kirjoitettiin {0}. Salaisuuksia ei sisällytetty.</value>
+  </data>
+</root>

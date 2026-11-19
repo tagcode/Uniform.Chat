@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using global::Terminal.Gui.Drawing;
 using global::Terminal.Gui.Views;
+using Uniform.Chat.Terminal.Localization;
 using TuiAttribute = global::Terminal.Gui.Drawing.Attribute;
 
 /// <summary>A list of text rows that draws one warning phrase, such as <see cref="NotTrusted"/>, in white on red wherever it appears, and the rest of each row as usual.</summary>
@@ -12,7 +13,7 @@ using TuiAttribute = global::Terminal.Gui.Drawing.Attribute;
 internal sealed class WarningListSource : IListDataSource
 {
     /// <summary>Label of a device that the account's current identity has not signed.</summary>
-    public const string NotTrusted = "Not trusted";
+    public static string NotTrusted => Strings.NotTrusted;
     private readonly ObservableCollection<string> rows;
     private readonly string warning;
     private readonly ListWrapper<string> inner;

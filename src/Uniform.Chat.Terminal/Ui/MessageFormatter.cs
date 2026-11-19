@@ -6,6 +6,7 @@ using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Kind of a timeline line, used for coloring.</summary>
 public enum EntryKind
@@ -65,7 +66,7 @@ public static class MessageFormatter
         string? text = clientEvent.Type switch
         {
             EventTypes.RoomMessage => null,
-            EventTypes.RoomEncrypted => $"<{nick}> [encrypted message; the key has not arrived]",
+            EventTypes.RoomEncrypted => Texts.Format(Strings.EncryptedNoKey, nick),
             _ => EventText.Describe(room, clientEvent) is string description ? $"-!- {description}" : null,
         };
 
@@ -107,7 +108,7 @@ public static class MessageFormatter
 
         // Return pending or failed line
         bool failed = message.State == OutboxState.Failed;
-        string suffix = failed ? $"  [not sent: {message.LastError}]" : "  [sending…]";
+        string suffix = failed ? Texts.Format(Strings.NotSent, message.LastError) : Strings.SendingSuffix;
         return new TimelineEntry { Text = $"{time} {body}{suffix}", Kind = failed ? EntryKind.Failed : EntryKind.Pending, Timestamp = message.CreatedAt.ToUnixTimeMilliseconds(), Indent = time.Length + TextWrapper.Columns(ownNick) + 4 };
     }
 
@@ -115,12 +116,12 @@ public static class MessageFormatter
     private static (string Body, EntryKind Kind) FormatMessage(Room room, ClientEvent clientEvent, string nick, string ownUserId, Func<string, ClientEvent?>? findEvent)
     {
         // Deleted message
-        if (GetText(clientEvent, room.GetMemberDisplayName) is not string text || !clientEvent.TryGetContent(out MessageContent? message)) return ($"<{nick}> [message deleted]", EntryKind.Info);
+        if (GetText(clientEvent, room.GetMemberDisplayName) is not string text || !clientEvent.TryGetContent(out MessageContent? message)) return (Texts.Format(Strings.MessageDeleted, nick), EntryKind.Info);
 
         // Edits show the new text; replies quote what they answer
         bool own = clientEvent.Sender == ownUserId;
         bool mentioned = !own && (message.Mentions?.UserIds?.Contains(ownUserId) == true || message.Mentions?.Room == true);
-        string edited = message.RelatesTo?.RelType == RelationTypes.Replace ? " (edited)" : "";
+        string edited = message.RelatesTo?.RelType == RelationTypes.Replace ? Strings.Edited : "";
         string quote = FormatQuote(room, message.RelatesTo?.InReplyTo?.EventId, findEvent);
         string body = $"{quote}{text}{edited}";
 
@@ -141,8 +142,8 @@ public static class MessageFormatter
         if (replyToId is null) return "";
         // Target from the caller, else the in-memory timeline
         ClientEvent? target = findEvent?.Invoke(replyToId) ?? (room.TryGetEvent(replyToId, out ClientEvent? found) ? found : null);
-        if (target is null || GetText(target, room.GetMemberDisplayName) is not string targetText) return "[re] ";
+        if (target is null || GetText(target, room.GetMemberDisplayName) is not string targetText) return Strings.ReplyPrefixUnknown;
         // Return quote
-        return $"[re {room.GetMemberDisplayName(target.Sender)}: {Snippet(targetText, 30)}] ";
+        return Texts.Format(Strings.ReplyQuote, room.GetMemberDisplayName(target.Sender), Snippet(targetText, 30));
     }
 }

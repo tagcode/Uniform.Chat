@@ -13,6 +13,7 @@ using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
 using global::Terminal.Gui.Views;
+using Uniform.Chat.Terminal.Localization;
 
 // Message actions, composing replies and edits, typing notifications, nick completion, files and devices.
 public sealed partial class MainWindow
@@ -54,20 +55,20 @@ public sealed partial class MainWindow
 
         // Offer what applies; hotkeys must be unique, so React uses A
         List<(string Label, Action Run)> actions = [];
-        if (message) actions.Add(("_Reply", () => StartReply(ev)));
-        if (message) actions.Add(("Re_act", () => React(roomId, ev)));
-        if (message && own && !attachment) actions.Add(("_Edit", () => StartEdit(ev)));
-        if (attachment && content!.MessageType == MessageTypes.Image) actions.Add(("_View image", () => _ = ViewImageAsync(content)));
-        if (attachment) actions.Add(("_Save file", () => _ = SaveAttachmentAsync(content!)));
-        if (links.Count > 0) actions.Add(("Open _link", () => OpenLink(links)));
-        if (own && ev.Unsigned?.RedactedBecause is null) actions.Add(("_Delete", () => DeleteMessage(roomId, ev)));
-        if (!own && message) actions.Add(("Re_port", () => ReportMessage(roomId, ev)));
-        if (!own) actions.Add(("_Block sender", () => SetIgnored(ev.Sender, ignored: true)));
-        actions.Add(("_Close", () => { }));
+        if (message) actions.Add((Strings.ButtonReply, () => StartReply(ev)));
+        if (message) actions.Add((Strings.ButtonReact, () => React(roomId, ev)));
+        if (message && own && !attachment) actions.Add((Strings.ButtonEdit, () => StartEdit(ev)));
+        if (attachment && content!.MessageType == MessageTypes.Image) actions.Add((Strings.ButtonViewImage, () => _ = ViewImageAsync(content)));
+        if (attachment) actions.Add((Strings.ButtonSaveFile, () => _ = SaveAttachmentAsync(content!)));
+        if (links.Count > 0) actions.Add((Strings.ButtonOpenLink, () => OpenLink(links)));
+        if (own && ev.Unsigned?.RedactedBecause is null) actions.Add((Strings.ButtonDelete, () => DeleteMessage(roomId, ev)));
+        if (!own && message) actions.Add((Strings.ButtonReport, () => ReportMessage(roomId, ev)));
+        if (!own) actions.Add((Strings.ButtonBlockSender, () => SetIgnored(ev.Sender, ignored: true)));
+        actions.Add((Strings.ButtonClose, () => { }));
 
         // Ask, then run after this dialog has fully closed, so a follow-up dialog does not receive the same key
         string preview = MessageFormatter.Snippet(timeline.SelectedEntry.Text, 60);
-        int? choice = Dialogs.Choose(app, "Message", preview, [.. actions.Select(a => a.Label)]);
+        int? choice = Dialogs.Choose(app, Strings.Message, preview, [.. actions.Select(a => a.Label)]);
         input.SetFocus();
         if (choice is int index && index < actions.Count) app.Invoke(actions[index].Run);
     }
@@ -82,7 +83,7 @@ public sealed partial class MainWindow
             return;
         }
         List<MatrixLink> shown = [.. links.Take(5)];
-        int? choice = Dialogs.Choose(app, "Open link", "Which room or user?", [.. shown.Select((l, i) => $"_{i + 1} {l.Target}"), "_Close"]);
+        int? choice = Dialogs.Choose(app, Strings.OpenLink, Strings.WhichRoomOrUser, [.. shown.Select((l, i) => $"_{i + 1} {l.Target}"), Strings.ButtonClose]);
         // Follow the chosen one after this dialog has closed
         if (choice is int index && index < shown.Count) app.Invoke(() => FollowLink(shown[index]));
     }
@@ -107,7 +108,7 @@ public sealed partial class MainWindow
         editEventId = null;
         replyTo = clientEvent;
         string nick = processor.Read(r => currentRoomId is not null && r?.TryGetRoom(currentRoomId, out Room? room) == true ? room.GetMemberDisplayName(clientEvent.Sender) : clientEvent.Sender);
-        SetInputPrefix($"[re {nick}] ");
+        SetInputPrefix(Texts.Format(Strings.ReplyPrefix, nick));
     }
 
     /// <summary>Put the text of own message <paramref name="clientEvent"/> into the input line for editing.</summary>
@@ -118,7 +119,7 @@ public sealed partial class MainWindow
         editEventId = clientEvent.EventId;
         input.Text = MessageFormatter.GetText(clientEvent) ?? "";
         input.MoveEnd();
-        SetInputPrefix("[edit] ");
+        SetInputPrefix(Strings.EditPrefix);
     }
 
     /// <summary>Leave reply or edit mode.</summary>
@@ -146,7 +147,7 @@ public sealed partial class MainWindow
         if (text.Length == 0) return;
         if (currentRoomId is not string roomId || processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.Membership == Memberships.Join) != true)
         {
-            Dialogs.Error(app, "No room", "Open a room you have joined first.");
+            Dialogs.Error(app, Strings.NoRoom, Strings.OpenJoinedRoomFirst);
             return;
         }
 
@@ -180,8 +181,8 @@ public sealed partial class MainWindow
     private void DeleteMessage(string roomId, ClientEvent clientEvent)
     {
         // Confirm and redact
-        if (!Dialogs.Confirm(app, "Delete message", $"Delete \"{MessageFormatter.Snippet(MessageFormatter.GetText(clientEvent) ?? "", 40)}\" for everyone?")) return;
-        _ = RunSafelyAsync("Deleting message", client => client.RedactAsync(roomId, clientEvent.EventId));
+        if (!Dialogs.Confirm(app, Strings.DeleteMessage, Texts.Format(Strings.DeleteMessageQuestion, MessageFormatter.Snippet(MessageFormatter.GetText(clientEvent) ?? "", 40)))) return;
+        _ = RunSafelyAsync(Strings.DeletingMessage, client => client.RedactAsync(roomId, clientEvent.EventId));
     }
 
     /// <summary>Download an attachment into the cache and copy it to the download folder, asking where first unless <see cref="UiOptions.AskWhereToSave"/> is off.</summary>
@@ -192,20 +193,20 @@ public sealed partial class MainWindow
         string path = FreePath(GetDownloadDirectory(), name);
         if (UiOptions.AskWhereToSave)
         {
-            if (Dialogs.Ask(app, "Save file", "Save as (a file, or a folder to save into):", path) is not string chosen) return;
+            if (Dialogs.Ask(app, Strings.SaveFile, Strings.SaveAsPrompt, path) is not string chosen) return;
             path = ExpandHome(chosen);
             if (Directory.Exists(path)) path = FreePath(path, name);
-            else if (File.Exists(path) && !Dialogs.Confirm(app, "Save file", $"{path} exists. Replace it?")) return;
+            else if (File.Exists(path) && !Dialogs.Confirm(app, Strings.SaveFile, Texts.Format(Strings.ReplaceFile, path))) return;
         }
 
         // Download into the cache, then copy
-        ShowStatus($"Downloading {name}…");
-        await RunSafelyAsync("Saving file", async client =>
+        ShowStatus(Texts.Format(Strings.Downloading, name));
+        await RunSafelyAsync(Strings.SavingFile, async client =>
         {
             StoredMedia media = await mediaCache.GetAsync(client, content);
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
             File.Copy(mediaCache.GetFullPath(media), path, overwrite: true);
-            app.Invoke(() => { ShowStatus($"Saved {path}"); Dialogs.Info(app, "File saved", path); });
+            app.Invoke(() => { ShowStatus(Texts.Format(Strings.Saved, path)); Dialogs.Info(app, Strings.FileSaved, path); });
         });
     }
 
@@ -237,7 +238,7 @@ public sealed partial class MainWindow
         IReadOnlyList<string> files = DroppedFiles.Parse(text, File.Exists);
         if (files.Count == 0 || currentRoomId is null) return false;
         string list = string.Join("\n", files.Select(Path.GetFileName));
-        if (!Dialogs.Confirm(app, "Send files", files.Count == 1 ? $"Send {list} to this room?" : $"Send these {files.Count} files to this room?\n\n{list}"))
+        if (!Dialogs.Confirm(app, Strings.SendFiles, files.Count == 1 ? Texts.Format(Strings.SendFileQuestion, list) : Texts.Format(Strings.SendFilesQuestion, files.Count, list)))
         {
             // Back to the input line, to edit or send as text
             input.Text = text;
@@ -253,7 +254,7 @@ public sealed partial class MainWindow
     {
         // Assert room, then pick
         if (currentRoomId is null) return;
-        if (Dialogs.PickFile(app, "Send file") is string path) SendFile(path);
+        if (Dialogs.PickFile(app, Strings.SendFile) is string path) SendFile(path);
     }
 
     /// <summary>Send the file at <paramref name="path"/> to the open room, encrypted when the room is.</summary>
@@ -264,31 +265,31 @@ public sealed partial class MainWindow
         bool encrypted = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.IsEncrypted);
         if (encrypted && !crypto.Available)
         {
-            Dialogs.Error(app, "Send file", $"This room is encrypted, but encryption is not available on this device.\n\n{crypto.UnavailableReason}");
+            Dialogs.Error(app, Strings.SendFile, Texts.Format(Strings.RoomEncryptedUnavailable, crypto.UnavailableReason));
             return;
         }
 
         // Encrypted rooms: encrypt and upload, then send the message through the outbox, which encrypts it
         string name = Path.GetFileName(path);
-        ShowStatus($"Uploading {name}…");
+        ShowStatus(Texts.Format(Strings.Uploading, name));
         if (encrypted)
         {
-            _ = RunSafelyAsync($"Sending {name}", async client =>
+            _ = RunSafelyAsync(Texts.Format(Strings.SendingName, name), async client =>
             {
                 byte[] bytes = await File.ReadAllBytesAsync(path);
                 EncryptedFile file = await client.UploadEncryptedAsync(bytes);
                 await outbox.EnqueueAsync(roomId, EventTypes.RoomMessage, MatrixClient.CreateFileContent(file, name, MimeTypes.FromPath(path), bytes.Length));
-                app.Invoke(() => ShowStatus($"Sent {name}"));
+                app.Invoke(() => ShowStatus(Texts.Format(Strings.SentName, name)));
             });
             return;
         }
 
         // Others: upload and send directly
-        _ = RunSafelyAsync($"Sending {name}", async client =>
+        _ = RunSafelyAsync(Texts.Format(Strings.SendingName, name), async client =>
         {
             await using FileStream file = File.OpenRead(path);
             await client.SendFileAsync(roomId, file, name, MimeTypes.FromPath(path));
-            app.Invoke(() => ShowStatus($"Sent {name}"));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.SentName, name)));
         });
     }
 
@@ -368,7 +369,7 @@ public sealed partial class MainWindow
         // Assert connected
         if (Client is not MatrixClient client)
         {
-            Dialogs.Error(app, "Not connected", "Wait until the client is connected.");
+            Dialogs.Error(app, Strings.NotConnected, Strings.WaitUntilConnected);
             return;
         }
 
@@ -383,7 +384,7 @@ public sealed partial class MainWindow
             }
             catch (Exception ex)
             {
-                Dialogs.Error(app, "Devices", ex.Message);
+                Dialogs.Error(app, Strings.Devices, ex.Message);
                 return;
             }
             Func<string, string>? trust = crypto.Available ? await DeviceTrustLabelsAsync() : null;
@@ -399,7 +400,7 @@ public sealed partial class MainWindow
         // Verify; the flow continues in dialogs as messages arrive
         if (action == 4 && device is not null)
         {
-            if (device.DeviceId == client.DeviceId) Dialogs.Info(app, "Verify", "This is the device you are using. Pick another of your devices.");
+            if (device.DeviceId == client.DeviceId) Dialogs.Info(app, Strings.Verify, Strings.ThisIsYourDevice);
             else await StartVerificationAsync(ownUserId, device.DeviceId);
             return;
         }
@@ -407,8 +408,8 @@ public sealed partial class MainWindow
         // Rename
         if (action == 1 && device is not null)
         {
-            string? name = Dialogs.Ask(app, "Rename device", $"Name for {device.DeviceId}:", device.DisplayName ?? "");
-            if (name is not null) await RunSafelyAsync("Renaming device", c => c.RenameDeviceAsync(device.DeviceId, name));
+            string? name = Dialogs.Ask(app, Strings.RenameDevice, Texts.Format(Strings.NameFor, device.DeviceId), device.DisplayName ?? "");
+            if (name is not null) await RunSafelyAsync(Strings.RenamingDevice, c => c.RenameDeviceAsync(device.DeviceId, name));
             return;
         }
 
@@ -417,14 +418,14 @@ public sealed partial class MainWindow
         targets.Remove(client.DeviceId ?? "");
         if (targets.Count == 0)
         {
-            Dialogs.Info(app, "Devices", "Nothing to log out. Use File → Log out to end this session.");
+            Dialogs.Info(app, Strings.Devices, Strings.NothingToLogOut);
             return;
         }
-        if (!Dialogs.Confirm(app, "Log out devices", $"Log out {targets.Count} device(s): {string.Join(", ", targets)}?")) return;
+        if (!Dialogs.Confirm(app, Strings.LogOutDevices, Texts.Format(Strings.LogOutDevicesQuestion, targets.Count, string.Join(", ", targets)))) return;
 
         // Delete, answering the password challenge
-        string? password = Dialogs.Ask(app, "Confirm", $"Password for {ownUserId}:", secret: true);
+        string? password = Dialogs.Ask(app, Strings.Confirm, Texts.Format(Strings.PasswordFor, ownUserId), secret: true);
         if (password is null) return;
-        await RunSafelyAsync("Logging out devices", c => c.DeleteDevicesAsync(targets, password));
+        await RunSafelyAsync(Strings.LoggingOutDevices, c => c.DeleteDevicesAsync(targets, password));
     }
 }

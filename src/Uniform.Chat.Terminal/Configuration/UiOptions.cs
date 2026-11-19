@@ -9,6 +9,9 @@ public sealed record UiOptions
     /// <summary>Configuration section name.</summary>
     public const string Section = "Ui";
 
+    /// <summary>The language of the texts, by culture name, e.g. <c>fi</c> or <c>en</c>; the system's when null.</summary>
+    [RestartRequired]
+    public string? Language { get; set; }
     /// <summary>Room ID or alias to open at start; the first room in the list when null.</summary>
     [RestartRequired]
     public string? StartRoom { get; set; }

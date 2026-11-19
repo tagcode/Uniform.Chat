@@ -4,7 +4,11 @@ uid: Uniform.Chat.Desktop.Settings.Article
 ---
 # Settings
 
-*⋮ → Settings* at the top of the room list sets the theme (follow the system, light or dark), the text size (very small to very large, for the whole window: titles, messages and the message field), and which notifications to show; see Notifications. Changes are saved right away.
+*⋮ → Settings* at the top of the room list sets the language (follow the system, English or Finnish), the theme (follow the system, light or dark), the text size (very small to very large, for the whole window: titles, messages and the message field), and which notifications to show; see Notifications. Changes are saved right away.
+
+## Language
+
+*Language* follows the system by default: Finnish on a Finnish system, English otherwise. Choosing *English* or *Suomi* switches the texts at once, without a restart; times and dates follow the chosen language too.
 
 ## Audio test
 

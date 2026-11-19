@@ -3,6 +3,7 @@ namespace Uniform.Matrix.Client.State;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>Client-side state of one room, kept up to date by <see cref="RoomStore"/>; not thread-safe.</summary>
 /// <remarks>A mutable class rather than a record, as identity matters and value equality over live state would be misleading.</remarks>
@@ -101,11 +102,11 @@ public sealed class Room
             // Member names
             List<string> names = GetHeroIds().Select(GetMemberDisplayName).ToList();
             int total = JoinedMemberCount + InvitedMemberCount;
-            if (names.Count == 0) return "Empty Room";
-            if (total <= 1) return $"Empty Room (was {JoinNames(names)})";
+            if (names.Count == 0) return Strings.EmptyRoom;
+            if (total <= 1) return Texts.Format(Strings.EmptyRoomWas, JoinNames(names));
             int others = total - 1 - names.Count;
             // Return names
-            return others > 0 ? $"{string.Join(", ", names)} and {others} others" : JoinNames(names);
+            return others > 0 ? Texts.Format(Strings.NamesAndOthers, string.Join(", ", names), others) : JoinNames(names);
         }
     }
 
@@ -288,7 +289,7 @@ public sealed class Room
     }
 
     /// <summary>Join names as <c>A</c>, <c>A and B</c> or <c>A, B and C</c>.</summary>
-    private static string JoinNames(IReadOnlyList<string> names) => names.Count == 1 ? names[0] : $"{string.Join(", ", names.Take(names.Count - 1))} and {names[^1]}";
+    private static string JoinNames(IReadOnlyList<string> names) => names.Count == 1 ? names[0] : Texts.Format(Strings.NamesAnd, string.Join(", ", names.Take(names.Count - 1)), names[^1]);
 
     /// <summary>Return the sender of a state event of either shape.</summary>
     private static string? GetSender(MatrixEvent? matrixEvent) => matrixEvent switch

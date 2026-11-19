@@ -4,6 +4,7 @@ using global::Android.App;
 using global::Android.Content;
 using global::Android.Content.PM;
 using Uniform.Chat.Avalonia.Services;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>Push messages through a <see href="https://unifiedpush.org/developers/spec/android/">UnifiedPush</see> distributor app such as ntfy, which keeps one connection for all its apps: broadcasts between the apps register, give the endpoint, and deliver messages. The choice and the endpoint are kept in the app's preferences.</summary>
 internal sealed class AndroidPushService : IPushService
@@ -95,7 +96,7 @@ internal sealed class AndroidPushService : IPushService
         register.SetPackage(distributor);
         register.PutExtra("token", Token);
         register.PutExtra("application", context.PackageName);
-        register.PutExtra("message", "Uniform Chat messages and calls");
+        register.PutExtra("message", Strings.PushRegistrationPurpose);
         register.PutExtra("pi", PendingIntent.GetBroadcast(context, 0, new Intent("org.unifiedpush.dummy_app"), PendingIntentFlags.Immutable));
         // Done
         context.SendBroadcast(register);
@@ -213,7 +214,7 @@ public sealed class UnifiedPushReceiver : BroadcastReceiver
             DateTime until = DateTime.UtcNow + HandlerWait;
             while (push.MessageHandler is null && DateTime.UtcNow < until) await Task.Delay(250);
             if (push.MessageHandler is Func<byte[], Task> handler) await handler(message);
-            else await new AndroidNotifier(context).ShowAsync("Uniform Chat", "New message");
+            else await new AndroidNotifier(context).ShowAsync("Uniform Chat", Strings.NewMessage);
         }
         finally
         {

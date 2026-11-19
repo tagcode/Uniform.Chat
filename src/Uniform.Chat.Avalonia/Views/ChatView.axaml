@@ -1,4 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:l="using:Uniform.Chat.Avalonia.Localization"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              xmlns:views="using:Uniform.Chat.Avalonia.Views"
@@ -46,12 +47,12 @@
         <TextBlock Text="{Binding StateText}" TextTrimming="CharacterEllipsis" />
       </StackPanel>
       <WrapPanel x:Name="CallButtons" VerticalAlignment="Center">
-        <Button Classes="accent" Margin="4,2" Content="Answer" Command="{Binding AnswerCommand}" IsVisible="{Binding IsRinging}" />
-        <Button Classes="accent" Margin="4,2" Content="Answer with video" Command="{Binding AnswerWithVideoCommand}" IsVisible="{Binding CanAnswerWithVideo}" />
-        <Button Margin="4,2" Content="Decline" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
+        <Button Classes="accent" Margin="4,2" Content="{l:Tr Answer}" Command="{Binding AnswerCommand}" IsVisible="{Binding IsRinging}" />
+        <Button Classes="accent" Margin="4,2" Content="{l:Tr AnswerWithVideo}" Command="{Binding AnswerWithVideoCommand}" IsVisible="{Binding CanAnswerWithVideo}" />
+        <Button Margin="4,2" Content="{l:Tr Decline}" Command="{Binding RejectCommand}" IsVisible="{Binding IsRinging}" />
         <Button Margin="4,2" Content="{Binding MuteText}" Command="{Binding ToggleMuteCommand}" IsVisible="{Binding IsActive}" />
         <!-- Device menus: the cameras with turning the camera off, then the microphones and speakers, each filled as it opens -->
-        <Button Margin="4,2" Content="Camera ▽" Classes.warning="{Binding CameraOff}" IsVisible="{Binding SendsVideo}">
+        <Button Margin="4,2" Content="{l:Tr CameraMenu}" Classes.warning="{Binding CameraOff}" IsVisible="{Binding SendsVideo}">
           <Button.Flyout>
             <MenuFlyout ItemsSource="{Binding CameraMenu}" Opening="OnDeviceMenuOpening">
               <MenuFlyout.ItemContainerTheme>
@@ -63,7 +64,7 @@
             </MenuFlyout>
           </Button.Flyout>
         </Button>
-        <Button Margin="4,2" Content="Microphone ▽" IsVisible="{Binding IsActive}">
+        <Button Margin="4,2" Content="{l:Tr MicrophoneMenu}" IsVisible="{Binding IsActive}">
           <Button.Flyout>
             <MenuFlyout ItemsSource="{Binding MicrophoneMenu}" Opening="OnDeviceMenuOpening">
               <MenuFlyout.ItemContainerTheme>
@@ -75,7 +76,7 @@
             </MenuFlyout>
           </Button.Flyout>
         </Button>
-        <Button Margin="4,2" Content="Speaker ▽" IsVisible="{Binding IsActive}">
+        <Button Margin="4,2" Content="{l:Tr SpeakerMenu}" IsVisible="{Binding IsActive}">
           <Button.Flyout>
             <MenuFlyout ItemsSource="{Binding SpeakerMenu}" Opening="OnDeviceMenuOpening">
               <MenuFlyout.ItemContainerTheme>
@@ -88,14 +89,14 @@
           </Button.Flyout>
         </Button>
         <Button Margin="4,2" Content="{Binding ScreenText}" Command="{Binding ToggleScreenCommand}" IsVisible="{Binding ShowsVideo}" />
-        <Button Classes="danger" Margin="4,2" Content="Hang up" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
+        <Button Classes="danger" Margin="4,2" Content="{l:Tr HangUp}" Command="{Binding HangupCommand}" IsVisible="{Binding IsActive}" />
       </WrapPanel>
       <Panel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" HorizontalAlignment="Center">
         <views:VideoView x:Name="CallVideo" MaxHeight="260" Feed="{Binding MainVideo}" IsVisible="{Binding ShowsVideo}" />
         <!-- Own camera in the corner, or a clear sign that it is off -->
         <views:VideoView Width="96" MaxHeight="128" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" Feed="{Binding LocalVideo}" IsVisible="{Binding ShowsCornerPreview}" />
         <Border Classes="cameraoff" Margin="6" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsVisible="{Binding CameraOff}">
-          <TextBlock Text="Camera is off" />
+          <TextBlock Text="{l:Tr CameraIsOff}" />
         </Border>
       </Panel>
       <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Classes="hint" Text="{Binding Error}" TextWrapping="Wrap" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
@@ -113,32 +114,32 @@
             <TextBlock Classes="title" Text="Uniform Chat" />
             <TextBlock Classes="hint" Text="{Binding UserId}" TextTrimming="CharacterEllipsis" />
           </StackPanel>
-          <Button Grid.Column="2" Classes="icon" Content="⋮" ToolTip.Tip="Account">
+          <Button Grid.Column="2" Classes="icon" Content="⋮" ToolTip.Tip="{l:Tr Account}">
             <Button.Flyout>
               <!-- A menu flyout closes when an item is chosen, unlike buttons in a plain flyout -->
               <MenuFlyout Placement="BottomEdgeAlignedRight">
-                <MenuItem Header="Room directory…" Command="{Binding OpenDirectoryCommand}" />
-                <MenuItem Header="Security and recovery…" Command="{Binding OpenSecurityCommand}" />
-                <MenuItem Header="Server administration…" Command="{Binding OpenAdminCommand}" IsVisible="{Binding IsServerAdmin}" />
-                <MenuItem Header="Settings…" Command="{Binding ToggleSettingsCommand}" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <MenuItem Header="{l:Tr RoomDirectoryEllipsis}" Command="{Binding OpenDirectoryCommand}" />
+                <MenuItem Header="{l:Tr SecurityAndRecovery}" Command="{Binding OpenSecurityCommand}" />
+                <MenuItem Header="{l:Tr ServerAdministrationEllipsis}" Command="{Binding OpenAdminCommand}" IsVisible="{Binding IsServerAdmin}" />
+                <MenuItem Header="{l:Tr SettingsEllipsis}" Command="{Binding ToggleSettingsCommand}" IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}" />
                 <Separator />
-                <MenuItem Header="Sign out" Command="{Binding SignOutCommand}" />
+                <MenuItem Header="{l:Tr SignOut}" Command="{Binding SignOutCommand}" />
               </MenuFlyout>
             </Button.Flyout>
           </Button>
         </Grid>
 
         <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="12,0,12,8">
-          <TextBox Grid.Column="0" Text="{Binding JoinTarget}" PlaceholderText="#room, @user, link or new name" ToolTip.Tip="Join a room by its address or link, chat with a user, or create a private room" x:Name="RoomBox" />
+          <TextBox Grid.Column="0" Text="{Binding JoinTarget}" PlaceholderText="{l:Tr RoomBoxPlaceholder}" ToolTip.Tip="{l:Tr RoomBoxHint}" x:Name="RoomBox" />
           <Button Grid.Column="1" Margin="6,0,0,0" Content="{Binding OpenTargetText}" Command="{Binding OpenTargetCommand}" />
-          <Button Grid.Column="2" Margin="6,0,0,0" Classes="icon" Content="🔍" ToolTip.Tip="Room directory" Command="{Binding OpenDirectoryCommand}" />
+          <Button Grid.Column="2" Margin="6,0,0,0" Classes="icon" Content="🔍" ToolTip.Tip="{l:Tr RoomDirectory}" Command="{Binding OpenDirectoryCommand}" />
         </Grid>
 
         <!-- Content shared from another app waits for a room -->
         <Border DockPanel.Dock="Top" Classes="notice" Margin="12,0,12,8" IsVisible="{Binding HasPendingShare}">
           <StackPanel Spacing="6">
             <TextBlock Text="{Binding PendingShareText}" TextWrapping="Wrap" />
-            <Button Content="Cancel" Command="{Binding CancelShareCommand}" />
+            <Button Content="{l:Tr Cancel}" Command="{Binding CancelShareCommand}" />
           </StackPanel>
         </Border>
 
@@ -148,8 +149,8 @@
             <TextBlock Text="{Binding SecuritySuggestion}" TextWrapping="Wrap" />
             <!-- Wraps when large text makes the buttons wider than the sidebar -->
             <WrapPanel ItemSpacing="8" LineSpacing="6">
-              <Button Classes="accent" Content="Security and recovery…" Command="{Binding OpenSecurityCommand}" />
-              <Button Content="Not now" Command="{Binding DismissSecuritySuggestionCommand}" />
+              <Button Classes="accent" Content="{l:Tr SecurityAndRecovery}" Command="{Binding OpenSecurityCommand}" />
+              <Button Content="{l:Tr NotNow}" Command="{Binding DismissSecuritySuggestionCommand}" />
             </WrapPanel>
           </StackPanel>
         </Border>
@@ -172,8 +173,8 @@
                     <TextBlock Grid.Column="0" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Classes.unread="{Binding HasUnread}" MaxWidth="{Binding $parent[Grid].Bounds.Width}" />
                     <TextBlock Grid.Column="1" Classes="hint" Text="{Binding TopicLine, StringFormat='  {0}'}" TextTrimming="CharacterEllipsis" MaxLines="1" VerticalAlignment="Center" IsVisible="{Binding HasTopic}" />
                   </Grid>
-                  <TextBlock Classes="hint" Text="Invitation" IsVisible="{Binding IsInvite}" />
-                  <TextBlock Classes="hint" Text="From your server" IsVisible="{Binding IsServerNotice}" />
+                  <TextBlock Classes="hint" Text="{l:Tr Invitation}" IsVisible="{Binding IsInvite}" />
+                  <TextBlock Classes="hint" Text="{l:Tr FromYourServer}" IsVisible="{Binding IsServerNotice}" />
                   <TextBlock Classes="hint" Text="{Binding LastMessage}" TextTrimming="CharacterEllipsis" MaxLines="1" IsVisible="{Binding HasLastMessage}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="4">
@@ -193,30 +194,30 @@
     <DockPanel x:Name="RoomArea" Grid.Column="1" IsVisible="{Binding ShowRoom}" DragDrop.AllowDrop="True">
       <Border DockPanel.Dock="Top" Classes="header">
         <Grid ColumnDefinitions="Auto,*,Auto">
-          <Button Grid.Column="0" Classes="icon" Content="‹" Command="{Binding BackCommand}" IsVisible="{Binding IsNarrow}" ToolTip.Tip="Rooms" />
+          <Button Grid.Column="0" Classes="icon" Content="‹" Command="{Binding BackCommand}" IsVisible="{Binding IsNarrow}" ToolTip.Tip="{l:Tr Rooms}" />
           <StackPanel Grid.Column="1" Margin="8,0" VerticalAlignment="Center">
             <TextBlock Classes="title" Text="{Binding SelectedRoom.Name, FallbackValue='Choose a room'}" TextTrimming="CharacterEllipsis" />
             <TextBlock Classes="hint" Text="{Binding SelectedRoom.Topic, FallbackValue=''}" TextTrimming="CharacterEllipsis" />
           </StackPanel>
           <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
-            <TextBlock Classes="hint" VerticalAlignment="Center" Text="🔒 Encrypted" IsVisible="{Binding SelectedRoom.IsEncrypted, FallbackValue=False}" />
-            <Button Classes="icon" Content="📹" ToolTip.Tip="Video call" Command="{Binding VideoCallRoomCommand}" IsVisible="{Binding CanVideoCallRoom}" />
-            <Button Classes="icon" Content="📞" ToolTip.Tip="Voice call" Command="{Binding CallRoomCommand}" IsVisible="{Binding CanCallRoom}" />
-            <Button Classes="icon" Content="⋮" ToolTip.Tip="Room" Command="{Binding LoadMembersCommand}" IsVisible="{Binding !SelectedRoom.IsInvite, FallbackValue=False}">
+            <TextBlock Classes="hint" VerticalAlignment="Center" Text="{l:Tr EncryptedBadge}" IsVisible="{Binding SelectedRoom.IsEncrypted, FallbackValue=False}" />
+            <Button Classes="icon" Content="📹" ToolTip.Tip="{l:Tr VideoCall}" Command="{Binding VideoCallRoomCommand}" IsVisible="{Binding CanVideoCallRoom}" />
+            <Button Classes="icon" Content="📞" ToolTip.Tip="{l:Tr VoiceCall}" Command="{Binding CallRoomCommand}" IsVisible="{Binding CanCallRoom}" />
+            <Button Classes="icon" Content="⋮" ToolTip.Tip="{l:Tr Room}" Command="{Binding LoadMembersCommand}" IsVisible="{Binding !SelectedRoom.IsInvite, FallbackValue=False}">
               <Button.Flyout>
                 <Flyout Placement="BottomEdgeAlignedRight">
                   <StackPanel Width="320" Spacing="8">
-                    <TextBlock Classes="subtitle" Text="Topic" />
+                    <TextBlock Classes="subtitle" Text="{l:Tr Topic}" />
                     <Grid ColumnDefinitions="*,Auto">
-                      <TextBox Grid.Column="0" Text="{Binding TopicDraft}" PlaceholderText="What the room is about" />
-                      <Button Grid.Column="1" Margin="6,0,0,0" Content="Set" Command="{Binding SetTopicCommand}" />
+                      <TextBox Grid.Column="0" Text="{Binding TopicDraft}" PlaceholderText="{l:Tr WhatTheRoomIsAbout}" />
+                      <Button Grid.Column="1" Margin="6,0,0,0" Content="{l:Tr Set}" Command="{Binding SetTopicCommand}" />
                     </Grid>
-                    <TextBlock Classes="subtitle" Text="Invite" />
+                    <TextBlock Classes="subtitle" Text="{l:Tr Invite}" />
                     <Grid ColumnDefinitions="*,Auto">
                       <TextBox Grid.Column="0" Text="{Binding InviteTarget}" PlaceholderText="@user:server" />
-                      <Button Grid.Column="1" Margin="6,0,0,0" Content="Invite" Command="{Binding InviteCommand}" />
+                      <Button Grid.Column="1" Margin="6,0,0,0" Content="{l:Tr Invite}" Command="{Binding InviteCommand}" />
                     </Grid>
-                    <TextBlock Classes="subtitle" Text="Members" />
+                    <TextBlock Classes="subtitle" Text="{l:Tr Members}" />
                     <ScrollViewer MaxHeight="240">
                       <ItemsControl ItemsSource="{Binding Members}">
                         <ItemsControl.ItemTemplate>
@@ -226,7 +227,7 @@
                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Classes="hint" Text="{Binding Details}" TextTrimming="CharacterEllipsis" />
                               </StackPanel>
-                              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="Verify" Click="OnVerifyMemberClick" IsVisible="{Binding ShowVerify}" />
+                              <Button Grid.Column="1" Classes="link" Margin="8,0,0,0" Content="{l:Tr Verify}" Click="OnVerifyMemberClick" IsVisible="{Binding ShowVerify}" />
                               <Button Grid.Column="2" Classes="link" Margin="8,0,0,0" Content="{Binding BlockText}" Click="OnBlockMemberClick" IsVisible="{Binding !IsOwn}" />
                             </Grid>
                           </DataTemplate>
@@ -234,8 +235,8 @@
                       </ItemsControl>
                     </ScrollViewer>
                     <Separator />
-                    <Button Content="Report room…" Click="OnReportRoomClick" HorizontalAlignment="Stretch" />
-                    <Button Content="Leave room" Command="{Binding LeaveRoomCommand}" HorizontalAlignment="Stretch" />
+                    <Button Content="{l:Tr ReportRoom}" Click="OnReportRoomClick" HorizontalAlignment="Stretch" />
+                    <Button Content="{l:Tr LeaveRoom}" Command="{Binding LeaveRoomCommand}" HorizontalAlignment="Stretch" />
                   </StackPanel>
                 </Flyout>
               </Button.Flyout>
@@ -247,22 +248,22 @@
       <!-- Invitation -->
       <Border DockPanel.Dock="Top" Classes="banner" IsVisible="{Binding SelectedRoom.IsInvite, FallbackValue=False}">
         <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock VerticalAlignment="Center" Text="You are invited to this room." />
-          <Button Classes="accent" Content="Join" Command="{Binding AcceptInviteCommand}" />
-          <Button Content="Decline" Command="{Binding DeclineInviteCommand}" />
+          <TextBlock VerticalAlignment="Center" Text="{l:Tr InvitedToRoom}" />
+          <Button Classes="accent" Content="{l:Tr Join}" Command="{Binding AcceptInviteCommand}" />
+          <Button Content="{l:Tr Decline}" Command="{Binding DeclineInviteCommand}" />
         </StackPanel>
       </Border>
 
       <!-- Server notices, which only the server writes -->
       <Border DockPanel.Dock="Top" Classes="banner" IsVisible="{Binding SelectedRoom.IsServerNotice, FallbackValue=False}">
-        <TextBlock TextWrapping="Wrap" Text="Messages from the admins of your server. You cannot reply here." />
+        <TextBlock TextWrapping="Wrap" Text="{l:Tr ServerNoticesHint}" />
       </Border>
 
       <!-- Suspended account -->
       <Border DockPanel.Dock="Top" Classes="notice" IsVisible="{Binding IsSuspended}">
         <Grid ColumnDefinitions="*,Auto">
-          <TextBlock Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Center" Text="Your account is suspended by the admins of your server: you can read and leave rooms, but not send messages, join rooms or invite. Check the Server notices room, if there is one." />
-          <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="Hide, and try again" Command="{Binding DismissSuspensionCommand}" />
+          <TextBlock Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Center" Text="{l:Tr AccountSuspendedHint}" />
+          <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr HideAndTryAgain}" Command="{Binding DismissSuspensionCommand}" />
         </Grid>
       </Border>
 
@@ -276,28 +277,28 @@
 
       <!-- Message box -->
       <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto" Margin="12,6,12,12" IsVisible="{Binding HasOpenRoom}">
-        <Button Grid.Column="0" Margin="0,0,6,0" Content="📎" ToolTip.Tip="Send a file" Click="OnAttachClick" VerticalAlignment="Bottom" IsEnabled="{Binding CanCompose}" />
-        <TextBox x:Name="ComposerBox" Grid.Column="1" Text="{Binding Composer}" PlaceholderText="Message" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="160" IsEnabled="{Binding CanCompose}" />
-        <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="Send" Command="{Binding SendCommand}" Focusable="False" ToolTip.Tip="Send (Enter); the message box keeps the focus" VerticalAlignment="Bottom" />
+        <Button Grid.Column="0" Margin="0,0,6,0" Content="📎" ToolTip.Tip="{l:Tr SendAFile}" Click="OnAttachClick" VerticalAlignment="Bottom" IsEnabled="{Binding CanCompose}" />
+        <TextBox x:Name="ComposerBox" Grid.Column="1" Text="{Binding Composer}" PlaceholderText="{l:Tr MessagePlaceholder}" AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="160" IsEnabled="{Binding CanCompose}" />
+        <Button Grid.Column="2" Margin="6,0,0,0" Classes="accent" Content="{l:Tr Send}" Command="{Binding SendCommand}" Focusable="False" ToolTip.Tip="{l:Tr SendTip}" VerticalAlignment="Bottom" />
       </Grid>
       <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding HasSharedFiles}">
         <Grid ColumnDefinitions="*,Auto,Auto">
           <TextBlock Grid.Column="0" Text="{Binding SharedFilesText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-          <Button Grid.Column="1" Classes="accent" Margin="6,0,0,0" Content="Send" Command="{Binding SendSharedFilesCommand}" />
-          <Button Grid.Column="2" Margin="6,0,0,0" Content="Cancel" Command="{Binding CancelShareCommand}" />
+          <Button Grid.Column="1" Classes="accent" Margin="6,0,0,0" Content="{l:Tr Send}" Command="{Binding SendSharedFilesCommand}" />
+          <Button Grid.Column="2" Margin="6,0,0,0" Content="{l:Tr Cancel}" Command="{Binding CancelShareCommand}" />
         </Grid>
       </Border>
       <Border DockPanel.Dock="Bottom" Classes="compose" IsVisible="{Binding IsComposingSpecial}">
         <Grid ColumnDefinitions="*,Auto">
           <TextBlock Grid.Column="0" Text="{Binding ComposeMode}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-          <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="Cancel (Esc)" Command="{Binding CancelComposeCommand}" />
+          <Button Grid.Column="1" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr CancelEsc}" Command="{Binding CancelComposeCommand}" />
         </Grid>
       </Border>
       <TextBlock DockPanel.Dock="Bottom" Classes="typing" Text="{Binding TypingText}" IsVisible="{Binding TypingText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
       <!-- Messages -->
       <Panel>
-        <TextBlock Classes="hint" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Choose a room to start." IsVisible="{Binding !HasOpenRoom}" />
+        <TextBlock Classes="hint" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{l:Tr ChooseRoomToStart}" IsVisible="{Binding !HasOpenRoom}" />
         <ListBox x:Name="MessageList" ItemsSource="{Binding Messages.Items}" Classes="messages" IsVisible="{Binding HasOpenRoom}" ContextRequested="OnMessageContextRequested">
           <ListBox.ItemTemplate>
             <DataTemplate x:DataType="vm:MessageViewModel">
@@ -335,11 +336,11 @@
                     </Border>
                     <!-- No menu of its own, so that a long press or right-click reaches the message's actions, which copy the text too -->
                     <views:RichText Body="{Binding Text}" Html="{Binding Html}" TextWrapping="Wrap" Classes.highlight="{Binding IsHighlight}" Classes.pending="{Binding IsPending}" ContextFlyout="{x:Null}" />
-                    <Image Source="{Binding Thumbnail}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Stretch="Uniform" Cursor="Hand" ToolTip.Tip="Open" Tapped="OnImageTapped" IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <Image Source="{Binding Thumbnail}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Stretch="Uniform" Cursor="Hand" ToolTip.Tip="{l:Tr Open}" Tapped="OnImageTapped" IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}" />
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                      <Button Classes="link" Content="Open" Click="OnOpenClick" IsVisible="{Binding IsAttachment}" />
-                      <Button Classes="link" Content="Save…" Click="OnSaveClick" IsVisible="{Binding IsAttachment}" />
-                      <TextBlock Classes="hint" Text="(edited)" IsVisible="{Binding IsEdited}" />
+                      <Button Classes="link" Content="{l:Tr Open}" Click="OnOpenClick" IsVisible="{Binding IsAttachment}" />
+                      <Button Classes="link" Content="{l:Tr SaveEllipsis}" Click="OnSaveClick" IsVisible="{Binding IsAttachment}" />
+                      <TextBlock Classes="hint" Text="{l:Tr Edited}" IsVisible="{Binding IsEdited}" />
                       <TextBlock Classes="hint" Text="{Binding SendState}" IsVisible="{Binding IsPending}" />
                       <Border Classes="reactions" IsVisible="{Binding HasReactions}">
                         <TextBlock Text="{Binding Reactions}" />
@@ -360,7 +361,7 @@
     <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding IsSettingsOpen}">
       <Border Classes="card">
         <Grid RowDefinitions="Auto,*">
-          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Right" />
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr Close}" Command="{Binding ToggleSettingsCommand}" HorizontalAlignment="Right" />
           <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
             <views:SettingsView DataContext="{Binding Settings}" />
           </ScrollViewer>
@@ -372,7 +373,7 @@
     <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding RoomDirectory, Converter={x:Static ObjectConverters.IsNotNull}}">
       <Border Classes="card tall">
         <Grid RowDefinitions="Auto,*">
-          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseDirectoryCommand}" HorizontalAlignment="Right" />
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr Close}" Command="{Binding CloseDirectoryCommand}" HorizontalAlignment="Right" />
           <views:DirectoryView Grid.Row="1" DataContext="{Binding RoomDirectory}" />
         </Grid>
       </Border>
@@ -382,7 +383,7 @@
     <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding Security, Converter={x:Static ObjectConverters.IsNotNull}}">
       <Border Classes="card">
         <Grid RowDefinitions="Auto,*">
-          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseSecurityCommand}" HorizontalAlignment="Right" />
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr Close}" Command="{Binding CloseSecurityCommand}" HorizontalAlignment="Right" />
           <ScrollViewer Grid.Row="1">
             <views:SecurityView DataContext="{Binding Security}" />
           </ScrollViewer>
@@ -394,7 +395,7 @@
     <Border Grid.ColumnSpan="2" Classes="overlay" IsVisible="{Binding Admin, Converter={x:Static ObjectConverters.IsNotNull}}">
       <Border Classes="card">
         <Grid RowDefinitions="Auto,*">
-          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseAdminCommand}" HorizontalAlignment="Right" />
+          <Button Grid.Row="0" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr Close}" Command="{Binding CloseAdminCommand}" HorizontalAlignment="Right" />
           <ScrollViewer Grid.Row="1">
             <views:AdminView DataContext="{Binding Admin}" />
           </ScrollViewer>

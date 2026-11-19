@@ -22,6 +22,7 @@ using global::Terminal.Gui.Drawing;
 using global::Terminal.Gui.Input;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Main window: menu bar, room list, message log, member list, input line and status bar.</summary>
 /// <remarks>
@@ -63,13 +64,13 @@ public sealed partial class MainWindow : Window
     private readonly ILogger<MainWindow> logger;
     private readonly string ownUserId;
 
-    private readonly ListView roomList = new() { Title = "Rooms", X = 0, Y = 1, Width = RoomListWidth, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
+    private readonly ListView roomList = new() { Title = Strings.Rooms, X = 0, Y = 1, Width = RoomListWidth, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
     private readonly TimelinePane timeline = new() { Title = "Matrix", X = RoomListWidth, Y = 1, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
-    private readonly ListView memberList = new() { Title = "Members", X = Pos.AnchorEnd(MemberListWidth), Y = 1, Width = MemberListWidth, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
+    private readonly ListView memberList = new() { Title = Strings.Members, X = Pos.AnchorEnd(MemberListWidth), Y = 1, Width = MemberListWidth, Height = Dim.Fill(2), BorderStyle = LineStyle.Single };
     private readonly Label inputPrefix = new() { X = 0, Y = Pos.AnchorEnd(2) };
     private readonly TextField input = new() { Y = Pos.AnchorEnd(2), Width = Dim.Fill() };
-    private readonly Label statusText = new() { Text = "Connecting…", X = 1, Width = Dim.Fill() };
-    private string statusMessage = "Connecting…";
+    private readonly Label statusText = new() { Text = Strings.Connecting, X = 1, Width = Dim.Fill() };
+    private string statusMessage = Strings.Connecting;
     private readonly ObservableCollection<string> roomRows = [];
     private readonly List<string> roomIds = [];
     private readonly HashSet<string> roomsWithHighlight = [];
@@ -128,7 +129,7 @@ public sealed partial class MainWindow : Window
         processor.EventsDecrypted += roomId => app.Invoke(() => { if (roomId == currentRoomId) _ = ReloadTimelineAsync(roomId); });
         uiOptions.OnChange(_ => app.Invoke(OnUiOptionsChanged));
         crypto.VerificationChanged += v => { VerificationState state = v.State; app.Invoke(() => OnVerificationChanged(v, state)); };
-        crypto.VerificationIgnored += (sender, device, reason) => app.Invoke(() => ShowStatus($"Verification request of {sender} {device} ignored: {reason}"));
+        crypto.VerificationIgnored += (sender, device, reason) => app.Invoke(() => ShowStatus(Texts.Format(Strings.VerificationIgnored, sender, device, reason)));
         calls.Devices = OpenCallDevices;
         calls.CallChanged += call => app.Invoke(() => OnCallChanged(call));
         calls.IncomingCall += call => app.Invoke(() => OnCallChanged(call));
@@ -143,60 +144,60 @@ public sealed partial class MainWindow : Window
 
     /// <summary>Build the File, Room, View and Help menus.</summary>
     private MenuBar CreateMenuBar() => new([
-        new MenuBarItem("_File", [
-            new MenuItem { Title = "_Encryption…", HelpText = "Keys, recovery and backup", Action = () => _ = ShowEncryptionAsync() },
-            new MenuItem { Title = "_Verify this device…", HelpText = "Emoji comparison", Action = () => VerifyUser(ownUserId) },
-            new MenuItem { Title = "_Devices…", HelpText = "See and log out sessions", Action = () => _ = ManageDevicesAsync() },
-            new MenuItem { Title = "_Settings…", HelpText = "View and change options", Action = ShowSettings },
-            new MenuItem { Title = "_Log out…", HelpText = "End the session on the server", Action = LogOut },
-            new MenuItem { Title = "Delete _account…", HelpText = "Deactivate the account for good", Action = DeleteAccount },
+        new MenuBarItem(Strings.MenuFile, [
+            new MenuItem { Title = Strings.MenuEncryption, HelpText = Strings.MenuEncryptionHelp, Action = () => _ = ShowEncryptionAsync() },
+            new MenuItem { Title = Strings.MenuVerifyDevice, HelpText = Strings.MenuVerifyDeviceHelp, Action = () => VerifyUser(ownUserId) },
+            new MenuItem { Title = Strings.MenuDevices, HelpText = Strings.MenuDevicesHelp, Action = () => _ = ManageDevicesAsync() },
+            new MenuItem { Title = Strings.MenuSettings, HelpText = Strings.MenuSettingsHelp, Action = ShowSettings },
+            new MenuItem { Title = Strings.MenuLogOut, HelpText = Strings.MenuLogOutHelp, Action = LogOut },
+            new MenuItem { Title = Strings.MenuDeleteAccount, HelpText = Strings.MenuDeleteAccountHelp, Action = DeleteAccount },
             new Line(),
-            new MenuItem { Title = "_Quit", HelpText = "Exit, keeping the session", Key = Key.Q.WithCtrl, Action = () => app.RequestStop() },
+            new MenuItem { Title = Strings.MenuQuit, HelpText = Strings.MenuQuitHelp, Key = Key.Q.WithCtrl, Action = () => app.RequestStop() },
         ]),
-        new MenuBarItem("_Room", [
-            new MenuItem { Title = "_Join…", HelpText = "Join by alias or ID", Key = Key.O.WithCtrl, Action = JoinRoom },
-            new MenuItem { Title = "Room _directory…", HelpText = "Search public rooms", Key = Key.R.WithCtrl, Action = BrowseDirectory },
-            new MenuItem { Title = "_New room…", HelpText = "Create a private room", Action = CreateRoom },
-            new MenuItem { Title = "New public _room…", HelpText = "Create a room anyone can join", Action = CreatePublicRoom },
-            new MenuItem { Title = "Direct _message…", HelpText = "Start a chat with a user", Action = StartDirectChat },
+        new MenuBarItem(Strings.MenuRoom, [
+            new MenuItem { Title = Strings.MenuJoin, HelpText = Strings.MenuJoinHelp, Key = Key.O.WithCtrl, Action = JoinRoom },
+            new MenuItem { Title = Strings.MenuDirectory, HelpText = Strings.MenuDirectoryHelp, Key = Key.R.WithCtrl, Action = BrowseDirectory },
+            new MenuItem { Title = Strings.MenuNewRoom, HelpText = Strings.MenuNewRoomHelp, Action = CreateRoom },
+            new MenuItem { Title = Strings.MenuNewPublicRoom, HelpText = Strings.MenuNewPublicRoomHelp, Action = CreatePublicRoom },
+            new MenuItem { Title = Strings.MenuDirectMessage, HelpText = Strings.MenuDirectMessageHelp, Action = StartDirectChat },
             new Line(),
-            new MenuItem { Title = "Send _file…", HelpText = "Upload a file here", Action = SendFile },
-            new MenuItem { Title = "_Call", HelpText = "Voice call this direct chat", Action = PlaceCall },
-            new MenuItem { Title = "_Hang up", HelpText = "End the call", Action = HangupCall },
-            new MenuItem { Title = "_Invite…", HelpText = "Invite a user here", Action = InviteUser },
-            new MenuItem { Title = "Set _topic…", HelpText = "Change the topic", Action = SetTopic },
-            new MenuItem { Title = "Set nam_e…", HelpText = "Change the room name", Action = SetRoomName },
-            new MenuItem { Title = "Set _avatar…", HelpText = "Picture of the room", Action = SetRoomAvatar },
-            new MenuItem { Title = "Add alia_s…", HelpText = "An address like #room:server", Action = AddAlias },
-            new MenuItem { Title = "Directory listin_g…", HelpText = "List in the public room directory", Action = ChangeDirectoryListing },
-            new MenuItem { Title = "_Power level…", HelpText = "Make a member admin or moderator", Action = SetPowerLevel },
-            new MenuItem { Title = "_Kick…", HelpText = "Remove a member", Action = KickMember },
-            new MenuItem { Title = "_Ban…", HelpText = "Remove a member for good", Action = BanMember },
-            new MenuItem { Title = "_Unban…", HelpText = "Let a banned user back", Action = UnbanMember },
-            new MenuItem { Title = "Enable en_cryption…", HelpText = "Encrypt this room; cannot be undone", Action = EnableEncryption },
-            new MenuItem { Title = "_Leave", HelpText = "Leave this room", Action = LeaveRoom },
+            new MenuItem { Title = Strings.MenuSendFile, HelpText = Strings.MenuSendFileHelp, Action = SendFile },
+            new MenuItem { Title = Strings.MenuCall, HelpText = Strings.MenuCallHelp, Action = PlaceCall },
+            new MenuItem { Title = Strings.MenuHangUp, HelpText = Strings.MenuHangUpHelp, Action = HangupCall },
+            new MenuItem { Title = Strings.MenuInvite, HelpText = Strings.MenuInviteHelp, Action = InviteUser },
+            new MenuItem { Title = Strings.MenuSetTopic, HelpText = Strings.MenuSetTopicHelp, Action = SetTopic },
+            new MenuItem { Title = Strings.MenuSetName, HelpText = Strings.MenuSetNameHelp, Action = SetRoomName },
+            new MenuItem { Title = Strings.MenuSetAvatar, HelpText = Strings.MenuSetAvatarHelp, Action = SetRoomAvatar },
+            new MenuItem { Title = Strings.MenuAddAlias, HelpText = Strings.MenuAddAliasHelp, Action = AddAlias },
+            new MenuItem { Title = Strings.MenuDirectoryListing, HelpText = Strings.MenuDirectoryListingHelp, Action = ChangeDirectoryListing },
+            new MenuItem { Title = Strings.MenuPowerLevel, HelpText = Strings.MenuPowerLevelHelp, Action = SetPowerLevel },
+            new MenuItem { Title = Strings.MenuKick, HelpText = Strings.MenuKickHelp, Action = KickMember },
+            new MenuItem { Title = Strings.MenuBan, HelpText = Strings.MenuBanHelp, Action = BanMember },
+            new MenuItem { Title = Strings.MenuUnban, HelpText = Strings.MenuUnbanHelp, Action = UnbanMember },
+            new MenuItem { Title = Strings.MenuEnableEncryption, HelpText = Strings.MenuEnableEncryptionHelp, Action = EnableEncryption },
+            new MenuItem { Title = Strings.MenuLeave, HelpText = Strings.MenuLeaveHelp, Action = LeaveRoom },
         ]),
-        new MenuBarItem("_View", [
-            new MenuItem { Title = "_Older messages", HelpText = "Load history", Key = Key.PageUp.WithCtrl, Action = () => _ = LoadOlderAsync() },
-            new MenuItem { Title = "_Members", HelpText = "Show or hide", Key = Key.F2, Action = () => SetMemberListVisible(!memberList.Visible) },
-            new MenuItem { Title = "_Select message", HelpText = "Reply, react, edit…", Key = Key.CursorUp.WithCtrl, Action = SelectMessage },
-            new MenuItem { Title = "_Logs…", HelpText = "This and earlier sessions", Action = ShowLogs },
-            new MenuItem { Title = "_Audio test…", HelpText = "Hear yourself, to test microphone and speaker", Action = TestAudio },
+        new MenuBarItem(Strings.MenuView, [
+            new MenuItem { Title = Strings.MenuOlderMessages, HelpText = Strings.MenuOlderMessagesHelp, Key = Key.PageUp.WithCtrl, Action = () => _ = LoadOlderAsync() },
+            new MenuItem { Title = Strings.MenuMembers, HelpText = Strings.MenuMembersHelp, Key = Key.F2, Action = () => SetMemberListVisible(!memberList.Visible) },
+            new MenuItem { Title = Strings.MenuSelectMessage, HelpText = Strings.MenuSelectMessageHelp, Key = Key.CursorUp.WithCtrl, Action = SelectMessage },
+            new MenuItem { Title = Strings.MenuLogs, HelpText = Strings.MenuLogsHelp, Action = ShowLogs },
+            new MenuItem { Title = Strings.MenuAudioTest, HelpText = Strings.MenuAudioTestHelp, Action = TestAudio },
             new Line(),
-            new MenuItem { Title = "_Next room", Key = Key.N.WithCtrl, Action = () => SelectRelativeRoom(+1) },
-            new MenuItem { Title = "_Previous room", Key = Key.P.WithCtrl, Action = () => SelectRelativeRoom(-1) },
+            new MenuItem { Title = Strings.MenuNextRoom, Key = Key.N.WithCtrl, Action = () => SelectRelativeRoom(+1) },
+            new MenuItem { Title = Strings.MenuPreviousRoom, Key = Key.P.WithCtrl, Action = () => SelectRelativeRoom(-1) },
         ]),
-        new MenuBarItem("_Server", [
-            new MenuItem { Title = "_Accounts…", HelpText = "Server admins: list and manage accounts", Action = () => ManageAccounts("") },
-            new MenuItem { Title = "_Registration tokens…", HelpText = "Tokens new accounts register with", Action = ManageRegistrationTokens },
-            new MenuItem { Title = "Re_ports…", HelpText = "What users reported", Action = ManageReports },
-            new MenuItem { Title = "R_ooms…", HelpText = "Every room of the server", Action = () => ManageServerRooms("") },
-            new MenuItem { Title = "Server _notice…", HelpText = "Message a user from the server", Action = () => SendServerNotice("") },
-            new MenuItem { Title = "_Who is…", HelpText = "A user's devices and addresses", Action = () => ShowWhois("") },
+        new MenuBarItem(Strings.MenuServer, [
+            new MenuItem { Title = Strings.MenuAccounts, HelpText = Strings.MenuAccountsHelp, Action = () => ManageAccounts("") },
+            new MenuItem { Title = Strings.MenuRegistrationTokens, HelpText = Strings.MenuRegistrationTokensHelp, Action = ManageRegistrationTokens },
+            new MenuItem { Title = Strings.MenuReports, HelpText = Strings.MenuReportsHelp, Action = ManageReports },
+            new MenuItem { Title = Strings.MenuServerRooms, HelpText = Strings.MenuServerRoomsHelp, Action = () => ManageServerRooms("") },
+            new MenuItem { Title = Strings.MenuServerNotice, HelpText = Strings.MenuServerNoticeHelp, Action = () => SendServerNotice("") },
+            new MenuItem { Title = Strings.MenuWhois, HelpText = Strings.MenuWhoisHelp, Action = () => ShowWhois("") },
         ]),
-        new MenuBarItem("_Help", [
-            new MenuItem { Title = "_Commands and keys", Key = Key.F1, Action = ShowHelp },
-            new MenuItem { Title = "_About", Action = () => Dialogs.Info(app, "About", $"Uniform Chat Terminal {Uniform.Matrix.Hosting.AppVersion.Of(typeof(MainWindow).Assembly)}\nA Matrix chat client for the terminal.\n\nhttps://spec.matrix.org") },
+        new MenuBarItem(Strings.MenuHelp, [
+            new MenuItem { Title = Strings.MenuCommandsAndKeys, Key = Key.F1, Action = ShowHelp },
+            new MenuItem { Title = Strings.MenuAbout, Action = () => Dialogs.Info(app, Strings.About, Texts.Format(Strings.AboutText, Uniform.Matrix.Hosting.AppVersion.Of(typeof(MainWindow).Assembly))) },
         ]),
     ]);
 
@@ -205,10 +206,10 @@ public sealed partial class MainWindow : Window
     {
         // Key hints, then live status
         StatusBar bar = new() { Y = Pos.AnchorEnd() };
-        bar.Add(new Shortcut { Title = "Help", Key = Key.F1, Action = ShowHelp, BindKeyToApplication = false });
-        bar.Add(new Shortcut { Title = "Rooms", Key = Key.N.WithCtrl, BindKeyToApplication = false });
-        bar.Add(new Shortcut { Title = "Join", Key = Key.O.WithCtrl, BindKeyToApplication = false });
-        bar.Add(new Shortcut { Title = "Quit", Key = Key.Q.WithCtrl, BindKeyToApplication = false });
+        bar.Add(new Shortcut { Title = Strings.Help, Key = Key.F1, Action = ShowHelp, BindKeyToApplication = false });
+        bar.Add(new Shortcut { Title = Strings.Rooms, Key = Key.N.WithCtrl, BindKeyToApplication = false });
+        bar.Add(new Shortcut { Title = Strings.Join, Key = Key.O.WithCtrl, BindKeyToApplication = false });
+        bar.Add(new Shortcut { Title = Strings.Quit, Key = Key.Q.WithCtrl, BindKeyToApplication = false });
         bar.Add(statusText);
         // Return bar
         return bar;
@@ -323,7 +324,7 @@ public sealed partial class MainWindow : Window
 
         // Header and typing may have changed
         if (current is not null || changes.TypingChanged.Any(r => r.RoomId == currentRoomId)) RefreshHeader();
-        foreach (Room room in changes.Invited) ShowStatus($"Invited to {processor.Read(_ => room.DisplayName)}");
+        foreach (Room room in changes.Invited) ShowStatus(Texts.Format(Strings.InvitedTo, processor.Read(_ => room.DisplayName)));
     }
 
     /// <summary>Show connection changes; a fatal error is reported and end the app.</summary>
@@ -339,17 +340,17 @@ public sealed partial class MainWindow : Window
 
         // Fatal error ends the app
         if (state != ConnectionState.Failed) return;
-        Dialogs.Error(app, "Cannot connect", $"{message}\n\nSee the log file for details.");
+        Dialogs.Error(app, Strings.CannotConnect, Texts.Format(Strings.SeeLogFile, message));
         app.RequestStop();
     }
 
     /// <summary>Return the status bar text for a connection state.</summary>
     private string DescribeConnection(ConnectionState state, string? message) => state switch
     {
-        ConnectionState.Connecting => message ?? "Connecting…",
-        ConnectionState.Connected => $"Connected as {ownUserId}",
-        ConnectionState.Retrying => $"Connection problem: {message}",
-        _ => $"Failed: {message}",
+        ConnectionState.Connecting => message ?? Strings.Connecting,
+        ConnectionState.Connected => Texts.Format(Strings.ConnectedAs, ownUserId),
+        ConnectionState.Retrying => Texts.Format(Strings.ConnectionProblem, message),
+        _ => Texts.Format(Strings.Failed, message),
     };
 
     /// <summary>Show the connection state again after a temporary status message.</summary>
@@ -369,7 +370,7 @@ public sealed partial class MainWindow : Window
         // Names of others typing
         List<string> typing = currentRoomId is null ? [] : processor.Read(r => r?.TryGetRoom(currentRoomId, out Room? room) == true ? room.TypingUserIds.Where(u => u != ownUserId).Select(room.GetMemberDisplayName).ToList() : []);
         // Show, with the status after it
-        statusText.Text = typing.Count == 0 ? statusMessage : $"{string.Join(", ", typing)} typing…  {statusMessage}";
+        statusText.Text = typing.Count == 0 ? statusMessage : Texts.Format(Strings.TypingStatus, string.Join(", ", typing), statusMessage);
     }
 
     /// <summary>Rebuild the room list: invites, favourites, others, low priority; keep the selection.</summary>
@@ -498,7 +499,7 @@ public sealed partial class MainWindow : Window
         string membership = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.Membership : Memberships.Leave);
         if (membership == Memberships.Invite)
         {
-            timeline.SetEntries([new TimelineEntry { Text = "-!- You are invited to this room. Press Enter to join or reject.", Kind = EntryKind.Info }]);
+            timeline.SetEntries([new TimelineEntry { Text = Strings.InvitedToThisRoom, Kind = EntryKind.Info }]);
             if (enter) AnswerInvite(roomId);
             return;
         }
@@ -513,7 +514,7 @@ public sealed partial class MainWindow : Window
 
         // Full member list once per room
         if (!membersLoaded.Add(roomId)) return;
-        await RunSafelyAsync("Loading members", client => processor.LoadMembersAsync(client, roomId));
+        await RunSafelyAsync(Strings.LoadingMembers, client => processor.LoadMembersAsync(client, roomId));
         if (currentRoomId == roomId) RefreshHeader();
     }
 
@@ -535,18 +536,18 @@ public sealed partial class MainWindow : Window
         bool already = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true && room.IsEncrypted);
         if (already)
         {
-            Dialogs.Info(app, "Encryption", "This room is already encrypted.");
+            Dialogs.Info(app, Strings.Encryption, Strings.AlreadyEncrypted);
             return;
         }
         if (!crypto.Available)
         {
-            Dialogs.Error(app, "Encryption", $"Encryption is not available on this device.\n\n{crypto.UnavailableReason}");
+            Dialogs.Error(app, Strings.Encryption, Texts.Format(Strings.EncryptionUnavailable, crypto.UnavailableReason));
             return;
         }
 
         // Confirm and enable
-        if (!Dialogs.Confirm(app, "Enable encryption", "Encrypt all new messages in this room? This cannot be turned off later.")) return;
-        _ = RunSafelyAsync("Enabling encryption", client => client.SendStateEventAsync(roomId, EventTypes.RoomEncryption, new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm }));
+        if (!Dialogs.Confirm(app, Strings.EnableEncryption, Strings.EnableEncryptionQuestion)) return;
+        _ = RunSafelyAsync(Strings.EnablingEncryption, client => client.SendStateEventAsync(roomId, EventTypes.RoomEncryption, new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm }));
     }
 
     /// <summary>Return the member list mark of a member, as in irssi: <c>@</c> admin, <c>%</c> moderator, <c>+</c> invited.</summary>
@@ -565,12 +566,12 @@ public sealed partial class MainWindow : Window
                 .OrderByDescending(m => m.Level >= PowerLevelsContent.Admin ? 2 : m.Level >= PowerLevelsContent.Moderator ? 1 : 0)
                 .ThenBy(m => room.GetMemberDisplayName(m.Member.UserId), StringComparer.CurrentCultureIgnoreCase)
                 .Select(m => RolePrefix(m.Level, m.Member.Membership) + room.GetMemberDisplayName(m.Member.UserId))];
-            return (room.IsEncrypted ? $"{header} [encrypted]" : header, names);
+            return (room.IsEncrypted ? Texts.Format(Strings.EncryptedHeader, header) : header, names);
         });
 
         // Apply
         timeline.Title = title;
-        memberList.Title = $"Members ({members.Count})";
+        memberList.Title = Texts.Format(Strings.MembersCount, members.Count);
         memberRows.Clear();
         foreach (string name in members) memberRows.Add(name);
         RefreshTyping();
@@ -685,7 +686,7 @@ public sealed partial class MainWindow : Window
             case "op": SetPowerLevel(argument.Length > 0 ? $"{argument.Split(' ')[0]} admin" : ""); break;
             case "deop": SetPowerLevel(argument.Length > 0 ? $"{argument.Split(' ')[0]} member" : ""); break;
             case "invite": InviteUser(argument); break;
-            case "nick": _ = RunSafelyAsync("Changing display name", client => client.SetDisplayNameAsync(argument)); break;
+            case "nick": _ = RunSafelyAsync(Strings.ChangingDisplayName, client => client.SetDisplayNameAsync(argument)); break;
             case "msg" or "query": StartDirectChat(argument); break;
             case "list": BrowseDirectory(argument); break;
             case "create": CreateRoom(argument); break;
@@ -708,7 +709,7 @@ public sealed partial class MainWindow : Window
             case "rooms": ManageServerRooms(argument); break;
             case "quit" or "exit": app.RequestStop(); break;
             case "help": ShowHelp(); break;
-            default: Dialogs.Error(app, "Unknown command", $"/{parts[0]} is not a command. See Help → Commands and keys."); break;
+            default: Dialogs.Error(app, Strings.UnknownCommand, Texts.Format(Strings.NotACommand, parts[0])); break;
         }
     }
 
@@ -716,7 +717,7 @@ public sealed partial class MainWindow : Window
     private void JoinRoom(string target)
     {
         // Ask
-        string? text = target.Length > 0 ? target : Dialogs.Ask(app, "Join room", "Room alias, ID or link, e.g. #matrix:matrix.org; servers to join through may follow:");
+        string? text = target.Length > 0 ? target : Dialogs.Ask(app, Strings.JoinRoom, Strings.JoinRoomPrompt);
         if (text is null) return;
         string[] words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (words.Length == 0) return;
@@ -724,7 +725,7 @@ public sealed partial class MainWindow : Window
         // Assert a room, not a user
         if (!MatrixLink.TryParse(words[0], out MatrixLink? link) || link.IsUser)
         {
-            Dialogs.Error(app, "Invalid room", $"{words[0]} is not a room alias, ID or link like #matrix:matrix.org. Use /msg to chat with a user.");
+            Dialogs.Error(app, Strings.InvalidRoom, Texts.Format(Strings.NotARoom, words[0]));
             return;
         }
         // Join with the link's servers and the typed ones
@@ -745,11 +746,11 @@ public sealed partial class MainWindow : Window
         // Newer room IDs name no server, so one is needed to join through
         if (room.StartsWith('!') && !room.Contains(':') && link.Via.Count == 0)
         {
-            Dialogs.Error(app, "Server needed", $"{room} does not name a server. Give servers in the room to join through, e.g. /join {room} matrix.org.");
+            Dialogs.Error(app, Strings.ServerNeeded, Texts.Format(Strings.RoomNamesNoServer, room, room));
             return;
         }
         // Join; the room appears with the next sync
-        _ = RunSafelyAsync($"Joining {room}", async client => { await client.JoinRoomAsync(room, link.Via.Count > 0 ? link.Via : null); app.Invoke(() => ShowStatus($"Joined {room}")); });
+        _ = RunSafelyAsync(Texts.Format(Strings.JoiningRoom, room), async client => { await client.JoinRoomAsync(room, link.Via.Count > 0 ? link.Via : null); app.Invoke(() => ShowStatus(Texts.Format(Strings.JoinedRoom, room))); });
     }
 
     /// <summary>Join from the menu, asking for the room.</summary>
@@ -768,7 +769,7 @@ public sealed partial class MainWindow : Window
             if (link.Target == ownUserId) return;
             string? direct = processor.Read(r => r?.Rooms.Values.FirstOrDefault(room => room.Membership == Memberships.Join && room.DirectUserId == link.Target)?.RoomId);
             if (direct is not null) _ = OpenRoomAsync(direct);
-            else if (Dialogs.Confirm(app, "Direct message", $"Start a direct chat with {link.Target}?")) StartDirectChat(link.Target);
+            else if (Dialogs.Confirm(app, Strings.DirectMessage, Texts.Format(Strings.StartDirectChatQuestion, link.Target))) StartDirectChat(link.Target);
             return;
         }
 
@@ -778,8 +779,8 @@ public sealed partial class MainWindow : Window
             _ = OpenRoomAsync(roomId);
             return;
         }
-        string through = link.Via.Count > 0 ? $" through {string.Join(", ", link.Via)}" : "";
-        if (Dialogs.Confirm(app, "Join room", $"Join {link.Target}{through}?")) JoinRoom(link);
+        string through = link.Via.Count > 0 ? Texts.Format(Strings.JoinThrough, string.Join(", ", link.Via)) : "";
+        if (Dialogs.Confirm(app, Strings.JoinRoom, Texts.Format(Strings.JoinQuestion, link.Target, through))) JoinRoom(link);
     }
 
     /// <summary>Server whose directory <see cref="BrowseDirectory(string)"/> showed last; empty for this homeserver.</summary>
@@ -791,7 +792,7 @@ public sealed partial class MainWindow : Window
         // Assert connected
         if (Client is not MatrixClient client)
         {
-            Dialogs.Error(app, "Not connected", "Wait until the client is connected.");
+            Dialogs.Error(app, Strings.NotConnected, Strings.WaitUntilConnected);
             return;
         }
         // Pick, remembering the server, and join through it
@@ -817,12 +818,12 @@ public sealed partial class MainWindow : Window
         }
 
         // Ask
-        string? name = roomName.Length > 0 ? roomName : Dialogs.Ask(app, "New room", "Room name:");
+        string? name = roomName.Length > 0 ? roomName : Dialogs.Ask(app, Strings.NewRoom, Strings.RoomNamePrompt);
         if (name is null) return;
         // Create
         // Encrypted like other clients do for private rooms, when encryption works
         IReadOnlyList<InitialStateEvent>? state = crypto.Available ? [new InitialStateEvent { Type = EventTypes.RoomEncryption, Content = new EncryptionContent { Algorithm = EncryptionAlgorithms.Megolm } }] : null;
-        _ = RunSafelyAsync("Creating room", client => client.CreateRoomAsync(new CreateRoomRequest { Name = name, Preset = RoomPresets.PrivateChat, InitialState = state }));
+        _ = RunSafelyAsync(Strings.CreatingRoom, client => client.CreateRoomAsync(new CreateRoomRequest { Name = name, Preset = RoomPresets.PrivateChat, InitialState = state }));
     }
 
     /// <summary>Create a room from the menu.</summary>
@@ -832,15 +833,15 @@ public sealed partial class MainWindow : Window
     private void StartDirectChat(string userId)
     {
         // Ask and validate
-        string? target = userId.Length > 0 ? userId : Dialogs.Ask(app, "Direct message", "User ID, e.g. @alice:matrix.org:");
+        string? target = userId.Length > 0 ? userId : Dialogs.Ask(app, Strings.DirectMessage, Strings.UserIdPrompt);
         if (target is null) return;
         if (!UserId.TryParse(target, out _))
         {
-            Dialogs.Error(app, "Invalid user", $"{target} is not a user ID like @alice:matrix.org.");
+            Dialogs.Error(app, Strings.InvalidUser, Texts.Format(Strings.NotAUser, target));
             return;
         }
         // Create room and invite
-        _ = RunSafelyAsync($"Starting chat with {target}", client => client.CreateDirectRoomAsync(target, encrypted: crypto.Available));
+        _ = RunSafelyAsync(Texts.Format(Strings.StartingChatWith, target), client => client.CreateDirectRoomAsync(target, encrypted: crypto.Available));
     }
 
     /// <summary>Start a direct chat from the menu.</summary>
@@ -851,10 +852,10 @@ public sealed partial class MainWindow : Window
     {
         // Assert room and ask
         if (currentRoomId is not string roomId) return;
-        string? target = userId.Length > 0 ? userId : Dialogs.Ask(app, "Invite", "User ID, e.g. @alice:matrix.org:");
+        string? target = userId.Length > 0 ? userId : Dialogs.Ask(app, Strings.Invite, Strings.UserIdPrompt);
         if (target is null) return;
         // Invite
-        _ = RunSafelyAsync($"Inviting {target}", client => client.InviteAsync(roomId, target));
+        _ = RunSafelyAsync(Texts.Format(Strings.Inviting, target), client => client.InviteAsync(roomId, target));
     }
 
     /// <summary>Invite from the menu.</summary>
@@ -866,10 +867,10 @@ public sealed partial class MainWindow : Window
         // Assert room and ask with the current topic
         if (currentRoomId is not string roomId) return;
         string current = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.Topic ?? "" : "");
-        string? text = topic.Length > 0 ? topic : Dialogs.Ask(app, "Set topic", "Topic:", current);
+        string? text = topic.Length > 0 ? topic : Dialogs.Ask(app, Strings.SetTopic, Strings.TopicPrompt, current);
         if (text is null) return;
         // Set
-        _ = RunSafelyAsync("Setting topic", client => client.SetRoomTopicAsync(roomId, text));
+        _ = RunSafelyAsync(Strings.SettingTopic, client => client.SetRoomTopicAsync(roomId, text));
     }
 
     /// <summary>Set the topic from the menu.</summary>
@@ -881,9 +882,9 @@ public sealed partial class MainWindow : Window
         // Assert room and confirm
         if (currentRoomId is not string roomId) return;
         string name = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? room.DisplayName : roomId);
-        if (!Dialogs.Confirm(app, "Leave room", $"Leave {name}?")) return;
+        if (!Dialogs.Confirm(app, Strings.LeaveRoom, Texts.Format(Strings.LeaveQuestion, name))) return;
         // Leave
-        _ = RunSafelyAsync($"Leaving {name}", client => client.LeaveRoomAsync(roomId));
+        _ = RunSafelyAsync(Texts.Format(Strings.Leaving, name), client => client.LeaveRoomAsync(roomId));
     }
 
     /// <summary>Ask whether to accept an invite, and join or rejects it.</summary>
@@ -891,23 +892,23 @@ public sealed partial class MainWindow : Window
     {
         // Ask
         (string name, string? inviter, bool direct) = processor.Read(r => r?.TryGetRoom(roomId, out Room? room) == true ? (room.DisplayName, room.InviterUserId, room.IsDirect) : (roomId, null, false));
-        int? answer = MessageBox.Query(app, "Invite", $"{inviter ?? "Someone"} invited you to {name}.", "_Later", "_Reject", "_Join");
+        int? answer = MessageBox.Query(app, Strings.Invite, Texts.Format(Strings.InvitedYou, inviter ?? Strings.Someone, name), Strings.ButtonLater, Strings.ButtonReject, Strings.ButtonJoin);
         // Act; direct chats are recorded as such, as the inviter did
-        if (answer == 2) _ = RunSafelyAsync($"Joining {name}", async client =>
+        if (answer == 2) _ = RunSafelyAsync(Texts.Format(Strings.JoiningRoom, name), async client =>
         {
             await client.JoinRoomAsync(roomId);
             if (direct && inviter is not null) await client.MarkDirectRoomAsync(inviter, roomId);
         });
-        if (answer == 1) _ = RunSafelyAsync($"Rejecting {name}", client => client.LeaveRoomAsync(roomId));
+        if (answer == 1) _ = RunSafelyAsync(Texts.Format(Strings.Rejecting, name), client => client.LeaveRoomAsync(roomId));
     }
 
     /// <summary>Log out after confirmation, deleting the device on the server, and quits.</summary>
     private void LogOut()
     {
         // Confirm
-        if (!Dialogs.Confirm(app, "Log out", "End this session on the server? Messages stay in the local database.")) return;
+        if (!Dialogs.Confirm(app, Strings.LogOut, Strings.LogOutQuestion)) return;
         // Log out, forget the token and the user ID, so the next start asks who signs in, and quit
-        _ = RunSafelyAsync("Logging out", async client =>
+        _ = RunSafelyAsync(Strings.LoggingOut, async client =>
         {
             // Best effort: an unreachable server still ends the local session
             try { await client.LogoutAsync(); }
@@ -930,63 +931,7 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>Show input commands and keys.</summary>
-    private void ShowHelp() => Dialogs.Info(app, "Commands and keys", string.Join('\n',
-        "**bold** _italic_ `code` ~~strike~~ [text](url)   Markdown is sent formatted",
-        "/plain text     send without Markdown",
-        "/me text        action, like * you wave",
-        "/join #room     join a room; also !id or a link, then servers to join through",
-        "/leave          leave this room",
-        "/topic text     set the topic",
-        "/name text      set the room name",
-        "/avatar [file]  set the room picture; /avatar none removes it",
-        "/kick @user [reason]   remove a member",
-        "/ban @user [reason]    remove a member for good",
-        "/unban @user    let a banned user back",
-        "/power @user level     set a power level: number, admin, moderator or member",
-        "/op @user, /deop @user  make admin, or ordinary member",
-        "/invite @user   invite a user",
-        "/msg @user      start a direct chat",
-        "/nick name      set your display name",
-        "/list [server]  browse public rooms, here or on another server",
-        "/create name    create a private room",
-        "/create #room [name]   create a public room with that address",
-        "/alias #room, /unalias #room   add or remove an address of this room",
-        "/publish, /unpublish   list this room in the public room directory, or not",
-        "/upload         send a file",
-        "/devices        manage your sessions",
-        "/settings       view and change options",
-        "/logs           read this and earlier session logs",
-        "/audiotest      hear yourself through Opus, to test microphone and speaker",
-        "/call           voice call the other member of this direct chat",
-        "/answer /reject answer or decline a ringing call",
-        "/hangup /mute   end the call, or mute and unmute the microphone",
-        "/encryption     keys, recovery and backup",
-        "/recover        unlock old messages with the recovery key",
-        "/verify [@user] verify your other device, or a user, with emoji",
-        "/ignore @user   block a user: their messages and invites no longer show; /ignore alone lists them",
-        "/unignore @user unblock a user",
-        "/report [@user] report this room, or a user, to your server's admins; messages from their actions (Enter)",
-        "/quit           exit",
-        "",
-        "Server admins, also in the Server menu:",
-        "/whois @user    a user's devices and addresses; anyone may look up themselves",
-        "/accounts [text], /rooms [text]   list and manage the server's accounts or rooms",
-        "/suspend @user, /unsuspend @user  they may read but not send, join or invite",
-        "/lock @user, /unlock @user        the server refuses their sessions",
-        "/notice @user text   send a server notice",
-        "/tokens, /reports    registration tokens, users' reports",
-        "",
-        "Alt+1…9         go to room 1…9",
-        "Ctrl+N, Ctrl+P  next, previous room",
-        "Ctrl+O          join a room",
-        "Ctrl+R          room directory",
-        "PageUp/Down     scroll messages",
-        "Ctrl+PageUp     load older messages",
-        "F2              show or hide members",
-        "Ctrl+Up, Enter  select a message, then act on it",
-        "Tab             complete a nick",
-        "Esc             cancel reply or edit",
-        "F10             open the menu"));
+    private void ShowHelp() => Dialogs.Info(app, Strings.CommandsAndKeys, Strings.HelpText);
 
     /// <summary>Run <paramref name="action"/> with the client, showing failures in a dialog.</summary>
     private async Task RunSafelyAsync(string what, Func<MatrixClient, Task> action)
@@ -994,7 +939,7 @@ public sealed partial class MainWindow : Window
         // Assert connected
         if (Client is not MatrixClient client)
         {
-            Dialogs.Error(app, "Not connected", "Wait until the client is connected.");
+            Dialogs.Error(app, Strings.NotConnected, Strings.WaitUntilConnected);
             return;
         }
         // Run, reporting errors

@@ -13,6 +13,7 @@ using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Hosting;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The client engine of one signed-in account, running in its own .NET host until disposed.</summary>
 /// <remarks>The engine needs the user ID when it starts, so the app starts one connection per sign-in instead of one host for its whole life.</remarks>
@@ -114,7 +115,7 @@ public sealed class ClientConnection : IAsyncDisposable
         {
             if (Status.State == ConnectionState.Failed) failed.TrySetResult(Status.Message);
             Task first = await Task.WhenAny(Session.WhenReady, failed.Task).WaitAsync(cancellationToken);
-            if (first == failed.Task) throw new InvalidOperationException(await failed.Task ?? "Signing in failed.");
+            if (first == failed.Task) throw new InvalidOperationException(await failed.Task ?? Strings.SigningInFailed);
             // Return client
             return await Session.WhenReady;
         }

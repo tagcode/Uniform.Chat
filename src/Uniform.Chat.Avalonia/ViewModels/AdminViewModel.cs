@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>A section of the server administration panel.</summary>
 public enum AdminSection
@@ -106,11 +107,11 @@ public sealed partial class AdminViewModel : ViewModelBase
     /// <summary>Whether an account is chosen.</summary>
     public bool HasSelectedAccount => SelectedAccount is not null;
     /// <summary>Text of the suspension button of the chosen account.</summary>
-    public string SuspendText => SelectedAccount?.Account.Suspended == true ? "End suspension" : "Suspend";
+    public string SuspendText => SelectedAccount?.Account.Suspended == true ? Strings.EndSuspension : Strings.Suspend;
     /// <summary>Text of the lock button of the chosen account.</summary>
-    public string LockText => SelectedAccount?.Account.Locked == true ? "Unlock" : "Lock";
+    public string LockText => SelectedAccount?.Account.Locked == true ? Strings.Unlock : Strings.Lock;
     /// <summary>Text of the admin button of the chosen account.</summary>
-    public string AdminText => SelectedAccount?.Account.Admin == true ? "Take admin rights" : "Make admin";
+    public string AdminText => SelectedAccount?.Account.Admin == true ? Strings.TakeAdminRights : Strings.MakeAdmin;
 
     /// <summary>New password for the chosen account.</summary>
     [ObservableProperty]
@@ -157,26 +158,26 @@ public sealed partial class AdminViewModel : ViewModelBase
     [RelayCommand]
     public Task RefreshAsync() => Section switch
     {
-        AdminSection.Reports => RunAsync("Loading reports", LoadReportsAsync),
-        AdminSection.Accounts => RunAsync("Loading accounts", LoadAccountsAsync),
-        _ => RunAsync("Loading tokens", LoadTokensAsync),
+        AdminSection.Reports => RunAsync(Strings.LoadingReports, LoadReportsAsync),
+        AdminSection.Accounts => RunAsync(Strings.LoadingAccounts, LoadAccountsAsync),
+        _ => RunAsync(Strings.LoadingTokens, LoadTokensAsync),
     };
 
     /// <summary>Delete a report.</summary>
-    public Task DeleteReportAsync(AdminReportItem item) => RunAsync("Deleting the report", async client =>
+    public Task DeleteReportAsync(AdminReportItem item) => RunAsync(Strings.DeletingReport, async client =>
     {
         // Delete, then list again
         await client.DeleteReportAsync(item.Report.Id);
         await LoadReportsAsync(client);
-        Message = "Report deleted.";
+        Message = Strings.ReportDeleted;
     });
 
     /// <summary>Suspend the reported user.</summary>
-    public Task SuspendReportedAsync(AdminReportItem item) => item.ReportedUser is not string userId ? Task.CompletedTask : RunAsync("Suspending", async client =>
+    public Task SuspendReportedAsync(AdminReportItem item) => item.ReportedUser is not string userId ? Task.CompletedTask : RunAsync(Strings.Suspending, async client =>
     {
         // Suspend, then tell
         await client.SetSuspendedAsync(userId, true);
-        Message = $"Suspended {userId}: they can read but not send, join or invite.";
+        Message = Translations.Format(Strings.SuspendedUser, userId);
     });
 
     /// <summary>Ask to shut down the reported room, which cannot be undone.</summary>
@@ -184,16 +185,16 @@ public sealed partial class AdminViewModel : ViewModelBase
     {
         // Confirmed later
         if (item.Report.RoomId is not string roomId) return;
-        Ask($"Shut down {roomId}? Every member from this server leaves it, its addresses here are deleted, and nobody from this server can join it again.", () => RunAsync("Shutting the room down", async client =>
+        Ask(Translations.Format(Strings.ShutDownConfirm, roomId), () => RunAsync(Strings.ShuttingRoomDown, async client =>
         {
-            AdminRoomShutdown done = await client.ShutdownRoomAsync(roomId, block: true, "The room was shut down by the server's admins");
-            Message = $"Shut down {roomId}: {done.KickedUsers.Count} members removed.";
+            AdminRoomShutdown done = await client.ShutdownRoomAsync(roomId, block: true, Strings.RoomShutDownReason);
+            Message = Translations.Format(Strings.ShutDownDone, roomId, done.KickedUsers.Count);
         }));
     }
 
     /// <summary>Find accounts by <see cref="Search"/>.</summary>
     [RelayCommand]
-    private Task SearchAccountsAsync() => RunAsync("Loading accounts", LoadAccountsAsync);
+    private Task SearchAccountsAsync() => RunAsync(Strings.LoadingAccounts, LoadAccountsAsync);
 
     /// <summary>Show the actions of an account, and its devices.</summary>
     public Task SelectAccountAsync(AdminAccountItem item)
@@ -204,10 +205,10 @@ public sealed partial class AdminViewModel : ViewModelBase
         NewPassword = "";
         NoticeText = "";
         // Done
-        return RunAsync("Looking up devices", async client =>
+        return RunAsync(Strings.LookingUpDevices, async client =>
         {
             WhoisResponse whois = await client.WhoisAsync(item.Name);
-            Devices = whois.Devices.Count == 0 ? "No devices are signed in." : string.Join("\n", whois.Devices.OrderBy(d => d.Key, StringComparer.Ordinal).Select(d => DescribeDevice(d.Key, d.Value)));
+            Devices = whois.Devices.Count == 0 ? Strings.NoDevicesSignedIn : string.Join("\n", whois.Devices.OrderBy(d => d.Key, StringComparer.Ordinal).Select(d => DescribeDevice(d.Key, d.Value)));
         }, report: false);
     }
 
@@ -217,32 +218,32 @@ public sealed partial class AdminViewModel : ViewModelBase
 
     /// <summary>Suspend the chosen account, or end the suspension.</summary>
     [RelayCommand]
-    private Task ToggleSuspendedAsync() => ChangeAccountAsync("Suspending", (client, account) => client.SetSuspendedAsync(account.Name, !account.Suspended), account => account.Suspended ? $"Ended the suspension of {account.Name}." : $"Suspended {account.Name}: they can read but not send, join or invite.");
+    private Task ToggleSuspendedAsync() => ChangeAccountAsync(Strings.Suspending, (client, account) => client.SetSuspendedAsync(account.Name, !account.Suspended), account => Translations.Format(account.Suspended ? Strings.EndedSuspension : Strings.SuspendedUser, account.Name));
 
     /// <summary>Lock the chosen account, or unlock it.</summary>
     [RelayCommand]
-    private Task ToggleLockedAsync() => ChangeAccountAsync("Locking", (client, account) => client.SetLockedAsync(account.Name, !account.Locked), account => account.Locked ? $"Unlocked {account.Name}." : $"Locked {account.Name}: the server refuses their devices until unlocked.");
+    private Task ToggleLockedAsync() => ChangeAccountAsync(Strings.Locking, (client, account) => client.SetLockedAsync(account.Name, !account.Locked), account => Translations.Format(account.Locked ? Strings.UnlockedUser : Strings.LockedUser, account.Name));
 
     /// <summary>Give or take the chosen account's admin rights.</summary>
     [RelayCommand]
-    private Task ToggleAdminAsync() => ChangeAccountAsync("Changing admin rights", (client, account) => client.SetServerAdminAsync(account.Name, !account.Admin), account => account.Admin ? $"{account.Name} is no longer a server admin." : $"{account.Name} is a server admin.");
+    private Task ToggleAdminAsync() => ChangeAccountAsync(Strings.ChangingAdminRights, (client, account) => client.SetServerAdminAsync(account.Name, !account.Admin), account => Translations.Format(account.Admin ? Strings.NoLongerAdmin : Strings.IsAdmin, account.Name));
 
     /// <summary>Set <see cref="NewPassword"/> for the chosen account, logging out its devices.</summary>
     [RelayCommand]
-    private Task ResetPasswordAsync() => NewPassword.Length == 0 ? Task.CompletedTask : ChangeAccountAsync("Resetting the password", (client, account) => client.ResetPasswordAsync(account.Name, NewPassword), account =>
+    private Task ResetPasswordAsync() => NewPassword.Length == 0 ? Task.CompletedTask : ChangeAccountAsync(Strings.ResettingPassword, (client, account) => client.ResetPasswordAsync(account.Name, NewPassword), account =>
     {
         // Forget the password, then tell
         NewPassword = "";
-        return $"Set a new password for {account.Name} and logged out their devices.";
+        return Translations.Format(Strings.PasswordReset, account.Name);
     });
 
     /// <summary>Send <see cref="NoticeText"/> to the chosen account as a server notice.</summary>
     [RelayCommand]
-    private Task SendNoticeAsync() => NoticeText.Trim().Length == 0 ? Task.CompletedTask : ChangeAccountAsync("Sending the notice", (client, account) => client.SendServerNoticeAsync(account.Name, NoticeText.Trim()), account =>
+    private Task SendNoticeAsync() => NoticeText.Trim().Length == 0 ? Task.CompletedTask : ChangeAccountAsync(Strings.SendingNotice, (client, account) => client.SendServerNoticeAsync(account.Name, NoticeText.Trim()), account =>
     {
         // Clear, then tell
         NoticeText = "";
-        return $"Sent a server notice to {account.Name}.";
+        return Translations.Format(Strings.NoticeSent, account.Name);
     });
 
     /// <summary>Ask to deactivate the chosen account, which cannot be undone.</summary>
@@ -251,12 +252,12 @@ public sealed partial class AdminViewModel : ViewModelBase
     {
         // Confirmed later
         if (SelectedAccount?.Account is not AdminAccount account) return;
-        Ask($"Deactivate {account.Name} for good? They leave every room and cannot sign in again; the user ID is not given out again.", () => ChangeAccountAsync("Deactivating", (client, _) => client.DeactivateUserAsync(account.Name), _ => $"Deactivated {account.Name}."));
+        Ask(Translations.Format(Strings.DeactivateConfirm, account.Name), () => ChangeAccountAsync(Strings.Deactivating, (client, _) => client.DeactivateUserAsync(account.Name), _ => Translations.Format(Strings.Deactivated, account.Name)));
     }
 
     /// <summary>Make a registration token with <see cref="NewTokenUses"/> and <see cref="NewTokenDays"/>.</summary>
     [RelayCommand]
-    private Task CreateTokenAsync() => RunAsync("Creating the token", async client =>
+    private Task CreateTokenAsync() => RunAsync(Strings.CreatingToken, async client =>
     {
         // Uses and days, empty for no limit
         int? uses = int.TryParse(NewTokenUses, NumberStyles.Integer, CultureInfo.CurrentCulture, out int u) && u > 0 ? u : null;
@@ -269,13 +270,13 @@ public sealed partial class AdminViewModel : ViewModelBase
     });
 
     /// <summary>Delete a registration token.</summary>
-    public Task DeleteTokenAsync(AdminTokenItem item) => RunAsync("Deleting the token", async client =>
+    public Task DeleteTokenAsync(AdminTokenItem item) => RunAsync(Strings.DeletingToken, async client =>
     {
         // Delete, then list again
         await client.DeleteRegistrationTokenAsync(item.Token);
         if (CreatedToken == item.Token) CreatedToken = "";
         await LoadTokensAsync(client);
-        Message = "Token deleted; accounts made with it stay.";
+        Message = Strings.TokenDeleted;
     });
 
     /// <summary>Do the change waiting for confirmation.</summary>
@@ -324,7 +325,7 @@ public sealed partial class AdminViewModel : ViewModelBase
         Reports.Clear();
         foreach (AdminReport report in page.EventReports) Reports.Add(Describe(report));
         // Done
-        if (Reports.Count == 0) Message = "No reports.";
+        if (Reports.Count == 0) Message = Strings.NoReports;
     }
 
     /// <summary>Load the accounts matching <see cref="Search"/>.</summary>
@@ -358,7 +359,7 @@ public sealed partial class AdminViewModel : ViewModelBase
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException or TaskCanceledException)
         {
-            Message = $"{what} failed: {MainViewModel.CleanError(exception.Message)}";
+            Message = Translations.Format(Strings.ActionFailed, what, MainViewModel.CleanError(exception.Message));
         }
         finally
         {
@@ -370,21 +371,21 @@ public sealed partial class AdminViewModel : ViewModelBase
     internal static AdminReportItem Describe(AdminReport report)
     {
         // What was reported, by whom, when
-        string target = report.EventId is not null ? "a message" : report.TargetUserId ?? report.RoomId ?? "?";
+        string target = report.EventId is not null ? Strings.AMessage : report.TargetUserId ?? report.RoomId ?? "?";
         string when = DateTimeOffset.FromUnixTimeMilliseconds(report.ReceivedTs).ToLocalTime().ToString("g", CultureInfo.CurrentCulture);
         string? sender = report.EventSummary?.Split(": ", 2)[0] is string first && first.StartsWith('@') ? first : null;
-        string details = string.Join("\n", new[] { $"Reason: {report.Reason}", report.EventSummary, report.RoomId is null ? null : $"Room: {report.RoomId}" }.OfType<string>());
+        string details = string.Join("\n", new[] { Translations.Format(Strings.ReasonLine, report.Reason), report.EventSummary, report.RoomId is null ? null : Translations.Format(Strings.RoomLine, report.RoomId) }.OfType<string>());
         // Return item
-        return new AdminReportItem(report, $"{report.UserId} reported {target} · {when}", details, report.TargetUserId ?? sender);
+        return new AdminReportItem(report, Translations.Format(Strings.ReportedLine, report.UserId, target, when), details, report.TargetUserId ?? sender);
     }
 
     /// <summary>Return one line about an account.</summary>
     internal static string Describe(AdminAccount account)
     {
         // Name, flags, use
-        IEnumerable<string> flags = new[] { account.Admin ? "admin" : null, account.Suspended ? "suspended" : null, account.Locked ? "locked" : null, account.Deactivated ? "deactivated" : null }.OfType<string>();
+        IEnumerable<string> flags = new[] { account.Admin ? Strings.FlagAdmin : null, account.Suspended ? Strings.FlagSuspended : null, account.Locked ? Strings.FlagLocked : null, account.Deactivated ? Strings.FlagDeactivated : null }.OfType<string>();
         // Return line
-        List<string?> parts = [account.DisplayName, .. flags, $"{account.Devices ?? 0} devices", $"{account.JoinedRooms ?? 0} rooms"];
+        List<string?> parts = [account.DisplayName, .. flags, Translations.Format(Strings.DeviceCount, account.Devices ?? 0), Translations.Format(Strings.RoomCount, account.JoinedRooms ?? 0)];
         return string.Join(" · ", parts.OfType<string>());
     }
 
@@ -392,8 +393,8 @@ public sealed partial class AdminViewModel : ViewModelBase
     internal static string Describe(AdminRegistrationToken token)
     {
         // Uses, then expiry
-        string uses = token.UsesAllowed is int allowed ? $"used {token.Completed} of {allowed}" : $"used {token.Completed}, no limit";
-        string expiry = token.ExpiryTime is long ms ? $"until {DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("g", CultureInfo.CurrentCulture)}" : "no expiry";
+        string uses = token.UsesAllowed is int allowed ? Translations.Format(Strings.TokenUsedOf, token.Completed, allowed) : Translations.Format(Strings.TokenUsedNoLimit, token.Completed);
+        string expiry = token.ExpiryTime is long ms ? Translations.Format(Strings.TokenUntil, DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("g", CultureInfo.CurrentCulture)) : Strings.NoExpiry;
         // Return line
         return $"{uses}, {expiry}";
     }
@@ -403,8 +404,8 @@ public sealed partial class AdminViewModel : ViewModelBase
     {
         // Last connection
         WhoisConnection? last = device.Sessions.SelectMany(s => s.Connections).OrderByDescending(c => c.LastSeen).FirstOrDefault();
-        string seen = last?.LastSeen is long ms ? DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("g", CultureInfo.CurrentCulture) : "never";
+        string seen = last?.LastSeen is long ms ? DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("g", CultureInfo.CurrentCulture) : Strings.Never;
         // Return line
-        return $"{device.DisplayName ?? deviceId} ({deviceId}), last seen {seen} from {last?.Ip ?? "unknown"}";
+        return Translations.Format(Strings.DeviceLine, device.DisplayName ?? deviceId, deviceId, seen, last?.Ip ?? Strings.Unknown);
     }
 }

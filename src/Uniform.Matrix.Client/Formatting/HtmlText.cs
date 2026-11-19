@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>Renders the HTML <c>formatted_body</c> of a message as terminal text: paragraphs, lists, quotes, code, links and mention names.</summary>
 /// <remarks>Emphasis becomes <c>*bold*</c>, <c>_italic_</c> and <c>~strike~</c>, as the log has one color per line. Reply fallbacks (<c>mx-reply</c>) are dropped and spoilers hidden.</remarks>
@@ -59,10 +60,10 @@ public static partial class HtmlText
             "em" or "i" => $"_{inner()}_",
             "del" or "s" or "strike" => $"~{inner()}~",
             "a" => RenderLink(element, inner(), context),
-            "img" => $"[image: {element.GetAttribute("alt") ?? element.GetAttribute("title") ?? "image"}]",
+            "img" => $"[{Texts.Format(Strings.ImageWith, element.GetAttribute("alt") ?? element.GetAttribute("title") ?? Strings.Image)}]",
             "hr" => Block("────────"),
             "mx-reply" => "",
-            "span" when element.HasAttribute("data-mx-spoiler") => element.GetAttribute("data-mx-spoiler") is { Length: > 0 } reason ? $"[spoiler: {reason}]" : "[spoiler]",
+            "span" when element.HasAttribute("data-mx-spoiler") => element.GetAttribute("data-mx-spoiler") is { Length: > 0 } reason ? $"[{Texts.Format(Strings.SpoilerWith, reason)}]" : $"[{Strings.Spoiler}]",
             "table" => Block(RenderTable(element, context)),
             _ => inner(),
         };

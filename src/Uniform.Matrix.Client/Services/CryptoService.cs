@@ -10,6 +10,7 @@ using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>End-to-end encryption of the client: owns the <see cref="OlmMachine"/>, decrypts syncs and encrypts outgoing events.</summary>
 /// <remarks>When the stored encryption state cannot be read, e.g. with another <c>crypto.key</c>, the client runs without encryption: encrypted messages stay unreadable and sending to encrypted rooms is refused.</remarks>
@@ -36,7 +37,7 @@ public sealed class CryptoService : IDisposable
     /// <summary>Completes once <see cref="StartAsync"/> has finished, with or without encryption; check <see cref="Available"/> after it.</summary>
     public Task WhenStarted => started.Task;
     /// <summary>Why encryption is not available, or null.</summary>
-    public string? UnavailableReason { get; private set; } = "Not started.";
+    public string? UnavailableReason { get; private set; } = Strings.CryptoNotStarted;
     /// <summary>This device's identity keys, when available.</summary>
     public IdentityKeys? IdentityKeys => machine?.IdentityKeys;
     /// <summary>This device's ID, when available.</summary>
@@ -82,7 +83,7 @@ public sealed class CryptoService : IDisposable
         catch (OlmException ex)
         {
             machine = null;
-            UnavailableReason = $"The stored encryption state cannot be read ({ex.Message}). Was {paths.CryptoKeyPath} replaced?";
+            UnavailableReason = Texts.Format(Strings.CryptoStateUnreadable, ex.Message, paths.CryptoKeyPath);
             logger.LogWarning("Encryption unavailable: {Reason}", UnavailableReason);
         }
         finally

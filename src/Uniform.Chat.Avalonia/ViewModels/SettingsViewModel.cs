@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Uniform.Matrix.Audio;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Hosting;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>Colour theme of the app.</summary>
 public enum AppTheme
@@ -42,6 +43,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
         NotifyMentions = ReadBool(ui, nameof(NotifyMentions), NotifyMentions);
         NotifyInvites = ReadBool(ui, nameof(NotifyInvites), NotifyInvites);
         NotifyCalls = ReadBool(ui, nameof(NotifyCalls), NotifyCalls);
+        Language = ReadString(ui, nameof(Language)) is string language && Translations.Languages.Contains(language) ? language : "";
+        Translations.Instance.Apply(Language);
         CallCamera = ReadString(ui, nameof(CallCamera));
         CallMicrophone = ReadString(ui, nameof(CallMicrophone));
         CallSpeaker = ReadString(ui, nameof(CallSpeaker));
@@ -94,7 +97,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
         if (platform?.Push is not IPushService push) return;
         distributors = push.GetDistributors();
         loading = true;
-        PushChoices = ["Own background connection", .. distributors.Select(d => $"UnifiedPush: {d.Name}")];
+        PushChoices = [Strings.OwnBackgroundConnection, .. distributors.Select(d => $"UnifiedPush: {d.Name}")];
         int chosen = distributors.ToList().FindIndex(d => d.Id == push.Distributor);
         PushChoiceIndex = chosen + 1;
         loading = false;
@@ -102,8 +105,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
         // Status
         string? name = distributors.FirstOrDefault(d => d.Id == push.Distributor)?.Name ?? push.Distributor;
         PushStatus = push.Distributor is null
-            ? distributors.Count == 0 ? "The app keeps its own connection, with a notification that shows it. Install a UnifiedPush distributor such as ntfy to receive messages without it." : "The app keeps its own connection, with a notification that shows it."
-            : push.Endpoint is null ? $"Waiting for {name}…" : $"Messages arrive through {name}; the app needs no connection of its own.";
+            ? distributors.Count == 0 ? Strings.OwnConnectionInstallHint : Strings.OwnConnection
+            : push.Endpoint is null ? Translations.Format(Strings.WaitingFor, name) : Translations.Format(Strings.MessagesArriveThrough, name);
     }
 
     /// <summary>Run <paramref name="action"/> on the user interface thread, or at once without a dispatcher.</summary>
@@ -114,8 +117,6 @@ public sealed partial class SettingsViewModel : ViewModelBase
         else dispatcher.Post(action);
     }
 
-    /// <summary>Themes to choose from, in <see cref="AppTheme"/> order.</summary>
-    public IReadOnlyList<string> Themes { get; } = ["System", "Light", "Dark"];
 
     /// <summary>The licenses shown in place of the settings, or null.</summary>
     [ObservableProperty]
@@ -203,7 +204,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ThemeIndex))]
     public partial AppTheme Theme { get; set; } = AppTheme.System;
 
-    /// <summary>Get or set <see cref="Theme"/> as an index of <see cref="Themes"/>, for the picker.</summary>
+    /// <summary>Get or set <see cref="Theme"/> as an index of the picker, in <see cref="AppTheme"/> order.</summary>
     public int ThemeIndex
     {
         get => (int)Theme;
@@ -259,6 +260,29 @@ public sealed partial class SettingsViewModel : ViewModelBase
     /// <summary>Save after each change made by the user.</summary>
     partial void OnNotifyCallsChanged(bool value) => Save();
 
+    /// <summary>The language of the app, by culture name, e.g. <c>fi</c>; empty for the system's.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LanguageIndex))]
+    public partial string Language { get; set; } = "";
+
+    /// <summary>Get or set <see cref="Language"/> as an index of <see cref="Translations.Languages"/>, for the picker.</summary>
+    public int LanguageIndex
+    {
+        get => Math.Max(0, Translations.Languages.ToList().IndexOf(Language));
+        set => Language = value >= 0 && value < Translations.Languages.Count ? Translations.Languages[value] : "";
+    }
+
+    /// <summary>Switch the app's texts to the chosen language at once, and save it; texts made earlier in code follow as they are made again.</summary>
+    partial void OnLanguageChanged(string value)
+    {
+        // Not while loading, which applies it itself
+        if (loading) return;
+        Translations.Instance.Apply(value);
+        RefreshPush();
+        // Done
+        Save();
+    }
+
     /// <summary>The camera chosen in a call, by <see cref="Uniform.Matrix.Calls.CameraChoice.Id"/>; calls start with it when it is there. Null for the platform's choice.</summary>
     [ObservableProperty]
     public partial string? CallCamera { get; set; }
@@ -302,6 +326,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
             ui[nameof(NotifyMentions)] = NotifyMentions;
             ui[nameof(NotifyInvites)] = NotifyInvites;
             ui[nameof(NotifyCalls)] = NotifyCalls;
+            ui[nameof(Language)] = Language.Length == 0 ? null : Language;
             ui[nameof(CallCamera)] = CallCamera;
             ui[nameof(CallMicrophone)] = CallMicrophone;
             ui[nameof(CallSpeaker)] = CallSpeaker;

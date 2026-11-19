@@ -4,6 +4,7 @@ using System.Text;
 using Uniform.Matrix.Gui.Terminal;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Terminal.Localization;
 
 // Server administration for server admins: accounts, registration tokens, reports, rooms and server notices.
 public sealed partial class MainWindow
@@ -12,11 +13,11 @@ public sealed partial class MainWindow
     private string? AskUserId(string title, string argument)
     {
         // Given or asked, then checked
-        string? text = argument.Trim().Length > 0 ? argument.Trim() : Dialogs.Ask(app, title, $"User, e.g. @alice:{OwnServerName}:");
+        string? text = argument.Trim().Length > 0 ? argument.Trim() : Dialogs.Ask(app, title, Texts.Format(Strings.UserPromptOnServer, OwnServerName));
         if (text is null) return null;
         string userId = text.StartsWith('@') ? text : $"@{text}:{OwnServerName}";
         if (UserId.TryParse(userId, out _)) return userId;
-        ShowStatus($"\"{text}\" is not a user ID; it looks like @alice:{OwnServerName}.");
+        ShowStatus(Texts.Format(Strings.NotAUserIdOnServer, text, OwnServerName));
         // On an invalid user ID
         return null;
     }
@@ -25,18 +26,18 @@ public sealed partial class MainWindow
     private void ShowWhois(string argument)
     {
         // User, then the devices
-        if (AskUserId("Who is", argument) is not string userId) return;
-        _ = RunSafelyAsync("Looking up the user", async client =>
+        if (AskUserId(Strings.WhoIs, argument) is not string userId) return;
+        _ = RunSafelyAsync(Strings.LookingUpUser, async client =>
         {
             WhoisResponse whois = await client.WhoisAsync(userId);
             StringBuilder text = new();
             foreach ((string deviceId, WhoisDevice device) in whois.Devices.OrderBy(d => d.Key, StringComparer.Ordinal))
             {
                 WhoisConnection? last = device.Sessions.SelectMany(s => s.Connections).OrderByDescending(c => c.LastSeen).FirstOrDefault();
-                string seen = last?.LastSeen is long ms ? DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "never";
-                text.AppendLine($"{deviceId}  {device.DisplayName ?? ""}\n    last seen {seen} from {last?.Ip ?? "unknown"}");
+                string seen = last?.LastSeen is long ms ? DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime().ToString("yyyy-MM-dd HH:mm") : Strings.Never;
+                text.AppendLine(Texts.Format(Strings.DeviceLastSeen, deviceId, device.DisplayName ?? "", seen, last?.Ip ?? Strings.Unknown));
             }
-            app.Invoke(() => Dialogs.ShowText(app, $"Who is {userId}", text.Length == 0 ? "No devices are logged in." : text.ToString()));
+            app.Invoke(() => Dialogs.ShowText(app, Texts.Format(Strings.WhoIsUser, userId), text.Length == 0 ? Strings.NoDevicesLoggedIn : text.ToString()));
         });
     }
 
@@ -44,16 +45,16 @@ public sealed partial class MainWindow
     private void ManageAccounts(string argument)
     {
         // Filter, then the list
-        string? filter = argument.Length > 0 ? argument : Dialogs.AskAllowEmpty(app, "Accounts", "Part of a user ID or name; empty for all:");
+        string? filter = argument.Length > 0 ? argument : Dialogs.AskAllowEmpty(app, Strings.Accounts, Strings.AccountFilterPrompt);
         if (filter is null) return;
-        _ = RunSafelyAsync("Listing accounts", async client =>
+        _ = RunSafelyAsync(Strings.ListingAccounts, async client =>
         {
             AdminAccountsResponse page = await client.GetAdminAccountsAsync(filter.Length > 0 ? filter : null, includeDeactivated: true, limit: 500);
             app.Invoke(() =>
             {
-                List<string> rows = ["+ New account…", .. page.Users.Select(Describe)];
-                string more = page.NextToken is null ? "" : $", first {page.Users.Count} shown";
-                if (Dialogs.PickIndex(app, "Accounts", $"{page.Total} accounts{more}:", rows) is not int index) return;
+                List<string> rows = [Strings.NewAccountRow, .. page.Users.Select(Describe)];
+                string more = page.NextToken is null ? "" : Texts.Format(Strings.FirstShown, page.Users.Count);
+                if (Dialogs.PickIndex(app, Strings.Accounts, Texts.Format(Strings.AccountsCount, page.Total, more), rows) is not int index) return;
                 if (index == 0) CreateAccount();
                 else ActOnAccount(page.Users[index - 1]);
             });
@@ -64,10 +65,10 @@ public sealed partial class MainWindow
     private static string Describe(AdminAccount account)
     {
         // Flags in brackets
-        IEnumerable<string> flags = new[] { account.Admin ? "admin" : null, account.Suspended ? "suspended" : null, account.Locked ? "locked" : null, account.Deactivated ? "deactivated" : null }.OfType<string>();
+        IEnumerable<string> flags = new[] { account.Admin ? Strings.FlagAdmin : null, account.Suspended ? Strings.FlagSuspended : null, account.Locked ? Strings.FlagLocked : null, account.Deactivated ? Strings.FlagDeactivated : null }.OfType<string>();
         string tags = string.Concat(flags.Select(f => $" [{f}]"));
         // Return line
-        return $"{account.Name}  {account.DisplayName}{tags}  {account.Devices ?? 0} devices, {account.JoinedRooms ?? 0} rooms";
+        return Texts.Format(Strings.AccountRow, account.Name, account.DisplayName, tags, account.Devices ?? 0, account.JoinedRooms ?? 0);
     }
 
     /// <summary>Ask what to do with <paramref name="account"/>, and do it.</summary>
@@ -77,14 +78,14 @@ public sealed partial class MainWindow
         string userId = account.Name;
         List<(string Title, Action Run)> actions =
         [
-            ("Who is: devices and addresses", () => ShowWhois(userId)),
-            ("Send a server notice…", () => SendServerNotice(userId)),
-            ("Reset password…", () => ResetPassword(userId)),
-            (account.Suspended ? "End suspension" : "Suspend: may read, not send", () => SetSuspended(userId, !account.Suspended)),
-            (account.Locked ? "Unlock" : "Lock: refuse every session", () => SetLocked(userId, !account.Locked)),
-            (account.Admin ? "Take server admin rights" : "Make server admin", () => SetServerAdmin(userId, !account.Admin)),
+            (Strings.WhoIsAction, () => ShowWhois(userId)),
+            (Strings.SendServerNoticeAction, () => SendServerNotice(userId)),
+            (Strings.ResetPasswordAction, () => ResetPassword(userId)),
+            (account.Suspended ? Strings.EndSuspension : Strings.SuspendAction, () => SetSuspended(userId, !account.Suspended)),
+            (account.Locked ? Strings.Unlock : Strings.LockAction, () => SetLocked(userId, !account.Locked)),
+            (account.Admin ? Strings.TakeServerAdmin : Strings.MakeServerAdmin, () => SetServerAdmin(userId, !account.Admin)),
         ];
-        if (!account.Deactivated) actions.Add(("Deactivate for good…", () => DeactivateUser(userId)));
+        if (!account.Deactivated) actions.Add((Strings.DeactivateAction, () => DeactivateUser(userId)));
 
         // Chosen action
         if (Dialogs.PickIndex(app, userId, Describe(account), [.. actions.Select(a => a.Title)]) is not int index) return;
@@ -95,12 +96,12 @@ public sealed partial class MainWindow
     private void CreateAccount()
     {
         // Name and password
-        if (AskUserId("New account", "") is not string userId) return;
-        if (Dialogs.Ask(app, "New account", $"Password for {userId}:", secret: true) is not string password || password.Length == 0) return;
-        _ = RunSafelyAsync("Creating the account", async client =>
+        if (AskUserId(Strings.NewAccount, "") is not string userId) return;
+        if (Dialogs.Ask(app, Strings.NewAccount, Texts.Format(Strings.PasswordFor, userId), secret: true) is not string password || password.Length == 0) return;
+        _ = RunSafelyAsync(Strings.CreatingAccount, async client =>
         {
             await client.CreateAdminAccountAsync(userId, password);
-            app.Invoke(() => ShowStatus($"Created {userId}."));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.CreatedUser, userId)));
         });
     }
 
@@ -108,11 +109,11 @@ public sealed partial class MainWindow
     private void ResetPassword(string userId)
     {
         // New password, then the change
-        if (Dialogs.Ask(app, "Reset password", $"New password for {userId}; their devices are logged out:", secret: true) is not string password || password.Length == 0) return;
-        _ = RunSafelyAsync("Resetting the password", async client =>
+        if (Dialogs.Ask(app, Strings.ResetPassword, Texts.Format(Strings.NewPasswordFor, userId), secret: true) is not string password || password.Length == 0) return;
+        _ = RunSafelyAsync(Strings.ResettingPassword, async client =>
         {
             await client.ResetPasswordAsync(userId, password);
-            app.Invoke(() => ShowStatus($"Set a new password for {userId} and logged out their devices."));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.PasswordReset, userId)));
         });
     }
 
@@ -120,11 +121,11 @@ public sealed partial class MainWindow
     private void SetSuspended(string argument, bool suspended)
     {
         // User, then the flag
-        if (AskUserId(suspended ? "Suspend" : "End suspension", argument) is not string userId) return;
-        _ = RunSafelyAsync(suspended ? "Suspending" : "Ending the suspension", async client =>
+        if (AskUserId(suspended ? Strings.Suspend : Strings.EndSuspension, argument) is not string userId) return;
+        _ = RunSafelyAsync(suspended ? Strings.Suspending : Strings.EndingSuspension, async client =>
         {
             await client.SetSuspendedAsync(userId, suspended);
-            app.Invoke(() => ShowStatus(suspended ? $"Suspended {userId}: they can read and leave rooms, but not send, join or invite. /unsuspend {userId} ends it." : $"Ended the suspension of {userId}."));
+            app.Invoke(() => ShowStatus(suspended ? Texts.Format(Strings.SuspendedUser, userId, userId) : Texts.Format(Strings.EndedSuspension, userId)));
         });
     }
 
@@ -132,11 +133,11 @@ public sealed partial class MainWindow
     private void SetLocked(string argument, bool locked)
     {
         // User, then the flag
-        if (AskUserId(locked ? "Lock" : "Unlock", argument) is not string userId) return;
-        _ = RunSafelyAsync(locked ? "Locking" : "Unlocking", async client =>
+        if (AskUserId(locked ? Strings.Lock : Strings.Unlock, argument) is not string userId) return;
+        _ = RunSafelyAsync(locked ? Strings.Locking : Strings.Unlocking, async client =>
         {
             await client.SetLockedAsync(userId, locked);
-            app.Invoke(() => ShowStatus(locked ? $"Locked {userId}: the server refuses their sessions until /unlock {userId}." : $"Unlocked {userId}."));
+            app.Invoke(() => ShowStatus(locked ? Texts.Format(Strings.LockedUser, userId, userId) : Texts.Format(Strings.UnlockedUser, userId)));
         });
     }
 
@@ -144,11 +145,11 @@ public sealed partial class MainWindow
     private void SetServerAdmin(string userId, bool admin)
     {
         // Confirm giving rights, which are wide
-        if (admin && !Dialogs.Confirm(app, "Make server admin", $"Let {userId} manage every account and room of the server?")) return;
-        _ = RunSafelyAsync(admin ? "Making admin" : "Taking admin rights", async client =>
+        if (admin && !Dialogs.Confirm(app, Strings.MakeServerAdmin, Texts.Format(Strings.MakeServerAdminQuestion, userId))) return;
+        _ = RunSafelyAsync(admin ? Strings.MakingAdmin : Strings.TakingAdminRights, async client =>
         {
             await client.SetServerAdminAsync(userId, admin);
-            app.Invoke(() => ShowStatus(admin ? $"{userId} is a server admin." : $"{userId} is no longer a server admin."));
+            app.Invoke(() => ShowStatus(admin ? Texts.Format(Strings.IsServerAdmin, userId) : Texts.Format(Strings.NoLongerServerAdmin, userId)));
         });
     }
 
@@ -156,11 +157,11 @@ public sealed partial class MainWindow
     private void DeactivateUser(string userId)
     {
         // Confirm, as it cannot be undone
-        if (!Dialogs.Confirm(app, "Deactivate", $"Deactivate {userId} for good? They leave every room and cannot log in again; the user ID is not given out again.")) return;
-        _ = RunSafelyAsync("Deactivating", async client =>
+        if (!Dialogs.Confirm(app, Strings.Deactivate, Texts.Format(Strings.DeactivateQuestion, userId))) return;
+        _ = RunSafelyAsync(Strings.Deactivating, async client =>
         {
             await client.DeactivateUserAsync(userId);
-            app.Invoke(() => ShowStatus($"Deactivated {userId}."));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.DeactivatedUser, userId)));
         });
     }
 
@@ -169,13 +170,13 @@ public sealed partial class MainWindow
     {
         // User and text
         string[] parts = argument.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-        if (AskUserId("Server notice", parts.Length > 0 ? parts[0] : "") is not string userId) return;
-        string? text = parts.Length > 1 ? parts[1] : Dialogs.Ask(app, "Server notice", $"Notice to {userId}; it arrives in their Server notices room:");
+        if (AskUserId(Strings.ServerNotice, parts.Length > 0 ? parts[0] : "") is not string userId) return;
+        string? text = parts.Length > 1 ? parts[1] : Dialogs.Ask(app, Strings.ServerNotice, Texts.Format(Strings.NoticePrompt, userId));
         if (string.IsNullOrWhiteSpace(text)) return;
-        _ = RunSafelyAsync("Sending the notice", async client =>
+        _ = RunSafelyAsync(Strings.SendingNotice, async client =>
         {
             await client.SendServerNoticeAsync(userId, text);
-            app.Invoke(() => ShowStatus($"Sent a server notice to {userId}."));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.SentNotice, userId)));
         });
     }
 
@@ -183,13 +184,13 @@ public sealed partial class MainWindow
     private void ManageRegistrationTokens()
     {
         // Tokens with their uses and expiry
-        _ = RunSafelyAsync("Listing registration tokens", async client =>
+        _ = RunSafelyAsync(Strings.ListingTokens, async client =>
         {
             IReadOnlyList<AdminRegistrationToken> tokens = await client.GetRegistrationTokensAsync();
             app.Invoke(() =>
             {
-                List<string> rows = ["+ New token…", .. tokens.Select(Describe)];
-                if (Dialogs.PickIndex(app, "Registration tokens", "New accounts need one of these when registration asks for a token:", rows) is not int index) return;
+                List<string> rows = [Strings.NewTokenRow, .. tokens.Select(Describe)];
+                if (Dialogs.PickIndex(app, Strings.RegistrationTokens, Strings.TokensPrompt, rows) is not int index) return;
                 if (index == 0) CreateRegistrationToken();
                 else DeleteRegistrationToken(tokens[index - 1].Token);
             });
@@ -200,8 +201,8 @@ public sealed partial class MainWindow
     private static string Describe(AdminRegistrationToken token)
     {
         // Uses and expiry
-        string uses = token.UsesAllowed is int allowed ? $"used {token.Completed} of {allowed}" : $"used {token.Completed}, no limit";
-        string expiry = token.ExpiryTime is long ms ? $"until {DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime():yyyy-MM-dd HH:mm}" : "no expiry";
+        string uses = token.UsesAllowed is int allowed ? Texts.Format(Strings.TokenUsesOf, token.Completed, allowed) : Texts.Format(Strings.TokenUsesNoLimit, token.Completed);
+        string expiry = token.ExpiryTime is long ms ? Texts.Format(Strings.TokenUntil, DateTimeOffset.FromUnixTimeMilliseconds(ms).ToLocalTime()) : Strings.NoExpiry;
         // Return line
         return $"{token.Token}  {uses}, {expiry}";
     }
@@ -210,17 +211,17 @@ public sealed partial class MainWindow
     private void CreateRegistrationToken()
     {
         // Text, uses and days; empty means random, unlimited and forever
-        if (Dialogs.AskAllowEmpty(app, "New token", "Token; empty for a random one:") is not string token) return;
-        if (Dialogs.AskAllowEmpty(app, "New token", "How many accounts may use it; empty for any number:") is not string usesText) return;
-        if (Dialogs.AskAllowEmpty(app, "New token", "Days it is valid; empty for no expiry:") is not string daysText) return;
+        if (Dialogs.AskAllowEmpty(app, Strings.NewToken, Strings.TokenPrompt) is not string token) return;
+        if (Dialogs.AskAllowEmpty(app, Strings.NewToken, Strings.TokenUsesPrompt) is not string usesText) return;
+        if (Dialogs.AskAllowEmpty(app, Strings.NewToken, Strings.TokenDaysPrompt) is not string daysText) return;
         int? uses = int.TryParse(usesText, out int u) && u > 0 ? u : null;
         DateTimeOffset? expiry = double.TryParse(daysText, out double days) && days > 0 ? DateTimeOffset.UtcNow.AddDays(days) : null;
 
         // Create, and show it for copying
-        _ = RunSafelyAsync("Creating the token", async client =>
+        _ = RunSafelyAsync(Strings.CreatingToken, async client =>
         {
             AdminRegistrationToken created = await client.CreateRegistrationTokenAsync(token.Trim().Length > 0 ? token.Trim() : null, uses, expiry);
-            app.Invoke(() => Dialogs.ShowCopyable(app, "New token", Describe(created), created.Token));
+            app.Invoke(() => Dialogs.ShowCopyable(app, Strings.NewToken, Describe(created), created.Token));
         });
     }
 
@@ -228,11 +229,11 @@ public sealed partial class MainWindow
     private void DeleteRegistrationToken(string token)
     {
         // Confirm, then delete
-        if (!Dialogs.Confirm(app, "Delete token", $"Delete the token {token}? Accounts made with it stay.")) return;
-        _ = RunSafelyAsync("Deleting the token", async client =>
+        if (!Dialogs.Confirm(app, Strings.DeleteToken, Texts.Format(Strings.DeleteTokenQuestion, token))) return;
+        _ = RunSafelyAsync(Strings.DeletingToken, async client =>
         {
             await client.DeleteRegistrationTokenAsync(token);
-            app.Invoke(() => ShowStatus($"Deleted the token {token}."));
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.DeletedToken, token)));
         });
     }
 
@@ -240,17 +241,17 @@ public sealed partial class MainWindow
     private void ManageReports()
     {
         // Reports with their target and reason
-        _ = RunSafelyAsync("Listing reports", async client =>
+        _ = RunSafelyAsync(Strings.ListingReports, async client =>
         {
             AdminReportsResponse page = await client.GetReportsAsync(limit: 500);
             app.Invoke(() =>
             {
                 if (page.EventReports.Count == 0)
                 {
-                    Dialogs.Info(app, "Reports", "No reports.");
+                    Dialogs.Info(app, Strings.Reports, Strings.NoReports);
                     return;
                 }
-                if (Dialogs.PickIndex(app, "Reports", $"{page.Total} reports, newest first:", [.. page.EventReports.Select(Describe)]) is not int index) return;
+                if (Dialogs.PickIndex(app, Strings.Reports, Texts.Format(Strings.ReportsCount, page.Total), [.. page.EventReports.Select(Describe)]) is not int index) return;
                 ActOnReport(page.EventReports[index]);
             });
         });
@@ -260,10 +261,10 @@ public sealed partial class MainWindow
     private static string Describe(AdminReport report)
     {
         // Target: a message, a user or a room
-        string target = report.EventId is not null ? $"message in {report.RoomId}" : report.TargetUserId ?? report.RoomId ?? "?";
+        string target = report.EventId is not null ? Texts.Format(Strings.MessageIn, report.RoomId) : report.TargetUserId ?? report.RoomId ?? "?";
         string when = DateTimeOffset.FromUnixTimeMilliseconds(report.ReceivedTs).ToLocalTime().ToString("yyyy-MM-dd HH:mm");
         // Return line
-        return $"{when}{(report.Resolved ? " [resolved]" : "")}  {report.UserId} → {target}: {report.Reason}";
+        return $"{when}{(report.Resolved ? Strings.FlagResolved : "")}  {report.UserId} → {target}: {report.Reason}";
     }
 
     /// <summary>Ask what to do about <paramref name="report"/>: suspend the reported user, shut the room down or delete the report.</summary>
@@ -272,37 +273,37 @@ public sealed partial class MainWindow
         // The reported user: the message's sender, or the user reported
         string? sender = report.EventSummary?.Split(": ", 2)[0] is string first && UserId.TryParse(first, out _) ? first : null;
         string? reported = report.TargetUserId ?? sender;
-        List<(string Title, Action Run)> actions = [("Delete the report", () => DeleteReport(report.Id))];
-        if (reported is not null) actions.Add(($"Suspend {reported}", () => SetSuspended(reported, true)));
-        if (report.RoomId is string roomId) actions.Add(("Shut the room down…", () => ShutdownRoom(roomId)));
+        List<(string Title, Action Run)> actions = [(Strings.DeleteTheReport, () => DeleteReport(report.Id))];
+        if (reported is not null) actions.Add((Texts.Format(Strings.SuspendUser, reported), () => SetSuspended(reported, true)));
+        if (report.RoomId is string roomId) actions.Add((Strings.ShutRoomDownAction, () => ShutdownRoom(roomId)));
 
         // Details above the choices
         string details = report.EventSummary is string summary ? $"{Describe(report)}\n{summary}" : Describe(report);
-        if (Dialogs.PickIndex(app, $"Report {report.Id}", details, [.. actions.Select(a => a.Title)]) is not int index) return;
+        if (Dialogs.PickIndex(app, Texts.Format(Strings.ReportTitle, report.Id), details, [.. actions.Select(a => a.Title)]) is not int index) return;
         actions[index].Run();
     }
 
     /// <summary>Delete a report.</summary>
-    private void DeleteReport(long reportId) => _ = RunSafelyAsync("Deleting the report", async client =>
+    private void DeleteReport(long reportId) => _ = RunSafelyAsync(Strings.DeletingReport, async client =>
     {
         // Delete, then tell
         await client.DeleteReportAsync(reportId);
-        app.Invoke(() => ShowStatus($"Deleted report {reportId}."));
+        app.Invoke(() => ShowStatus(Texts.Format(Strings.DeletedReport, reportId)));
     });
 
     /// <summary>List the server's rooms, matching <paramref name="argument"/> or asked text, and act on the chosen one.</summary>
     private void ManageServerRooms(string argument)
     {
         // Filter, then the list
-        string? filter = argument.Length > 0 ? argument : Dialogs.AskAllowEmpty(app, "Rooms", "Part of a room name, alias or ID; empty for all:");
+        string? filter = argument.Length > 0 ? argument : Dialogs.AskAllowEmpty(app, Strings.Rooms, Strings.RoomFilterPrompt);
         if (filter is null) return;
-        _ = RunSafelyAsync("Listing rooms", async client =>
+        _ = RunSafelyAsync(Strings.ListingRooms, async client =>
         {
             AdminRoomsResponse page = await client.GetAdminRoomsAsync(filter.Length > 0 ? filter : null, limit: 500);
             app.Invoke(() =>
             {
-                string more = page.NextBatch is null ? "" : $", first {page.Rooms.Count} shown";
-                if (Dialogs.PickIndex(app, "Rooms", $"{page.TotalRooms} rooms, most members first{more}:", [.. page.Rooms.Select(Describe)]) is not int index) return;
+                string more = page.NextBatch is null ? "" : Texts.Format(Strings.FirstShown, page.Rooms.Count);
+                if (Dialogs.PickIndex(app, Strings.Rooms, Texts.Format(Strings.RoomsCount, page.TotalRooms, more), [.. page.Rooms.Select(Describe)]) is not int index) return;
                 ActOnServerRoom(page.Rooms[index]);
             });
         });
@@ -315,18 +316,18 @@ public sealed partial class MainWindow
         string title = room.Name ?? room.CanonicalAlias ?? room.RoomId;
         string id = title == room.RoomId ? "" : $"  {room.RoomId}";
         // Return line
-        return $"{title}{id}  {room.JoinedMembers} members{(room.Public ? " [public]" : "")}{(room.Encryption is not null ? " [encrypted]" : "")}";
+        return Texts.Format(Strings.RoomRow, title, id, room.JoinedMembers, (room.Public ? Strings.FlagPublic : ""), (room.Encryption is not null ? Strings.FlagEncrypted : ""));
     }
 
     /// <summary>Ask what to do with a room of the server: list its members or shut it down.</summary>
     private void ActOnServerRoom(AdminRoomInfo room)
     {
         // Members or shutdown
-        int? choice = Dialogs.PickIndex(app, room.Name ?? room.RoomId, Describe(room), ["Members", "Shut down…"]);
-        if (choice == 0) _ = RunSafelyAsync("Listing members", async client =>
+        int? choice = Dialogs.PickIndex(app, room.Name ?? room.RoomId, Describe(room), [Strings.Members, Strings.ShutDownAction]);
+        if (choice == 0) _ = RunSafelyAsync(Strings.ListingMembers, async client =>
         {
             IReadOnlyList<string> members = await client.GetAdminRoomMembersAsync(room.RoomId);
-            app.Invoke(() => Dialogs.ShowText(app, $"Members of {room.Name ?? room.RoomId}", members.Count == 0 ? "No members." : string.Join('\n', members)));
+            app.Invoke(() => Dialogs.ShowText(app, Texts.Format(Strings.MembersOf, room.Name ?? room.RoomId), members.Count == 0 ? Strings.NoMembers : string.Join('\n', members)));
         });
         if (choice == 1) ShutdownRoom(room.RoomId);
     }
@@ -335,17 +336,17 @@ public sealed partial class MainWindow
     private void ShutdownRoom(string roomId)
     {
         // Block or not, then the reason members see
-        int? choice = Dialogs.Choose(app, "Shut down", $"Make every member of this server leave {roomId}, and delete its addresses here? Blocking also keeps them from joining again.", ["_Cancel", "Shut _down", "Shut down and _block"]);
+        int? choice = Dialogs.Choose(app, Strings.ShutDown, Texts.Format(Strings.ShutDownQuestion, roomId), [Strings.ButtonCancel, Strings.ButtonShutDown, Strings.ButtonShutDownBlock]);
         if (choice is not (1 or 2)) return;
-        string? reason = Dialogs.AskAllowEmpty(app, "Shut down", "Reason shown to the members; empty for none:");
+        string? reason = Dialogs.AskAllowEmpty(app, Strings.ShutDown, Strings.ShutDownReasonPrompt);
         if (reason is null) return;
 
         // Shut down, then tell what was done
-        _ = RunSafelyAsync("Shutting the room down", async client =>
+        _ = RunSafelyAsync(Strings.ShuttingDown, async client =>
         {
             AdminRoomShutdown done = await client.ShutdownRoomAsync(roomId, block: choice == 2, reason.Length > 0 ? reason : null);
-            string failed = done.FailedToKickUsers.Count > 0 ? $"; {done.FailedToKickUsers.Count} could not be removed" : "";
-            app.Invoke(() => ShowStatus($"Shut {roomId} down: {done.KickedUsers.Count} members removed{failed}{(choice == 2 ? ", blocked" : "")}."));
+            string failed = done.FailedToKickUsers.Count > 0 ? Texts.Format(Strings.CouldNotRemove, done.FailedToKickUsers.Count) : "";
+            app.Invoke(() => ShowStatus(Texts.Format(Strings.ShutDownDone, roomId, done.KickedUsers.Count, failed, (choice == 2 ? Strings.Blocked : ""))));
         });
     }
 }

@@ -1,0 +1,1755 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Finnish texts; each key of Strings.resx, with the same placeholders -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="About" xml:space="preserve">
+    <value>Tietoja</value>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>Uniform Chat Terminal {0}
+Matrix-keskustelusovellus päätteelle.
+
+https://spec.matrix.org</value>
+  </data>
+  <data name="AcceptPolicy" xml:space="preserve">
+    <value>Jatkamalla hyväksyt käyttöehdot: ei laitonta, loukkaavaa tai haitallista sisältöä.
+{0}</value>
+  </data>
+  <data name="AccountDeleted" xml:space="preserve">
+    <value>Tilisi on poistettu.</value>
+  </data>
+  <data name="AccountFilterPrompt" xml:space="preserve">
+    <value>Osa käyttäjätunnusta tai nimeä; tyhjä näyttää kaikki:</value>
+  </data>
+  <data name="AccountRow" xml:space="preserve">
+    <value>{0}  {1}{2}  laitteita {3}, huoneita {4}</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Tilit</value>
+  </data>
+  <data name="AccountsCount" xml:space="preserve">
+    <value>Tilejä {0}{1}:</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0} epäonnistui: {1}</value>
+  </data>
+  <data name="AddAlias" xml:space="preserve">
+    <value>Lisää osoite</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Lisättiin {0}</value>
+  </data>
+  <data name="Adding" xml:space="preserve">
+    <value>Lisätään {0}</value>
+  </data>
+  <data name="AddressPrompt" xml:space="preserve">
+    <value>Osoite, esim. #huone tai #huone:{0}:</value>
+  </data>
+  <data name="AliasRemovePrompt" xml:space="preserve">
+    <value>Poistettava osoite, esim. #huone:{0}:</value>
+  </data>
+  <data name="AlreadyEncrypted" xml:space="preserve">
+    <value>Tämä huone on jo salattu.</value>
+  </data>
+  <data name="AndMore" xml:space="preserve">
+    <value> ja {0} muuta</value>
+  </data>
+  <data name="Answering" xml:space="preserve">
+    <value>Vastataan</value>
+  </data>
+  <data name="APasswordFor" xml:space="preserve">
+    <value>Salasana käyttäjälle {0}:</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Kysytään palvelimelta {0}…</value>
+  </data>
+  <data name="AudioTest" xml:space="preserve">
+    <value>Äänitesti</value>
+  </data>
+  <data name="AudioTestDevices" xml:space="preserve">
+    <value>Mikrofoni: {0}. Kaiutin: {1}.</value>
+  </data>
+  <data name="AudioTestNothing" xml:space="preserve">
+    <value>Äänitesti: mitään ei tallentunut</value>
+  </data>
+  <data name="AudioTestResult" xml:space="preserve">
+    <value>Äänitesti: {0:F0} s, {1:F0} kbit/s</value>
+  </data>
+  <data name="AudioTestSilence" xml:space="preserve">
+    <value>Hiljaisuus tarkoittaa, ettei sisääntulo ole mikrofoni: valitse se järjestelmän ääniasetuksista, tai aseta Audio:Microphone asetuksissa.</value>
+  </data>
+  <data name="AudioTestSpeak" xml:space="preserve">
+    <value>Puhu: kuulet itsesi sekunnin päästä, Opuksen läpi kuten puhelussa.</value>
+  </data>
+  <data name="AudioUnsupported" xml:space="preserve">
+    <value>Ääntä ei tueta tällä alustalla.</value>
+  </data>
+  <data name="BackupNeedsKey" xml:space="preserve">
+    <value>versio {0}, tarvitsee palautusavaimen</value>
+  </data>
+  <data name="BackupOn" xml:space="preserve">
+    <value>käytössä (versio {0})</value>
+  </data>
+  <data name="BackupRestored" xml:space="preserve">
+    <value>Avainten varmuuskopio palautettu: huoneavaimia tuotiin {0}.</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Porttikielto</value>
+  </data>
+  <data name="Banning" xml:space="preserve">
+    <value>Asetetaan porttikielto:</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>, estetty</value>
+  </data>
+  <data name="BlockedList" xml:space="preserve">
+    <value>Estetyt: {0}</value>
+  </data>
+  <data name="BlockedUser" xml:space="preserve">
+    <value>{0} estettiin: hänen viestinsä ja kutsunsa eivät enää näy. /unignore {1} peruu eston.</value>
+  </data>
+  <data name="Blocking" xml:space="preserve">
+    <value>Estetään</value>
+  </data>
+  <data name="ButtonAcceptThem" xml:space="preserve">
+    <value>_Hyväksyn ne</value>
+  </data>
+  <data name="ButtonBlockSender" xml:space="preserve">
+    <value>_Estä lähettäjä</value>
+  </data>
+  <data name="ButtonCancel" xml:space="preserve">
+    <value>_Peruuta</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>_Sulje</value>
+  </data>
+  <data name="ButtonCreateAccount" xml:space="preserve">
+    <value>_Luo tili</value>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>_Poista</value>
+  </data>
+  <data name="ButtonEdit" xml:space="preserve">
+    <value>_Muokkaa</value>
+  </data>
+  <data name="ButtonJoin" xml:space="preserve">
+    <value>_Liity</value>
+  </data>
+  <data name="ButtonLater" xml:space="preserve">
+    <value>_Myöhemmin</value>
+  </data>
+  <data name="ButtonList" xml:space="preserve">
+    <value>_Näytä</value>
+  </data>
+  <data name="ButtonLogOutDevice" xml:space="preserve">
+    <value>_Kirjaa laite ulos</value>
+  </data>
+  <data name="ButtonLogOutOthers" xml:space="preserve">
+    <value>Kirjaa _muut ulos</value>
+  </data>
+  <data name="ButtonOpenLink" xml:space="preserve">
+    <value>Avaa _linkki</value>
+  </data>
+  <data name="ButtonOther" xml:space="preserve">
+    <value>_Muu…</value>
+  </data>
+  <data name="ButtonQuit" xml:space="preserve">
+    <value>_Lopeta</value>
+  </data>
+  <data name="ButtonReact" xml:space="preserve">
+    <value>_Reagoi</value>
+  </data>
+  <data name="ButtonRecover" xml:space="preserve">
+    <value>_Palauta</value>
+  </data>
+  <data name="ButtonReject" xml:space="preserve">
+    <value>_Hylkää</value>
+  </data>
+  <data name="ButtonRename" xml:space="preserve">
+    <value>_Nimeä uudelleen</value>
+  </data>
+  <data name="ButtonReply" xml:space="preserve">
+    <value>_Vastaa</value>
+  </data>
+  <data name="ButtonReport" xml:space="preserve">
+    <value>_Ilmoita</value>
+  </data>
+  <data name="ButtonSaveFile" xml:space="preserve">
+    <value>_Tallenna tiedosto</value>
+  </data>
+  <data name="ButtonSetUpRecovery" xml:space="preserve">
+    <value>_Aseta palautus</value>
+  </data>
+  <data name="ButtonShutDown" xml:space="preserve">
+    <value>_Sulje</value>
+  </data>
+  <data name="ButtonShutDownBlock" xml:space="preserve">
+    <value>Sulje ja _estä</value>
+  </data>
+  <data name="ButtonSignIn" xml:space="preserve">
+    <value>_Kirjaudu</value>
+  </data>
+  <data name="ButtonTheyDontMatch" xml:space="preserve">
+    <value>Ne _eivät täsmää</value>
+  </data>
+  <data name="ButtonTheyMatch" xml:space="preserve">
+    <value>Ne _täsmäävät</value>
+  </data>
+  <data name="ButtonUnlist" xml:space="preserve">
+    <value>_Piilota</value>
+  </data>
+  <data name="ButtonVerifyDevice" xml:space="preserve">
+    <value>_Vahvista tämä laite</value>
+  </data>
+  <data name="ButtonVerifySelected" xml:space="preserve">
+    <value>_Vahvista valittu</value>
+  </data>
+  <data name="ButtonViewImage" xml:space="preserve">
+    <value>Näytä _kuva</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Puhelu</value>
+  </data>
+  <data name="CallConnected" xml:space="preserve">
+    <value>Puhelu: Puhelussa käyttäjän {0} kanssa{1}{2}  /mute /hangup</value>
+  </data>
+  <data name="CallConnecting" xml:space="preserve">
+    <value>Puhelu: Yhdistetään käyttäjään {0}…</value>
+  </data>
+  <data name="CallEnded" xml:space="preserve">
+    <value>Puhelu: Puhelu käyttäjän {0} kanssa päättyi: {1}</value>
+  </data>
+  <data name="Calling" xml:space="preserve">
+    <value>Soitetaan</value>
+  </data>
+  <data name="CallInviting" xml:space="preserve">
+    <value>Puhelu: Soitetaan käyttäjälle {0}…  /hangup peruu</value>
+  </data>
+  <data name="CallReconnecting" xml:space="preserve">
+    <value>Puhelu: Yhdistetään uudelleen käyttäjään {0}…</value>
+  </data>
+  <data name="CallRinging" xml:space="preserve">
+    <value>Puhelu: {0} soittaa: /answer tai /reject</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>Yhteys ei onnistu</value>
+  </data>
+  <data name="CannotOpenAudio" xml:space="preserve">
+    <value>Mikrofonia tai kaiutinta ei voi avata: {0}</value>
+  </data>
+  <data name="ChangingDisplayName" xml:space="preserve">
+    <value>Vaihdetaan näyttönimeä</value>
+  </data>
+  <data name="CheckingEncryption" xml:space="preserve">
+    <value>Tarkistetaan salausta…</value>
+  </data>
+  <data name="ChooseReaction" xml:space="preserve">
+    <value>Valitse reaktio:</value>
+  </data>
+  <data name="CommandsAndKeys" xml:space="preserve">
+    <value>Komennot ja näppäimet</value>
+  </data>
+  <data name="CompareEmoji" xml:space="preserve">
+    <value>Vertaa emojeja</value>
+  </data>
+  <data name="CompareWith" xml:space="preserve">
+    <value>Vertaa: {0}
+
+{1}
+
+tai numerot {2}
+
+Näkyvätkö samat, samassa järjestyksessä?</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Vahvista</value>
+  </data>
+  <data name="ConnectedAs" xml:space="preserve">
+    <value>Yhteydessä käyttäjänä {0}</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Yhdistetään…</value>
+  </data>
+  <data name="ConnectionProblem" xml:space="preserve">
+    <value>Yhteysongelma: {0}</value>
+  </data>
+  <data name="CouldNotRemove" xml:space="preserve">
+    <value>; {0} ei voitu poistaa</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Luo tili</value>
+  </data>
+  <data name="CreatedAlias" xml:space="preserve">
+    <value>Luotiin #{0}:{1}</value>
+  </data>
+  <data name="CreatedUser" xml:space="preserve">
+    <value>Luotiin {0}.</value>
+  </data>
+  <data name="CreatingAccount" xml:space="preserve">
+    <value>Luodaan tiliä</value>
+  </data>
+  <data name="CreatingAlias" xml:space="preserve">
+    <value>Luodaan #{0}:{1}</value>
+  </data>
+  <data name="CreatingRoom" xml:space="preserve">
+    <value>Luodaan huonetta</value>
+  </data>
+  <data name="CreatingToken" xml:space="preserve">
+    <value>Luodaan koodia</value>
+  </data>
+  <data name="CreatorUnlimited" xml:space="preserve">
+    <value>{0} loi tämän huoneen ja hänellä on rajattomat oikeudet, joita ei voi muuttaa.</value>
+  </data>
+  <data name="CrossSigningNotStored" xml:space="preserve">
+    <value>Ristiinvarmennuksen avaimia ei ollut salaisessa tallennustilassa.</value>
+  </data>
+  <data name="CrossSigningRestored" xml:space="preserve">
+    <value>Ristiinvarmennus palautettu; tämä laite on nyt vahvistettu.</value>
+  </data>
+  <data name="DayChanged" xml:space="preserve">
+    <value>--- Päivä vaihtui: {0:dddd d.M.yyyy} ---</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Poista käytöstä</value>
+  </data>
+  <data name="DeactivateAction" xml:space="preserve">
+    <value>Poista käytöstä pysyvästi…</value>
+  </data>
+  <data name="DeactivatedUser" xml:space="preserve">
+    <value>{0} poistettiin käytöstä.</value>
+  </data>
+  <data name="DeactivateQuestion" xml:space="preserve">
+    <value>Poistetaanko {0} käytöstä pysyvästi? Hän poistuu kaikista huoneista eikä voi enää kirjautua; käyttäjätunnusta ei anneta uudelleen.</value>
+  </data>
+  <data name="Deactivating" xml:space="preserve">
+    <value>Poistetaan käytöstä</value>
+  </data>
+  <data name="DeleteAccount" xml:space="preserve">
+    <value>Poista tili</value>
+  </data>
+  <data name="DeleteAccountQuestion" xml:space="preserve">
+    <value>Poistetaanko tilisi pysyvästi? Poistut kaikista huoneista, nimesi ja kuvasi poistetaan ja kaikki laitteet kirjataan ulos. Käyttäjätunnusta ei voi käyttää uudelleen.</value>
+  </data>
+  <data name="DeletedReport" xml:space="preserve">
+    <value>Raportti {0} poistettiin.</value>
+  </data>
+  <data name="DeletedToken" xml:space="preserve">
+    <value>Koodi {0} poistettiin.</value>
+  </data>
+  <data name="DeleteMessage" xml:space="preserve">
+    <value>Poista viesti</value>
+  </data>
+  <data name="DeleteMessageQuestion" xml:space="preserve">
+    <value>Poistetaanko "{0}" kaikilta?</value>
+  </data>
+  <data name="DeleteTheReport" xml:space="preserve">
+    <value>Poista raportti</value>
+  </data>
+  <data name="DeleteToken" xml:space="preserve">
+    <value>Poista koodi</value>
+  </data>
+  <data name="DeleteTokenQuestion" xml:space="preserve">
+    <value>Poistetaanko koodi {0}? Sillä luodut tilit säilyvät.</value>
+  </data>
+  <data name="DeletingAccount" xml:space="preserve">
+    <value>Poistetaan tiliä</value>
+  </data>
+  <data name="DeletingMessage" xml:space="preserve">
+    <value>Poistetaan viestiä</value>
+  </data>
+  <data name="DeletingReport" xml:space="preserve">
+    <value>Poistetaan raporttia</value>
+  </data>
+  <data name="DeletingToken" xml:space="preserve">
+    <value>Poistetaan koodia</value>
+  </data>
+  <data name="DeviceLastSeen" xml:space="preserve">
+    <value>{0}  {1}
+    nähty viimeksi {2} osoitteesta {3}</value>
+  </data>
+  <data name="DeviceNotVerifiedYet" xml:space="preserve">
+    <value>Tätä laitetta ei ole vielä vahvistettu. Vahvista se toisella laitteellasi tai palautusavaimellasi, jotta muut näkevät sen vahvistettuna ja se voi lukea vanhemmat viestisi.</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Laitteet</value>
+  </data>
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Laitteet ({0}, * = tämä laite)</value>
+  </data>
+  <data name="DirectMessage" xml:space="preserve">
+    <value>Yksityisviesti</value>
+  </data>
+  <data name="DirectoryHint" xml:space="preserve">
+    <value>Jätä palvelin tyhjäksi hakeaksesi omalta; Enter kummassakin kentässä hakee.</value>
+  </data>
+  <data name="DirectoryListing" xml:space="preserve">
+    <value>Näkyminen hakemistossa</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Ladataan {0}…</value>
+  </data>
+  <data name="E2eeUnavailable" xml:space="preserve">
+    <value>Päästä päähän -salaus ei ole käytettävissä.
+
+{0}</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value> (muokattu)</value>
+  </data>
+  <data name="EditPrefix" xml:space="preserve">
+    <value>[muokkaus] </value>
+  </data>
+  <data name="EnableEncryption" xml:space="preserve">
+    <value>Ota salaus käyttöön</value>
+  </data>
+  <data name="EnableEncryptionQuestion" xml:space="preserve">
+    <value>Salataanko kaikki uudet viestit tässä huoneessa? Salausta ei voi myöhemmin poistaa.</value>
+  </data>
+  <data name="EnablingEncryption" xml:space="preserve">
+    <value>Otetaan salaus käyttöön</value>
+  </data>
+  <data name="EncryptedHeader" xml:space="preserve">
+    <value>{0} [salattu]</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>&lt;{0}&gt; [salattu viesti; avain ei ole saapunut]</value>
+  </data>
+  <data name="Encryption" xml:space="preserve">
+    <value>Salaus</value>
+  </data>
+  <data name="EncryptionUnavailable" xml:space="preserve">
+    <value>Salaus ei ole käytettävissä tällä laitteella.
+
+{0}</value>
+  </data>
+  <data name="EndAnsweredElsewhere" xml:space="preserve">
+    <value>vastattu toisella laitteella</value>
+  </data>
+  <data name="EndCalledAgain" xml:space="preserve">
+    <value>toinen soitti uudelleen</value>
+  </data>
+  <data name="EndDeclined" xml:space="preserve">
+    <value>hylätty</value>
+  </data>
+  <data name="EndDeclinedElsewhere" xml:space="preserve">
+    <value>hylätty toisella laitteella</value>
+  </data>
+  <data name="EndedSuspension" xml:space="preserve">
+    <value>Käyttäjän {0} jäädytys lopetettiin.</value>
+  </data>
+  <data name="EndEnded" xml:space="preserve">
+    <value>päättyi</value>
+  </data>
+  <data name="EndingSuspension" xml:space="preserve">
+    <value>Lopetetaan jäädytys</value>
+  </data>
+  <data name="EndMissed" xml:space="preserve">
+    <value>vastaamatta</value>
+  </data>
+  <data name="EndNoAnswer" xml:space="preserve">
+    <value>ei vastausta</value>
+  </data>
+  <data name="EndNoConnection" xml:space="preserve">
+    <value>ei yhteyttä</value>
+  </data>
+  <data name="EndSuspension" xml:space="preserve">
+    <value>Lopeta jäädytys</value>
+  </data>
+  <data name="EndTheyHungUp" xml:space="preserve">
+    <value>toinen lopetti</value>
+  </data>
+  <data name="EndYouDeclined" xml:space="preserve">
+    <value>sinä hylkäsit</value>
+  </data>
+  <data name="EndYouHungUp" xml:space="preserve">
+    <value>sinä lopetit</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Epäonnistui: {0}</value>
+  </data>
+  <data name="FileSaved" xml:space="preserve">
+    <value>Tiedosto tallennettu</value>
+  </data>
+  <data name="FirstShown" xml:space="preserve">
+    <value>, näytetään ensimmäiset {0}</value>
+  </data>
+  <data name="FlagAdmin" xml:space="preserve">
+    <value>ylläpitäjä</value>
+  </data>
+  <data name="FlagDeactivated" xml:space="preserve">
+    <value>poistettu käytöstä</value>
+  </data>
+  <data name="FlagEncrypted" xml:space="preserve">
+    <value> [salattu]</value>
+  </data>
+  <data name="FlagLocked" xml:space="preserve">
+    <value>lukittu</value>
+  </data>
+  <data name="FlagPublic" xml:space="preserve">
+    <value> [julkinen]</value>
+  </data>
+  <data name="FlagResolved" xml:space="preserve">
+    <value> [käsitelty]</value>
+  </data>
+  <data name="FlagSuspended" xml:space="preserve">
+    <value>jäädytetty</value>
+  </data>
+  <data name="GiveUserId" xml:space="preserve">
+    <value>Anna käyttäjätunnus kuten @nimi:palvelin.</value>
+  </data>
+  <data name="GiveUserIdToStart" xml:space="preserve">
+    <value>Anna Matrix-käyttäjätunnuksesi aloittaaksesi.
+
+</value>
+  </data>
+  <data name="GiveYourUserId" xml:space="preserve">
+    <value>Anna käyttäjätunnuksesi.</value>
+  </data>
+  <data name="HangingUp" xml:space="preserve">
+    <value>Lopetetaan puhelua</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Ohje</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>**lihava** _kursiivi_ `koodi` ~~yliviivattu~~ [teksti](url)   Markdown lähtee muotoiltuna
+/plain teksti   lähetä ilman Markdownia
+/me teksti      toiminto, kuten * sinä vilkutat
+/join #huone    liity huoneeseen; myös !id tai linkki, sitten palvelimet joiden kautta liitytään
+/leave          poistu tästä huoneesta
+/topic teksti   aseta aihe
+/name teksti    aseta huoneen nimi
+/avatar [tiedosto]  aseta huoneen kuva; /avatar none poistaa sen
+/kick @käyttäjä [syy]   poista jäsen
+/ban @käyttäjä [syy]    poista jäsen pysyvästi
+/unban @käyttäjä  päästä estetty käyttäjä takaisin
+/power @käyttäjä taso   aseta oikeustaso: luku, admin, moderator tai member
+/op @käyttäjä, /deop @käyttäjä  tee ylläpitäjäksi, tai tavalliseksi jäseneksi
+/invite @käyttäjä  kutsu käyttäjä
+/msg @käyttäjä  aloita yksityiskeskustelu
+/nick nimi      aseta näyttönimesi
+/list [palvelin]  selaa julkisia huoneita, täällä tai toisella palvelimella
+/create nimi    luo yksityinen huone
+/create #huone [nimi]   luo julkinen huone tällä osoitteella
+/alias #huone, /unalias #huone   lisää tai poista tämän huoneen osoite
+/publish, /unpublish   näytä tämä huone julkisessa huonehakemistossa, tai älä
+/upload         lähetä tiedosto
+/devices        hallitse istuntojasi
+/settings       katso ja muuta asetuksia
+/logs           lue tämän ja aiempien istuntojen lokit
+/audiotest      kuule itsesi Opuksen läpi, mikrofonin ja kaiuttimen testiksi
+/call           soita tämän yksityiskeskustelun toiselle jäsenelle
+/answer /reject vastaa soivaan puheluun tai hylkää se
+/hangup /mute   lopeta puhelu, tai mykistä mikrofoni ja palauta se
+/encryption     avaimet, palautus ja varmuuskopio
+/recover        avaa vanhat viestit palautusavaimella
+/verify [@käyttäjä] vahvista toinen laitteesi, tai käyttäjä, emojeilla
+/ignore @käyttäjä  estä käyttäjä: hänen viestinsä ja kutsunsa eivät enää näy; pelkkä /ignore listaa estetyt
+/unignore @käyttäjä  poista käyttäjän esto
+/report [@käyttäjä] ilmoita tästä huoneesta, tai käyttäjästä, palvelimesi ylläpitäjille; viesteistä niiden toiminnoista (Enter)
+/quit           lopeta
+
+Palvelimen ylläpitäjille, myös Palvelin-valikossa:
+/whois @käyttäjä  käyttäjän laitteet ja osoitteet; kuka tahansa voi katsoa omansa
+/accounts [teksti], /rooms [teksti]   listaa ja hallitse palvelimen tilejä tai huoneita
+/suspend @käyttäjä, /unsuspend @käyttäjä  voi lukea muttei lähettää, liittyä tai kutsua
+/lock @käyttäjä, /unlock @käyttäjä        palvelin hylkää hänen istuntonsa
+/notice @käyttäjä teksti   lähetä palvelimen ilmoitus
+/tokens, /reports    rekisteröintikoodit, käyttäjien raportit
+
+Alt+1…9         siirry huoneeseen 1…9
+Ctrl+N, Ctrl+P  seuraava, edellinen huone
+Ctrl+O          liity huoneeseen
+Ctrl+R          huonehakemisto
+PageUp/Down     vieritä viestejä
+Ctrl+PageUp     lataa vanhempia viestejä
+F2              näytä tai piilota jäsenet
+Ctrl+Up, Enter  valitse viesti ja tee sille jotain
+Tab             täydennä nimimerkki
+Esc             peru vastaus tai muokkaus
+F10             avaa valikko</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Kuva</value>
+  </data>
+  <data name="ImageFormatUnsupported" xml:space="preserve">
+    <value>Tätä kuvamuotoa ei voi näyttää. Tallenna tiedosto avataksesi sen toisessa ohjelmassa.</value>
+  </data>
+  <data name="InvalidAddress" xml:space="preserve">
+    <value>Virheellinen osoite</value>
+  </data>
+  <data name="InvalidRoom" xml:space="preserve">
+    <value>Virheellinen huone</value>
+  </data>
+  <data name="InvalidUser" xml:space="preserve">
+    <value>Virheellinen käyttäjä</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Kutsu</value>
+  </data>
+  <data name="InvitedTo" xml:space="preserve">
+    <value>Kutsu huoneeseen {0}</value>
+  </data>
+  <data name="InvitedToThisRoom" xml:space="preserve">
+    <value>-!- Sinut on kutsuttu tähän huoneeseen. Paina Enter liittyäksesi tai hylätäksesi.</value>
+  </data>
+  <data name="InvitedYou" xml:space="preserve">
+    <value>{0} kutsui sinut huoneeseen {1}.</value>
+  </data>
+  <data name="Inviting" xml:space="preserve">
+    <value>Kutsutaan käyttäjää {0}</value>
+  </data>
+  <data name="IsServerAdmin" xml:space="preserve">
+    <value>{0} on palvelimen ylläpitäjä.</value>
+  </data>
+  <data name="IsVerified" xml:space="preserve">
+    <value>{0} on vahvistettu.</value>
+  </data>
+  <data name="Join" xml:space="preserve">
+    <value>Liity</value>
+  </data>
+  <data name="JoinedRoom" xml:space="preserve">
+    <value>Liityttiin huoneeseen {0}</value>
+  </data>
+  <data name="JoiningRoom" xml:space="preserve">
+    <value>Liitytään huoneeseen {0}</value>
+  </data>
+  <data name="JoinQuestion" xml:space="preserve">
+    <value>Liitytäänkö huoneeseen {0}{1}?</value>
+  </data>
+  <data name="JoinRoom" xml:space="preserve">
+    <value>Liity huoneeseen</value>
+  </data>
+  <data name="JoinRoomPrompt" xml:space="preserve">
+    <value>Huoneen osoite, tunniste tai linkki, esim. #matrix:matrix.org; perään voi lisätä palvelimet, joiden kautta liitytään:</value>
+  </data>
+  <data name="JoinThrough" xml:space="preserve">
+    <value> palvelimien {0} kautta</value>
+  </data>
+  <data name="Kick" xml:space="preserve">
+    <value>Poista huoneesta</value>
+  </data>
+  <data name="Kicking" xml:space="preserve">
+    <value>Poistetaan</value>
+  </data>
+  <data name="LeaveQuestion" xml:space="preserve">
+    <value>Poistutaanko huoneesta {0}?</value>
+  </data>
+  <data name="LeaveRoom" xml:space="preserve">
+    <value>Poistu huoneesta</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Poistutaan huoneesta {0}</value>
+  </data>
+  <data name="LevelAdmin" xml:space="preserve">
+    <value>Ylläpitäjä ({0})</value>
+  </data>
+  <data name="LevelFor" xml:space="preserve">
+    <value>Taso käyttäjälle {0}, 0–100:</value>
+  </data>
+  <data name="LevelMember" xml:space="preserve">
+    <value>Jäsen (0)</value>
+  </data>
+  <data name="LevelModerator" xml:space="preserve">
+    <value>Moderaattori ({0})</value>
+  </data>
+  <data name="LevelOther" xml:space="preserve">
+    <value>Muu…</value>
+  </data>
+  <data name="ListingAccounts" xml:space="preserve">
+    <value>Listataan tilejä</value>
+  </data>
+  <data name="ListingMembers" xml:space="preserve">
+    <value>Listataan jäseniä</value>
+  </data>
+  <data name="ListingReports" xml:space="preserve">
+    <value>Listataan raportteja</value>
+  </data>
+  <data name="ListingRoom" xml:space="preserve">
+    <value>Näytetään {0} hakemistossa</value>
+  </data>
+  <data name="ListingRooms" xml:space="preserve">
+    <value>Listataan huoneita</value>
+  </data>
+  <data name="ListingTokens" xml:space="preserve">
+    <value>Listataan rekisteröintikoodeja</value>
+  </data>
+  <data name="ListQuestion" xml:space="preserve">
+    <value>Näytetäänkö {0} palvelimen {1} julkisessa huonehakemistossa? Näkyminen ei muuta sitä, kuka saa liittyä.</value>
+  </data>
+  <data name="LoadingMembers" xml:space="preserve">
+    <value>Ladataan jäseniä</value>
+  </data>
+  <data name="LoadingName" xml:space="preserve">
+    <value>Ladataan {0}…</value>
+  </data>
+  <data name="LoadingPreview" xml:space="preserve">
+    <value>[ladataan esikatselua…]</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Lukitse</value>
+  </data>
+  <data name="LockAction" xml:space="preserve">
+    <value>Lukitse: hylkää kaikki istunnot</value>
+  </data>
+  <data name="LockedUser" xml:space="preserve">
+    <value>{0} lukittiin: palvelin hylkää hänen istuntonsa, kunnes /unlock {1}.</value>
+  </data>
+  <data name="Locking" xml:space="preserve">
+    <value>Lukitaan</value>
+  </data>
+  <data name="LoggingOut" xml:space="preserve">
+    <value>Kirjaudutaan ulos</value>
+  </data>
+  <data name="LoggingOutDevices" xml:space="preserve">
+    <value>Kirjataan laitteita ulos</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Kirjaudu</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Kirjaudu ulos</value>
+  </data>
+  <data name="LogOutDevices" xml:space="preserve">
+    <value>Kirjaa laitteet ulos</value>
+  </data>
+  <data name="LogOutDevicesQuestion" xml:space="preserve">
+    <value>Kirjataanko ulos laitteet ({0}): {1}?</value>
+  </data>
+  <data name="LogOutQuestion" xml:space="preserve">
+    <value>Lopetetaanko tämä istunto palvelimella? Viestit jäävät paikalliseen tietokantaan.</value>
+  </data>
+  <data name="LookingUpUser" xml:space="preserve">
+    <value>Haetaan käyttäjää</value>
+  </data>
+  <data name="LowerOwnLevel" xml:space="preserve">
+    <value>Lasketaanko oma tasosi {0} tasolle {1}? Et voi itse nostaa sitä takaisin.</value>
+  </data>
+  <data name="MakeServerAdmin" xml:space="preserve">
+    <value>Tee palvelimen ylläpitäjäksi</value>
+  </data>
+  <data name="MakeServerAdminQuestion" xml:space="preserve">
+    <value>Saako {0} hallita kaikkia palvelimen tilejä ja huoneita?</value>
+  </data>
+  <data name="MakingAdmin" xml:space="preserve">
+    <value>Tehdään ylläpitäjäksi</value>
+  </data>
+  <data name="MemberPrompt" xml:space="preserve">
+    <value>Käyttäjätunnus tai nimi tässä huoneessa:</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Jäsenet</value>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Jäsenet ({0})</value>
+  </data>
+  <data name="MembersOf" xml:space="preserve">
+    <value>Huoneen {0} jäsenet</value>
+  </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>_Tietoja</value>
+  </data>
+  <data name="MenuAccounts" xml:space="preserve">
+    <value>_Tilit…</value>
+  </data>
+  <data name="MenuAccountsHelp" xml:space="preserve">
+    <value>Palvelimen ylläpitäjille: listaa ja hallitse tilejä</value>
+  </data>
+  <data name="MenuAddAlias" xml:space="preserve">
+    <value>Lisää _osoite…</value>
+  </data>
+  <data name="MenuAddAliasHelp" xml:space="preserve">
+    <value>Osoite kuten #huone:palvelin</value>
+  </data>
+  <data name="MenuAudioTest" xml:space="preserve">
+    <value>Ääni_testi…</value>
+  </data>
+  <data name="MenuAudioTestHelp" xml:space="preserve">
+    <value>Kuule itsesi, mikrofonin ja kaiuttimen testiksi</value>
+  </data>
+  <data name="MenuBan" xml:space="preserve">
+    <value>Po_rttikielto…</value>
+  </data>
+  <data name="MenuBanHelp" xml:space="preserve">
+    <value>Poista jäsen pysyvästi</value>
+  </data>
+  <data name="MenuCall" xml:space="preserve">
+    <value>_Soita</value>
+  </data>
+  <data name="MenuCallHelp" xml:space="preserve">
+    <value>Äänipuhelu tähän yksityiskeskusteluun</value>
+  </data>
+  <data name="MenuCommandsAndKeys" xml:space="preserve">
+    <value>_Komennot ja näppäimet</value>
+  </data>
+  <data name="MenuDeleteAccount" xml:space="preserve">
+    <value>Poista _tili…</value>
+  </data>
+  <data name="MenuDeleteAccountHelp" xml:space="preserve">
+    <value>Poista tili käytöstä pysyvästi</value>
+  </data>
+  <data name="MenuDevices" xml:space="preserve">
+    <value>_Laitteet…</value>
+  </data>
+  <data name="MenuDevicesHelp" xml:space="preserve">
+    <value>Katso istunnot ja kirjaa niitä ulos</value>
+  </data>
+  <data name="MenuDirectMessage" xml:space="preserve">
+    <value>_Yksityisviesti…</value>
+  </data>
+  <data name="MenuDirectMessageHelp" xml:space="preserve">
+    <value>Aloita keskustelu käyttäjän kanssa</value>
+  </data>
+  <data name="MenuDirectory" xml:space="preserve">
+    <value>_Huonehakemisto…</value>
+  </data>
+  <data name="MenuDirectoryHelp" xml:space="preserve">
+    <value>Etsi julkisia huoneita</value>
+  </data>
+  <data name="MenuDirectoryListing" xml:space="preserve">
+    <value>Näky_minen hakemistossa…</value>
+  </data>
+  <data name="MenuDirectoryListingHelp" xml:space="preserve">
+    <value>Näytä julkisessa huonehakemistossa</value>
+  </data>
+  <data name="MenuEnableEncryption" xml:space="preserve">
+    <value>Ota salaus käyttöön…</value>
+  </data>
+  <data name="MenuEnableEncryptionHelp" xml:space="preserve">
+    <value>Salaa tämä huone; ei voi perua</value>
+  </data>
+  <data name="MenuEncryption" xml:space="preserve">
+    <value>_Salaus…</value>
+  </data>
+  <data name="MenuEncryptionHelp" xml:space="preserve">
+    <value>Avaimet, palautus ja varmuuskopio</value>
+  </data>
+  <data name="MenuFile" xml:space="preserve">
+    <value>_Tiedosto</value>
+  </data>
+  <data name="MenuHangUp" xml:space="preserve">
+    <value>Katkaise _puhelu</value>
+  </data>
+  <data name="MenuHangUpHelp" xml:space="preserve">
+    <value>Lopeta puhelu</value>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>_Ohje</value>
+  </data>
+  <data name="MenuInvite" xml:space="preserve">
+    <value>_Kutsu…</value>
+  </data>
+  <data name="MenuInviteHelp" xml:space="preserve">
+    <value>Kutsu käyttäjä tänne</value>
+  </data>
+  <data name="MenuJoin" xml:space="preserve">
+    <value>_Liity…</value>
+  </data>
+  <data name="MenuJoinHelp" xml:space="preserve">
+    <value>Liity osoitteella tai tunnisteella</value>
+  </data>
+  <data name="MenuKick" xml:space="preserve">
+    <value>Po_ista huoneesta…</value>
+  </data>
+  <data name="MenuKickHelp" xml:space="preserve">
+    <value>Poista jäsen</value>
+  </data>
+  <data name="MenuLeave" xml:space="preserve">
+    <value>Läh_de huoneesta</value>
+  </data>
+  <data name="MenuLeaveHelp" xml:space="preserve">
+    <value>Poistu tästä huoneesta</value>
+  </data>
+  <data name="MenuLogOut" xml:space="preserve">
+    <value>_Kirjaudu ulos…</value>
+  </data>
+  <data name="MenuLogOutHelp" xml:space="preserve">
+    <value>Lopeta istunto palvelimella</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>L_okit…</value>
+  </data>
+  <data name="MenuLogsHelp" xml:space="preserve">
+    <value>Tämä ja aiemmat istunnot</value>
+  </data>
+  <data name="MenuMembers" xml:space="preserve">
+    <value>_Jäsenet</value>
+  </data>
+  <data name="MenuMembersHelp" xml:space="preserve">
+    <value>Näytä tai piilota</value>
+  </data>
+  <data name="MenuNewPublicRoom" xml:space="preserve">
+    <value>Uusi _julkinen huone…</value>
+  </data>
+  <data name="MenuNewPublicRoomHelp" xml:space="preserve">
+    <value>Luo huone, johon kuka tahansa voi liittyä</value>
+  </data>
+  <data name="MenuNewRoom" xml:space="preserve">
+    <value>_Uusi huone…</value>
+  </data>
+  <data name="MenuNewRoomHelp" xml:space="preserve">
+    <value>Luo yksityinen huone</value>
+  </data>
+  <data name="MenuNextRoom" xml:space="preserve">
+    <value>_Seuraava huone</value>
+  </data>
+  <data name="MenuOlderMessages" xml:space="preserve">
+    <value>_Vanhemmat viestit</value>
+  </data>
+  <data name="MenuOlderMessagesHelp" xml:space="preserve">
+    <value>Lataa historiaa</value>
+  </data>
+  <data name="MenuPowerLevel" xml:space="preserve">
+    <value>Oik_eustaso…</value>
+  </data>
+  <data name="MenuPowerLevelHelp" xml:space="preserve">
+    <value>Tee jäsenestä ylläpitäjä tai moderaattori</value>
+  </data>
+  <data name="MenuPreviousRoom" xml:space="preserve">
+    <value>_Edellinen huone</value>
+  </data>
+  <data name="MenuQuit" xml:space="preserve">
+    <value>Lo_peta</value>
+  </data>
+  <data name="MenuQuitHelp" xml:space="preserve">
+    <value>Sulje, istunto säilyy</value>
+  </data>
+  <data name="MenuRegistrationTokens" xml:space="preserve">
+    <value>_Rekisteröintikoodit…</value>
+  </data>
+  <data name="MenuRegistrationTokensHelp" xml:space="preserve">
+    <value>Koodit, joilla uudet tilit rekisteröidään</value>
+  </data>
+  <data name="MenuReports" xml:space="preserve">
+    <value>Ra_portit…</value>
+  </data>
+  <data name="MenuReportsHelp" xml:space="preserve">
+    <value>Mistä käyttäjät ovat ilmoittaneet</value>
+  </data>
+  <data name="MenuRoom" xml:space="preserve">
+    <value>_Huone</value>
+  </data>
+  <data name="MenuSelectMessage" xml:space="preserve">
+    <value>Va_litse viesti</value>
+  </data>
+  <data name="MenuSelectMessageHelp" xml:space="preserve">
+    <value>Vastaa, reagoi, muokkaa…</value>
+  </data>
+  <data name="MenuSendFile" xml:space="preserve">
+    <value>Lähetä _tiedosto…</value>
+  </data>
+  <data name="MenuSendFileHelp" xml:space="preserve">
+    <value>Lähetä tiedosto tänne</value>
+  </data>
+  <data name="MenuServer" xml:space="preserve">
+    <value>_Palvelin</value>
+  </data>
+  <data name="MenuServerNotice" xml:space="preserve">
+    <value>Palvelimen _ilmoitus…</value>
+  </data>
+  <data name="MenuServerNoticeHelp" xml:space="preserve">
+    <value>Viesti käyttäjälle palvelimelta</value>
+  </data>
+  <data name="MenuServerRooms" xml:space="preserve">
+    <value>_Huoneet…</value>
+  </data>
+  <data name="MenuServerRoomsHelp" xml:space="preserve">
+    <value>Kaikki palvelimen huoneet</value>
+  </data>
+  <data name="MenuSetAvatar" xml:space="preserve">
+    <value>Aseta ku_va…</value>
+  </data>
+  <data name="MenuSetAvatarHelp" xml:space="preserve">
+    <value>Huoneen kuva</value>
+  </data>
+  <data name="MenuSetName" xml:space="preserve">
+    <value>Aseta _nimi…</value>
+  </data>
+  <data name="MenuSetNameHelp" xml:space="preserve">
+    <value>Muuta huoneen nimeä</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>_Asetukset…</value>
+  </data>
+  <data name="MenuSettingsHelp" xml:space="preserve">
+    <value>Katso ja muuta asetuksia</value>
+  </data>
+  <data name="MenuSetTopic" xml:space="preserve">
+    <value>Aseta _aihe…</value>
+  </data>
+  <data name="MenuSetTopicHelp" xml:space="preserve">
+    <value>Muuta aihetta</value>
+  </data>
+  <data name="MenuUnban" xml:space="preserve">
+    <value>Pura porttikielto…</value>
+  </data>
+  <data name="MenuUnbanHelp" xml:space="preserve">
+    <value>Päästä estetty käyttäjä takaisin</value>
+  </data>
+  <data name="MenuVerifyDevice" xml:space="preserve">
+    <value>_Vahvista tämä laite…</value>
+  </data>
+  <data name="MenuVerifyDeviceHelp" xml:space="preserve">
+    <value>Emojien vertailu</value>
+  </data>
+  <data name="MenuView" xml:space="preserve">
+    <value>_Näytä</value>
+  </data>
+  <data name="MenuWhois" xml:space="preserve">
+    <value>_Kuka on…</value>
+  </data>
+  <data name="MenuWhoisHelp" xml:space="preserve">
+    <value>Käyttäjän laitteet ja osoitteet</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Viesti</value>
+  </data>
+  <data name="MessageDeleted" xml:space="preserve">
+    <value>&lt;{0}&gt; [viesti poistettu]</value>
+  </data>
+  <data name="MessageIn" xml:space="preserve">
+    <value>viesti huoneessa {0}</value>
+  </data>
+  <data name="Microphones" xml:space="preserve">
+    <value>Mikrofonit: {0}</value>
+  </data>
+  <data name="Muted" xml:space="preserve">
+    <value>, mykistetty</value>
+  </data>
+  <data name="NameFor" xml:space="preserve">
+    <value>Laitteen {0} nimi:</value>
+  </data>
+  <data name="NeitherTrusted" xml:space="preserve">
+    <value>Tämä laite tai {0} ei ole luotettu nykyisellä identiteetilläsi, joten kumpikaan ei voi taata toista.
+
+Vahvista tämä laite luotetulla laitteella{1}, tai käytä palautusavaintasi.</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>ei koskaan</value>
+  </data>
+  <data name="NewAccount" xml:space="preserve">
+    <value>Uusi tili</value>
+  </data>
+  <data name="NewAccountRow" xml:space="preserve">
+    <value>+ Uusi tili…</value>
+  </data>
+  <data name="NewPasswordFor" xml:space="preserve">
+    <value>Käyttäjän {0} uusi salasana; hänen laitteensa kirjataan ulos:</value>
+  </data>
+  <data name="NewPublicRoom" xml:space="preserve">
+    <value>Uusi julkinen huone</value>
+  </data>
+  <data name="NewRoom" xml:space="preserve">
+    <value>Uusi huone</value>
+  </data>
+  <data name="NewToken" xml:space="preserve">
+    <value>Uusi koodi</value>
+  </data>
+  <data name="NewTokenRow" xml:space="preserve">
+    <value>+ Uusi koodi…</value>
+  </data>
+  <data name="NoAppRegistration" xml:space="preserve">
+    <value>Tämä palvelin ei salli sovellusten luoda tilejä.</value>
+  </data>
+  <data name="NoCallRinging" xml:space="preserve">
+    <value>Mikään puhelu ei soi.</value>
+  </data>
+  <data name="NoCallToHangUp" xml:space="preserve">
+    <value>Ei puhelua lopetettavaksi.</value>
+  </data>
+  <data name="NoCallToMute" xml:space="preserve">
+    <value>Ei puhelua mykistettäväksi.</value>
+  </data>
+  <data name="NoDevicesLoggedIn" xml:space="preserve">
+    <value>Yhtään laitetta ei ole kirjautuneena.</value>
+  </data>
+  <data name="NoExpiry" xml:space="preserve">
+    <value>ei vanhene</value>
+  </data>
+  <data name="NoLongerServerAdmin" xml:space="preserve">
+    <value>{0} ei ole enää palvelimen ylläpitäjä.</value>
+  </data>
+  <data name="NoMemberHere" xml:space="preserve">
+    <value>Täällä ei ole jäsentä "{0}". Anna käyttäjätunnus kuten @alice:matrix.org.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>Ei jäseniä.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>ei ole</value>
+  </data>
+  <data name="NoneFound" xml:space="preserve">
+    <value>ei löytynyt</value>
+  </data>
+  <data name="NoneTrusted" xml:space="preserve">
+    <value>Mikään laitteistasi ei ole luotettu nykyisellä identiteetilläsi, joten mikään ei voi taata tätä.
+
+Käytä palautusavaintasi, tai nollaa identiteettisi laitteella, jonka pidät.</value>
+  </data>
+  <data name="NoOneBlocked" xml:space="preserve">
+    <value>Ketään ei ole estetty.</value>
+  </data>
+  <data name="NoPreview" xml:space="preserve">
+    <value>[ei esikatselua]</value>
+  </data>
+  <data name="NoRecoveryYet" xml:space="preserve">
+    <value>Tälle tilille ei ole vielä asetettu palautusta. Sen asettaminen näyttää tämän laitteen muille vahvistettuna ja antaa palautusavaimen, joka avaa viestisi uusilla laitteilla.</value>
+  </data>
+  <data name="NoReports" xml:space="preserve">
+    <value>Ei raportteja.</value>
+  </data>
+  <data name="NoRoom" xml:space="preserve">
+    <value>Ei huonetta</value>
+  </data>
+  <data name="NoRoomsFound" xml:space="preserve">
+    <value>Huoneita ei löytynyt</value>
+  </data>
+  <data name="NotACommand" xml:space="preserve">
+    <value>/{0} ei ole komento. Katso Ohje → Komennot ja näppäimet.</value>
+  </data>
+  <data name="NotALevel" xml:space="preserve">
+    <value>"{0}" ei ole taso; anna luku tai admin, moderator tai member.</value>
+  </data>
+  <data name="NotAMatrixUserId" xml:space="preserve">
+    <value>"{0}" ei ole Matrix-käyttäjätunnus; se on muotoa @alice:matrix.org.
+
+</value>
+  </data>
+  <data name="NotAnImage" xml:space="preserve">
+    <value>{0} ei ole kuvatiedosto.</value>
+  </data>
+  <data name="NotAnotherUser" xml:space="preserve">
+    <value>"{0}" ei ole toisen käyttäjän tunnus; se on muotoa @alice:matrix.org.</value>
+  </data>
+  <data name="NotARoom" xml:space="preserve">
+    <value>{0} ei ole huoneen osoite, tunniste tai linkki kuten #matrix:matrix.org. Käytä /msg keskustellaksesi käyttäjän kanssa.</value>
+  </data>
+  <data name="NotARoomAddress" xml:space="preserve">
+    <value>{0} ei ole huoneen osoite kuten #huone tai #huone:{1}.</value>
+  </data>
+  <data name="NotAServerAddress" xml:space="preserve">
+    <value>"{0}" ei ole palvelimen osoite; se on muotoa https://matrix.example.org.</value>
+  </data>
+  <data name="NotAUser" xml:space="preserve">
+    <value>{0} ei ole käyttäjätunnus kuten @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdExample" xml:space="preserve">
+    <value>"{0}" ei ole käyttäjätunnus; se on muotoa @alice:matrix.org.</value>
+  </data>
+  <data name="NotAUserIdOnServer" xml:space="preserve">
+    <value>"{0}" ei ole käyttäjätunnus; se on muotoa @alice:{1}.</value>
+  </data>
+  <data name="NotConnected" xml:space="preserve">
+    <value>Ei yhteyttä</value>
+  </data>
+  <data name="NothingToLogOut" xml:space="preserve">
+    <value>Ei mitään kirjattavaa ulos. Lopeta tämä istunto kohdasta Tiedosto → Kirjaudu ulos.</value>
+  </data>
+  <data name="NoticePrompt" xml:space="preserve">
+    <value>Ilmoitus käyttäjälle {0}; se saapuu hänen palvelinilmoitusten huoneeseensa:</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>  [ei lähetetty: {0}]</value>
+  </data>
+  <data name="NotSetUp" xml:space="preserve">
+    <value>ei asetettu</value>
+  </data>
+  <data name="NotTrusted" xml:space="preserve">
+    <value>Ei luotettu</value>
+  </data>
+  <data name="NotVerified" xml:space="preserve">
+    <value>ei vahvistettu</value>
+  </data>
+  <data name="NoUsableBackup" xml:space="preserve">
+    <value>Käyttökelpoista avainten varmuuskopiota ei löytynyt.</value>
+  </data>
+  <data name="OneOfTrustedDevices" xml:space="preserve">
+    <value>yhdellä luotetuista laitteistasi</value>
+  </data>
+  <data name="OpenDirectChatFirst" xml:space="preserve">
+    <value>Avaa ensin yksityiskeskustelu.</value>
+  </data>
+  <data name="OpenEncryptionQuestion" xml:space="preserve">
+    <value>{0}
+
+Avataanko salausikkuna nyt? Se löytyy myös kohdasta Tiedosto → Salaus, ja komennolla /encryption.</value>
+  </data>
+  <data name="OpeningName" xml:space="preserve">
+    <value>Avataan {0}</value>
+  </data>
+  <data name="OpenJoinedRoomFirst" xml:space="preserve">
+    <value>Avaa ensin huone, johon olet liittynyt.</value>
+  </data>
+  <data name="OpenLink" xml:space="preserve">
+    <value>Avaa linkki</value>
+  </data>
+  <data name="OtherServer" xml:space="preserve">
+    <value>Toinen palvelin</value>
+  </data>
+  <data name="OwnServerOnly" xml:space="preserve">
+    <value>Osoitteita voi tehdä vain omalle palvelimellesi, {0}.</value>
+  </data>
+  <data name="PasswordFor" xml:space="preserve">
+    <value>Käyttäjän {0} salasana:</value>
+  </data>
+  <data name="PasswordNotAccepted" xml:space="preserve">
+    <value>Salasanaa ei hyväksytty.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Käyttäjälle {0} asetettiin uusi salasana ja hänen laitteensa kirjattiin ulos.</value>
+  </data>
+  <data name="PasswordsDiffer" xml:space="preserve">
+    <value>Salasanat eroavat.</value>
+  </data>
+  <data name="PowerLevel" xml:space="preserve">
+    <value>Oikeustaso</value>
+  </data>
+  <data name="PowerLevelOf" xml:space="preserve">
+    <value>Käyttäjän {0} oikeustaso (nyt {1})</value>
+  </data>
+  <data name="PressEnterToClose" xml:space="preserve">
+    <value>Paina Enter sulkeaksesi.</value>
+  </data>
+  <data name="Quit" xml:space="preserve">
+    <value>Lopeta</value>
+  </data>
+  <data name="React" xml:space="preserve">
+    <value>Reagoi</value>
+  </data>
+  <data name="ReactionPrompt" xml:space="preserve">
+    <value>Reaktion teksti tai emoji:</value>
+  </data>
+  <data name="ReasonFor" xml:space="preserve">
+    <value>Syy käyttäjälle {0} (valinnainen):</value>
+  </data>
+  <data name="ReasonHarassment" xml:space="preserve">
+    <value>_Häirintä tai viha</value>
+  </data>
+  <data name="ReasonIllegal" xml:space="preserve">
+    <value>_Laiton sisältö</value>
+  </data>
+  <data name="ReasonOther" xml:space="preserve">
+    <value>_Muu</value>
+  </data>
+  <data name="ReasonSexualViolent" xml:space="preserve">
+    <value>_Seksuaalinen tai väkivaltainen sisältö</value>
+  </data>
+  <data name="ReasonSpam" xml:space="preserve">
+    <value>_Roskaposti</value>
+  </data>
+  <data name="Recover" xml:space="preserve">
+    <value>Palauta</value>
+  </data>
+  <data name="Recovered" xml:space="preserve">
+    <value>Palautettu</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Palautetaan</value>
+  </data>
+  <data name="RecoveringKeys" xml:space="preserve">
+    <value>Palautetaan avaimia…</value>
+  </data>
+  <data name="RecoveryKey" xml:space="preserve">
+    <value>Palautusavain</value>
+  </data>
+  <data name="RecoveryKeyPrompt" xml:space="preserve">
+    <value>Palautusavain (tai salalause):</value>
+  </data>
+  <data name="RegistrationStepUnsupported" xml:space="preserve">
+    <value>Tämä palvelin vaatii vaiheen, jota tämä sovellus ei osaa, kuten captchan tai sähköpostin. Luo tili palvelimen verkkosivulla ja kirjaudu sitten tässä.</value>
+  </data>
+  <data name="RegistrationTokenPrompt" xml:space="preserve">
+    <value>Rekisteröintikoodi palvelimen ylläpitäjältä:</value>
+  </data>
+  <data name="RegistrationTokens" xml:space="preserve">
+    <value>Rekisteröintikoodit</value>
+  </data>
+  <data name="Rejecting" xml:space="preserve">
+    <value>Hylätään kutsu huoneeseen {0}</value>
+  </data>
+  <data name="RejectingCall" xml:space="preserve">
+    <value>Hylätään</value>
+  </data>
+  <data name="Relayed" xml:space="preserve">
+    <value>, välitetty</value>
+  </data>
+  <data name="RemoveAlias" xml:space="preserve">
+    <value>Poista osoite</value>
+  </data>
+  <data name="Removed" xml:space="preserve">
+    <value>Poistettiin {0}</value>
+  </data>
+  <data name="Removing" xml:space="preserve">
+    <value>Poistetaan {0}</value>
+  </data>
+  <data name="RemovingAvatar" xml:space="preserve">
+    <value>Poistetaan kuvaa</value>
+  </data>
+  <data name="RenameDevice" xml:space="preserve">
+    <value>Nimeä laite uudelleen</value>
+  </data>
+  <data name="RenamingDevice" xml:space="preserve">
+    <value>Nimetään laitetta uudelleen</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>{0} on jo olemassa. Korvataanko se?</value>
+  </data>
+  <data name="ReplyPrefix" xml:space="preserve">
+    <value>[vast. {0}] </value>
+  </data>
+  <data name="ReplyPrefixUnknown" xml:space="preserve">
+    <value>[vast.] </value>
+  </data>
+  <data name="ReplyQuote" xml:space="preserve">
+    <value>[vast. {0}: {1}] </value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Ilmoita</value>
+  </data>
+  <data name="Reported" xml:space="preserve">
+    <value>Ilmoitettu palvelimesi ylläpitäjille: {0}.</value>
+  </data>
+  <data name="ReportedMessage" xml:space="preserve">
+    <value>Viestistä ilmoitettiin palvelimesi ylläpitäjille. /ignore estää sen lähettäjän.</value>
+  </data>
+  <data name="Reporting" xml:space="preserve">
+    <value>Ilmoitetaan</value>
+  </data>
+  <data name="ReportingMessage" xml:space="preserve">
+    <value>Ilmoitetaan viestistä</value>
+  </data>
+  <data name="ReportNotAUser" xml:space="preserve">
+    <value>"{0}" ei ole käyttäjätunnus; /report @käyttäjä:palvelin, tai pelkkä /report tälle huoneelle.</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Raportit</value>
+  </data>
+  <data name="ReportsCount" xml:space="preserve">
+    <value>Raportteja {0}, uusin ensin:</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Raportti {0}</value>
+  </data>
+  <data name="ReportWhy" xml:space="preserve">
+    <value>Ilmoitus palvelimesi ylläpitäjille: {0}. Miksi?</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Vaihda salasana</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Vaihda salasana…</value>
+  </data>
+  <data name="ResettingPassword" xml:space="preserve">
+    <value>Vaihdetaan salasanaa</value>
+  </data>
+  <data name="RoomAvatar" xml:space="preserve">
+    <value>Huoneen kuva</value>
+  </data>
+  <data name="RoomAvatarSet" xml:space="preserve">
+    <value>Huoneen kuva asetettu</value>
+  </data>
+  <data name="RoomDirectory" xml:space="preserve">
+    <value>Huonehakemisto</value>
+  </data>
+  <data name="RoomEncryptedUnavailable" xml:space="preserve">
+    <value>Tämä huone on salattu, mutta salaus ei ole käytettävissä tällä laitteella.
+
+{0}</value>
+  </data>
+  <data name="RoomFilterPrompt" xml:space="preserve">
+    <value>Osa huoneen nimeä, osoitetta tai tunnistetta; tyhjä näyttää kaikki:</value>
+  </data>
+  <data name="RoomListed" xml:space="preserve">
+    <value>{0} näkyy huonehakemistossa</value>
+  </data>
+  <data name="RoomNamePrompt" xml:space="preserve">
+    <value>Huoneen nimi:</value>
+  </data>
+  <data name="RoomNamesNoServer" xml:space="preserve">
+    <value>{0} ei nimeä palvelinta. Anna huoneessa olevat palvelimet, joiden kautta liitytään, esim. /join {1} matrix.org.</value>
+  </data>
+  <data name="RoomRow" xml:space="preserve">
+    <value>{0}{1}  jäseniä {2}{3}{4}</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Huoneet</value>
+  </data>
+  <data name="RoomsCount" xml:space="preserve">
+    <value>Huoneita {0}, eniten jäseniä ensin{1}:</value>
+  </data>
+  <data name="RoomUnlisted" xml:space="preserve">
+    <value>{0} ei enää näy huonehakemistossa</value>
+  </data>
+  <data name="SamePasswordAgain" xml:space="preserve">
+    <value>Sama salasana uudelleen:</value>
+  </data>
+  <data name="SaveAsPrompt" xml:space="preserve">
+    <value>Tallenna nimellä (tiedosto, tai kansio johon tallennetaan):</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Tallennettiin {0}</value>
+  </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Tallenna tiedosto</value>
+  </data>
+  <data name="SavingFile" xml:space="preserve">
+    <value>Tallennetaan tiedostoa</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Haku epäonnistui: {0}</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Haetaan…</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Haku:</value>
+  </data>
+  <data name="SeeLogFile" xml:space="preserve">
+    <value>{0}
+
+Lisätiedot ovat lokitiedostossa.</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>Lähetä tiedosto</value>
+  </data>
+  <data name="SendFileQuestion" xml:space="preserve">
+    <value>Lähetetäänkö {0} tähän huoneeseen?</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Lähetä tiedostot</value>
+  </data>
+  <data name="SendFilesQuestion" xml:space="preserve">
+    <value>Lähetetäänkö nämä tiedostot ({0}) tähän huoneeseen?
+
+{1}</value>
+  </data>
+  <data name="SendingName" xml:space="preserve">
+    <value>Lähetetään {0}</value>
+  </data>
+  <data name="SendingNotice" xml:space="preserve">
+    <value>Lähetetään ilmoitusta</value>
+  </data>
+  <data name="SendingSuffix" xml:space="preserve">
+    <value>  [lähetetään…]</value>
+  </data>
+  <data name="SendingVerificationRequest" xml:space="preserve">
+    <value>Lähetetään vahvistuspyyntöä…</value>
+  </data>
+  <data name="SendServerNoticeAction" xml:space="preserve">
+    <value>Lähetä palvelimen ilmoitus…</value>
+  </data>
+  <data name="SentName" xml:space="preserve">
+    <value>Lähetettiin {0}</value>
+  </data>
+  <data name="SentNotice" xml:space="preserve">
+    <value>Palvelimen ilmoitus lähetettiin käyttäjälle {0}.</value>
+  </data>
+  <data name="ServerAddressHint" xml:space="preserve">
+    <value>Esimerkiksi http://localhost:8008 tällä tietokoneella olevalle palvelimelle.</value>
+  </data>
+  <data name="ServerAddressPrompt" xml:space="preserve">
+    <value>Palvelimen osoite, vain jos sitä ei löydy käyttäjätunnuksesta:</value>
+  </data>
+  <data name="ServerLabel" xml:space="preserve">
+    <value>Palvelin:</value>
+  </data>
+  <data name="ServerNeeded" xml:space="preserve">
+    <value>Palvelin tarvitaan</value>
+  </data>
+  <data name="ServerNotice" xml:space="preserve">
+    <value>Palvelimen ilmoitus</value>
+  </data>
+  <data name="ServerPolicies" xml:space="preserve">
+    <value>Palvelimen käytännöt:
+{0}</value>
+  </data>
+  <data name="SetName" xml:space="preserve">
+    <value>Aseta nimi</value>
+  </data>
+  <data name="SettingAvatar" xml:space="preserve">
+    <value>Asetetaan kuvaa</value>
+  </data>
+  <data name="SettingName" xml:space="preserve">
+    <value>Asetetaan nimeä</value>
+  </data>
+  <data name="SettingPowerLevel" xml:space="preserve">
+    <value>Asetetaan käyttäjän {0} oikeustasoa</value>
+  </data>
+  <data name="SettingTopic" xml:space="preserve">
+    <value>Asetetaan aihetta</value>
+  </data>
+  <data name="SettingUpRecovery" xml:space="preserve">
+    <value>Asetetaan palautusta…</value>
+  </data>
+  <data name="SetTopic" xml:space="preserve">
+    <value>Aseta aihe</value>
+  </data>
+  <data name="SetUp" xml:space="preserve">
+    <value>asetettu</value>
+  </data>
+  <data name="SetUpAndTrusted" xml:space="preserve">
+    <value>asetettu ja luotettu täällä</value>
+  </data>
+  <data name="SetUpNotTrusted" xml:space="preserve">
+    <value>asetettu, ei vielä luotettu täällä</value>
+  </data>
+  <data name="SetUpRecovery" xml:space="preserve">
+    <value>Aseta palautus</value>
+  </data>
+  <data name="SetUpRecoveryQuestion" xml:space="preserve">
+    <value>Luodaanko ristiinvarmennuksen avaimet, avainten varmuuskopio ja palautusavain?
+
+Palautusavaimella uusi kirjautuminen voi vahvistaa itsensä ja lukea vanhat viestit. Säilytä se turvassa kuin salasana.</value>
+  </data>
+  <data name="ShutDown" xml:space="preserve">
+    <value>Sulje huone</value>
+  </data>
+  <data name="ShutDownAction" xml:space="preserve">
+    <value>Sulje…</value>
+  </data>
+  <data name="ShutDownDone" xml:space="preserve">
+    <value>{0} suljettiin: jäseniä poistettiin {1}{2}{3}.</value>
+  </data>
+  <data name="ShutDownQuestion" xml:space="preserve">
+    <value>Poistetaanko kaikki tämän palvelimen jäsenet huoneesta {0} ja poistetaanko sen osoitteet täältä? Esto estää myös liittymästä uudelleen.</value>
+  </data>
+  <data name="ShutDownReasonPrompt" xml:space="preserve">
+    <value>Jäsenille näytettävä syy; tyhjä ei näytä syytä:</value>
+  </data>
+  <data name="ShutRoomDownAction" xml:space="preserve">
+    <value>Sulje huone…</value>
+  </data>
+  <data name="ShuttingDown" xml:space="preserve">
+    <value>Suljetaan huonetta</value>
+  </data>
+  <data name="SignInIntro" xml:space="preserve">
+    <value>Anna koko Matrix-käyttäjätunnuksesi aloittaaksesi; se muistetaan onnistuneen kirjautumisen jälkeen.</value>
+  </data>
+  <data name="SignInToMatrix" xml:space="preserve">
+    <value>Kirjaudu Matrixiin</value>
+  </data>
+  <data name="Someone" xml:space="preserve">
+    <value>Joku</value>
+  </data>
+  <data name="Speakers" xml:space="preserve">
+    <value>Kaiuttimet: {0}</value>
+  </data>
+  <data name="StartDirectChatQuestion" xml:space="preserve">
+    <value>Aloitetaanko yksityiskeskustelu käyttäjän {0} kanssa?</value>
+  </data>
+  <data name="StartingChatWith" xml:space="preserve">
+    <value>Aloitetaan keskustelu käyttäjän {0} kanssa</value>
+  </data>
+  <data name="StartInTerminal" xml:space="preserve">
+    <value>Uniform Chat on päätesovellus: käynnistä se päätteessä.</value>
+  </data>
+  <data name="StatusCrossSigning" xml:space="preserve">
+    <value>Ristiinvarmennus:      {0}</value>
+  </data>
+  <data name="StatusDevice" xml:space="preserve">
+    <value>Laite:                 {0}</value>
+  </data>
+  <data name="StatusFingerprint" xml:space="preserve">
+    <value>Sormenjälki:           {0}</value>
+  </data>
+  <data name="StatusKeyBackup" xml:space="preserve">
+    <value>Avainten varmuuskopio: {0}</value>
+  </data>
+  <data name="StatusRecoveryKey" xml:space="preserve">
+    <value>Palautusavain:         {0}</value>
+  </data>
+  <data name="StatusThisDevice" xml:space="preserve">
+    <value>Tämä laite:            {0}</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Jäädytä</value>
+  </data>
+  <data name="SuspendAction" xml:space="preserve">
+    <value>Jäädytä: saa lukea, ei lähettää</value>
+  </data>
+  <data name="SuspendedUser" xml:space="preserve">
+    <value>{0} jäädytettiin: hän voi lukea huoneita ja poistua niistä, muttei lähettää, liittyä tai kutsua. /unsuspend {1} lopettaa jäädytyksen.</value>
+  </data>
+  <data name="Suspending" xml:space="preserve">
+    <value>Jäädytetään</value>
+  </data>
+  <data name="SuspendUser" xml:space="preserve">
+    <value>Jäädytä {0}</value>
+  </data>
+  <data name="SystemDefault" xml:space="preserve">
+    <value>järjestelmän oletus</value>
+  </data>
+  <data name="TakeServerAdmin" xml:space="preserve">
+    <value>Poista palvelimen ylläpito-oikeudet</value>
+  </data>
+  <data name="TakingAdminRights" xml:space="preserve">
+    <value>Poistetaan ylläpito-oikeuksia</value>
+  </data>
+  <data name="TheVerificationCancelled" xml:space="preserve">
+    <value>Vahvistus peruttiin.</value>
+  </data>
+  <data name="ThisIsYourDevice" xml:space="preserve">
+    <value>Tämä on laite, jota käytät. Valitse jokin toinen laitteistasi.</value>
+  </data>
+  <data name="ThisMessage" xml:space="preserve">
+    <value>tämä viesti</value>
+  </data>
+  <data name="ThisRoom" xml:space="preserve">
+    <value>tämä huone</value>
+  </data>
+  <data name="TokenDaysPrompt" xml:space="preserve">
+    <value>Montako päivää se on voimassa; tyhjä ei vanhene:</value>
+  </data>
+  <data name="TokenNotAccepted" xml:space="preserve">
+    <value>Palvelin ei hyväksynyt rekisteröintikoodia.</value>
+  </data>
+  <data name="TokenPrompt" xml:space="preserve">
+    <value>Koodi; tyhjä arpoo sen:</value>
+  </data>
+  <data name="TokensPrompt" xml:space="preserve">
+    <value>Uudet tilit tarvitsevat jonkin näistä, kun rekisteröinti kysyy koodia:</value>
+  </data>
+  <data name="TokenUntil" xml:space="preserve">
+    <value>voimassa {0:yyyy-MM-dd HH:mm} asti</value>
+  </data>
+  <data name="TokenUsesNoLimit" xml:space="preserve">
+    <value>käytetty {0}, ei rajaa</value>
+  </data>
+  <data name="TokenUsesOf" xml:space="preserve">
+    <value>käytetty {0}/{1}</value>
+  </data>
+  <data name="TokenUsesPrompt" xml:space="preserve">
+    <value>Kuinka moni tili voi käyttää sitä; tyhjä ei rajoita:</value>
+  </data>
+  <data name="TopicPrompt" xml:space="preserve">
+    <value>Aihe:</value>
+  </data>
+  <data name="TrustCrossSigned" xml:space="preserve">
+    <value>ristiinvarmennettu</value>
+  </data>
+  <data name="TrustedList" xml:space="preserve">
+    <value>: {0}</value>
+  </data>
+  <data name="TrustNoKeys" xml:space="preserve">
+    <value>ei avaimia</value>
+  </data>
+  <data name="TrustThisDevice" xml:space="preserve">
+    <value>tämä laite</value>
+  </data>
+  <data name="TrustUnverified" xml:space="preserve">
+    <value>vahvistamaton</value>
+  </data>
+  <data name="TrustVerified" xml:space="preserve">
+    <value>vahvistettu</value>
+  </data>
+  <data name="TypingStatus" xml:space="preserve">
+    <value>{0} kirjoittaa…  {1}</value>
+  </data>
+  <data name="Unban" xml:space="preserve">
+    <value>Pura porttikielto</value>
+  </data>
+  <data name="Unbanning" xml:space="preserve">
+    <value>Puretaan porttikielto:</value>
+  </data>
+  <data name="UnblockedUser" xml:space="preserve">
+    <value>Käyttäjän {0} esto poistettiin.</value>
+  </data>
+  <data name="Unblocking" xml:space="preserve">
+    <value>Poistetaan estoa</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>tuntematon</value>
+  </data>
+  <data name="UnknownCommand" xml:space="preserve">
+    <value>Tuntematon komento</value>
+  </data>
+  <data name="UnlistingRoom" xml:space="preserve">
+    <value>Piilotetaan {0} hakemistosta</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Avaa lukitus</value>
+  </data>
+  <data name="UnlockedUser" xml:space="preserve">
+    <value>Käyttäjän {0} lukitus avattiin.</value>
+  </data>
+  <data name="Unlocking" xml:space="preserve">
+    <value>Avataan lukitusta</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Lähetetään {0}…</value>
+  </data>
+  <data name="UserIdPrompt" xml:space="preserve">
+    <value>Käyttäjätunnus, esim. @alice:matrix.org:</value>
+  </data>
+  <data name="UserIdTaken" xml:space="preserve">
+    <value>{0} on varattu; valitse toinen.</value>
+  </data>
+  <data name="UserPromptOnServer" xml:space="preserve">
+    <value>Käyttäjä, esim. @alice:{0}:</value>
+  </data>
+  <data name="Verification" xml:space="preserve">
+    <value>Vahvistus</value>
+  </data>
+  <data name="VerificationCancelled" xml:space="preserve">
+    <value>Vahvistus peruttu</value>
+  </data>
+  <data name="VerificationCancelledWith" xml:space="preserve">
+    <value>Vahvistus ({0}) peruttiin: {1}</value>
+  </data>
+  <data name="VerificationIgnored" xml:space="preserve">
+    <value>Käyttäjän {0} laitteen {1} vahvistuspyyntö ohitettiin: {2}</value>
+  </data>
+  <data name="VerificationRequest" xml:space="preserve">
+    <value>Vahvistuspyyntö</value>
+  </data>
+  <data name="VerificationRequested" xml:space="preserve">
+    <value>Vahvistusta pyydetty; hyväksy se {0}.</value>
+  </data>
+  <data name="VerifiedCrossSigned" xml:space="preserve">
+    <value>vahvistettu (ristiinvarmennettu)</value>
+  </data>
+  <data name="VerifiedWho" xml:space="preserve">
+    <value>Vahvistettu: {0}</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Vahvista</value>
+  </data>
+  <data name="WaitingToConfirm" xml:space="preserve">
+    <value>Odotetaan vahvistusta: {0}…</value>
+  </data>
+  <data name="WaitUntilConnected" xml:space="preserve">
+    <value>Odota, kunnes yhteys palvelimeen on muodostettu.</value>
+  </data>
+  <data name="WantsToVerify" xml:space="preserve">
+    <value>{0} haluaa vahvistaa tämän laitteen vertaamalla emojeja.
+
+Hyväksytäänkö?</value>
+  </data>
+  <data name="WhichRoomOrUser" xml:space="preserve">
+    <value>Mikä huone tai käyttäjä?</value>
+  </data>
+  <data name="WhoIs" xml:space="preserve">
+    <value>Kuka on</value>
+  </data>
+  <data name="WhoIsAction" xml:space="preserve">
+    <value>Kuka on: laitteet ja osoitteet</value>
+  </data>
+  <data name="WhoIsUser" xml:space="preserve">
+    <value>Kuka on {0}</value>
+  </data>
+  <data name="WriteDownRecoveryKey" xml:space="preserve">
+    <value>Kirjoita tämä palautusavain muistiin tai kopioi se nyt ja säilytä se turvassa. Sitä ei näytetä uudelleen.</value>
+  </data>
+  <data name="YourDevice" xml:space="preserve">
+    <value>laitteesi {0}</value>
+  </data>
+  <data name="YourOtherDevice" xml:space="preserve">
+    <value>toisella laitteellasi</value>
+  </data>
+  <data name="YourPasswordToConfirm" xml:space="preserve">
+    <value>Salasanasi vahvistukseksi:</value>
+  </data>
+</root>

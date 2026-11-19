@@ -1,0 +1,10 @@
+namespace Uniform.Matrix.Gui.Terminal.Localization;
+
+using System.Globalization;
+
+/// <summary>Formatting of the texts in <see cref="Strings"/>, in the language of the current UI culture.</summary>
+internal static class Texts
+{
+    /// <summary>Return <paramref name="format"/>, a text of <see cref="Strings"/> with placeholders such as <c>{0}</c>, filled in with the formats of the current culture.</summary>
+    public static string Format(string format, params object?[] arguments) => string.Format(CultureInfo.CurrentCulture, format, arguments);
+}

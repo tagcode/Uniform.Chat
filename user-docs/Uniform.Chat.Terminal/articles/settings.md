@@ -41,6 +41,7 @@ Every setting can be given on the command line as `--Section:Name=value`. The on
 | `Storage:MediaDirectoryName` | `media` | Media cache directory name inside each account directory. |
 | `Storage:LogDirectoryName` | `logs` | Directory inside DataDirectory with one log file per session. |
 | `Storage:LogFilesKept` | `20` | Session log files to keep; older ones are deleted at start. |
+| `Ui:Language` | not set | The language of the texts, by culture name, e.g. fi or en; the system's when null. |
 | `Ui:StartRoom` | not set | Room ID or alias to open at start; the first room in the list when null. |
 | `Ui:InlineImages` | `true` | Whether to show ASCII previews of images in the message log. |
 | `Ui:ImagePreviewColumns` | `0` | Widest preview in terminal columns; 0 fills the width of the message log. |
@@ -67,4 +68,14 @@ Edited options are marked `*`, applied but unsaved ones `+`. Values given on the
 
 ## Logs
 
-View → Logs (or `/logs`) shows the log of this run and earlier ones; each run writes its own file, and the oldest beyond `Storage:LogFilesKept` are deleted. Pick a run on the left. **Level** cycles the lowest level shown, Alt+F focuses the text filter, and Enter shows a whole entry, such as an error with its stack trace. Warnings are yellow and errors red; the current run's log follows new lines while scrolled to the end.
+View → Logs (or `/logs`) shows the log of this run and earlier ones; each run writes its own file, and the oldest beyond `Storage:LogFilesKept` are deleted. Pick a run on the left. **Level** cycles the lowest level shown, Alt+F focuses the text filter (Alt+D in Finnish), and Enter shows a whole entry, such as an error with its stack trace. Warnings are yellow and errors red; the current run's log follows new lines while scrolled to the end.
+
+## Language
+
+The client shows its texts in the language of the system, English or Finnish; other languages fall back to English. `Ui:Language` chooses one, e.g. `fi` or `en`, and takes effect at the next start:
+
+```bash
+./Uniform.Chat --Ui:Language=fi
+```
+
+The slash commands, such as `/join`, are the same in every language.

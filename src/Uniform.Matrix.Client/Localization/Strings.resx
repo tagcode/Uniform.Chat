@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- English texts, the neutral culture; each key also in Strings.fi.resx -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AskedToJoin" xml:space="preserve">
+    <value>{0} asked to join</value>
+  </data>
+  <data name="AskedToVerify" xml:space="preserve">
+    <value>Asked to verify by comparing emoji</value>
+  </data>
+  <data name="AskedUserToVerify" xml:space="preserve">
+    <value>Asked {0} to verify by comparing emoji</value>
+  </data>
+  <data name="Banned" xml:space="preserve">
+    <value>{0} banned {1}</value>
+  </data>
+  <data name="ChangedAvatar" xml:space="preserve">
+    <value>{0} changed the room avatar</value>
+  </data>
+  <data name="ChangedTopic" xml:space="preserve">
+    <value>{0} changed the topic to: {1}</value>
+  </data>
+  <data name="CreatedRoom" xml:space="preserve">
+    <value>{0} created the room</value>
+  </data>
+  <data name="CryptoNotStarted" xml:space="preserve">
+    <value>Not started.</value>
+  </data>
+  <data name="CryptoStateUnreadable" xml:space="preserve">
+    <value>The stored encryption state cannot be read ({0}). Was {1} replaced?</value>
+  </data>
+  <data name="DeclinedInvite" xml:space="preserve">
+    <value>{0} declined the invite</value>
+  </data>
+  <data name="EmptyRoom" xml:space="preserve">
+    <value>Empty Room</value>
+  </data>
+  <data name="EmptyRoomWas" xml:space="preserve">
+    <value>Empty Room (was {0})</value>
+  </data>
+  <data name="EncryptedNoKey" xml:space="preserve">
+    <value>Encrypted message; the key has not arrived</value>
+  </data>
+  <data name="EncryptionUnavailableReason" xml:space="preserve">
+    <value>encryption unavailable: {0}</value>
+  </data>
+  <data name="FileGone" xml:space="preserve">
+    <value>the file is gone</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>image</value>
+  </data>
+  <data name="ImageWith" xml:space="preserve">
+    <value>image: {0}</value>
+  </data>
+  <data name="InvitedUser" xml:space="preserve">
+    <value>{0} invited {1}</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>{0} joined</value>
+  </data>
+  <data name="Kicked" xml:space="preserve">
+    <value>{0} kicked {1}</value>
+  </data>
+  <data name="Left" xml:space="preserve">
+    <value>{0} left</value>
+  </data>
+  <data name="LoggingIn" xml:space="preserve">
+    <value>Logging in</value>
+  </data>
+  <data name="NamesAnd" xml:space="preserve">
+    <value>{0} and {1}</value>
+  </data>
+  <data name="NamesAndOthers" xml:space="preserve">
+    <value>{0} and {1} others</value>
+  </data>
+  <data name="NowKnownAs" xml:space="preserve">
+    <value>{0} is now known as {1}</value>
+  </data>
+  <data name="OpeningStorage" xml:space="preserve">
+    <value>Opening local storage</value>
+  </data>
+  <data name="PreparingEncryption" xml:space="preserve">
+    <value>Preparing encryption</value>
+  </data>
+  <data name="Reacted" xml:space="preserve">
+    <value>{0} reacted {1}</value>
+  </data>
+  <data name="RemovedAvatar" xml:space="preserve">
+    <value>{0} removed the room avatar</value>
+  </data>
+  <data name="RenamedRoom" xml:space="preserve">
+    <value>{0} renamed the room to {1}</value>
+  </data>
+  <data name="RetryingIn" xml:space="preserve">
+    <value>{0}; retrying in {1:F0} s</value>
+  </data>
+  <data name="Spoiler" xml:space="preserve">
+    <value>spoiler</value>
+  </data>
+  <data name="SpoilerWith" xml:space="preserve">
+    <value>spoiler: {0}</value>
+  </data>
+  <data name="Unbanned" xml:space="preserve">
+    <value>{0} unbanned {1}</value>
+  </data>
+</root>

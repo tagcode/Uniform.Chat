@@ -37,4 +37,8 @@
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- Texts of the terminal client: English in Strings.resx, other languages beside it; an internal typed class Strings is generated from the English -->
+  <ItemGroup>
+    <EmbeddedResource Update="Localization/Strings.resx" StronglyTypedLanguage="CSharp" StronglyTypedClassName="Strings" StronglyTypedNamespace="Uniform.Chat.Terminal.Localization" StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs" />
+  </ItemGroup>
 </Project>

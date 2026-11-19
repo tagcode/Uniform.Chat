@@ -1,11 +1,13 @@
 namespace Uniform.Chat.Avalonia.ViewModels;
 
+using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Uniform.Matrix.Client.Formatting;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The open room's timeline as items: events become messages, while edits, deletions and reactions change the messages they refer to.</summary>
 /// <remarks>Methods taking a <see cref="Room"/> read room state, so call them under the room store's lock.</remarks>
@@ -106,7 +108,7 @@ public sealed class MessageList
     }
 
     /// <summary>Return the shown state of an outbox message: why it was not sent, or that it is being sent.</summary>
-    private static string DescribeState(OutboxMessage message) => message.State == OutboxState.Failed ? $"Not sent: {message.LastError}" : "Sending…";
+    private static string DescribeState(OutboxMessage message) => message.State == OutboxState.Failed ? Translations.Format(Strings.NotSent, message.LastError) : Strings.Sending;
 
     /// <summary>Remove the outbox item that <paramref name="clientEvent"/> is the sent copy of, by transaction ID, or else by text for a sent item.</summary>
     private void RemoveEcho(ClientEvent clientEvent)
@@ -136,7 +138,7 @@ public sealed class MessageList
         // Deleted messages, plain or encrypted, keep their place, unless deleted long ago
         if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
         if (EventText.IsDeletion(clientEvent) || (clientEvent.Type == EventTypes.RoomMessage && !clientEvent.TryGetContent(out MessageContent? _)))
-            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = "Message deleted", IsDeleted = true };
+            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = Strings.MessageDeleted, IsDeleted = true };
         if (clientEvent.Type != EventTypes.RoomMessage)
         {
             if (EventText.Describe(room, clientEvent) is not string description) return null;
@@ -145,7 +147,7 @@ public sealed class MessageList
 
         // A message's text
         if (EventText.GetText(clientEvent, room.GetMemberDisplayName) is not string text || !clientEvent.TryGetContent(out MessageContent? content))
-            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = "Message deleted", IsDeleted = true };
+            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = Strings.MessageDeleted, IsDeleted = true };
 
         // Kind by message type; attachments show their name and size
         MessageKind kind = content.MessageType switch
@@ -198,7 +200,7 @@ public sealed class MessageList
                     return true;
                 }
                 deleted.Html = null;
-                deleted.Text = "Message deleted";
+                deleted.Text = Strings.MessageDeleted;
                 deleted.IsDeleted = true;
             }
             return true;
@@ -245,7 +247,7 @@ public sealed class MessageList
         // Assert reply
         if (replyTo is null) return null;
         // Return quote of the answered message
-        return byEventId.TryGetValue(replyTo, out MessageViewModel? target) ? $"{target.SenderName}: {Snippet(target.Text)}" : "Reply";
+        return byEventId.TryGetValue(replyTo, out MessageViewModel? target) ? $"{target.SenderName}: {Snippet(target.Text)}" : Strings.Reply;
     }
 
     /// <summary>Shorten text to its first line, at most <paramref name="length"/> characters.</summary>
@@ -276,10 +278,13 @@ public sealed class MessageList
     /// <summary>Return <c>Today</c>, <c>Yesterday</c>, the weekday within a week, or the date.</summary>
     internal static string FormatDay(DateOnly day, DateOnly today) => (today.DayNumber - day.DayNumber) switch
     {
-        0 => "Today",
-        1 => "Yesterday",
-        > 1 and < 7 => day.ToString("dddd"),
-        _ when day.Year == today.Year => day.ToString("dddd d MMMM"),
-        _ => day.ToString("d MMMM yyyy"),
+        0 => Strings.Today,
+        1 => Strings.Yesterday,
+        > 1 and < 7 => Capitalize(day.ToString("dddd", CultureInfo.CurrentCulture)),
+        _ when day.Year == today.Year => Capitalize(day.ToString(Strings.DayFormatThisYear, CultureInfo.CurrentCulture)),
+        _ => day.ToString(Strings.DayFormatOtherYear, CultureInfo.CurrentCulture),
     };
+
+    /// <summary>Return <paramref name="text"/> with its first letter in capitals, as weekdays and months start a header, e.g. Finnish <c>Maanantai</c>.</summary>
+    private static string Capitalize(string text) => text.Length == 0 ? text : char.ToUpper(text[0], CultureInfo.CurrentCulture) + text[1..];
 }

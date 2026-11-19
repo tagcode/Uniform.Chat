@@ -7,6 +7,7 @@ using Uniform.Matrix.Client.Configuration;
 using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
+using Uniform.Matrix.Client.Localization;
 
 /// <summary>Background service that prepares the database, connects, then runs sync and the outbox until shutdown.</summary>
 public sealed class MatrixWorker : BackgroundService
@@ -42,11 +43,11 @@ public sealed class MatrixWorker : BackgroundService
         // Run, reporting fatal errors to the UI
         try
         {
-            status.Set(ConnectionState.Connecting, "Opening local storage");
+            status.Set(ConnectionState.Connecting, Strings.OpeningStorage);
             await store.MigrateAsync(stoppingToken);
-            status.Set(ConnectionState.Connecting, "Logging in");
+            status.Set(ConnectionState.Connecting, Strings.LoggingIn);
             MatrixClient client = await session.ConnectAsync(stoppingToken);
-            status.Set(ConnectionState.Connecting, "Preparing encryption");
+            status.Set(ConnectionState.Connecting, Strings.PreparingEncryption);
             await client.RetryTransientAsync(async token => { await crypto.StartAsync(client, token); return true; }, OnSyncRetry, stoppingToken);
             int decrypted = await processor.RetryStoredEncryptedAsync(stoppingToken);
             if (decrypted > 0) logger.LogInformation("Decrypted {Count} stored events with known keys", decrypted);
@@ -88,7 +89,7 @@ public sealed class MatrixWorker : BackgroundService
             {
                 // Logged, shown as retrying, then again
                 logger.LogError(exception, "Processing a sync failed; syncing again in {Wait}", wait);
-                status.Set(ConnectionState.Retrying, $"{exception.Message}; retrying in {wait.TotalSeconds:F0} s");
+                status.Set(ConnectionState.Retrying, Texts.Format(Strings.RetryingIn, exception.Message, wait.TotalSeconds));
                 await Task.Delay(wait, cancellationToken);
                 wait = TimeSpan.FromTicks(Math.Min(wait.Ticks * 2, TimeSpan.FromMinutes(5).Ticks));
             }
@@ -123,6 +124,6 @@ public sealed class MatrixWorker : BackgroundService
     {
         // Log and publish
         logger.LogWarning("Sync failed, retrying in {Wait}: {Error}", wait, exception.Describe());
-        status.Set(ConnectionState.Retrying, $"{exception.Message}; retrying in {wait.TotalSeconds:F0} s");
+        status.Set(ConnectionState.Retrying, Texts.Format(Strings.RetryingIn, exception.Message, wait.TotalSeconds));
     }
 }

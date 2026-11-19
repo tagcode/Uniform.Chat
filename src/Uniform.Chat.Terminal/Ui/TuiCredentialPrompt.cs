@@ -3,6 +3,7 @@ namespace Uniform.Chat.Terminal.Ui;
 using Uniform.Matrix.Client.Services;
 using Uniform.Matrix.Gui.Terminal;
 using global::Terminal.Gui.App;
+using Uniform.Chat.Terminal.Localization;
 
 /// <summary>Asks for the password in a modal dialog on the UI thread.</summary>
 public sealed class TuiCredentialPrompt : ICredentialPrompt
@@ -23,7 +24,7 @@ public sealed class TuiCredentialPrompt : ICredentialPrompt
         TaskCompletionSource<string> result = new(TaskCreationOptions.RunContinuationsAsynchronously);
         app.Invoke(() =>
         {
-            string? password = Dialogs.Ask(app, "Log in", $"Password for {userId}:", secret: true);
+            string? password = Dialogs.Ask(app, Strings.LogIn, Texts.Format(Strings.PasswordFor, userId), secret: true);
             if (password is null) result.TrySetCanceled(cancellationToken);
             else result.TrySetResult(password);
         });

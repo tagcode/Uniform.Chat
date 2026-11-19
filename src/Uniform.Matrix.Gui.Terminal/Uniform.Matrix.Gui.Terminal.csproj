@@ -31,4 +31,8 @@
     <PackageReference Include="Terminal.Gui" Version="2.5.0" />
   </ItemGroup>
 
+  <!-- Texts of the windows and dialogs: English in Strings.resx, other languages beside it; an internal typed class Strings is generated from the English -->
+  <ItemGroup>
+    <EmbeddedResource Update="Localization/Strings.resx" StronglyTypedLanguage="CSharp" StronglyTypedClassName="Strings" StronglyTypedNamespace="Uniform.Matrix.Gui.Terminal.Localization" StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs" />
+  </ItemGroup>
 </Project>

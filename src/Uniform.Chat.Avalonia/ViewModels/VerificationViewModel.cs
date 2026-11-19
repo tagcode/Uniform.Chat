@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Uniform.Chat.Avalonia.Services;
 using Uniform.Matrix.Protocol.Crypto;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>An emoji verification with another device as it goes: accept a request, compare emoji, then the outcome.</summary>
 public sealed partial class VerificationViewModel : ViewModelBase
@@ -46,13 +47,17 @@ public sealed partial class VerificationViewModel : ViewModelBase
 
     /// <summary>The same as numbers, for devices without emoji.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(NumbersText))]
     public partial string Numbers { get; set; } = "";
+
+    /// <summary>The numbers to compare instead of the emoji, as shown.</summary>
+    public string NumbersText => Translations.Format(Strings.OrTheNumbers, Numbers);
 
     /// <summary>Show <paramref name="state"/>.</summary>
     public void Update(VerificationState state)
     {
         // The other device is known once it answered
-        string who = Verification.OtherUserId == connection.UserId ? $"your device {Verification.OtherDeviceId}".TrimEnd() : $"{Verification.OtherUserId} {Verification.OtherDeviceId}".TrimEnd();
+        string who = Verification.OtherUserId == connection.UserId ? Translations.Format(Strings.YourDevice, Verification.OtherDeviceId).TrimEnd() : $"{Verification.OtherUserId} {Verification.OtherDeviceId}".TrimEnd();
         IsIncoming = state == VerificationState.Requested && !Verification.WeRequested;
         IsComparing = state == VerificationState.ShowingSas;
         IsFinished = state is VerificationState.Done or VerificationState.Cancelled;
@@ -61,13 +66,13 @@ public sealed partial class VerificationViewModel : ViewModelBase
         // Return message by state
         Message = state switch
         {
-            VerificationState.Requested when IsIncoming => $"{who} wants to verify this device by comparing emoji.",
-            VerificationState.Requested => $"Accept the request on {who}.",
-            VerificationState.Ready => $"Starting with {who}…",
-            VerificationState.ShowingSas => $"Compare with {who}. Do they show the same emoji in the same order?",
-            VerificationState.Confirmed => $"Waiting for {who} to confirm…",
-            VerificationState.Done => $"{char.ToUpperInvariant(who[0])}{who[1..]} is verified.",
-            _ => Verification.CancelCode is "m.user" or "m.accepted" ? "Verification cancelled." : $"Verification cancelled: {Verification.CancelReason}",
+            VerificationState.Requested when IsIncoming => Translations.Format(Strings.WantsToVerify, who),
+            VerificationState.Requested => Translations.Format(Strings.AcceptRequestOn, who),
+            VerificationState.Ready => Translations.Format(Strings.StartingWith, who),
+            VerificationState.ShowingSas => Translations.Format(Strings.CompareWith, who),
+            VerificationState.Confirmed => Translations.Format(Strings.WaitingToConfirm, who),
+            VerificationState.Done => Translations.Format(Strings.IsVerified, $"{char.ToUpperInvariant(who[0])}{who[1..]}"),
+            _ => Verification.CancelCode is "m.user" or "m.accepted" ? Strings.VerificationCancelled : Translations.Format(Strings.VerificationCancelledWith, Verification.CancelReason),
         };
     }
 
@@ -107,7 +112,7 @@ public sealed partial class VerificationViewModel : ViewModelBase
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error tell
-            Message = $"Verification failed: {exception.Message}";
+            Message = Translations.Format(Strings.VerificationFailed, exception.Message);
         }
     }
 }

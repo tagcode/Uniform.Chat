@@ -7,6 +7,7 @@ using global::Android.Media;
 using global::Android.OS;
 using global::Android.Views;
 using Uniform.Matrix.Calls;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The front camera with Android's VP8 encoder, for a call's video: Camera2 renders into the encoder's input surface, and each encoded frame comes in <see cref="FrameEncoded"/>.</summary>
 /// <remarks>
@@ -83,7 +84,7 @@ public sealed class AndroidCamera(Context context) : IVideoCamera
             foreach (string id in cameraManager.GetCameraIdList())
             {
                 int facing = cameraManager.GetCameraCharacteristics(id).Get(CameraCharacteristics.LensFacing!) is Java.Lang.Integer value ? value.IntValue() : -1;
-                string kind = facing == (int)LensFacing.Front ? "Front camera" : facing == (int)LensFacing.Back ? "Back camera" : "External camera";
+                string kind = facing == (int)LensFacing.Front ? Strings.FrontCamera : facing == (int)LensFacing.Back ? Strings.BackCamera : Strings.ExternalCamera;
                 int count = seen[kind] = seen.GetValueOrDefault(kind) + 1;
                 choices.Add(new CameraChoice(id, count == 1 ? kind : $"{kind} {count}"));
             }

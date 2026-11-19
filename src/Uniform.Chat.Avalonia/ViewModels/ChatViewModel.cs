@@ -15,6 +15,7 @@ using Uniform.Matrix.Client.Storage;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Protocol.Crypto;
+using Uniform.Chat.Avalonia.Localization;
 
 /// <summary>The signed-in screen: the room list, the open room's messages and the message box.</summary>
 /// <remarks>Sync changes arrive on a background thread and are applied on the UI thread through <see cref="IUiDispatcher"/>. Partial files: ChatViewModel.cs, ChatViewModel.Actions.cs for the action sheets of messages and rooms, and ChatViewModel.Share.cs for content shared from other apps.</remarks>
@@ -72,6 +73,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         IsNarrow = singlePane;
         StatusText = Describe(connection.Status.State, connection.Status.Message);
         ListenForShares();
+        Translations.Instance.Changed += OnLanguageChanged;
     }
 
     /// <summary>Rooms, invites first, then favourites, others and low priority, each by name.</summary>
@@ -137,9 +139,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Get the room box's button text: Join, Chat or Create by what was typed.</summary>
     public string OpenTargetText => JoinTarget.Trim() switch
     {
-        ['@', ..] => "Chat",
-        ['#' or '!', ..] => "Join",
-        _ => "Create",
+        ['@', ..] => Strings.StartChat,
+        ['#' or '!', ..] => Strings.Join,
+        _ => Strings.Create,
     };
 
     /// <summary>Message the composer answers, or null.</summary>
@@ -153,7 +155,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public partial MessageViewModel? Editing { get; set; }
 
     /// <summary>Get what the composer does besides sending a new message, e.g. <c>Replying to Bob: snippet</c>.</summary>
-    public string ComposeMode => Editing is not null ? "Editing message" : ReplyingTo is MessageViewModel parent ? $"Replying to {parent.SenderName}: {MessageList.Snippet(parent.Text)}" : "";
+    public string ComposeMode => Editing is not null ? Strings.EditingMessage : ReplyingTo is MessageViewModel parent ? Translations.Format(Strings.ReplyingTo, parent.SenderName, MessageList.Snippet(parent.Text)) : "";
 
     /// <summary>Get whether the composer replies or edits.</summary>
     public bool IsComposingSpecial => Editing is not null || ReplyingTo is not null;
@@ -278,6 +280,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     {
         // Unsubscribe and end the reader
         ShareInbox.Arrived -= OnShared;
+        Translations.Instance.Changed -= OnLanguageChanged;
         connection.Status.Changed -= OnConnectionChanged;
         connection.Processor.EventsDecrypted -= OnEventsDecrypted;
         connection.Outbox.RoomChanged -= OnOutboxChanged;
@@ -359,7 +362,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         MessageContent edited = content with { MessageType = emote ? MessageTypes.Emote : MessageTypes.Text, Body = text, Format = html is null ? null : MessageFormats.Html, FormattedBody = html };
         if (!await connection.Outbox.EditAsync(id, edited))
         {
-            Notice = "The message was sent already, so the change was not made.";
+            Notice = Strings.EditTooLate;
             return;
         }
         // Done: shown with its new text, in its place
@@ -387,7 +390,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         if (target == connection.UserId) return true;
         JoinTarget = target[0] == '!' ? string.Join(' ', [target, .. link.Via]) : target;
-        Notice = target[0] == '@' ? $"Choose Chat to start a chat with {target}." : $"Choose Join to join {target}.";
+        Notice = Translations.Format(target[0] == '@' ? Strings.ChooseChatWith : Strings.ChooseJoin, target);
         // Done
         return true;
     }
@@ -432,17 +435,17 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Delete own <paramref name="message"/> for everyone.</summary>
     public Task DeleteAsync(MessageViewModel message) =>
-        SelectedRoom is { IsInvite: false } room && message.CanDelete ? RunAsync("Deleting the message", client => client.RedactAsync(room.RoomId, message.EventId!)) : Task.CompletedTask;
+        SelectedRoom is { IsInvite: false } room && message.CanDelete ? RunAsync(Strings.DeletingMessage, client => client.RedactAsync(room.RoomId, message.EventId!)) : Task.CompletedTask;
 
     /// <summary>Reasons offered when reporting a message, a user or a room.</summary>
-    public static IReadOnlyList<string> ReportReasons { get; } = ["Spam", "Harassment or hate", "Sexual or violent content", "Illegal content", "Other"];
+    public static IReadOnlyList<string> ReportReasons => [Strings.ReasonSpam, Strings.ReasonHarassment, Strings.ReasonSexualOrViolent, Strings.ReasonIllegal, Strings.ReasonOther];
 
     /// <summary>Report <paramref name="message"/> of the open room to the admins of the user's server.</summary>
     public async Task ReportMessageAsync(MessageViewModel message, string reason)
     {
         // Sent messages of the open room only
         if (SelectedRoom is not { IsInvite: false } room || message.EventId is null || message.IsPending) return;
-        if (await RunAsync("Reporting the message", client => client.ReportEventAsync(room.RoomId, message.EventId, reason))) ui.Post(() => Notice = "Reported to the admins of your server. You can also block the sender from the message's menu.");
+        if (await RunAsync(Strings.ReportingMessage, client => client.ReportEventAsync(room.RoomId, message.EventId, reason))) ui.Post(() => Notice = Strings.ReportedMessage);
     }
 
     /// <summary>Report the user <paramref name="userId"/> to the admins of the user's server.</summary>
@@ -450,7 +453,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     {
         // Anyone but oneself
         if (userId == connection.UserId) return;
-        if (await RunAsync("Reporting the user", client => client.ReportUserAsync(userId, reason))) ui.Post(() => Notice = $"Reported {userId} to the admins of your server.");
+        if (await RunAsync(Strings.ReportingUser, client => client.ReportUserAsync(userId, reason))) ui.Post(() => Notice = Translations.Format(Strings.ReportedTo, userId));
     }
 
     /// <summary>Report the open room to the admins of the user's server.</summary>
@@ -460,7 +463,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public async Task ReportRoomAsync(RoomItemViewModel room, string reason)
     {
         // Any room in the list
-        if (await RunAsync("Reporting the room", client => client.ReportRoomAsync(room.RoomId, reason))) ui.Post(() => Notice = $"Reported {room.Name} to the admins of your server.");
+        if (await RunAsync(Strings.ReportingRoom, client => client.ReportRoomAsync(room.RoomId, reason))) ui.Post(() => Notice = Translations.Format(Strings.ReportedTo, room.Name));
     }
 
     /// <summary>Block <paramref name="userId"/>, so their messages and invites no longer show, or unblock them.</summary>
@@ -468,12 +471,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     {
         // Anyone but oneself; the server keeps the list, as m.ignored_user_list
         if (userId == connection.UserId) return;
-        if (!await RunAsync(blocked ? "Blocking" : "Unblocking", client => connection.Processor.SetIgnoredAsync(client, userId, blocked))) return;
+        if (!await RunAsync(blocked ? Strings.Blocking : Strings.Unblocking, client => connection.Processor.SetIgnoredAsync(client, userId, blocked))) return;
 
         // Show the room again without, or with, their messages
         ui.Post(() =>
         {
-            Notice = blocked ? $"Blocked {userId}: their messages and invites no longer show. Unblock them in Security and recovery." : $"Unblocked {userId}.";
+            Notice = Translations.Format(blocked ? Strings.BlockedUser : Strings.UnblockedUser, userId);
             LoadMembers();
             if (SelectedRoom is RoomItemViewModel open) _ = OpenRoomAsync(open.RoomId);
         });
@@ -491,7 +494,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         if (SelectedRoom is not { IsInvite: false } room) return;
         if (room.IsEncrypted && !connection.Crypto.Available)
         {
-            Notice = $"This room is encrypted, but encryption is not available on this device: {connection.Crypto.UnavailableReason}";
+            Notice = Translations.Format(Strings.EncryptionUnavailable, connection.Crypto.UnavailableReason);
             return;
         }
 
@@ -503,7 +506,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         catch (IOException exception)
         {
             // On a file that cannot be read or copied
-            Notice = $"Sending {fileName} failed: {exception.Message}";
+            Notice = Translations.Format(Strings.SendingFileFailed, fileName, exception.Message);
             return;
         }
         // Done: shown as waiting
@@ -523,7 +526,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            Notice = $"Downloading {message.FileName} failed: {exception.Message}";
+            Notice = Translations.Format(Strings.DownloadFailed, message.FileName, exception.Message);
             return null;
         }
     }
@@ -569,7 +572,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
         catch (Exception exception) when (exception is MatrixException or HttpRequestException)
         {
-            Notice = $"Loading history failed: {exception.Message}";
+            Notice = Translations.Format(Strings.LoadingHistoryFailed, exception.Message);
         }
         finally
         {
@@ -635,7 +638,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     {
         // Direct chats are recorded as such, as the inviter did
         string? directWith = connection.Processor.Read(store => store?.TryGetRoom(room.RoomId, out Room? invited) == true && invited.IsDirect ? invited.InviterUserId : null);
-        await RunAsync($"Joining {room.Name}", async client =>
+        await RunAsync(Translations.Format(Strings.Joining, room.Name), async client =>
         {
             await client.JoinRoomAsync(room.RoomId);
             if (directWith is not null) await client.MarkDirectRoomAsync(directWith, room.RoomId);
@@ -650,7 +653,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public async Task DeclineAsync(RoomItemViewModel room)
     {
         // Leave, then close the room
-        await RunAsync($"Declining {room.Name}", client => client.LeaveRoomAsync(room.RoomId));
+        await RunAsync(Translations.Format(Strings.Declining, room.Name), client => client.LeaveRoomAsync(room.RoomId));
         if (SelectedRoom == room) SelectedRoom = null;
     }
 
@@ -664,7 +667,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         string target = link?.Target ?? JoinTarget.Trim();
         if (target[0] == '@' && !Uniform.Matrix.Protocol.Core.UserId.TryParse(target, out _))
         {
-            Notice = $"{target} is not a user ID; they look like @name:server.";
+            Notice = Translations.Format(Strings.NotAUserId, target);
             return;
         }
 
@@ -675,8 +678,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         bool done = target[0] switch
         {
             '#' or '!' => await JoinLinkAsync(link ?? new MatrixLink { Target = target }),
-            '@' => await RunAsync($"Starting a chat with {target}", async client => roomId = await client.CreateDirectRoomAsync(target, encrypted)),
-            _ => await RunAsync($"Creating {target}", async client => roomId = await client.CreateRoomAsync(new CreateRoomRequest { Name = target, Preset = RoomPresets.PrivateChat, InitialState = state })),
+            '@' => await RunAsync(Translations.Format(Strings.StartingChat, target), async client => roomId = await client.CreateDirectRoomAsync(target, encrypted)),
+            _ => await RunAsync(Translations.Format(Strings.CreatingRoom, target), async client => roomId = await client.CreateRoomAsync(new CreateRoomRequest { Name = target, Preset = RoomPresets.PrivateChat, InitialState = state })),
         };
         if (!done) return;
 
@@ -699,7 +702,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
         // Join, then open when sync brings it
         string? roomId = null;
-        if (!await RunAsync($"Joining {link.Target}", async client => roomId = await client.JoinRoomAsync(link.Target, link.Via.Count > 0 ? link.Via : null))) return false;
+        if (!await RunAsync(Translations.Format(Strings.Joining, link.Target), async client => roomId = await client.JoinRoomAsync(link.Target, link.Via.Count > 0 ? link.Via : null))) return false;
         openWhenArrived = roomId;
         RefreshRooms();
         // Return joined
@@ -748,7 +751,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // On error tell
-            Notice = $"Verifying {member.Name} failed: {exception.Message}";
+            Notice = Translations.Format(Strings.VerifyingFailed, member.Name, exception.Message);
         }
     }
 
@@ -759,9 +762,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         // Assert a joined room
         if (SelectedRoom is not { IsInvite: false } room) return;
         string target = InviteTarget.Trim();
-        if (!await RunAsync($"Inviting {target}", client => client.InviteAsync(room.RoomId, target))) return;
+        if (!await RunAsync(Translations.Format(Strings.Inviting, target), client => client.InviteAsync(room.RoomId, target))) return;
         InviteTarget = "";
-        Notice = $"Invited {target}.";
+        Notice = Translations.Format(Strings.Invited, target);
     }
 
     /// <summary>Return whether the invite box has a user ID.</summary>
@@ -769,7 +772,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>Set the open room's topic to <see cref="TopicDraft"/>.</summary>
     [RelayCommand]
-    private Task SetTopicAsync() => SelectedRoom is { IsInvite: false } room ? RunAsync("Setting the topic", client => client.SetRoomTopicAsync(room.RoomId, TopicDraft.Trim())) : Task.CompletedTask;
+    private Task SetTopicAsync() => SelectedRoom is { IsInvite: false } room ? RunAsync(Strings.SettingTopic, client => client.SetRoomTopicAsync(room.RoomId, TopicDraft.Trim())) : Task.CompletedTask;
 
     /// <summary>Leave the open room and close it.</summary>
     [RelayCommand]
@@ -779,7 +782,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     public async Task LeaveAsync(RoomItemViewModel room)
     {
         // Leave, then back to the list
-        if (!await RunAsync($"Leaving {room.Name}", client => client.LeaveRoomAsync(room.RoomId))) return;
+        if (!await RunAsync(Translations.Format(Strings.Leaving, room.Name), client => client.LeaveRoomAsync(room.RoomId))) return;
         if (SelectedRoom == room) SelectedRoom = null;
     }
 
@@ -866,8 +869,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             return;
         }
         // Done
-        SecuritySuggestion = !status.CrossSigningSetUp ? "Set up recovery, so that others see this device as verified, and a recovery key unlocks your messages on new devices."
-            : !status.ThisDeviceCrossSigned ? "Verify this device with another of yours, or with your recovery key, so that others see it as verified and it reads your older messages."
+        SecuritySuggestion = !status.CrossSigningSetUp ? Strings.SuggestSetUpRecovery
+            : !status.ThisDeviceCrossSigned ? Strings.SuggestVerifyDevice
             : "";
     }
 
@@ -1024,11 +1027,11 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
                     if (!(batch.Room.IsDirect && Settings?.NotifyDirectMessages != false || mentioned && Settings?.NotifyMentions != false)) continue;
                     string sender = batch.Room.GetMemberDisplayName(clientEvent.Sender);
                     string text = EventText.GetText(clientEvent, batch.Room.GetMemberDisplayName) ?? "";
-                    found.Add((batch.Room.IsDirect ? sender : $"{sender} in {batch.Room.DisplayName}", content.MessageType == MessageTypes.Emote ? $"* {sender} {text}" : text));
+                    found.Add((batch.Room.IsDirect ? sender : Translations.Format(Strings.SenderInRoom, sender, batch.Room.DisplayName), content.MessageType == MessageTypes.Emote ? $"* {sender} {text}" : text));
                 }
             }
             foreach (Room invited in changes.Invited.Where(r => Settings?.NotifyInvites != false && notifiedChanges && !roomsById.ContainsKey(r.RoomId) && store?.IgnoredUsers.Contains(r.InviterUserId ?? "") != true))
-                found.Add(("Invitation", $"{(invited.InviterUserId is string inviter ? invited.GetMemberDisplayName(inviter) : "Someone")} invited you to {invited.DisplayName}"));
+                found.Add((Strings.Invitation, Translations.Format(Strings.InvitedYouTo, invited.InviterUserId is string inviter ? invited.GetMemberDisplayName(inviter) : Strings.Someone, invited.DisplayName)));
             return found.Take(3).ToList();
         });
         notifiedChanges = true;
@@ -1108,9 +1111,9 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         TypingText = names.Count switch
         {
             0 => "",
-            1 => $"{names[0]} is typing…",
-            2 => $"{names[0]} and {names[1]} are typing…",
-            _ => "Several people are typing…",
+            1 => Translations.Format(Strings.TypingOne, names[0]),
+            2 => Translations.Format(Strings.TypingTwo, names[0], names[1]),
+            _ => Strings.TypingSeveral,
         };
     }
 
@@ -1272,6 +1275,17 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         }
     }
 
+    /// <summary>Make the texts made in code again in the new language: the room list, the open room's lines, the status and the compose line; the views' own texts follow by themselves.</summary>
+    private void OnLanguageChanged() => ui.Post(() =>
+    {
+        // The list, the status and the compose line
+        RefreshRooms();
+        StatusText = Describe(connection.Status.State, connection.Status.Message);
+        OnPropertyChanged(nameof(ComposeMode));
+        // Done: the open room's lines anew
+        if (SelectedRoom is RoomItemViewModel open) _ = OpenRoomAsync(open.RoomId);
+    });
+
     /// <summary>Show the engine's connection state.</summary>
     private void OnConnectionChanged(ConnectionState state, string? message) => ui.Post(() =>
     {
@@ -1309,7 +1323,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         {
             connection.Logger.LogInformation("{What} failed: {Error}", what, exception.Describe());
             if (NoteSuspension(exception.Message)) return false;
-            if (report) ui.Post(() => Notice = $"{what} failed: {exception.Message}");
+            if (report) ui.Post(() => Notice = Translations.Format(Strings.ActionFailed, what, exception.Message));
             return false;
         }
     }
@@ -1317,10 +1331,10 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>Return the status line for a connection state; empty when connected.</summary>
     internal static string Describe(ConnectionState state, string? message) => state switch
     {
-        ConnectionState.Connected => "Online",
-        ConnectionState.Connecting => message is null ? "Connecting…" : $"{message}…",
-        ConnectionState.Retrying => message is null ? "Connection lost, retrying…" : $"Retrying: {message}",
-        ConnectionState.Failed => $"Stopped: {message}",
+        ConnectionState.Connected => Strings.Online,
+        ConnectionState.Connecting => message is null ? Strings.Connecting : $"{message}…",
+        ConnectionState.Retrying => message is null ? Strings.ConnectionLostRetrying : Translations.Format(Strings.RetryingWith, message),
+        ConnectionState.Failed => Translations.Format(Strings.Stopped, message),
         _ => message ?? "",
     };
 }

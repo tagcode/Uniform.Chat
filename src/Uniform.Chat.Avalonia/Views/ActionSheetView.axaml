@@ -1,4 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:l="using:Uniform.Chat.Avalonia.Localization"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:Uniform.Chat.Avalonia.ViewModels"
              x:Class="Uniform.Chat.Avalonia.Views.ActionSheetView"
@@ -35,10 +36,10 @@
     <StackPanel DockPanel.Dock="Top" Margin="20,0,20,8" Spacing="8">
       <Border Classes="grip" />
       <Grid ColumnDefinitions="Auto,*,Auto">
-        <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="Back" Command="{Binding BackCommand}" IsVisible="{Binding IsChoosing}" Margin="-12,0,0,0" />
+        <Button Grid.Column="0" Classes="icon" Content="‹" ToolTip.Tip="{l:Tr Back}" Command="{Binding BackCommand}" IsVisible="{Binding IsChoosing}" Margin="-12,0,0,0" />
         <TextBlock Grid.Column="1" Classes="title" Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsVisible="{Binding !IsChoosing}" />
         <TextBlock Grid.Column="1" Classes="title" Text="{Binding Choosing}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsVisible="{Binding IsChoosing}" />
-        <Button Grid.Column="2" Classes="icon" Content="✕" ToolTip.Tip="Close" Command="{Binding CloseCommand}" Margin="0,0,-12,0" />
+        <Button Grid.Column="2" Classes="icon" Content="✕" ToolTip.Tip="{l:Tr Close}" Command="{Binding CloseCommand}" Margin="0,0,-12,0" />
       </Grid>
       <ItemsControl ItemsSource="{Binding Details}" IsVisible="{Binding !IsChoosing}">
         <ItemsControl.ItemTemplate>

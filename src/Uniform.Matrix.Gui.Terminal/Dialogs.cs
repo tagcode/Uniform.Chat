@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using global::Terminal.Gui.App;
 using global::Terminal.Gui.ViewBase;
 using global::Terminal.Gui.Views;
+using Uniform.Matrix.Gui.Terminal.Localization;
 
 /// <summary>Modal dialogs; call on the UI thread.</summary>
 public static class Dialogs
@@ -28,8 +29,8 @@ public static class Dialogs
         Label prompt = new() { Text = label, X = 1, Y = 0, Width = Dim.Fill(1) };
         TextField field = new() { Text = initial, Secret = secret, X = 1, Y = Pos.Bottom(prompt), Width = Dim.Fill(1) };
         dialog.Add(prompt, field);
-        dialog.AddButton(new Button { Text = "_Cancel" });
-        dialog.AddButton(new Button { Text = "_OK", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonCancel });
+        dialog.AddButton(new Button { Text = Strings.ButtonOk, IsDefault = true });
 
         // Run; Enter in the field accepts with the default button
         field.SetFocus();
@@ -50,14 +51,14 @@ public static class Dialogs
         int listHeight = Math.Min(options.Count, 15);
         int width = Math.Max(Math.Max(30, title.Length + 8), options.Max(o => o.Length) + 8);
         using Dialog dialog = new() { Title = title, Width = width };
-        Label currentLabel = new() { Text = $"Current: {current ?? "(not set)"}", X = 1, Y = 0, Width = Dim.Fill(1) };
+        Label currentLabel = new() { Text = Texts.Format(Strings.Current, current ?? Strings.NotSet), X = 1, Y = 0, Width = Dim.Fill(1) };
         ListView list = new() { X = 1, Y = 2, Width = Dim.Fill(1), Height = listHeight };
         list.SetSource(rows);
         list.SelectedItem = Math.Max(0, index);
         list.Accepting += (_, e) => { e.Handled = true; dialog.Result = 1; app.RequestStop(dialog); };
         dialog.Add(currentLabel, list);
-        dialog.AddButton(new Button { Text = "_Cancel" });
-        dialog.AddButton(new Button { Text = "_OK", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonCancel });
+        dialog.AddButton(new Button { Text = Strings.ButtonOk, IsDefault = true });
 
         // Run
         list.SetFocus();
@@ -82,8 +83,8 @@ public static class Dialogs
         list.SelectedItem = 0;
         list.Accepting += (_, e) => { e.Handled = true; dialog.Result = 1; app.RequestStop(dialog); };
         dialog.Add(label, list);
-        dialog.AddButton(new Button { Text = "_Cancel" });
-        dialog.AddButton(new Button { Text = "_OK", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonCancel });
+        dialog.AddButton(new Button { Text = Strings.ButtonOk, IsDefault = true });
 
         // Run
         list.SetFocus();
@@ -101,7 +102,7 @@ public static class Dialogs
         ListView view = new() { X = 1, Y = 0, Width = Dim.Fill(1), Height = Dim.Fill(1) };
         view.SetSource(lines);
         dialog.Add(view);
-        dialog.AddButton(new Button { Text = "_Close", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonClose, IsDefault = true });
 
         // Run
         view.SetFocus();
@@ -116,7 +117,7 @@ public static class Dialogs
         Label label = new() { Text = message, X = 1, Y = 0, Width = Dim.Fill(1) };
         TextField field = new() { Text = text, ReadOnly = true, X = 1, Y = Pos.Bottom(label) + 1, Width = Dim.Fill(1) };
         dialog.Add(label, field);
-        dialog.AddButton(new Button { Text = "_Done", IsDefault = true });
+        dialog.AddButton(new Button { Text = Strings.ButtonDone, IsDefault = true });
 
         // Run
         field.SetFocus();
@@ -124,13 +125,13 @@ public static class Dialogs
     }
 
     /// <summary>Ask a yes or no question; return true for yes.</summary>
-    public static bool Confirm(IApplication app, string title, string message) => MessageBox.Query(app, title, message, "_No", "_Yes") == 1;
+    public static bool Confirm(IApplication app, string title, string message) => MessageBox.Query(app, title, message, Strings.ButtonNo, Strings.ButtonYes) == 1;
 
     /// <summary>Show a message with an OK button.</summary>
-    public static void Info(IApplication app, string title, string message) => MessageBox.Query(app, title, message, "_OK");
+    public static void Info(IApplication app, string title, string message) => MessageBox.Query(app, title, message, Strings.ButtonOk);
 
     /// <summary>Show an error with an OK button.</summary>
-    public static void Error(IApplication app, string title, string message) => MessageBox.ErrorQuery(app, title, message, "_OK");
+    public static void Error(IApplication app, string title, string message) => MessageBox.ErrorQuery(app, title, message, Strings.ButtonOk);
 
     /// <summary>Let the user pick one of <paramref name="options"/>; return its index, or null when closed.</summary>
     public static int? Choose(IApplication app, string title, string message, IReadOnlyList<string> options) => MessageBox.Query(app, title, message, [.. options]);
