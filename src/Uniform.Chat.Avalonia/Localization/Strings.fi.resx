@@ -9,7 +9,7 @@
     <value>Hyväksy</value>
   </data>
   <data name="AcceptPolicies" xml:space="preserve">
-    <value>Olen lukenut nämä ehdot ja hyväksyn ne</value>
+    <value>Olen lukenut ehdot ja hyväksyn ne</value>
   </data>
   <data name="AcceptPoliciesToContinue" xml:space="preserve">
     <value>Lue ja hyväksy palvelimen ehdot jatkaaksesi.</value>
@@ -27,7 +27,7 @@
     <value>Tilit</value>
   </data>
   <data name="AccountSuspendedHint" xml:space="preserve">
-    <value>Palvelimesi ylläpito on jäädyttänyt tilisi: voit lukea huoneita ja poistua niistä, mutta et lähettää viestejä, liittyä huoneisiin tai kutsua. Katso Palvelinilmoitukset-huone, jos sellainen on.</value>
+    <value>Ylläpito on jäädyttänyt tilisi: voit lukea huoneita ja poistua niistä, mutta et voi lähettää viestejä, liittyä tai kutsua huoneisiin. Katso Palvelinilmoitukset-huone, jos sellainen on.</value>
   </data>
   <data name="ActionFailed" xml:space="preserve">
     <value>{0} epäonnistui: {1}</value>
