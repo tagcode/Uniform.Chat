@@ -192,10 +192,13 @@ public class ChatFlowTests
             await WaitUntilAsync(() => own.IsEdited && own.Source == "see you **tomorrow**", "the edit");
             Assert.Contains("<strong>tomorrow</strong>", own.Html);
 
-            // Act and assert: delete it
+            // Act and assert: delete it; its line is replaced by a deletion marker
             await chat.DeleteAsync(own);
-            await WaitUntilAsync(() => own.Text == "Message deleted", "the deletion");
-            Assert.False(own.CanEdit);
+            await WaitUntilAsync(() => chat.Messages.Find(own.EventId!) is { Text: "Message deleted" }, "the deletion");
+            MessageViewModel deleted = chat.Messages.Find(own.EventId!)!;
+            Assert.True(deleted.IsDeleted);
+            Assert.False(deleted.CanEdit);
+            Assert.DoesNotContain(own, chat.Messages.Items);
         }
         finally
         {

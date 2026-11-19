@@ -86,6 +86,31 @@ public class MessageListTests
         Assert.Equal("Message deleted", list.Items[1].Text);
     }
 
+    /// <summary>An image deleted while shown turns at once into the line a reload shows: no image, file name or reactions, just that it was deleted.</summary>
+    [Fact]
+    public void DeleteShownImage()
+    {
+        // Arrange: an image with a reaction, shown
+        Room room = CreateRoom();
+        MessageList list = new(Me);
+        ClientEvent image = Event(EventTypes.RoomMessage, Bob, new MessageContent { MessageType = MessageTypes.Image, Body = "cat.png", Url = "mxc://hs.example/cat" });
+        list.Reset(room, [image, Event(EventTypes.Reaction, Me, new ReactionContent { RelatesTo = new Relation { RelType = "m.annotation", EventId = image.EventId, Key = "👍" } })]);
+        Assert.NotNull(list.Items[0].ImageUri);
+
+        // Act
+        list.Append(room, [Event(EventTypes.RoomRedaction, Bob, new { redacts = image.EventId }) with { OriginServerTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() }]);
+
+        // Assert
+        MessageViewModel item = Assert.Single(list.Items);
+        Assert.Null(item.ImageUri);
+        Assert.False(item.IsAttachment);
+        Assert.True(item.IsInfo);
+        Assert.True(item.IsDeleted);
+        Assert.Equal("", item.Reactions);
+        Assert.Equal("Message deleted", item.Text);
+        Assert.Same(item, list.Find(image.EventId!));
+    }
+
     /// <summary>Consecutive messages of one sender share a header; a new sender or a pause starts a new one.</summary>
     [Fact]
     public void GroupHeaders()

@@ -138,7 +138,7 @@ public sealed class MessageList
         // Deleted messages, plain or encrypted, keep their place, unless deleted long ago
         if (EventText.IsOldDeletion(clientEvent, DateTimeOffset.UtcNow)) return null;
         if (EventText.IsDeletion(clientEvent) || (clientEvent.Type == EventTypes.RoomMessage && !clientEvent.TryGetContent(out MessageContent? _)))
-            return new MessageViewModel { EventId = clientEvent.EventId, SenderId = clientEvent.Sender, SenderName = sender, Timestamp = clientEvent.Timestamp, Kind = MessageKind.Info, IsOwn = own, Text = Strings.MessageDeleted, IsDeleted = true };
+            return DeletedLine(clientEvent.EventId, clientEvent.Sender, sender, clientEvent.Timestamp, own);
         if (clientEvent.Type != EventTypes.RoomMessage)
         {
             if (EventText.Describe(room, clientEvent) is not string description) return null;
@@ -199,9 +199,11 @@ public sealed class MessageList
                     byEventId.Remove(target);
                     return true;
                 }
-                deleted.Html = null;
-                deleted.Text = Strings.MessageDeleted;
-                deleted.IsDeleted = true;
+                // Shown as when loaded deleted: an info line, its image, file, quote and reactions gone
+                MessageViewModel line = DeletedLine(deleted.EventId, deleted.SenderId, deleted.SenderName, deleted.Timestamp, deleted.IsOwn);
+                int at = Items.IndexOf(deleted);
+                if (at >= 0) Items[at] = line;
+                byEventId[target] = line;
             }
             return true;
         }
@@ -222,6 +224,10 @@ public sealed class MessageList
         original.IsEdited = true;
         return true;
     }
+
+    /// <summary>Return the line of a deleted message: an info line that says so, without the message's text, image, file or reactions.</summary>
+    private static MessageViewModel DeletedLine(string? eventId, string senderId, string senderName, DateTimeOffset timestamp, bool own) =>
+        new() { EventId = eventId, SenderId = senderId, SenderName = senderName, Timestamp = timestamp, Kind = MessageKind.Info, IsOwn = own, Text = Strings.MessageDeleted, IsDeleted = true };
 
     /// <summary>Return the plain body as written: the new content of an edit, without a reply fallback quote.</summary>
     private static string SourceOf(MessageContent content) =>
