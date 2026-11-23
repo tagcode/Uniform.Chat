@@ -13,3 +13,7 @@ Settings and logging for any application on the .NET generic host, the client's 
 ## Logs
 
 [`FileLoggerProvider`](xref:Uniform.Matrix.Hosting.FileLoggerProvider) writes `logs/client-yyyyMMdd-HHmmss.log` per session and prunes the oldest beyond `Storage:LogFilesKept`. [`LogFiles`](xref:Uniform.Matrix.Hosting.LogFiles) lists and parses them: a line with time and level starts an entry, other lines (stack traces) continue it.
+
+## Image orientation
+
+Phones store a photo as the camera's sensor sees it and write how to turn it into the Exif orientation tag, 1 to 8, instead of turning the pixels. Decoders such as StbImageSharp and Avalonia's show the pixels as stored, so a photo taken upright shows on its side. [`ImageOrientation.Read`](xref:Uniform.Matrix.Hosting.Imaging.ImageOrientation.Read(System.ReadOnlySpan{System.Byte})) finds the tag in a JPEG's Exif segment, and [`ImageOrientation.Apply`](xref:Uniform.Matrix.Hosting.Imaging.ImageOrientation.Apply(System.Byte[],System.Int32,System.Int32,System.Int32)) turns and mirrors decoded 32-bit pixels to match. Three places use it: the server's thumbnails, which no longer carry the tag; the terminal client's image previews; and the Avalonia apps' pictures, through [`Pictures`](xref:Uniform.Chat.Avalonia.Services.Pictures), which scale a turned photo by its width as shown.

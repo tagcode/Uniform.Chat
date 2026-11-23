@@ -31,4 +31,8 @@
     <ProjectReference Include="..\..\src\Uniform.Matrix.Hosting\Uniform.Matrix.Hosting.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\ExifJpeg.cs" Link="ExifJpeg.cs" />
+  </ItemGroup>
+
 </Project>

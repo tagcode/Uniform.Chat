@@ -2,6 +2,7 @@ namespace Uniform.Chat.Terminal.Ui.Images;
 
 using StbImageSharp;
 using global::Terminal.Gui.Drawing;
+using Uniform.Matrix.Hosting.Imaging;
 
 /// <summary>Image decoded to 8-bit RGBA pixels, row by row from the top.</summary>
 /// <param name="Width">Width in pixels.</param>
@@ -12,18 +13,19 @@ public sealed record DecodedImage(int Width, int Height, byte[] Rgba)
     /// <summary>Largest dimension accepted, to bound memory for hostile or huge images.</summary>
     public const int MaxDimension = 8192;
 
-    /// <summary>Decode PNG, JPEG, GIF (first frame), BMP, TGA or PSD; return null for other or broken data.</summary>
+    /// <summary>Decode PNG, JPEG, GIF (first frame), BMP, TGA or PSD, upright by a photo's Exif orientation; return null for other or broken data.</summary>
     public static DecodedImage? TryDecode(byte[] data)
     {
         // Check size from the header before decoding
         ImageInfo? info = ImageInfo.FromStream(new MemoryStream(data));
         if (info is not { Width: > 0 and <= MaxDimension, Height: > 0 and <= MaxDimension }) return null;
 
-        // Decode to RGBA
+        // Decode to RGBA, turned as a phone's photo shows
         try
         {
             ImageResult result = ImageResult.FromMemory(data, ColorComponents.RedGreenBlueAlpha);
-            return new DecodedImage(result.Width, result.Height, result.Data);
+            (byte[] rgba, int width, int height) = ImageOrientation.Apply(result.Data, result.Width, result.Height, ImageOrientation.Read(data));
+            return new DecodedImage(width, height, rgba);
         }
         catch (Exception ex) when (ex is InvalidOperationException or ArgumentException or IndexOutOfRangeException)
         {

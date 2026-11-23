@@ -37,5 +37,7 @@
   <!-- Checks of translations, shared by the test projects of projects with texts -->
   <ItemGroup>
     <Compile Include="..\Shared\LocalizationChecks.cs" Link="LocalizationChecks.cs" />
+    <Compile Include="..\Shared\ExifJpeg.cs" Link="ExifJpeg.cs" />
+    <Compile Include="..\Shared\TestPhotos.cs" Link="TestPhotos.cs" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Text;
 using Uniform.Chat.Terminal.Ui.Images;
+using Uniform.Matrix.Testing;
 
 /// <summary>Unit tests for <see cref="DecodedImage"/> and <see cref="AsciiArt"/>.</summary>
 public class ImageTests
@@ -93,6 +94,23 @@ public class ImageTests
         Assert.NotNull(decoded);
         Assert.Equal((3, 2), (decoded.Width, decoded.Height));
         Assert.Equal(source.Rgba, decoded.Rgba);
+    }
+
+    /// <summary>A phone's photo, stored on its side with an Exif orientation, decodes upright.</summary>
+    [Fact]
+    public void DecodePhotoUpright()
+    {
+        // Stored 40×20, red left, blue right, to show a quarter turn clockwise
+        byte[] photo = TestPhotos.LeftRedRightBlue(40, 20, orientation: 6);
+
+        // Act
+        DecodedImage? decoded = DecodedImage.TryDecode(photo);
+
+        // Assert: 20×40, red on top, blue below
+        Assert.NotNull(decoded);
+        Assert.Equal((20, 40), (decoded.Width, decoded.Height));
+        Assert.True(decoded.GetPixel(10, 5).R > 200 && decoded.GetPixel(10, 5).B < 60, "red on top");
+        Assert.True(decoded.GetPixel(10, 35).B > 200 && decoded.GetPixel(10, 35).R < 60, "blue below");
     }
 
     /// <summary>Data that is not an image is rejected without throwing.</summary>

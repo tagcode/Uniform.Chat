@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit.v3" Version="4.0.2" />
@@ -33,5 +34,7 @@
   <!-- Checks of translations, shared by the test projects of projects with texts -->
   <ItemGroup>
     <Compile Include="..\Shared\LocalizationChecks.cs" Link="LocalizationChecks.cs" />
+    <Compile Include="..\Shared\ExifJpeg.cs" Link="ExifJpeg.cs" />
+    <Compile Include="..\Shared\TestPhotos.cs" Link="TestPhotos.cs" />
   </ItemGroup>
 </Project>

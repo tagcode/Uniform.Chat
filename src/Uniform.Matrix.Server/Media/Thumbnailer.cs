@@ -2,8 +2,9 @@ namespace Uniform.Matrix.Server.Media;
 
 using StbImageSharp;
 using StbImageWriteSharp;
+using Uniform.Matrix.Hosting.Imaging;
 
-/// <summary>Makes <see href="https://spec.matrix.org/latest/client-server-api/#thumbnails">thumbnails</see> of images: one of a few standard sizes, cropped or scaled, never larger than the image.</summary>
+/// <summary>Makes <see href="https://spec.matrix.org/latest/client-server-api/#thumbnails">thumbnails</see> of images: one of a few standard sizes, cropped or scaled, never larger than the image, and upright by the photo's Exif orientation, which the thumbnail no longer carries.</summary>
 public static class Thumbnailer
 {
     /// <summary>Thumbnail method that fills the size and crops the rest.</summary>
@@ -44,10 +45,10 @@ public static class Thumbnailer
             return null;
         }
 
-        // Source region and target size, never enlarged
-        int sourceWidth = decoded.Width, sourceHeight = decoded.Height;
+        // Upright, as a phone's photo shows; then source region and target size, never enlarged
+        (byte[] upright, int sourceWidth, int sourceHeight) = ImageOrientation.Apply(decoded.Data, decoded.Width, decoded.Height, ImageOrientation.Read(image));
         (int x, int y, int w, int h, int targetWidth, int targetHeight) = method == Crop ? CropRegion(sourceWidth, sourceHeight, width, height) : ScaleRegion(sourceWidth, sourceHeight, width, height);
-        byte[] pixels = Resize(decoded.Data, sourceWidth, x, y, w, h, targetWidth, targetHeight);
+        byte[] pixels = Resize(upright, sourceWidth, x, y, w, h, targetWidth, targetHeight);
 
         // PNG keeps transparency, JPEG is smaller
         using MemoryStream output = new();

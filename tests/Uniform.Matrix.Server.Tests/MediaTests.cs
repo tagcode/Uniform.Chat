@@ -7,6 +7,7 @@ using StbImageWriteSharp;
 using Uniform.Matrix.Protocol.Client;
 using Uniform.Matrix.Protocol.Core;
 using Uniform.Matrix.Server.Media;
+using Uniform.Matrix.Testing;
 
 /// <summary>Tests of the media repository: uploads, downloads, limits and thumbnails, through our own client.</summary>
 public class MediaTests
@@ -146,6 +147,24 @@ public class MediaTests
         Assert.Equal("image/png", smallType);
         MatrixException notImage = await Assert.ThrowsAsync<MatrixException>(() => alice.DownloadThumbnailAsync(text, 96, 96, cancellationToken: Ct));
         Assert.Equal(HttpStatusCode.BadRequest, notImage.StatusCode);
+    }
+
+    /// <summary>A phone's photo, stored on its side with an Exif orientation, gets an upright thumbnail, as the thumbnail no longer carries the orientation.</summary>
+    [Fact]
+    public async Task ThumbnailPhotoUpright()
+    {
+        // Stored 400×200, red left, blue right, to show a quarter turn clockwise
+        await using TestHomeserver server = await TestHomeserver.StartAsync(Open);
+        MatrixClient alice = await UserAsync(server, "alice");
+        MxcUri photo = await alice.UploadMediaAsync(new MemoryStream(TestPhotos.LeftRedRightBlue(400, 200, orientation: 6)), "image/jpeg", cancellationToken: Ct);
+
+        // Act
+        (ImageResult thumbnail, _) = await ThumbnailAsync(alice, photo, 300, 200, crop: false);
+
+        // Assert: 120×240, red on top, blue below
+        Assert.Equal((120, 240), (thumbnail.Width, thumbnail.Height));
+        Assert.True(thumbnail.Data[(30 * 120 + 60) * 4] > 200, "red on top");
+        Assert.True(thumbnail.Data[(210 * 120 + 60) * 4 + 2] > 200, "blue below");
     }
 
     /// <summary>Requests map to the smallest standard size that covers them, else the largest.</summary>

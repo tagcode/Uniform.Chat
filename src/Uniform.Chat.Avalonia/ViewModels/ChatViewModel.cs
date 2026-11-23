@@ -1189,29 +1189,13 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             }
             string path = connection.Media.GetFullPath(media);
             int? width = message.Content?.Info?.Width;
-            Bitmap bitmap = await Task.Run(() => DecodeSmall(path, width));
+            Bitmap bitmap = await Task.Run(() => Pictures.Decode(path, ThumbnailWidth, width));
             ui.Post(() => message.Thumbnail = bitmap);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             connection.Logger.LogInformation("Thumbnail of {Uri} failed: {Error}", message.ImageUri, exception.Describe());
         }
-    }
-
-    /// <summary>Decode the image at <paramref name="path"/> at most <see cref="ThumbnailWidth"/> pixels wide, so large photos take little memory; <paramref name="width"/> is its width when the message tells.</summary>
-    private static Bitmap DecodeSmall(string path, int? width)
-    {
-        // Scaled while decoding when known to be wide
-        using FileStream file = File.OpenRead(path);
-        if (width > ThumbnailWidth) return Bitmap.DecodeToWidth(file, ThumbnailWidth);
-        Bitmap bitmap = new(file);
-        if (bitmap.PixelSize.Width <= ThumbnailWidth) return bitmap;
-
-        // Wider than the message said: decode again, scaled
-        bitmap.Dispose();
-        file.Position = 0;
-        // Return scaled
-        return Bitmap.DecodeToWidth(file, ThumbnailWidth);
     }
 
     /// <summary>Download a room's avatar as a small thumbnail and show it in the list.</summary>
@@ -1261,11 +1245,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
             StoredMedia media = await connection.Media.GetThumbnailAsync(client, MxcUri.Parse(uri), 96, 96);
             string path = connection.Media.GetFullPath(media);
             // Return picture
-            return await Task.Run(() =>
-            {
-                using FileStream stream = File.OpenRead(path);
-                return Bitmap.DecodeToWidth(stream, 96);
-            });
+            return await Task.Run(() => Pictures.Decode(path, 96, int.MaxValue));
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

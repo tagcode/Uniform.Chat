@@ -33,4 +33,9 @@
     <ProjectReference Include="..\..\src\Uniform.Matrix.Client\Uniform.Matrix.Client.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\ExifJpeg.cs" Link="ExifJpeg.cs" />
+    <Compile Include="..\Shared\TestPhotos.cs" Link="TestPhotos.cs" />
+  </ItemGroup>
+
 </Project>
