@@ -76,9 +76,6 @@
 # Server Database connections
 - Support all the database connections EF supports
 
-# Video player
-- Room embedded video player for desktop clients: .mp4, .mov, .webm (VP9 or AV1), .mkv
-
 # Room VOIP
 - MSC3401
 - Planned ~/.claude/plans/matrixrtc-group-calls.md
