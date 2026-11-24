@@ -296,11 +296,11 @@ public class FederationTests
         await WaitForOutboxAsync(a, 0);
         lock (network.FailTransactions) network.FailTransactions["b.test"] = 2;
 
-        // Act: a message while b is down, then wait for the retry
+        // Act: a message while b is down, then wait for the retry; on a busy machine alice's join may still wait beside it
         await alice.SendTextAsync(roomId, "kept for b", Ct);
-        int waiting = await WaitForOutboxAsync(a, 1);
+        int waiting = await WaitForOutboxEventsAsync(a, "kept for b", 1);
         IReadOnlyList<string> atB = await WaitForBodiesAsync(bob, roomId, 1, attempts: 150);
-        int after = await WaitForOutboxAsync(a, 0);
+        int after = await WaitForOutboxEventsAsync(a, "kept for b", 0);
 
         // Assert
         Assert.Equal(1, waiting);
@@ -392,7 +392,23 @@ public class FederationTests
         return false;
     }
 
-    /// <summary>Return the number of outbox rows once it is <paramref name="expected"/>, or after a while what it is.</summary>
+    /// <summary>Wait until the federation outbox holds <paramref name="expected"/> events whose JSON contains <paramref name="text"/>, e.g. a message's body; return the count seen last.</summary>
+    private static async Task<int> WaitForOutboxEventsAsync(TestHomeserver server, string text, int expected)
+    {
+        // Poll the table's events of the text
+        IDbContextFactory<ServerDbContext> contexts = server.Services.GetRequiredService<IDbContextFactory<ServerDbContext>>();
+        int count = -1;
+        for (int i = 0; i < 300 && count != expected; i++)
+        {
+            await using ServerDbContext db = await contexts.CreateDbContextAsync(Ct);
+            count = await db.FederationOutbox.CountAsync(o => !o.IsEdu && o.Json.Contains(text), Ct);
+            if (count != expected) await Task.Delay(50, Ct);
+        }
+        // Return count
+        return count;
+    }
+
+    /// <summary>Wait until the federation outbox holds <paramref name="expected"/> rows of any kind; return the count seen last.</summary>
     private static async Task<int> WaitForOutboxAsync(TestHomeserver server, int expected)
     {
         // Poll the table
