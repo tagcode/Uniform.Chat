@@ -82,16 +82,10 @@
 
 # Room VOIP
 - MSC3401
+- Planned ~/.claude/plans/matrixrtc-group-calls.md
 
 # .NET 11
 - Codebase refactor
   - .NET 11 improvements
   - Remove residual AOT code and replace with JIT decision.
   - Detect redundant mechanisms
-
-# Localization
-- Translation texts for other languages.
-- European languages: German, Swedish, Norwegian, Danish, Dutch, Polish, Estonian, Latvian, Lithuanian, Hungarian, Romanian, Ukrainian, Serbo-Croatian, Turkish, Greek, Czech, Serbian, Bulgarian, Albanian, Neopolitan, Slovak, Sami
-- World languages: Mandarin Chinese, Hindi, Standard Arabic, French, Bengali, Portuguese, Indonesian, Urdu, Russian, German, Japanese, Egyptian Arabic, Marathi, Vietnamese, Telugu
-
-German, Swedish, Norwegian, Danish, Dutch, Polish, Estonian, Latvian, Lithuanian, Hungarian, Romanian, Ukrainian, Serbo-Croatian, Turkish, Greek, Czech, Serbian, Bulgarian, Albanian, Neopolitan, Slovak, Sami, Mandarin Chinese, Hindi, Standard Arabic, French, Bengali, Portuguese, Indonesian, Urdu, Russian, German, Japanese, Egyptian Arabic, Marathi, Vietnamese, Telugu
