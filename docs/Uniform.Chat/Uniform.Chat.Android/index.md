@@ -35,7 +35,11 @@ Google Play asks for each type to be declared under *App content → Foreground 
 
 ## Video messages
 
-`AndroidVideoPlayback` plays video messages with Android's `MediaPlayer`, so everything the phone decodes plays, mostly in hardware. Its sound goes to the media stream; its pictures go into an `ImageReader` of YUV 4:2:0 images on a thread of their own, and `AndroidImages` copies them into [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame)s, taking every second or third pixel of a picture wider than 640, as a message shows them small. The file's rotation, read with `MediaMetadataRetriever`, goes with each picture, so a video recorded upright shows upright.
+`AndroidVideoPlayback` plays video messages with Android's own decoders, so everything the phone decodes plays, mostly in hardware: MP4 with H.264, H.265 and AAC, WebM and more. `MediaExtractor` reads the file; `MediaCodec` decodes the pictures into YUV 4:2:0 images that `GetOutputImage` gives, as call video does, and `AndroidImages` copies them into [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame)s, taking every second or third pixel of a picture wider than 640, as a message shows them small. The file's rotation goes with each picture, so a video recorded upright shows upright.
+
+The sound is decoded whole when the video opens, mixed down to stereo, and plays on the media speaker with [`AudioClipPlayer`](xref:Uniform.Matrix.Audio.AudioClipPlayer), which keeps the time: each picture shows when its time comes. Seeking decodes from the keyframe before the position. A video without sound keeps its own time.
+
+Pictures do not go through a surface such as `ImageReader`, as `MediaPlayer` would need: on some phones, e.g. the Galaxy S25, the hardware decoder fills such a surface in a layout only the GPU reads, and Android aborts the app when the CPU asks for the image's planes.
 
 ## Call audio
 

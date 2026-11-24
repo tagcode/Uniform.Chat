@@ -18,7 +18,7 @@ Audio and video messages play in the message list. [`MediaMessagePlayer`](xref:U
 |---|---|---|
 | Audio | [`AudioPlayback`](xref:Uniform.Chat.Avalonia.Services.AudioPlayback), with [Uniform.Matrix.Audio](xref:Uniform.Matrix.Audio.Article) in C# | WAV, MP3, FLAC, Ogg Opus, Ogg Vorbis |
 | Video, desktop | [`WebmPlayback`](xref:Uniform.Chat.Avalonia.Services.WebmPlayback), in C# | WebM with VP8, and Opus sound |
-| Video, Android | `AndroidVideoPlayback`, Android's `MediaPlayer`, through [`GuiPlatform.VideoPlayback`](xref:Uniform.Chat.Avalonia.GuiPlatform.VideoPlayback) | what the phone decodes: MP4 with H.264, H.265 and AAC, WebM, and more |
+| Video, Android | `AndroidVideoPlayback`, Android's `MediaExtractor` and `MediaCodec`, through [`GuiPlatform.VideoPlayback`](xref:Uniform.Chat.Avalonia.GuiPlatform.VideoPlayback) | what the phone decodes: MP4 with H.264, H.265 and AAC, WebM, and more |
 
 `WebmPlayback` reads the whole file and decodes its sound when opened; its pictures are decoded as they are due, timed by the sound on the media speaker, or by a clock of its own when there is none. It jumps to the latest keyframe due when decoding falls more than half a second behind, and seeking decodes from the keyframe before the position. The desktop has no H.264 decoder, so MP4 videos keep *Open*, which plays them in the system's player.
 
