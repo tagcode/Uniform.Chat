@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\src\Uniform.Chat.Desktop\Uniform.Chat.Desktop.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Resources\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

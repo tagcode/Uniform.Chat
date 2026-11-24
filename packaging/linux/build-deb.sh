@@ -22,7 +22,8 @@ case "$kind" in
     desktop)
         package=uniform-chat command=uniform-chat program=Uniform.Chat
         depends="$runtime, libx11-6, libice6, libsm6, libfontconfig1"
-        recommends="libasound2t64 | libasound2"
+        # GStreamer plays video messages: demuxers, VP8/VP9 and videoflip in -good, H.264, H.265 and AAC in -libav
+        recommends="libasound2t64 | libasound2, gstreamer1.0-plugins-good, gstreamer1.0-libav"
         summary="Matrix chat app with voice calls"
         details="Uniform Chat is a chat app for Matrix, the open network for secure, decentralized communication: rooms, direct chats, end-to-end encryption, files and voice calls. Run it with uniform-chat, or from the application menu."
         ;;

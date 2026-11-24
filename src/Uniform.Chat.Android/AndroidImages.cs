@@ -16,31 +16,32 @@ internal static class AndroidImages
         return new VideoFrame(width, height, Plane(planes[0], width, height), Plane(planes[1], chromaWidth, chromaHeight), Plane(planes[2], chromaWidth, chromaHeight));
     }
 
-    /// <summary>Return <paramref name="image"/> as I420 at most <paramref name="maxWidth"/> pixels wide, taking every second, third… pixel of a wider one, e.g. a phone's 1080p video shown small in a message.</summary>
+    /// <summary>Return the picture of <paramref name="image"/>, within its crop rectangle, as I420 at most <paramref name="maxWidth"/> pixels wide, taking every second, third… pixel of a wider one, e.g. a phone's 1080p video shown small in a message.</summary>
+    /// <remarks>Decoders round their buffers up, e.g. 1080 rows to 1088; the crop rectangle tells the picture in them.</remarks>
     public static VideoFrame ToVideoFrame(global::Android.Media.Image image, int maxWidth)
     {
-        // The step that fits, then every step-th pixel of each plane
-        int step = (image.Width + maxWidth - 1) / maxWidth;
-        if (step <= 1) return ToVideoFrame(image);
+        // The picture's rectangle, then every step-th pixel of each plane in it
+        global::Android.Graphics.Rect crop = image.CropRect is { } rect && rect.Width() > 0 && rect.Height() > 0 ? rect : new global::Android.Graphics.Rect(0, 0, image.Width, image.Height);
+        int step = Math.Max(1, (crop.Width() + maxWidth - 1) / maxWidth);
         global::Android.Media.Image.Plane[] planes = image.GetPlanes()!;
-        int width = image.Width / step, height = image.Height / step, chromaWidth = (width + 1) / 2, chromaHeight = (height + 1) / 2;
+        int width = Math.Max(1, crop.Width() / step), height = Math.Max(1, crop.Height() / step), chromaWidth = (width + 1) / 2, chromaHeight = (height + 1) / 2;
         // Return picture
-        return new VideoFrame(width, height, Sampled(planes[0], width, height, step), Sampled(planes[1], chromaWidth, chromaHeight, step), Sampled(planes[2], chromaWidth, chromaHeight, step));
+        return new VideoFrame(width, height, Sampled(planes[0], crop.Left, crop.Top, width, height, step), Sampled(planes[1], crop.Left / 2, crop.Top / 2, chromaWidth, chromaHeight, step), Sampled(planes[2], crop.Left / 2, crop.Top / 2, chromaWidth, chromaHeight, step));
     }
 
-    /// <summary>Return every <paramref name="step"/>-th pixel of every <paramref name="step"/>-th row of a plane, <paramref name="width"/> by <paramref name="height"/> of them, tightly packed.</summary>
-    private static byte[] Sampled(global::Android.Media.Image.Plane plane, int width, int height, int step)
+    /// <summary>Return every <paramref name="step"/>-th pixel of every <paramref name="step"/>-th row of a plane from (<paramref name="left"/>, <paramref name="top"/>), <paramref name="width"/> by <paramref name="height"/> of them, tightly packed.</summary>
+    private static byte[] Sampled(global::Android.Media.Image.Plane plane, int left, int top, int width, int height, int step)
     {
         // The buffer's bytes, then the pixels picked
         Java.Nio.ByteBuffer buffer = plane.Buffer!;
         byte[] raw = new byte[buffer.Remaining()];
         buffer.Get(raw);
-        int rowStride = plane.RowStride * step, pixelStride = plane.PixelStride * step;
+        int rowStride = plane.RowStride, pixelStride = plane.PixelStride;
         byte[] packed = new byte[width * height];
         for (int row = 0; row < height; row++)
         {
-            int from = row * rowStride;
-            for (int column = 0; column < width && from + column * pixelStride < raw.Length; column++) packed[row * width + column] = raw[from + column * pixelStride];
+            int from = (top + row * step) * rowStride + left * pixelStride;
+            for (int column = 0; column < width && from + column * step * pixelStride < raw.Length; column++) packed[row * width + column] = raw[from + column * step * pixelStride];
         }
         // Return pixels
         return packed;

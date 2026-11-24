@@ -77,8 +77,7 @@
 - Support all the database connections EF supports
 
 # Video player
-- Room embedded video player for a limited video codec and file formats.
-- The currently implemented encoders could be supported.
+- Room embedded video player for desktop clients: .mp4, .mov, .webm (VP9 or AV1), .mkv
 
 # Room VOIP
 - MSC3401

@@ -17,10 +17,13 @@ Audio and video messages play in the message list. [`MediaMessagePlayer`](xref:U
 | Kind | Playback | Formats |
 |---|---|---|
 | Audio | [`AudioPlayback`](xref:Uniform.Chat.Avalonia.Services.AudioPlayback), with [Uniform.Matrix.Audio](xref:Uniform.Matrix.Audio.Article) in C# | WAV, MP3, FLAC, Ogg Opus, Ogg Vorbis |
-| Video, desktop | [`WebmPlayback`](xref:Uniform.Chat.Avalonia.Services.WebmPlayback), in C# | WebM with VP8, and Opus sound |
-| Video, Android | `AndroidVideoPlayback`, Android's `MediaExtractor` and `MediaCodec`, through [`GuiPlatform.VideoPlayback`](xref:Uniform.Chat.Avalonia.GuiPlatform.VideoPlayback) | what the phone decodes: MP4 with H.264, H.265 and AAC, WebM, and more |
+| Video, Linux | [`DecodedVideoPlayback`](xref:Uniform.Chat.Avalonia.Services.DecodedVideoPlayback) of `GStreamerVideoSource`, through [`GuiPlatform.VideoPlayback`](xref:Uniform.Chat.Avalonia.GuiPlatform.VideoPlayback) | what the installed GStreamer plugins decode: MP4 with H.264, H.265 and AAC, WebM, Matroska, and more |
+| Video, Android | [`DecodedVideoPlayback`](xref:Uniform.Chat.Avalonia.Services.DecodedVideoPlayback) of `AndroidVideoSource`, Android's `MediaExtractor` and `MediaCodec` | what the phone decodes: MP4 with H.264, H.265 and AAC, WebM, and more |
+| Video, otherwise | [`WebmPlayback`](xref:Uniform.Chat.Avalonia.Services.WebmPlayback), in C# | WebM with VP8, and Opus sound |
 
-`WebmPlayback` reads the whole file and decodes its sound when opened; its pictures are decoded as they are due, timed by the sound on the media speaker, or by a clock of its own when there is none. It jumps to the latest keyframe due when decoding falls more than half a second behind, and seeking decodes from the keyframe before the position. The desktop has no H.264 decoder, so MP4 videos keep *Open*, which plays them in the system's player.
+[`DecodedVideoPlayback`](xref:Uniform.Chat.Avalonia.Services.DecodedVideoPlayback) plays what a platform decodes through an [`IVideoSource`](xref:Uniform.Chat.Avalonia.Services.IVideoSource): pictures with their times, pulled as they are due, and the sound decoded whole, which plays on the media speaker and keeps the time.
+
+`WebmPlayback` reads the whole file and decodes its sound when opened; its pictures are decoded as they are due, timed by the sound on the media speaker, or by a clock of its own when there is none. It jumps to the latest keyframe due when decoding falls more than half a second behind, and seeking decodes from the keyframe before the position. Where neither GStreamer nor another platform decoder is there, as on Windows for now, MP4 videos keep *Open*, which plays them in the system's player.
 
 Audio messages played are saved in the client's store, [`ClientStore.MarkListenedAsync`](xref:Uniform.Matrix.Client.Storage.ClientStore.MarkListenedAsync*), and marked 🎧.
 

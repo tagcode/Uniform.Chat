@@ -5,6 +5,7 @@ using global::Avalonia.Android;
 using Uniform.Chat.Android.Audio;
 using Uniform.Chat.Avalonia;
 using Uniform.Chat.Avalonia.Localization;
+using Uniform.Chat.Avalonia.Services;
 using global::Android.App;
 using global::Android.Runtime;
 
@@ -46,7 +47,7 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             Push = new AndroidPushService(this),
             Ring = peer => new Ringer(this, peer),
             ScreenOffNearEar = () => new NearEarScreenOff(this),
-            VideoPlayback = () => new AndroidVideoPlayback(() => new AndroidSpeaker(this, null, media: true)),
+            VideoPlayback = () => new DecodedVideoPlayback(path => new AndroidVideoSource(path), () => new AndroidSpeaker(this, null, media: true)),
             PlaysVideo = (mimeType, fileName) => mimeType?.StartsWith("video/", StringComparison.OrdinalIgnoreCase) == true || Path.GetExtension(fileName ?? "").ToLowerInvariant() is ".mp4" or ".m4v" or ".mov" or ".3gp" or ".webm" or ".mkv",
         };
         base.OnCreate();
