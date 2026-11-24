@@ -40,4 +40,8 @@
     <Compile Include="..\Shared\ExifJpeg.cs" Link="ExifJpeg.cs" />
     <Compile Include="..\Shared\TestPhotos.cs" Link="TestPhotos.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Uniform.Matrix.Audio.Tests\Resources\tone_voice_mono.ogg" Link="Resources\tone_voice_mono.ogg" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

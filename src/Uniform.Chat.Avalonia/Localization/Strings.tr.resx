@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Göndermeyi iptal et</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} oynatılamıyor: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Değişiklikler hemen kaydedilir.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat, MIT lisansı altında özgür bir yazılımdır. .NET çalışma zamanını ve her biri kendi lisansına sahip başka kütüphaneleri içerir; metinleri aşağıdadır.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Dinlendi</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Hesaplar yükleniyor</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Yapıştırma başarısız: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Duraklat</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Telefon varsayılanı</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Telefon mikrofonu</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Oynat</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Gizlilik politikası</value>

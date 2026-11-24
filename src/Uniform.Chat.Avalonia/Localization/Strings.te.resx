@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>పంపడం రద్దు చేయి</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0}ని ప్లే చేయలేము: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>మార్పులు వెంటనే సేవ్ అవుతాయి.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat MIT లైసెన్స్ కింద ఉచిత సాఫ్ట్‌వేర్. ఇందులో .NET రన్‌టైమ్ మరియు ఇతర లైబ్రరీలు ఉన్నాయి, ప్రతిదీ తన సొంత లైసెన్స్ కింద, వాటి పాఠాలు క్రింద ఉన్నాయి.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>విన్నారు</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>ఖాతాలను లోడ్ చేస్తోంది</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>పేస్ట్ విఫలమైంది: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>పాజ్</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>ఫోన్ డిఫాల్ట్</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>ఫోన్ మైక్రోఫోన్</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>ప్లే చేయి</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>గోప్యతా విధానం</value>

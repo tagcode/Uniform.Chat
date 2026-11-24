@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>भेजना रद्द करें</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} चलाया नहीं जा सकता: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>बदलाव तुरंत सहेजे जाते हैं।</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat, MIT लाइसेंस के तहत मुक्त सॉफ़्टवेयर है। इसमें .NET रनटाइम और अन्य लाइब्रेरी शामिल हैं, हर एक अपने लाइसेंस के तहत, जिनके पाठ नीचे हैं।</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>सुना गया</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>खाते लोड हो रहे हैं</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>चिपकाना विफल: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>विराम</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>फ़ोन डिफ़ॉल्ट</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>फ़ोन माइक्रोफ़ोन</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>चलाएँ</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>गोपनीयता नीति</value>

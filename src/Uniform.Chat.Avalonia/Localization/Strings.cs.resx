@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Zrušit odeslání</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} nelze přehrát: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Změny se ukládají okamžitě.</value>
   </data>
@@ -569,6 +572,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat je svobodný software pod licencí MIT. Obsahuje prostředí .NET a další knihovny, každou pod vlastní licencí, jejichž texty následují.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Poslechnuto</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Načítání účtů</value>
   </data>
@@ -800,11 +806,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Vložení selhalo: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pozastavit</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Výchozí v telefonu</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Mikrofon telefonu</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Přehrát</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Zásady ochrany soukromí</value>

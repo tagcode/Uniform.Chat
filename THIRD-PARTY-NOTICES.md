@@ -123,6 +123,7 @@ The Noto Sans Arabic, Noto Sans Devanagari, Noto Sans Bengali and Noto Sans Telu
 | NAudio.Alsa | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Alsa.txt) |
 | NAudio.Core | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Core.txt) |
 | NAudio.Wasapi | 3.3.0 | Android client, desktop client, terminal client | [MIT](LICENSES/packages/NAudio.Wasapi.txt) |
+| NVorbis | 0.10.5 | Android client, desktop client, terminal client | [see file](LICENSES/packages/NVorbis.txt) |
 | Onigwrap | 1.0.11 | server, terminal client | [MIT](LICENSES/packages/Onigwrap.txt) |
 | SkiaSharp | 3.119.4 | Android client, desktop client | [MIT](LICENSES/packages/SkiaSharp.txt) |
 | SkiaSharp.NativeAssets.Android | 3.119.4 | Android client | [MIT](LICENSES/packages/SkiaSharp.NativeAssets.Android.txt) |

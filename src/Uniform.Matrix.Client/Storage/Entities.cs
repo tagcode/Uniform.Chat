@@ -103,6 +103,15 @@ public sealed class StoredMedia
     public DateTimeOffset DownloadedAt { get; set; }
 }
 
+/// <summary>An audio message the user has played, so the apps mark it as listened.</summary>
+public sealed class ListenedAudio
+{
+    /// <summary>The message's event ID; primary key.</summary>
+    public required string EventId { get; set; }
+    /// <summary>When it was first played.</summary>
+    public DateTimeOffset ListenedAt { get; set; }
+}
+
 /// <summary>Stored encryption account of this device; one row.</summary>
 public sealed class CryptoAccountRow
 {

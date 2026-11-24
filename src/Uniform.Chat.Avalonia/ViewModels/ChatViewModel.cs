@@ -58,7 +58,8 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <param name="notifier">System notifications, or null for none.</param>
     /// <param name="settings">App settings, shown in the settings panel; null hides it.</param>
     /// <param name="call">The call bar; null for no calls.</param>
-    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null, CallViewModel? call = null)
+    /// <param name="openMediaSpeaker">Opens the speaker that plays audio messages; null where the platform has no audio, so they are not played here.</param>
+    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null, CallViewModel? call = null, Func<NAudio.Wave.IWavePlayer>? openMediaSpeaker = null)
     {
         // Dependencies
         this.connection = connection;
@@ -68,8 +69,18 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         this.notifier = notifier;
         Settings = settings;
         Call = call;
-        Messages = new MessageList(connection.UserId) { IsBlocked = connection.Processor.IsIgnored };
-        Messages.Items.CollectionChanged += (_, e) => ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
+        if (openMediaSpeaker is not null)
+        {
+            Player = new AudioMessagePlayer(openMediaSpeaker, ui, DownloadAsync, eventId => connection.Store.MarkListenedAsync(eventId));
+            Player.Notice += text => Notice = text;
+        }
+        AudioMessagePlayer? player = Player;
+        Messages = new MessageList(connection.UserId) { IsBlocked = connection.Processor.IsIgnored, IsListened = player is null ? null : player.IsListened, PlaysAudio = player is not null };
+        Messages.Items.CollectionChanged += (_, e) =>
+        {
+            ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
+            player?.Follow(e);
+        };
         IsNarrow = singlePane;
         StatusText = Describe(connection.Status.State, connection.Status.Message);
         ListenForShares();
@@ -81,6 +92,12 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
 
     /// <summary>The call bar; null for no calls.</summary>
     public CallViewModel? Call { get; }
+
+    /// <summary>Plays audio messages; null where the platform has no audio.</summary>
+    public AudioMessagePlayer? Player { get; }
+
+    /// <summary>Play the audio message <paramref name="message"/>, or pause or resume it.</summary>
+    public Task TogglePlayAsync(MessageViewModel message) => Player?.ToggleAsync(message) ?? Task.CompletedTask;
 
     /// <summary>The open room's timeline.</summary>
     public MessageList Messages { get; }
@@ -273,6 +290,28 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         ui.Post(RefreshRooms);
         if (connection.Status.State == ConnectionState.Connected) OnConnectionChanged(ConnectionState.Connected, connection.Status.Message);
         _ = CheckServerAdminAsync();
+        _ = RememberListenedAsync();
+    }
+
+    /// <summary>Load the audio messages listened to before, to mark them.</summary>
+    private async Task RememberListenedAsync()
+    {
+        // Before rooms open, usually; a room open already shows them on its next opening
+        if (Player is null) return;
+        try
+        {
+            IReadOnlySet<string> listened = await connection.Store.LoadListenedAsync();
+            ui.Post(() =>
+            {
+                Player.Remember(listened);
+                foreach (MessageViewModel message in Messages.Items.Where(m => m.IsPlayable && m.EventId is not null && listened.Contains(m.EventId))) message.IsListened = true;
+            });
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            // On a store that failed: no marks
+            connection.Logger.LogInformation("Listened audio messages did not load: {Error}", exception.Describe());
+        }
     }
 
     /// <summary>Stop following the engine.</summary>
@@ -286,6 +325,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         connection.Outbox.RoomChanged -= OnOutboxChanged;
         connection.Crypto.VerificationChanged -= OnVerificationChanged;
         Call?.Dispose();
+        if (Player is not null) await Player.DisposeAsync();
         await stopping.CancelAsync();
         if (consuming is not null) await consuming.ContinueWith(_ => { }, TaskScheduler.Default);
         stopping.Dispose();
@@ -306,6 +346,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         ReplyingTo = null;
         Editing = null;
         openedRoomId = null;
+        if (Player is not null) _ = Player.StopAsync();
         if (value is null)
         {
             Messages.Items.Clear();
@@ -942,6 +983,7 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         openedRoomId = roomId;
         oldestLine = page.OldestLine;
         connection.Processor.Read(store => { if (store?.TryGetRoom(roomId, out Room? room) == true) { Messages.Reset(room, page.Events); RefreshTyping(room); } return 0; });
+        Player?.KeepIfShown(Messages.Items);
         await RefreshPendingAsync(roomId);
         LoadThumbnails();
 

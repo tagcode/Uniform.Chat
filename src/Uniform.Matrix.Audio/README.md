@@ -1,6 +1,6 @@
 # Uniform.Matrix.Audio
 
-Voice audio for Matrix calls: 20 ms voice frames from a microphone and to a speaker over [NAudio](https://github.com/naudio/NAudio), with ALSA on Linux and WASAPI on Windows, and Opus encoding and decoding with [Concentus](https://github.com/lostromb/concentus) in pure C#.
+Voice audio for Matrix calls: 20 ms voice frames from a microphone and to a speaker over [NAudio](https://github.com/naudio/NAudio), with ALSA on Linux and WASAPI on Windows, and Opus encoding and decoding with [Concentus](https://github.com/lostromb/concentus) in pure C#. Also playing audio files and messages: WAV, MP3, FLAC, Ogg Opus and Ogg Vorbis, all decoded in C#.
 
 ```bash
 dotnet add package Uniform.Matrix.Audio
@@ -24,4 +24,14 @@ VoiceEncoder encoder = new();
 VoiceDecoder decoder = new();
 byte[] packet = encoder.Encode(frame);
 short[] played = decoder.Decode(packet);
+```
+
+To play an audio file, such as a voice message:
+
+```csharp
+using Uniform.Matrix.Audio.Decoding;
+
+AudioClip clip = await AudioFile.DecodeFileAsync("voice.ogg");
+await using AudioClipPlayer player = new(devices.OpenMediaSpeaker);
+await player.PlayAsync(clip);
 ```

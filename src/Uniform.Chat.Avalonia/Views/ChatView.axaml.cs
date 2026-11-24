@@ -522,6 +522,13 @@ public partial class ChatView : UserControl
         if ((sender as Control)?.DataContext is MessageViewModel message) _ = OpenAttachmentAsync(message);
     }
 
+    /// <summary>Play, pause or resume the audio message of the button.</summary>
+    private void OnPlayClick(object? sender, RoutedEventArgs e)
+    {
+        // The button's message
+        if (model is not null && (sender as Control)?.DataContext is MessageViewModel message) _ = model.TogglePlayAsync(message);
+    }
+
     /// <summary>Open an image by tapping or clicking its preview: pressed and released on it, so a finger lifted over it after a press elsewhere, as when the tap on the room list opened the room under it, or after a scroll, does not open it.</summary>
     private void OnImageTapped(object? sender, TappedEventArgs e)
     {

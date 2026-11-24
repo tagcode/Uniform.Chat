@@ -156,6 +156,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>その他(_O)…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>再生(_Y)</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>終了(_Q)</value>
   </data>
@@ -191,6 +194,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>サインイン(_S)</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>停止(_T)</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>一致しない(_D)</value>
@@ -239,6 +245,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>マイクまたはスピーカーを開けません：{0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} を再生できません: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>表示名を変更しています</value>
@@ -1209,6 +1218,9 @@ F10             メニューを開く</value>
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>パスワードが一致しません。</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>再生中 {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>権限レベル</value>

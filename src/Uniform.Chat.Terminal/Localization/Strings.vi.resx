@@ -156,6 +156,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Khác…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>_Phát</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>Th_oát</value>
   </data>
@@ -191,6 +194,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>Đăng _nhập</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>_Dừng</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>Khôn_g khớp</value>
@@ -239,6 +245,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Không mở được micrô hoặc loa: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Không thể phát {0}: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Đang đổi tên hiển thị</value>
@@ -1209,6 +1218,9 @@ Mở cửa sổ mã hóa ngay? Cửa sổ này cũng có trong Tệp → Mã hó
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>Mật khẩu không giống nhau.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Đang phát {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Mức quyền</value>

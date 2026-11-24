@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Peruuta lähetys</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Tiedostoa {0} ei voi toistaa: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Muutokset tallentuvat heti.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat on vapaata ohjelmistoa MIT-lisenssillä. Se sisältää .NET-ajoympäristön ja muita kirjastoja, kukin omalla lisenssillään, joiden tekstit ovat alla.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Kuunneltu</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Tilien lataaminen</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Liittäminen epäonnistui: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Tauko</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Puhelimen oletus</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Puhelimen mikrofoni</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Toista</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Tietosuojaseloste</value>

@@ -38,6 +38,8 @@ Blocking someone hides their messages and invites from you, on all your devices;
 
 Images show a preview in the room; click it to open the image. Under a file or image, *Open* opens it in the app your system uses for its type, and *Save…* saves it where you choose. On Android, use *Save…*.
 
+Audio messages, such as Element's voice messages, and audio files play in the room: ▶ plays and ⏸ pauses, the slider moves through it, and the time shows where it is. A message you have played gets 🎧, which stays on this device. WAV, MP3, FLAC, Ogg Opus and Ogg Vorbis play here; other formats, such as M4A, keep *Open* and *Save…*. On a phone, audio plays at the media volume, through headphones when connected, else the loudspeaker. Opening another room stops it.
+
 ## Sharing from other apps
 
 On Android, Uniform Chat is in the share menu of other apps. Share a link from a browser, or a photo from the gallery, and choose *Uniform Chat*. The app opens and asks you to choose a room; *Cancel* stops sharing.

@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>بھیجنا منسوخ کریں</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} نہیں چلایا جا سکتا: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>تبدیلیاں فوراً محفوظ ہو جاتی ہیں۔</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat ایم آئی ٹی (MIT) لائسنس کے تحت مفت سافٹ ویئر ہے۔ اس میں .NET رن ٹائم اور دیگر لائبریریاں شامل ہیں، ہر ایک اپنے لائسنس کے تحت، جن کے متن نیچے ہیں۔</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>سنا گیا</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>اکاؤنٹس لوڈ ہو رہے ہیں</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>پیسٹ ناکام: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>وقفہ</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>فون کا ڈیفالٹ</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>فون کا مائیکروفون</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>چلائیں</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>رازداری کی پالیسی</value>

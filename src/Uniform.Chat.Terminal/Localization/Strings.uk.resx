@@ -183,6 +183,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Інше…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>В_ідтворити</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Закрити</value>
   </data>
@@ -218,6 +221,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Увійти</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>З_упинити</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>_Не збігаються</value>
@@ -266,6 +272,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Не вдається відкрити мікрофон або динамік: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Не вдається відтворити {0}: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Зміна відображуваного імені</value>
@@ -1281,6 +1290,9 @@ F10             відкрити меню</value>
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>Паролі не збігаються.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Відтворюється {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Рівень прав</value>

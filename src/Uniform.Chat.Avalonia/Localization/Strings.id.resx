@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Batalkan pengiriman</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Tidak dapat memutar {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Perubahan langsung disimpan.</value>
   </data>
@@ -545,6 +548,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat adalah perangkat lunak bebas dengan lisensi MIT. Aplikasi ini menyertakan runtime .NET dan pustaka lain, masing-masing dengan lisensinya sendiri, yang teksnya ada di bawah.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Sudah didengar</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Memuat akun</value>
   </data>
@@ -770,11 +776,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Penempelan gagal: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Jeda</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Bawaan ponsel</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Mikrofon ponsel</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Putar</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Kebijakan privasi</value>

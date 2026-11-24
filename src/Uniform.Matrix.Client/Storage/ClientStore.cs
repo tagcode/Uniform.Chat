@@ -80,6 +80,26 @@ public sealed class ClientStore
         return await db.Accounts.Select(a => a.RoomsJson).FirstOrDefaultAsync(cancellationToken);
     }
 
+    /// <summary>Remember that the audio message <paramref name="eventId"/> was played; once.</summary>
+    public async Task MarkListenedAsync(string eventId, CancellationToken cancellationToken = default)
+    {
+        // A row, unless there is one
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        if (await db.ListenedAudio.AnyAsync(l => l.EventId == eventId, cancellationToken)) return;
+        db.ListenedAudio.Add(new ListenedAudio { EventId = eventId, ListenedAt = time.GetUtcNow() });
+        // Done
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>Return the event IDs of the audio messages played.</summary>
+    public async Task<IReadOnlySet<string>> LoadListenedAsync(CancellationToken cancellationToken = default)
+    {
+        // All of them; a few per day at most
+        await using ClientDbContext db = await contexts.CreateDbContextAsync(cancellationToken);
+        // Return IDs
+        return (await db.ListenedAudio.Select(l => l.EventId).ToListAsync(cancellationToken)).ToHashSet();
+    }
+
     /// <summary>Forget the access token, e.g. after the server rejected it; history is kept.</summary>
     public async Task ClearAccessTokenAsync(CancellationToken cancellationToken = default)
     {

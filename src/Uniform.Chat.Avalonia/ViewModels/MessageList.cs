@@ -3,6 +3,7 @@ namespace Uniform.Chat.Avalonia.ViewModels;
 using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using Uniform.Matrix.Audio.Decoding;
 using Uniform.Matrix.Client.Formatting;
 using Uniform.Matrix.Client.State;
 using Uniform.Matrix.Client.Storage;
@@ -26,6 +27,12 @@ public sealed class MessageList
 
     /// <summary>Return whether the user has blocked, i.e. ignores, a sender, whose messages are then not shown; null shows all.</summary>
     public Func<string, bool>? IsBlocked { get; init; }
+
+    /// <summary>Return whether the user has played the audio message of an event ID; null for none played.</summary>
+    public Func<string, bool>? IsListened { get; init; }
+
+    /// <summary>Whether audio messages can be played here, so they show a player.</summary>
+    public bool PlaysAudio { get; init; }
 
     /// <summary>Items in time order, unsent messages last.</summary>
     public ObservableCollection<MessageViewModel> Items { get; } = [];
@@ -160,6 +167,7 @@ public sealed class MessageList
         if (kind == MessageKind.Attachment) text = $"{content.Filename ?? text}{(content.Info?.Size is long size ? $" · {EventText.FormatSize(size)}" : "")}";
         bool mentioned = !own && (content.Mentions?.UserIds?.Contains(ownUserId) == true || content.Mentions?.Room == true);
         string? image = content.MessageType == MessageTypes.Image && MxcUri.TryParse(content.MediaUrl, out _) ? content.MediaUrl : null;
+        bool playable = PlaysAudio && content.MessageType is MessageTypes.Audio or MessageTypes.File && content.MediaUrl is not null && AudioFile.IsPlayable(content.Info?.Mimetype, content.Filename ?? content.Body);
         // Return message
         return new MessageViewModel
         {
@@ -180,6 +188,9 @@ public sealed class MessageList
             Event = clientEvent,
             Source = SourceOf(content),
             IsEdited = content.RelatesTo?.RelType == RelationTypes.Replace,
+            IsPlayable = playable,
+            IsListened = playable && IsListened?.Invoke(clientEvent.EventId!) == true,
+            PlayLength = playable && content.Info?.Duration is long duration ? duration / 1000.0 : 0,
         };
     }
 

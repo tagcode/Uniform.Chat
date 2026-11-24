@@ -15,6 +15,9 @@ public sealed class AndroidAudioDevices(Context context, AudioChoice choice) : I
     /// <summary>Open the chosen speaker.</summary>
     public IWavePlayer OpenSpeaker() => new AndroidSpeaker(context, choice.Speaker);
 
+    /// <summary>Open the media stream, which plays to headphones or the loudspeaker at the media volume.</summary>
+    public IWavePlayer OpenMediaSpeaker() => new AndroidSpeaker(context, null, media: true);
+
     /// <summary>Return the microphones: the phone's, then attached headsets'.</summary>
     public IReadOnlyList<AudioDevice> ListMicrophones() => AudioRoutes.Microphones(context);
 

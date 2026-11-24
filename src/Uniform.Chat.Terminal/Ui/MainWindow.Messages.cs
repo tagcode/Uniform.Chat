@@ -41,7 +41,7 @@ public sealed partial class MainWindow
         logger.LogDebug("Selected message {EventId}, log focused: {Focused}", timeline.SelectedEntry?.EventId, timeline.HasFocus);
     }
 
-    /// <summary>Show actions for the selected message: reply, react, edit, delete, save attachment, report, block the sender.</summary>
+    /// <summary>Show actions for the selected message: reply, react, edit, delete, play audio, save attachment, report, block the sender.</summary>
     private void ShowMessageActions()
     {
         // Assert selected event of the open room
@@ -59,6 +59,7 @@ public sealed partial class MainWindow
         if (message) actions.Add((Strings.ButtonReact, () => React(roomId, ev)));
         if (message && own && !attachment) actions.Add((Strings.ButtonEdit, () => StartEdit(ev)));
         if (attachment && content!.MessageType == MessageTypes.Image) actions.Add((Strings.ButtonViewImage, () => _ = ViewImageAsync(content)));
+        if (attachment && IsPlayable(content) && ev.EventId is string audioId) actions.Add(PlayAction(content!, audioId));
         if (attachment) actions.Add((Strings.ButtonSaveFile, () => _ = SaveAttachmentAsync(content!)));
         if (links.Count > 0) actions.Add((Strings.ButtonOpenLink, () => OpenLink(links)));
         if (own && ev.Unsigned?.RedactedBecause is null) actions.Add((Strings.ButtonDelete, () => DeleteMessage(roomId, ev)));

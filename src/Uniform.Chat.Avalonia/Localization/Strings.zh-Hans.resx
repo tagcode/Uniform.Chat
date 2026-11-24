@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>取消发送</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>无法播放 {0}：{1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>更改会立即保存。</value>
   </data>
@@ -545,6 +548,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat 是基于 MIT 许可证的自由软件。它包含 .NET 运行时和其他库，各自遵循自己的许可证，许可证文本如下。</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>已收听</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>正在加载账户</value>
   </data>
@@ -770,11 +776,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>粘贴失败：{0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>暂停</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>手机默认</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>手机麦克风</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>播放</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>隐私政策</value>

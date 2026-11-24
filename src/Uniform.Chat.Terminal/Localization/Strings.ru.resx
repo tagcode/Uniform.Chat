@@ -183,6 +183,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Другое…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>_Воспроизвести</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Закрыть</value>
   </data>
@@ -218,6 +221,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Войти</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>Ос_тановить</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>_Не совпадают</value>
@@ -266,6 +272,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Не удаётся открыть микрофон или динамик: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Не удаётся воспроизвести {0}: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Смена отображаемого имени</value>
@@ -1281,6 +1290,9 @@ F10             открыть меню</value>
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>Пароли не совпадают.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Воспроизводится {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Уровень прав</value>

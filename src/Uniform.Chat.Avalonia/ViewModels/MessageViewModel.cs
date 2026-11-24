@@ -136,4 +136,67 @@ public sealed partial class MessageViewModel : ViewModelBase
 
     /// <summary>Reaction keys and their senders, aggregated into <see cref="Reactions"/>.</summary>
     internal Dictionary<string, HashSet<string>> ReactionSenders { get; } = [];
+
+    /// <summary>Whether it is an audio file to play here, as voice messages are.</summary>
+    public bool IsPlayable { get; init; }
+
+    /// <summary>Whether the user has played it.</summary>
+    [ObservableProperty]
+    public partial bool IsListened { get; set; }
+
+    /// <summary>Whether it plays now.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PlayGlyph), nameof(PlayTip))]
+    public partial bool IsPlaying { get; set; }
+
+    /// <summary>Whether it is being downloaded and decoded before playing.</summary>
+    [ObservableProperty]
+    public partial bool IsLoadingAudio { get; set; }
+
+    /// <summary>The position played, in seconds; the user moves it to seek.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PlayTimeText))]
+    public partial double PlayPosition { get; set; }
+
+    /// <summary>The length in seconds: from the message until played, then exact; 0 when unknown.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PlayTimeText), nameof(PlayMaximum))]
+    public partial double PlayLength { get; set; }
+
+    /// <summary>The slider's end: the length, or 1 while unknown.</summary>
+    public double PlayMaximum => PlayLength > 0 ? PlayLength : 1;
+
+    /// <summary>The button's glyph: play or pause.</summary>
+    public string PlayGlyph => IsPlaying ? "⏸" : "▶";
+
+    /// <summary>The button's tip.</summary>
+    public string PlayTip => IsPlaying ? Localization.Strings.Pause : Localization.Strings.Play;
+
+    /// <summary>Position and length, e.g. <c>0:12 / 1:03</c>; the length only before playing.</summary>
+    public string PlayTimeText => PlayPosition > 0 || IsPlaying ? $"{Clock(PlayPosition)} / {Clock(PlayLength)}" : PlayLength > 0 ? Clock(PlayLength) : "";
+
+    /// <summary>Called when the user moves <see cref="PlayPosition"/>, to seek; set by the player while it plays this message.</summary>
+    internal Action<MessageViewModel, double>? Seeked { get; set; }
+
+    /// <summary>Whether the player sets <see cref="PlayPosition"/> now, rather than the user.</summary>
+    private bool settingPosition;
+
+    /// <summary>Set the position as played, without seeking.</summary>
+    internal void ShowPosition(double seconds)
+    {
+        // Not a seek
+        settingPosition = true;
+        try { PlayPosition = seconds; }
+        finally { settingPosition = false; }
+    }
+
+    /// <summary>Seek when the user moves the position.</summary>
+    partial void OnPlayPositionChanged(double value)
+    {
+        // The user's moves only
+        if (!settingPosition) Seeked?.Invoke(this, value);
+    }
+
+    /// <summary>Return seconds as <c>m:ss</c>.</summary>
+    private static string Clock(double seconds) => TimeSpan.FromSeconds(Math.Max(0, Math.Round(seconds))).ToString(seconds >= 3600 ? @"h\:mm\:ss" : @"m\:ss");
 }

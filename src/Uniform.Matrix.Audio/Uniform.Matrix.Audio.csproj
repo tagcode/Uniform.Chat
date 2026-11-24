@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Voice audio for Matrix calls: Opus encoding and decoding, 20 ms voice frames from a microphone and to a speaker over NAudio, with ALSA on Linux and WASAPI on Windows.</Description>
-    <PackageTags>matrix;audio;opus;voice;calls;naudio</PackageTags>
+    <Description>Audio for Matrix clients: voice for calls, with Opus encoding and decoding and 20 ms voice frames from a microphone and to a speaker over NAudio, with ALSA on Linux and WASAPI on Windows; and playing audio messages and files of WAV, MP3, FLAC, Ogg Opus and Ogg Vorbis.</Description>
+    <PackageTags>matrix;audio;opus;voice;calls;naudio;mp3;flac;vorbis;player</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
@@ -31,6 +31,7 @@
     <PackageReference Include="NAudio.Core" Version="3.3.0" />
     <PackageReference Include="NAudio.Alsa" Version="3.3.0" />
     <PackageReference Include="NAudio.Wasapi" Version="3.3.0" />
+    <PackageReference Include="NVorbis" Version="0.10.5" />
   </ItemGroup>
 
   <ItemGroup>

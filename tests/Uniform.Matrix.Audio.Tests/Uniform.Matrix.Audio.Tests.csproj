@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\src\Uniform.Matrix.Audio\Uniform.Matrix.Audio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Resources\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

@@ -10,6 +10,10 @@ Room → Send file (or `/upload`) opens a file browser; the file is uploaded and
 
 Attachments show as `[image: cat.png, 120 KB]`. The Save file action asks where to save, starting with a free name in your downloads folder; give a file, or a folder to save into. The folder is `Ui:DownloadDirectory`, or `~/Downloads` when it is unset; with `Ui:AskWhereToSave` off, files are saved there without asking.
 
+## Audio
+
+Audio messages, such as Element's voice messages, and audio files play from the message's actions: select the message (Ctrl+Up, then Enter) and choose Play. The status line shows `Playing voice.ogg  0:12 / 1:03`; the same action on that message is Stop. WAV, MP3, FLAC, Ogg Opus and Ogg Vorbis play here, on the speaker of `Audio:Speaker`; other formats, such as M4A, can be saved.
+
 ## Images
 
 Images in the log get a preview under the message, drawn with shade blocks:

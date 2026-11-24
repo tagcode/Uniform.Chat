@@ -165,6 +165,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Annat…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>S_pela upp</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Avsluta</value>
   </data>
@@ -200,6 +203,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Logga in</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>Sl_uta spela</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>De stämmer _inte</value>
@@ -248,6 +254,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Kan inte öppna mikrofonen eller högtalaren: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Kan inte spela upp {0}: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Byter visningsnamn</value>
@@ -1233,6 +1242,9 @@ Använd din återställningsnyckel, eller återställ din identitet på en enhet
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>Lösenorden skiljer sig.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Spelar {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Behörighetsnivå</value>

@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>送信をキャンセル</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} を再生できません: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>変更はすぐに保存されます。</value>
   </data>
@@ -545,6 +548,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat は MIT ライセンスのフリーソフトウェアです。.NET ランタイムとその他のライブラリを含み、それぞれ独自のライセンスに従います。その本文を以下に示します。</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>再生済み</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>アカウントを読み込んでいます</value>
   </data>
@@ -770,11 +776,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>貼り付けに失敗しました：{0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>スマートフォンの既定</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>スマートフォンのマイク</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>再生</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>プライバシーポリシー</value>

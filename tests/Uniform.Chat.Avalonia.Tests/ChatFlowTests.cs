@@ -37,7 +37,7 @@ public class ChatFlowTests
     }
 
     /// <summary>Render the app in a window and check that it draws; save the frame to <c>UNIFORM_MATRIX_SCREENSHOTS</c> when set.</summary>
-    private static async Task CaptureAsync(MainViewModel model, string fileName, double width = 1000, double height = 680)
+    internal static async Task CaptureAsync(MainViewModel model, string fileName, double width = 1000, double height = 680)
     {
         // Show, let layout and rendering run, then capture
         Window window = new() { Width = width, Height = height, Content = new MainView { DataContext = model } };

@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Avbryt sändningen</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Kan inte spela upp {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Ändringar sparas direkt.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat är fri programvara under MIT-licensen. Den innehåller .NET-körmiljön och andra bibliotek, var och ett under sin egen licens, vars texter följer.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Lyssnad</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Läser in konton</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Inklistringen misslyckades: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pausa</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Telefonens standard</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Telefonens mikrofon</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Spela upp</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Integritetspolicy</value>

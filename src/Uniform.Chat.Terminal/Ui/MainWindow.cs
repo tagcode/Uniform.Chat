@@ -35,6 +35,7 @@ using Uniform.Chat.Terminal.Localization;
 /// <item><description>MainWindow.Admin.cs: room administration: name, avatar, kick, ban and power levels.</description></item>
 /// <item><description>MainWindow.Tools.cs: settings and log windows.</description></item>
 /// <item><description>MainWindow.Calls.cs: voice calls.</description></item>
+/// <item><description>MainWindow.Audio.cs: playing audio messages.</description></item>
 /// <item><description>MainWindow.Moderation.cs: reporting, blocking users and deleting the account.</description></item>
 /// <item><description>MainWindow.Server.cs: server administration for server admins: accounts, registration tokens, reports, rooms and notices.</description></item>
 /// </list>

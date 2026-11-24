@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Anulează trimiterea</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} nu poate fi redat: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Modificările se salvează imediat.</value>
   </data>
@@ -569,6 +572,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat este software liber sub licența MIT. Include runtime-ul .NET și alte biblioteci, fiecare sub propria licență, ale căror texte urmează.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Ascultat</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Se încarcă conturile</value>
   </data>
@@ -800,11 +806,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Lipirea a eșuat: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pauză</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Implicit telefon</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Microfonul telefonului</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Redă</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Politica de confidențialitate</value>

@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Küldés megszakítása</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} nem játszható le: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>A módosítások azonnal mentődnek.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>A Uniform Chat MIT-licencű szabad szoftver. Tartalmazza a .NET futtatókörnyezetet és más könyvtárakat, mindegyiket a saját licencével; ezek szövege alább olvasható.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Meghallgatva</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Fiókok betöltése</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>A beillesztés sikertelen: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Szünet</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Telefon alapértelmezése</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Telefon mikrofonja</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Lejátszás</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Adatvédelmi irányelvek</value>

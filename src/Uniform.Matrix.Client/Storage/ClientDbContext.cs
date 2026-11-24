@@ -19,6 +19,8 @@ public sealed class ClientDbContext : DbContext
     public DbSet<OutboxMessage> Outbox => Set<OutboxMessage>();
     /// <summary>Downloaded media.</summary>
     public DbSet<StoredMedia> Media => Set<StoredMedia>();
+    /// <summary>Audio messages the user has played.</summary>
+    public DbSet<ListenedAudio> ListenedAudio => Set<ListenedAudio>();
     /// <summary>Encryption account of this device.</summary>
     public DbSet<CryptoAccountRow> CryptoAccount => Set<CryptoAccountRow>();
     /// <summary>Olm sessions.</summary>
@@ -45,6 +47,7 @@ public sealed class ClientDbContext : DbContext
         modelBuilder.Entity<CryptoValueRow>().HasKey(v => v.Name);
         modelBuilder.Entity<StoredEvent>().HasKey(e => e.EventId);
         modelBuilder.Entity<StoredMedia>().HasKey(m => m.MxcUri);
+        modelBuilder.Entity<ListenedAudio>().HasKey(l => l.EventId);
 
         // History is read per room in time order
         modelBuilder.Entity<StoredEvent>().HasIndex(e => new { e.RoomId, e.OriginServerTs });
@@ -63,6 +66,7 @@ public sealed class ClientDbContext : DbContext
         modelBuilder.Entity<OutboxMessage>().Property(m => m.CreatedAt).HasConversion(v => v.UtcTicks, v => new DateTimeOffset(v, TimeSpan.Zero));
         modelBuilder.Entity<OutboxMessage>().Property(m => m.SentAt).HasConversion(v => v.HasValue ? v.Value.UtcTicks : (long?)null, v => v.HasValue ? new DateTimeOffset(v.Value, TimeSpan.Zero) : null);
         modelBuilder.Entity<StoredMedia>().Property(m => m.DownloadedAt).HasConversion(v => v.UtcTicks, v => new DateTimeOffset(v, TimeSpan.Zero));
+        modelBuilder.Entity<ListenedAudio>().Property(l => l.ListenedAt).HasConversion(v => v.UtcTicks, v => new DateTimeOffset(v, TimeSpan.Zero));
     }
 }
 

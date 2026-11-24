@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Annuller afsendelse</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Kan ikke afspille {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Ændringer gemmes med det samme.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat er fri software under MIT-licensen. Den indeholder .NET-runtime og andre biblioteker, hver under sin egen licens, hvis tekster følger.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Lyttet</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Indlæser konti</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Indsættelse mislykkedes: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Telefonens standard</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Telefonens mikrofon</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Afspil</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privatlivspolitik</value>

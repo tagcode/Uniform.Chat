@@ -165,6 +165,10 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Other…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>Pla_y</value>
+    <comment>Message action: play an audio message; keep a hotkey unique among the message actions</comment>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Quit</value>
   </data>
@@ -200,6 +204,10 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Sign in</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>S_top</value>
+    <comment>Message action: stop the audio message playing; keep a hotkey unique among the message actions</comment>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>They _don't match</value>
@@ -248,6 +256,10 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Cannot open the microphone or speaker: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Cannot play {0}: {1}</value>
+    <comment>{0} file name, {1} why</comment>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Changing display name</value>
@@ -1233,6 +1245,10 @@ Open the encryption window now? It is also in File → Encryption, and /encrypti
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>The passwords differ.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Playing {0}  {1} / {2}</value>
+    <comment>Status line while an audio message plays: {0} file name, {1} position, {2} length, e.g. 0:12 / 1:03</comment>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Power level</value>

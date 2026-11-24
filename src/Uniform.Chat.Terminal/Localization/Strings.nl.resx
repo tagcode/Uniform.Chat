@@ -165,6 +165,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Overig…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>_Afspelen</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Afsluiten</value>
   </data>
@@ -200,6 +203,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Inloggen</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>_Stoppen</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>Ze komen _niet overeen</value>
@@ -248,6 +254,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Kan de microfoon of luidspreker niet openen: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Kan {0} niet afspelen: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Weergavenaam wijzigen</value>
@@ -1233,6 +1242,9 @@ Het versleutelingsvenster nu openen? Het staat ook onder Bestand → Versleuteli
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>De wachtwoorden verschillen.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Speelt {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Machtsniveau</value>

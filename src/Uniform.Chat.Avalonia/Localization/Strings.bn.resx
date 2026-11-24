@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>পাঠানো বাতিল করুন</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} চালানো যাচ্ছে না: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>পরিবর্তন সঙ্গে সঙ্গে সংরক্ষিত হয়।</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat হল MIT লাইসেন্সের অধীনে মুক্ত সফটওয়্যার। এতে .NET রানটাইম ও অন্যান্য লাইব্রেরি আছে, প্রতিটি নিজ নিজ লাইসেন্সের অধীনে, যার পাঠ নিচে দেওয়া হল।</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>শোনা হয়েছে</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>অ্যাকাউন্ট লোড হচ্ছে</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>পেস্ট ব্যর্থ: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>বিরতি</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>ফোনের ডিফল্ট</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>ফোনের মাইক্রোফোন</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>চালান</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>গোপনীয়তা নীতি</value>

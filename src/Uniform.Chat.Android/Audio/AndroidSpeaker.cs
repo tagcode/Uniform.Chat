@@ -5,13 +5,14 @@ using global::Android.Media;
 using NAudio.Wave;
 using Uniform.Matrix.Audio;
 
-/// <summary>The phone's earpiece, loudspeaker or an attached speaker through <see cref="AudioTrack"/>, as an NAudio <see cref="IWavePlayer"/> playing the voice format as call audio.</summary>
-/// <remarks>Plays in <see cref="CommunicationMode"/>, so call audio goes to the earpiece and the phone's echo cancellation hears it. A chosen device that can take calls, such as the loudspeaker or a Bluetooth headset, becomes the communication device; one connected for music only, such as many Bluetooth speakers, gets the audio as media instead.</remarks>
+/// <summary>The phone's earpiece, loudspeaker or an attached speaker through <see cref="AudioTrack"/>, as an NAudio <see cref="IWavePlayer"/>: the voice format as call audio, or <see cref="AudioClipPlayer.OutputFormat"/> as media.</summary>
+/// <remarks>Call audio plays in <see cref="CommunicationMode"/>, so it goes to the earpiece and the phone's echo cancellation hears it. A chosen device that can take calls, such as the loudspeaker or a Bluetooth headset, becomes the communication device; one connected for music only, such as many Bluetooth speakers, gets the audio as media instead. Media, such as audio messages, plays on the media stream, where the phone routes it to headphones or the loudspeaker at the media volume.</remarks>
 /// <param name="context">Context for the audio service.</param>
-/// <param name="speaker">The chosen output's name from <see cref="AudioRoutes.Speakers"/>; null for the phone's default, the earpiece or a headset for calls.</param>
-public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlayer
+/// <param name="speaker">The chosen output's name from <see cref="AudioRoutes.Speakers"/>; null for the phone's default, the earpiece or a headset for calls. Unused for media.</param>
+/// <param name="media">Whether it plays media in stereo, rather than call audio.</param>
+public sealed class AndroidSpeaker(Context context, string? speaker, bool media = false) : IWavePlayer
 {
-    private const int ChunkBytes = VoiceFormat.FrameSamples * 2;
+    private readonly int chunkBytes = (media ? AudioClipPlayer.OutputFormat.Channels : 1) * VoiceFormat.FrameSamples * 2;
     private readonly AudioManager? audio = context.GetSystemService(Context.AudioService) as AudioManager;
     private IWaveProvider? source;
     private AudioTrack? track;
@@ -25,16 +26,17 @@ public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlay
     public float Volume { get; set; } = 1;
 
     /// <summary>The voice format.</summary>
-    public WaveFormat OutputWaveFormat => VoiceFormat.WaveFormat;
+    public WaveFormat OutputWaveFormat => media ? AudioClipPlayer.OutputFormat : VoiceFormat.WaveFormat;
 
     /// <summary>Raised when playing ends, with the error that ended it, if any.</summary>
     public event EventHandler<StoppedEventArgs>? PlaybackStopped;
 
-    /// <summary>Play from <paramref name="waveProvider"/>, which must give the voice format.</summary>
+    /// <summary>Play from <paramref name="waveProvider"/>, which must give <see cref="OutputWaveFormat"/>.</summary>
     public void Init(IWaveProvider waveProvider)
     {
-        // Assert the voice format
-        if (waveProvider.WaveFormat.SampleRate != VoiceFormat.SampleRate || waveProvider.WaveFormat.Channels != 1 || waveProvider.WaveFormat.BitsPerSample != 16) throw new ArgumentException("The speaker plays 48 kHz mono 16-bit.", nameof(waveProvider));
+        // Assert the format
+        WaveFormat expected = OutputWaveFormat;
+        if (waveProvider.WaveFormat.SampleRate != expected.SampleRate || waveProvider.WaveFormat.Channels != expected.Channels || waveProvider.WaveFormat.BitsPerSample != 16) throw new ArgumentException($"The speaker plays {expected.SampleRate} Hz, {expected.Channels} channels, 16-bit.", nameof(waveProvider));
         source = waveProvider;
     }
 
@@ -44,16 +46,23 @@ public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlay
         // Assert a source, not already playing
         if (source is null) throw new InvalidOperationException("Init first.");
         if (playing) return;
-        CommunicationMode.Enter(context);
-        AudioDeviceInfo? media = Route();
-        AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(media is null ? AudioUsageKind.VoiceCommunication : AudioUsageKind.Media)!.SetContentType(AudioContentType.Speech)!.Build()!;
-        AudioFormat format = new AudioFormat.Builder().SetEncoding(Encoding.Pcm16bit)!.SetSampleRate(VoiceFormat.SampleRate)!.SetChannelMask(ChannelOut.Mono)!.Build()!;
-        int minimum = AudioTrack.GetMinBufferSize(VoiceFormat.SampleRate, ChannelOut.Mono, Encoding.Pcm16bit);
-        AudioTrack.Builder builder = new AudioTrack.Builder().SetAudioAttributes(attributes)!.SetAudioFormat(format)!.SetTransferMode(AudioTrackMode.Stream)!.SetBufferSizeInBytes(Math.Max(minimum, ChunkBytes * 2))!;
-        if (OperatingSystem.IsAndroidVersionAtLeast(26)) builder.SetPerformanceMode(AudioTrackPerformanceMode.LowLatency);
+        // Call audio in communication mode, routed; media as it is
+        AudioDeviceInfo? musicOnly = null;
+        if (!media)
+        {
+            CommunicationMode.Enter(context);
+            musicOnly = Route();
+        }
+        AudioUsageKind usage = media || musicOnly is not null ? AudioUsageKind.Media : AudioUsageKind.VoiceCommunication;
+        AudioAttributes attributes = new AudioAttributes.Builder().SetUsage(usage)!.SetContentType(media ? AudioContentType.Music : AudioContentType.Speech)!.Build()!;
+        ChannelOut channels = media ? ChannelOut.Stereo : ChannelOut.Mono;
+        AudioFormat format = new AudioFormat.Builder().SetEncoding(Encoding.Pcm16bit)!.SetSampleRate(VoiceFormat.SampleRate)!.SetChannelMask(channels)!.Build()!;
+        int minimum = AudioTrack.GetMinBufferSize(VoiceFormat.SampleRate, channels, Encoding.Pcm16bit);
+        AudioTrack.Builder builder = new AudioTrack.Builder().SetAudioAttributes(attributes)!.SetAudioFormat(format)!.SetTransferMode(AudioTrackMode.Stream)!.SetBufferSizeInBytes(Math.Max(minimum, chunkBytes * 2))!;
+        if (OperatingSystem.IsAndroidVersionAtLeast(26) && !media) builder.SetPerformanceMode(AudioTrackPerformanceMode.LowLatency);
         track = builder.Build()!;
         track.SetVolume(Volume);
-        if (media is not null) track.SetPreferredDevice(media);
+        if (musicOnly is not null) track.SetPreferredDevice(musicOnly);
 
         // Write until stopped
         playing = true;
@@ -93,7 +102,7 @@ public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlay
         Exception? error = null;
         try
         {
-            byte[] buffer = new byte[ChunkBytes];
+            byte[] buffer = new byte[chunkBytes];
             while (playing && track is AudioTrack current && source is IWaveProvider provider)
             {
                 int read = provider.Read(buffer.AsSpan());
@@ -109,7 +118,7 @@ public sealed class AndroidSpeaker(Context context, string? speaker) : IWavePlay
         finally
         {
             track?.Stop();
-            CommunicationMode.Exit(context);
+            if (!media) CommunicationMode.Exit(context);
             playing = false;
             PlaybackState = PlaybackState.Stopped;
         }

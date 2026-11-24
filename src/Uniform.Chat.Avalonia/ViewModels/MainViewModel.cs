@@ -3,6 +3,7 @@ namespace Uniform.Chat.Avalonia.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Uniform.Chat.Avalonia.Services;
+using Uniform.Matrix.Audio;
 using Uniform.Matrix.Protocol.Core;
 
 /// <summary>The app's current page: the sign-in form, resuming, or the chat screen; it owns the running connection.</summary>
@@ -115,7 +116,8 @@ public sealed partial class MainViewModel : ViewModelBase
         connection = started;
         Settings.LogPath = started.LogPath;
         CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf, () => Settings.NotifyCalls, Settings);
-        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call);
+        Func<NAudio.Wave.IWavePlayer>? openMediaSpeaker = platform.Audio is { } audio ? () => audio(AudioChoice.Default).OpenMediaSpeaker() : null;
+        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call, openMediaSpeaker);
         chat.Start();
         if (platform.Push is IPushService push)
         {

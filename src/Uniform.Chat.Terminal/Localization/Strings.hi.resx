@@ -165,6 +165,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>अन्य(_O)…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>चलाएँ(_Y)</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>बाहर निकलें(_Q)</value>
   </data>
@@ -200,6 +203,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>साइन इन करें(_S)</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>रोकें(_T)</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>मेल नहीं खाते(_D)</value>
@@ -248,6 +254,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>माइक्रोफ़ोन या स्पीकर नहीं खुल सकता: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} चलाया नहीं जा सकता: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>प्रदर्शन नाम बदला जा रहा है</value>
@@ -1233,6 +1242,9 @@ F10             मेनू खोलें</value>
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>पासवर्ड अलग हैं।</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>चल रहा है {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>अधिकार स्तर</value>

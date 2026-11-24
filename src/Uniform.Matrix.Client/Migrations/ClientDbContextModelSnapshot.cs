@@ -151,6 +151,19 @@ namespace Uniform.Matrix.Client.Migrations
                     b.ToTable("CryptoValues");
                 });
 
+            modelBuilder.Entity("Uniform.Matrix.Client.Storage.ListenedAudio", b =>
+                {
+                    b.Property<string>("EventId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ListenedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("ListenedAudio");
+                });
+
             modelBuilder.Entity("Uniform.Matrix.Client.Storage.OutboxMessage", b =>
                 {
                     b.Property<long>("Id")

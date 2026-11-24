@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Senden abbrechen</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} kann nicht abgespielt werden: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Änderungen werden sofort gespeichert.</value>
   </data>
@@ -557,6 +560,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat ist freie Software unter der MIT-Lizenz. Es enthält die .NET-Laufzeit und weitere Bibliotheken, jeweils unter eigener Lizenz, deren Texte folgen.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Angehört</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Konten werden geladen</value>
   </data>
@@ -785,11 +791,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Einfügen fehlgeschlagen: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Telefonstandard</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Telefonmikrofon</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Abspielen</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Datenschutzerklärung</value>

@@ -165,6 +165,9 @@ https://spec.matrix.org</value>
   <data name="ButtonOther" xml:space="preserve">
     <value>_Andere…</value>
   </data>
+  <data name="ButtonPlay" xml:space="preserve">
+    <value>Abs_pielen</value>
+  </data>
   <data name="ButtonQuit" xml:space="preserve">
     <value>_Beenden</value>
   </data>
@@ -200,6 +203,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="ButtonSignIn" xml:space="preserve">
     <value>_Anmelden</value>
+  </data>
+  <data name="ButtonStopPlaying" xml:space="preserve">
+    <value>S_topp</value>
   </data>
   <data name="ButtonTheyDontMatch" xml:space="preserve">
     <value>Sie stimmen _nicht überein</value>
@@ -248,6 +254,9 @@ https://spec.matrix.org</value>
   </data>
   <data name="CannotOpenAudio" xml:space="preserve">
     <value>Mikrofon oder Lautsprecher kann nicht geöffnet werden: {0}</value>
+  </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>{0} kann nicht abgespielt werden: {1}</value>
   </data>
   <data name="ChangingDisplayName" xml:space="preserve">
     <value>Anzeigename wird geändert</value>
@@ -1233,6 +1242,9 @@ Das Verschlüsselungsfenster jetzt öffnen? Es ist auch unter Datei → Verschl�
   </data>
   <data name="PasswordsDiffer" xml:space="preserve">
     <value>Die Passwörter stimmen nicht überein.</value>
+  </data>
+  <data name="PlayingStatus" xml:space="preserve">
+    <value>Spielt {0}  {1} / {2}</value>
   </data>
   <data name="PowerLevel" xml:space="preserve">
     <value>Berechtigungsstufe</value>

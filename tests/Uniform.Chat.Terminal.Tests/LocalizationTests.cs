@@ -23,7 +23,7 @@ public class LocalizationTests
         ["MenuAccounts", "MenuRegistrationTokens", "MenuReports", "MenuServerRooms", "MenuServerNotice", "MenuWhois"],
         ["MenuCommandsAndKeys", "MenuAbout"],
         ["ButtonQuit", "ButtonCreateAccount", "ButtonSignIn"],
-        ["ButtonReply", "ButtonReact", "ButtonEdit", "ButtonViewImage", "ButtonSaveFile", "ButtonOpenLink", "ButtonDelete", "ButtonReport", "ButtonBlockSender", "ButtonClose"],
+        ["ButtonReply", "ButtonReact", "ButtonEdit", "ButtonViewImage", "ButtonPlay", "ButtonStopPlaying", "ButtonSaveFile", "ButtonOpenLink", "ButtonDelete", "ButtonReport", "ButtonBlockSender", "ButtonClose"],
         ["ButtonClose", "ButtonRename", "ButtonLogOutDevice", "ButtonLogOutOthers", "ButtonVerifySelected"],
         ["ButtonClose", "ButtonSetUpRecovery", "ButtonRecover", "ButtonVerifyDevice"],
         ["ButtonTheyMatch", "ButtonTheyDontMatch", "ButtonCancel"],

@@ -20,6 +20,9 @@ public interface IAudioDevices
     /// <summary>Open the speaker, not yet initialized.</summary>
     IWavePlayer OpenSpeaker();
 
+    /// <summary>Open a speaker for media, such as audio messages, taking <see cref="AudioClipPlayer.OutputFormat"/>; the speaker of calls by default, while a phone plays media on its media stream rather than the earpiece.</summary>
+    IWavePlayer OpenMediaSpeaker() => OpenSpeaker();
+
     /// <summary>Return the microphones there are.</summary>
     IReadOnlyList<AudioDevice> ListMicrophones();
 
@@ -154,13 +157,13 @@ internal sealed class MixFormatSpeaker(IWavePlayer speaker, WaveFormat mix) : IW
         remove => speaker.PlaybackStopped -= value;
     }
 
-    /// <summary>Play <paramref name="waveProvider"/> resampled, and spread over the device's channels.</summary>
+    /// <summary>Play <paramref name="waveProvider"/> resampled, and spread over the device's channels: mono to all, stereo to the first two.</summary>
     public void Init(IWaveProvider waveProvider)
     {
         // Rate, then channels
         ISampleProvider samples = waveProvider.ToSampleProvider();
         if (samples.WaveFormat.SampleRate != mix.SampleRate) samples = new WdlResamplingSampleProvider(samples, mix.SampleRate);
-        if (samples.WaveFormat.Channels == 1 && mix.Channels > 1) samples = new SpreadSampleProvider(samples, mix.Channels);
+        if (samples.WaveFormat.Channels < mix.Channels) samples = new SpreadSampleProvider(samples, mix.Channels);
         // Done
         speaker.Init(new SampleToWaveProvider(samples));
     }
@@ -177,22 +180,33 @@ internal sealed class MixFormatSpeaker(IWavePlayer speaker, WaveFormat mix) : IW
     /// <summary>Close the device.</summary>
     public void Dispose() => speaker.Dispose();
 
-    /// <summary>Mono samples copied to every channel.</summary>
-    private sealed class SpreadSampleProvider(ISampleProvider mono, int channels) : ISampleProvider
+    /// <summary>Samples of fewer channels over more: mono copied to every channel, more than one channel to the first ones, the rest silent.</summary>
+    private sealed class SpreadSampleProvider(ISampleProvider source, int channels) : ISampleProvider
     {
+        private readonly int sourceChannels = source.WaveFormat.Channels;
         private float[] buffer = [];
 
-        /// <summary>The mono source's rate over the channels.</summary>
-        public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(mono.WaveFormat.SampleRate, channels);
+        /// <summary>The source's rate over the channels.</summary>
+        public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(source.WaveFormat.SampleRate, channels);
 
         /// <summary>Read whole frames of all channels.</summary>
         public int Read(Span<float> destination)
         {
-            // Mono samples for the frames that fit
+            // Source frames that fit
             int frames = destination.Length / channels;
-            if (buffer.Length < frames) buffer = new float[frames];
-            int read = mono.Read(buffer.AsSpan(0, frames));
-            for (int i = 0; i < read; i++) destination.Slice(i * channels, channels).Fill(buffer[i]);
+            if (buffer.Length < frames * sourceChannels) buffer = new float[frames * sourceChannels];
+            int read = source.Read(buffer.AsSpan(0, frames * sourceChannels)) / sourceChannels;
+            for (int i = 0; i < read; i++)
+            {
+                Span<float> frame = destination.Slice(i * channels, channels);
+                if (sourceChannels == 1)
+                {
+                    frame.Fill(buffer[i]);
+                    continue;
+                }
+                frame.Clear();
+                buffer.AsSpan(i * sourceChannels, sourceChannels).CopyTo(frame);
+            }
             // Return samples written
             return read * channels;
         }

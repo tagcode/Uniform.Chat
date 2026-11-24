@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Скасувати надсилання</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Не вдається відтворити {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Зміни зберігаються одразу.</value>
   </data>
@@ -581,6 +584,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat — вільне програмне забезпечення за ліцензією MIT. Воно містить середовище .NET та інші бібліотеки, кожна за власною ліцензією; їхні тексти наведено нижче.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Прослухано</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Завантаження облікових записів</value>
   </data>
@@ -815,11 +821,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Не вдалося вставити: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Типовий для телефону</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Мікрофон телефону</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Відтворити</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Політика конфіденційності</value>

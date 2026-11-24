@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Hủy gửi</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Không thể phát {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Thay đổi được lưu ngay.</value>
   </data>
@@ -545,6 +548,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat là phần mềm tự do theo giấy phép MIT. Ứng dụng bao gồm môi trường .NET và các thư viện khác, mỗi thư viện có giấy phép riêng, nội dung ở bên dưới.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Đã nghe</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Đang tải tài khoản</value>
   </data>
@@ -770,11 +776,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Dán thất bại: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Tạm dừng</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Mặc định điện thoại</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Micrô điện thoại</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Phát</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Chính sách quyền riêng tư</value>

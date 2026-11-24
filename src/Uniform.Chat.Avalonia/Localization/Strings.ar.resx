@@ -131,6 +131,9 @@
   <data name="CancelSending" xml:space="preserve">
     <value>إلغاء الإرسال</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>تعذّر تشغيل {0}: {1}</value>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>تُحفظ التغييرات فورًا.</value>
   </data>
@@ -605,6 +608,9 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat برنامج حر مرخّص بموجب ترخيص MIT. ويتضمن بيئة تشغيل .NET ومكتبات أخرى، لكلٍّ منها ترخيصها الخاص، ونصوصها أدناه.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>تم الاستماع</value>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>جارٍ تحميل الحسابات</value>
   </data>
@@ -845,11 +851,17 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>فشل اللصق: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>إيقاف مؤقت</value>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>افتراضي الهاتف</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>ميكروفون الهاتف</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>تشغيل</value>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>سياسة الخصوصية</value>

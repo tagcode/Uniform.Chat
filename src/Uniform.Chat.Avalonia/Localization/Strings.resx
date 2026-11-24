@@ -131,6 +131,10 @@
   <data name="CancelSending" xml:space="preserve">
     <value>Cancel sending</value>
   </data>
+  <data name="CannotPlay" xml:space="preserve">
+    <value>Cannot play {0}: {1}</value>
+    <comment>{0} file name, {1} why</comment>
+  </data>
   <data name="ChangesSavedRightAway" xml:space="preserve">
     <value>Changes are saved right away.</value>
   </data>
@@ -559,6 +563,10 @@
   <data name="LicencesIntro" xml:space="preserve">
     <value>Uniform Chat is free software under the MIT license. It includes the .NET runtime and other libraries, each under its own license, whose texts follow.</value>
   </data>
+  <data name="Listened" xml:space="preserve">
+    <value>Listened</value>
+    <comment>Tip of the icon by an audio message the user has played</comment>
+  </data>
   <data name="LoadingAccounts" xml:space="preserve">
     <value>Loading accounts</value>
   </data>
@@ -787,11 +795,19 @@
   <data name="PastingFailed" xml:space="preserve">
     <value>Pasting failed: {0}</value>
   </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+    <comment>Button tip: pause the audio message playing</comment>
+  </data>
   <data name="PhoneDefault" xml:space="preserve">
     <value>Phone default</value>
   </data>
   <data name="PhoneMicrophone" xml:space="preserve">
     <value>Phone microphone</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Play</value>
+    <comment>Button tip: play an audio message</comment>
   </data>
   <data name="PrivacyPolicy" xml:space="preserve">
     <value>Privacy policy</value>
