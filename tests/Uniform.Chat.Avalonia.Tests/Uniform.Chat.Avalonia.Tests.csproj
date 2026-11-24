@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Uniform.Matrix.Audio.Tests\Resources\tone_voice_mono.ogg" Link="Resources\tone_voice_mono.ogg" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Uniform.Matrix.Video.Tests\Resources\*.webm" LinkBase="Resources" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

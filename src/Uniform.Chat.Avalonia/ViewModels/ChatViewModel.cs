@@ -58,8 +58,10 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <param name="notifier">System notifications, or null for none.</param>
     /// <param name="settings">App settings, shown in the settings panel; null hides it.</param>
     /// <param name="call">The call bar; null for no calls.</param>
-    /// <param name="openMediaSpeaker">Opens the speaker that plays audio messages; null where the platform has no audio, so they are not played here.</param>
-    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null, CallViewModel? call = null, Func<NAudio.Wave.IWavePlayer>? openMediaSpeaker = null)
+    /// <param name="openMediaSpeaker">Opens the speaker that plays audio and video messages; null where the platform has no audio, so they are not played here, unless <paramref name="videoPlayback"/> plays video.</param>
+    /// <param name="videoPlayback">Makes the platform's player of video messages; null plays WebM with VP8 in C# on <paramref name="openMediaSpeaker"/>.</param>
+    /// <param name="playsVideo">Returns whether <paramref name="videoPlayback"/> plays a video of a MIME type and file name; null for WebM only.</param>
+    public ChatViewModel(ClientConnection connection, IUiDispatcher ui, bool singlePane, Func<Task> signOut, INotifier? notifier = null, SettingsViewModel? settings = null, CallViewModel? call = null, Func<NAudio.Wave.IWavePlayer>? openMediaSpeaker = null, Func<IMediaPlayback>? videoPlayback = null, Func<string?, string?, bool>? playsVideo = null)
     {
         // Dependencies
         this.connection = connection;
@@ -69,13 +71,16 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
         this.notifier = notifier;
         Settings = settings;
         Call = call;
-        if (openMediaSpeaker is not null)
+        // Audio in C#; video by the platform, else WebM in C#
+        Func<IMediaPlayback>? video = videoPlayback ?? (openMediaSpeaker is null ? null : () => new WebmPlayback(openMediaSpeaker));
+        Func<string?, string?, bool>? videoPlays = video is null ? null : playsVideo ?? IsWebm;
+        if (openMediaSpeaker is not null || video is not null)
         {
-            Player = new AudioMessagePlayer(openMediaSpeaker, ui, DownloadAsync, eventId => connection.Store.MarkListenedAsync(eventId));
+            Player = new MediaMessagePlayer(message => message.IsVideo ? video!() : new AudioPlayback(openMediaSpeaker!), ui, DownloadAsync, eventId => connection.Store.MarkListenedAsync(eventId));
             Player.Notice += text => Notice = text;
         }
-        AudioMessagePlayer? player = Player;
-        Messages = new MessageList(connection.UserId) { IsBlocked = connection.Processor.IsIgnored, IsListened = player is null ? null : player.IsListened, PlaysAudio = player is not null };
+        MediaMessagePlayer? player = Player;
+        Messages = new MessageList(connection.UserId) { IsBlocked = connection.Processor.IsIgnored, IsListened = player is null ? null : player.IsListened, PlaysAudio = openMediaSpeaker is not null, PlaysVideo = videoPlays };
         Messages.Items.CollectionChanged += (_, e) =>
         {
             ShowSenderAvatars(e.NewItems?.OfType<MessageViewModel>() ?? []);
@@ -93,10 +98,13 @@ public sealed partial class ChatViewModel : ViewModelBase, IAsyncDisposable
     /// <summary>The call bar; null for no calls.</summary>
     public CallViewModel? Call { get; }
 
-    /// <summary>Plays audio messages; null where the platform has no audio.</summary>
-    public AudioMessagePlayer? Player { get; }
+    /// <summary>Plays audio and video messages; null where the platform has neither.</summary>
+    public MediaMessagePlayer? Player { get; }
 
-    /// <summary>Play the audio message <paramref name="message"/>, or pause or resume it.</summary>
+    /// <summary>Return whether a video of a MIME type and file name is WebM, which plays here in C#.</summary>
+    private static bool IsWebm(string? mimeType, string? fileName) => mimeType?.Split(';')[0].Trim().Equals("video/webm", StringComparison.OrdinalIgnoreCase) == true || Path.GetExtension(fileName ?? "").Equals(".webm", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Play the audio or video message <paramref name="message"/>, or pause or resume it.</summary>
     public Task TogglePlayAsync(MessageViewModel message) => Player?.ToggleAsync(message) ?? Task.CompletedTask;
 
     /// <summary>The open room's timeline.</summary>

@@ -33,6 +33,10 @@ Two foreground services keep the app working off screen, each with a notificatio
 
 Google Play asks for each type to be declared under *App content → Foreground service permissions*, with a short video of the user starting it, and for `USE_FULL_SCREEN_INTENT`, which rings incoming calls over the lock screen.
 
+## Video messages
+
+`AndroidVideoPlayback` plays video messages with Android's `MediaPlayer`, so everything the phone decodes plays, mostly in hardware. Its sound goes to the media stream; its pictures go into an `ImageReader` of YUV 4:2:0 images on a thread of their own, and `AndroidImages` copies them into [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame)s, taking every second or third pixel of a picture wider than 640, as a message shows them small. The file's rotation, read with `MediaMetadataRetriever`, goes with each picture, so a video recorded upright shows upright.
+
 ## Call audio
 
 The microphone and speaker of a call share Android's communication mode for the length of the call (`CommunicationMode`): in it, the phone routes voice to the earpiece and runs its echo cancellation between the speaker and the microphone. The microphone records from the voice communication source and also turns on the platform's echo canceller and noise suppressor, kept for the whole recording, since a collected effect is released.

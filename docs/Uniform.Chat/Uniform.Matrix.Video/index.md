@@ -26,6 +26,12 @@ A [`VideoFrame`](xref:Uniform.Matrix.Video.VideoFrame) is I420: full-size luma, 
 picture.CopyToBgra(pixels, stride);
 ```
 
+## WebM files
+
+[`WebmFile.Parse`](xref:Uniform.Matrix.Video.Webm.WebmFile.Parse*) reads a [WebM](https://www.webmproject.org/docs/container/) file, the Matroska subset browsers and phones record video in, into its [`Tracks`](xref:Uniform.Matrix.Video.Webm.WebmFile.Tracks), with their codecs and codec private data, and their [`Frames`](xref:Uniform.Matrix.Video.Webm.WebmFile.Frames) in file order, each with its time and keyframe flag. It reads files of known sizes and the live ones of browsers' MediaRecorder, whose segment and clusters have unknown sizes and no duration, and blocks of every lacing. A file cut short keeps the frames before the cut.
+
+The apps play video messages with it: the VP8 frames through [`Vp8Decoder`](xref:Uniform.Matrix.Video.Vp8.Vp8Decoder), and Opus sound through [`AudioFile.DecodeOpus`](xref:Uniform.Matrix.Audio.Decoding.AudioFile.DecodeOpus*); see [Uniform.Chat.Avalonia](xref:Uniform.Chat.Avalonia.Article). `WebmFileTests` reads files ffmpeg made, as written and as a live recording, and decodes their pictures to the same pixels as libvpx.
+
 ## Encoding
 
 [`Vp8Encoder`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder) encodes pictures as VP8 frames, in pure C# too. A keyframe predicts each macroblock from its edges by DC; the inter frames between keyframes predict each from the previous picture at the same place, and skip those with nothing left to code, which for a camera is most of the picture. Residuals are transformed and quantized with one quantizer, and written with the default probabilities, without a loop filter. A keyframe comes every [`KeyframeInterval`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.KeyframeInterval) frames, and after [`RequestKeyframe`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.RequestKeyframe), e.g. when the peer lost packets. [`Quantizer`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Quantizer), 0 to 127, trades size for quality. The encoder reconstructs each frame with the decoder's own inverse transforms, so [`Reconstruction`](xref:Uniform.Matrix.Video.Vp8.Vp8Encoder.Reconstruction) is the picture that decoders show; the tests check that bit for bit, and that Chromium decodes the frames.

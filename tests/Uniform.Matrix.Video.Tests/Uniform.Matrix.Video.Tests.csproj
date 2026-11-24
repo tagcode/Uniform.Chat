@@ -29,6 +29,7 @@
   <!-- The VP8 test vectors of libvpx, with the MD5 of each decoded frame -->
   <ItemGroup>
     <None Include="TestVectors\*" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Resources\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -38,6 +38,8 @@ Blocking someone hides their messages and invites from you, on all your devices;
 
 Images show a preview in the room; click it to open the image. Under a file or image, *Open* opens it in the app your system uses for its type, and *Save…* saves it where you choose. On Android, use *Save…*.
 
+Video messages play in the room too: ▶ plays the video in the message, with its sound, and a tap on the picture pauses it; the slider and the time work as for audio. On Android, every video the phone can play plays here, such as the MP4 videos phones record. The desktop app plays WebM videos with VP8, as browsers record them; other videos, such as MP4, keep *Open*, which plays them in your system's player.
+
 Audio messages, such as Element's voice messages, and audio files play in the room: ▶ plays and ⏸ pauses, the slider moves through it, and the time shows where it is. A message you have played gets 🎧, which stays on this device. WAV, MP3, FLAC, Ogg Opus and Ogg Vorbis play here; other formats, such as M4A, keep *Open* and *Save…*. On a phone, audio plays at the media volume, through headphones when connected, else the loudspeaker. Opening another room stops it.
 
 ## Sharing from other apps

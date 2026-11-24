@@ -117,7 +117,7 @@ public sealed partial class MainViewModel : ViewModelBase
         Settings.LogPath = started.LogPath;
         CallViewModel call = new(started.Calls, ui, platform, started.DisplayNameOf, () => Settings.NotifyCalls, Settings);
         Func<NAudio.Wave.IWavePlayer>? openMediaSpeaker = platform.Audio is { } audio ? () => audio(AudioChoice.Default).OpenMediaSpeaker() : null;
-        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call, openMediaSpeaker);
+        chat = new ChatViewModel(started, ui, platform.SinglePane, SignOutAsync, platform.Notifier, Settings, call, openMediaSpeaker, platform.VideoPlayback, platform.PlaysVideo);
         chat.Start();
         if (platform.Push is IPushService push)
         {

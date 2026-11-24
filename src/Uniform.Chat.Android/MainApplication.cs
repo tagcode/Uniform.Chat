@@ -46,6 +46,8 @@ public sealed class MainApplication : AvaloniaAndroidApplication<App>
             Push = new AndroidPushService(this),
             Ring = peer => new Ringer(this, peer),
             ScreenOffNearEar = () => new NearEarScreenOff(this),
+            VideoPlayback = () => new AndroidVideoPlayback(),
+            PlaysVideo = (mimeType, fileName) => mimeType?.StartsWith("video/", StringComparison.OrdinalIgnoreCase) == true || Path.GetExtension(fileName ?? "").ToLowerInvariant() is ".mp4" or ".m4v" or ".mov" or ".3gp" or ".webm" or ".mkv",
         };
         base.OnCreate();
         NetworkWatcher.Start(this);

@@ -34,6 +34,9 @@ public sealed class MessageList
     /// <summary>Whether audio messages can be played here, so they show a player.</summary>
     public bool PlaysAudio { get; init; }
 
+    /// <summary>Returns whether a video of a MIME type and file name can be played here, so it shows a player; null for none.</summary>
+    public Func<string?, string?, bool>? PlaysVideo { get; init; }
+
     /// <summary>Items in time order, unsent messages last.</summary>
     public ObservableCollection<MessageViewModel> Items { get; } = [];
 
@@ -189,8 +192,9 @@ public sealed class MessageList
             Source = SourceOf(content),
             IsEdited = content.RelatesTo?.RelType == RelationTypes.Replace,
             IsPlayable = playable,
+            IsVideo = !playable && content.MessageType is MessageTypes.Video or MessageTypes.File && content.MediaUrl is not null && PlaysVideo?.Invoke(content.Info?.Mimetype, content.Filename ?? content.Body) == true,
             IsListened = playable && IsListened?.Invoke(clientEvent.EventId!) == true,
-            PlayLength = playable && content.Info?.Duration is long duration ? duration / 1000.0 : 0,
+            PlayLength = content.MessageType is MessageTypes.Audio or MessageTypes.Video && content.Info?.Duration is long duration ? duration / 1000.0 : 0,
         };
     }
 

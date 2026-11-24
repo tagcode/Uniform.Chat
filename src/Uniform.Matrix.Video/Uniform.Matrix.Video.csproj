@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/tagcode/Uniform.Chat</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Video for Matrix calls in pure C#: a VP8 decoder ported from the reference decoder of RFC 6386, with no native libraries.</Description>
+    <Description>Video for Matrix calls and messages in pure C#: a VP8 decoder ported from the reference decoder of RFC 6386, and a WebM reader, with no native libraries.</Description>
     <PackageTags>matrix;video;vp8;webrtc;calls</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

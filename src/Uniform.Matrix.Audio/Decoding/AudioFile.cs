@@ -100,6 +100,25 @@ public static class AudioFile
         return clip.Build();
     }
 
+    /// <summary>Decode Opus packets of a container other than Ogg, such as a WebM track, after <paramref name="opusHead"/>, the stream's identification header, e.g. the track's codec private data.</summary>
+    /// <param name="opusHead">The <c>OpusHead</c> header: channels, pre-skip and gain.</param>
+    /// <param name="packets">The audio packets, in order.</param>
+    /// <param name="maxSamples">The most samples the clip may have.</param>
+    /// <exception cref="NotSupportedException">When it has more than two channels, or the clip would be longer than <paramref name="maxSamples"/>.</exception>
+    /// <exception cref="InvalidDataException">When the header or a packet is broken, or there is no audio.</exception>
+    public static AudioClip DecodeOpus(byte[] opusHead, IEnumerable<ReadOnlyMemory<byte>> packets, long maxSamples = DefaultMaxSamples)
+    {
+        // Decoded; Concentus's own failures as broken data
+        ClipBuilder clip = new(maxSamples);
+        try { OpusFile.DecodePackets(opusHead, packets, clip); }
+        catch (Exception exception) when (exception is not (NotSupportedException or InvalidDataException or OutOfMemoryException or OperationCanceledException))
+        {
+            throw new InvalidDataException($"The Opus stream is broken: {exception.Message}", exception);
+        }
+        // Return the clip
+        return clip.Build();
+    }
+
     /// <summary>Read and decode the file at <paramref name="path"/> on the thread pool; see <see cref="Decode"/>.</summary>
     public static async Task<AudioClip> DecodeFileAsync(string path, CancellationToken cancellationToken = default)
     {

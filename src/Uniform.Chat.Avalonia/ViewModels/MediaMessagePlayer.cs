@@ -3,39 +3,37 @@ namespace Uniform.Chat.Avalonia.ViewModels;
 using System.Collections.Specialized;
 using Uniform.Chat.Avalonia.Localization;
 using Uniform.Chat.Avalonia.Services;
-using Uniform.Matrix.Audio;
-using Uniform.Matrix.Audio.Decoding;
+using Uniform.Matrix.Video;
 
-/// <summary>Plays the audio messages of the open room, one at a time: downloads and decodes the file, follows the position on the message, and remembers which messages were listened to.</summary>
-/// <remarks>The message list makes new items when a room opens again or its events are decrypted; the player follows the item of the message playing by its event ID, and stops when it goes, e.g. deleted.</remarks>
-public sealed class AudioMessagePlayer : IAsyncDisposable
+/// <summary>Plays the audio and video messages of the open room, one at a time: downloads the file, opens it with an <see cref="IMediaPlayback"/>, shows the position and a video's pictures on the message, and remembers which audio messages were listened to.</summary>
+/// <remarks>The message list makes new items when a room opens again or its events are decrypted; the player follows the item of the message playing by its event ID, and stops when it goes, e.g. deleted. A message played to its end keeps its playback, so playing it again needs no new decoding.</remarks>
+public sealed class MediaMessagePlayer : IAsyncDisposable
 {
     /// <summary>How often the position shown is updated.</summary>
     private static readonly TimeSpan Tick = TimeSpan.FromMilliseconds(200);
 
-    private readonly AudioClipPlayer player;
+    private readonly Func<MessageViewModel, IMediaPlayback> create;
     private readonly IUiDispatcher ui;
     private readonly Func<MessageViewModel, Task<string?>> download;
     private readonly Func<string, Task> markListened;
     private readonly HashSet<string> listened = [];
     private readonly Timer clock;
     private MessageViewModel? current;
-    private (string EventId, AudioClip Clip)? decoded;
+    private IMediaPlayback? playback;
+    private string? playbackEventId;
 
-    /// <summary>Create a player on <paramref name="openSpeaker"/>.</summary>
-    /// <param name="openSpeaker">Opens the media speaker.</param>
+    /// <summary>Create a player.</summary>
+    /// <param name="create">Makes the playback of a message: audio, or video.</param>
     /// <param name="ui">Dispatcher of the user interface thread.</param>
     /// <param name="download">Returns the file of a message from the media cache, downloading it; null when it failed, which it tells itself.</param>
-    /// <param name="markListened">Saves that the message of an event ID was listened to.</param>
-    public AudioMessagePlayer(Func<NAudio.Wave.IWavePlayer> openSpeaker, IUiDispatcher ui, Func<MessageViewModel, Task<string?>> download, Func<string, Task> markListened)
+    /// <param name="markListened">Saves that the audio message of an event ID was listened to.</param>
+    public MediaMessagePlayer(Func<MessageViewModel, IMediaPlayback> create, IUiDispatcher ui, Func<MessageViewModel, Task<string?>> download, Func<string, Task> markListened)
     {
-        // The player, and the clock that shows its position
+        // The clock that shows the position
+        this.create = create;
         this.ui = ui;
         this.download = download;
         this.markListened = markListened;
-        player = new AudioClipPlayer(openSpeaker);
-        player.Ended += _ => ui.Post(OnEnded);
-        player.Failed += e => ui.Post(() => OnFailed(e));
         clock = new Timer(_ => ui.Post(ShowPosition), null, Timeout.InfiniteTimeSpan, Tick);
     }
 
@@ -45,10 +43,10 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
     /// <summary>The message playing or paused; null for none.</summary>
     public MessageViewModel? Current => current;
 
-    /// <summary>Remember the messages listened to before, to mark them; call once at the start.</summary>
+    /// <summary>Remember the audio messages listened to before, to mark them; call once at the start.</summary>
     public void Remember(IEnumerable<string> eventIds) => listened.UnionWith(eventIds);
 
-    /// <summary>Return whether the message of <paramref name="eventId"/> was listened to.</summary>
+    /// <summary>Return whether the audio message of <paramref name="eventId"/> was listened to.</summary>
     public bool IsListened(string eventId) => listened.Contains(eventId);
 
     /// <summary>Follow a <paramref name="change"/> of the open room's timeline, to keep the playing message's item when the list makes it anew, and stop when it is removed or deleted; call on the UI thread.</summary>
@@ -59,7 +57,7 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
         if (current?.EventId is not string playing) return;
         if (change.NewItems?.OfType<MessageViewModel>().FirstOrDefault(m => m.EventId == playing) is MessageViewModel renewed)
         {
-            if (renewed.IsPlayable) Adopt(renewed);
+            if (renewed.HasPlayer) Adopt(renewed);
             else _ = StopAsync();
             return;
         }
@@ -78,69 +76,106 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
     public async Task ToggleAsync(MessageViewModel message)
     {
         // The one playing pauses, the one paused resumes
-        if (message == current)
+        if (message == current && playback is IMediaPlayback open)
         {
-            if (player.IsPlaying) await PauseAsync();
+            if (open.IsPlaying) await PauseAsync();
             else await ResumeAsync();
             return;
         }
 
-        // Another one: stop the last, then download, decode and play
-        await StopAsync();
+        // Another one: stop the last, then open it, unless kept from playing it before
         if (message.EventId is not string eventId) return;
+        await StopAsync(keep: eventId);
         current = message;
-        message.IsLoadingAudio = true;
+        message.IsLoadingMedia = true;
         try
         {
-            AudioClip? clip = decoded is { } known && known.EventId == eventId ? known.Clip : null;
-            if (clip is null)
+            if (playback is null)
             {
-                if (await download(message) is not string path) return;
-                clip = await AudioFile.DecodeFileAsync(path);
-                decoded = (eventId, clip);
+                if (await download(message) is not string path || current != message) return;
+                IMediaPlayback opened = create(message);
+                try { await opened.OpenAsync(path); }
+                catch
+                {
+                    await opened.DisposeAsync();
+                    throw;
+                }
+                Attach(opened, eventId);
             }
             if (current != message) return;
-            message.PlayLength = clip.Duration.TotalSeconds;
+
+            // From where the message shows, then the clock
+            message.PlayLength = playback!.Duration.TotalSeconds;
             message.Seeked = OnSeeked;
-            await player.PlayAsync(clip, TimeSpan.FromSeconds(message.PlayPosition < message.PlayLength - 0.5 ? message.PlayPosition : 0));
-            message.IsPlaying = player.IsPlaying;
-            if (!player.IsPlaying) return;
+            if (message.PlayPosition > 0 && message.PlayPosition < message.PlayLength - 0.5) await playback.SeekAsync(TimeSpan.FromSeconds(message.PlayPosition));
+            await playback.PlayAsync();
+            message.IsPlaying = playback.IsPlaying;
+            if (!playback.IsPlaying) return;
             clock.Change(TimeSpan.Zero, Tick);
-            await MarkListenedAsync(message, eventId);
+            if (message.IsPlayable) await MarkListenedAsync(message, eventId);
         }
         catch (Exception exception) when (exception is NotSupportedException or InvalidDataException or IOException)
         {
-            // On a file that is not one to play
+            // On a file that is not one to play here
             Notice?.Invoke(Translations.Format(Strings.CannotPlay, message.FileName, exception.Message));
             if (current == message) current = null;
         }
         finally
         {
-            message.IsLoadingAudio = false;
+            message.IsLoadingMedia = false;
         }
     }
 
-    /// <summary>Stop, and leave the message at its start.</summary>
-    public async Task StopAsync()
-    {
-        // The player, then the message shown stopped
-        clock.Change(Timeout.InfiniteTimeSpan, Tick);
-        await player.StopAsync();
-        if (current is not MessageViewModel stopped) return;
-        current = null;
-        stopped.IsPlaying = false;
-        stopped.Seeked = null;
-        // Done
-        stopped.ShowPosition(0);
-    }
+    /// <summary>Stop, and leave the message at its start; a video keeps its last picture.</summary>
+    public Task StopAsync() => StopAsync(keep: null);
 
-    /// <summary>Stop and close the speaker.</summary>
+    /// <summary>Stop and close the playback.</summary>
     public async ValueTask DisposeAsync()
     {
         // Stopped, the clock too
         await StopAsync();
         await clock.DisposeAsync();
-        await player.DisposeAsync();
+    }
+
+    /// <summary>Stop; keep the playback when it is of <paramref name="keep"/>, to play that message again, else close it.</summary>
+    private async Task StopAsync(string? keep)
+    {
+        // The clock, the playback
+        clock.Change(Timeout.InfiniteTimeSpan, Tick);
+        if (playback is IMediaPlayback open)
+        {
+            if (playbackEventId == keep)
+            {
+                if (open.IsPlaying) await open.PauseAsync();
+                await open.SeekAsync(TimeSpan.Zero);
+            }
+            else
+            {
+                playback = null;
+                playbackEventId = null;
+                await open.DisposeAsync();
+            }
+        }
+
+        // Done: the message shown stopped
+        if (current is not MessageViewModel stopped) return;
+        current = null;
+        stopped.IsPlaying = false;
+        stopped.Seeked = null;
+        stopped.ShowPosition(0);
+    }
+
+    /// <summary>Take an opened playback for the message of <paramref name="eventId"/>: its pictures to the message's video, its end and failures to the UI thread.</summary>
+    private void Attach(IMediaPlayback opened, string eventId)
+    {
+        // Pictures go to the feed the message shows, which a renewed item keeps
+        VideoFeed? feed = current!.IsVideo ? current.Video ??= new VideoFeed() : null;
+        if (feed is not null) opened.PictureReady += feed.Push;
+        opened.Ended += () => ui.Post(() => OnEnded(opened));
+        opened.Failed += e => ui.Post(() => OnFailed(opened, e));
+        playback = opened;
+        // Done
+        playbackEventId = eventId;
     }
 
     /// <summary>Pause, keeping the position.</summary>
@@ -148,7 +183,7 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
     {
         // Stopped where it is
         clock.Change(Timeout.InfiniteTimeSpan, Tick);
-        await player.PauseAsync();
+        await playback!.PauseAsync();
         ShowPosition();
         // Done
         if (current is not null) current.IsPlaying = false;
@@ -158,11 +193,11 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
     private async Task ResumeAsync()
     {
         // From where it paused, or where the user moved it
-        await player.ResumeAsync();
+        await playback!.PlayAsync();
         if (current is null) return;
-        current.IsPlaying = player.IsPlaying;
+        current.IsPlaying = playback.IsPlaying;
         // Done
-        if (player.IsPlaying) clock.Change(TimeSpan.Zero, Tick);
+        if (playback.IsPlaying) clock.Change(TimeSpan.Zero, Tick);
     }
 
     /// <summary>Mark the message listened to, and save it once.</summary>
@@ -178,14 +213,14 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
         }
     }
 
-    /// <summary>Move the player to the position the user chose on the message playing or paused.</summary>
+    /// <summary>Move the playback to the position the user chose on the message playing or paused.</summary>
     private void OnSeeked(MessageViewModel message, double seconds)
     {
         // The current message only
-        if (message == current) player.Seek(TimeSpan.FromSeconds(seconds));
+        if (message == current && playback is IMediaPlayback open) _ = open.SeekAsync(TimeSpan.FromSeconds(seconds));
     }
 
-    /// <summary>Take over a new item of the message playing: its state, and the seeking.</summary>
+    /// <summary>Take over a new item of the message playing: its state, its video, and the seeking.</summary>
     private void Adopt(MessageViewModel renewed)
     {
         // State copied from the old item
@@ -194,24 +229,26 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
         renewed.PlayLength = old.PlayLength;
         renewed.ShowPosition(old.PlayPosition);
         renewed.IsPlaying = old.IsPlaying;
-        renewed.IsListened = true;
+        renewed.IsListened = old.IsListened;
+        renewed.Video = old.Video;
         renewed.Seeked = OnSeeked;
         // Done
         current = renewed;
     }
 
-    /// <summary>Show the player's position on the message.</summary>
+    /// <summary>Show the playback's position on the message.</summary>
     private void ShowPosition()
     {
-        // While it has a clip
-        if (current is null || player.Clip is null) return;
-        current.ShowPosition(player.Position.TotalSeconds);
+        // While one is open
+        if (current is null || playback is null) return;
+        current.ShowPosition(playback.Position.TotalSeconds);
     }
 
-    /// <summary>Show the message played to its end: stopped, at its start.</summary>
-    private void OnEnded()
+    /// <summary>Show the message played to its end: stopped, at its start, the playback kept to play again.</summary>
+    private void OnEnded(IMediaPlayback ended)
     {
-        // The clock stops; the clip stays decoded for playing again
+        // The current playback only
+        if (ended != playback) return;
         clock.Change(Timeout.InfiniteTimeSpan, Tick);
         if (current is null) return;
         current.IsPlaying = false;
@@ -219,13 +256,13 @@ public sealed class AudioMessagePlayer : IAsyncDisposable
         current.Seeked = null;
         // Done
         current = null;
-        _ = player.StopAsync();
     }
 
-    /// <summary>Show a speaker that failed.</summary>
-    private void OnFailed(Exception exception)
+    /// <summary>Show a playback that failed, e.g. its speaker.</summary>
+    private void OnFailed(IMediaPlayback failed, Exception exception)
     {
-        // Stopped, and told
+        // The current playback only, stopped and told
+        if (failed != playback) return;
         clock.Change(Timeout.InfiniteTimeSpan, Tick);
         if (current is not null) current.IsPlaying = false;
         // Done

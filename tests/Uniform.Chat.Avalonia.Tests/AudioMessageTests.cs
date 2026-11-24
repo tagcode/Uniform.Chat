@@ -72,7 +72,7 @@ public class AudioMessageTests
     }
 
     /// <summary>Devices whose media speaker plays in real time into nothing; calls are not made.</summary>
-    private sealed class PlayingDevices : IAudioDevices
+    internal sealed class PlayingDevices : IAudioDevices
     {
         private int mediaSpeakers;
 

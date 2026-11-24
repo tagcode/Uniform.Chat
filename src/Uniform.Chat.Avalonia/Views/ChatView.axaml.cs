@@ -522,7 +522,17 @@ public partial class ChatView : UserControl
         if ((sender as Control)?.DataContext is MessageViewModel message) _ = OpenAttachmentAsync(message);
     }
 
-    /// <summary>Play, pause or resume the audio message of the button.</summary>
+    /// <summary>Pause or resume a video by tapping its picture.</summary>
+    private void OnVideoTapped(object? sender, TappedEventArgs e)
+    {
+        // The picture's message
+        if (model is null || (sender as Control)?.DataContext is not MessageViewModel message) return;
+        e.Handled = true;
+        // Done
+        _ = model.TogglePlayAsync(message);
+    }
+
+    /// <summary>Play, pause or resume the audio or video message of the button.</summary>
     private void OnPlayClick(object? sender, RoutedEventArgs e)
     {
         // The button's message

@@ -58,6 +58,12 @@ public sealed record GuiPlatform
 
     /// <summary>Whether <see cref="Ring"/> only plays a sound, as on the desktop, so an incoming call still shows a notification; Android's ring shows one of its own.</summary>
     public bool RingIsSoundOnly { get; init; }
+
+    /// <summary>Makes the player of video messages, e.g. Android's MediaPlayer, which plays what the phone decodes; null plays WebM with VP8 in C#, <see cref="Services.WebmPlayback"/>.</summary>
+    public Func<Services.IMediaPlayback>? VideoPlayback { get; init; }
+
+    /// <summary>Returns whether <see cref="VideoPlayback"/> plays a video of a MIME type and file name, before it is downloaded; null for WebM only.</summary>
+    public Func<string?, string?, bool>? PlaysVideo { get; init; }
     /// <summary>Turn the screen off while the phone is held to the ear, so that the cheek does not press buttons; dispose the result to stop. Null where there is no proximity sensor.</summary>
     public Func<IDisposable>? ScreenOffNearEar { get; init; }
 

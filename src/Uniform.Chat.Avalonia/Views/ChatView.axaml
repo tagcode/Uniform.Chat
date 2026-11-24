@@ -337,8 +337,9 @@
                     <!-- No menu of its own, so that a long press or right-click reaches the message's actions, which copy the text too -->
                     <views:RichText Body="{Binding Text}" Html="{Binding Html}" TextWrapping="Wrap" Classes.highlight="{Binding IsHighlight}" Classes.pending="{Binding IsPending}" ContextFlyout="{x:Null}" />
                     <Image Source="{Binding Thumbnail}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Stretch="Uniform" Cursor="Hand" ToolTip.Tip="{l:Tr Open}" Tapped="OnImageTapped" IsVisible="{Binding Thumbnail, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsPlayable}">
-                      <Button Classes="icon" Content="{Binding PlayGlyph}" ToolTip.Tip="{Binding PlayTip}" Click="OnPlayClick" IsEnabled="{Binding !IsLoadingAudio}" />
+                    <views:VideoView Feed="{Binding Video}" MaxHeight="320" MaxWidth="480" HorizontalAlignment="Left" Cursor="Hand" Tapped="OnVideoTapped" IsVisible="{Binding HasVideo}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding HasPlayer}">
+                      <Button Classes="icon" Content="{Binding PlayGlyph}" ToolTip.Tip="{Binding PlayTip}" Click="OnPlayClick" IsEnabled="{Binding !IsLoadingMedia}" />
                       <Slider Width="180" Minimum="0" Maximum="{Binding PlayMaximum}" Value="{Binding PlayPosition}" VerticalAlignment="Center" />
                       <TextBlock Classes="hint" Text="{Binding PlayTimeText}" VerticalAlignment="Center" />
                       <TextBlock Text="🎧" ToolTip.Tip="{l:Tr Listened}" IsVisible="{Binding IsListened}" VerticalAlignment="Center" />

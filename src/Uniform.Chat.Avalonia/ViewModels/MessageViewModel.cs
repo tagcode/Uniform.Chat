@@ -140,6 +140,20 @@ public sealed partial class MessageViewModel : ViewModelBase
     /// <summary>Whether it is an audio file to play here, as voice messages are.</summary>
     public bool IsPlayable { get; init; }
 
+    /// <summary>Whether it is a video to play here.</summary>
+    public bool IsVideo { get; init; }
+
+    /// <summary>Whether it has a player: audio or video.</summary>
+    public bool HasPlayer => IsPlayable || IsVideo;
+
+    /// <summary>The pictures of a video once opened; null before.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasVideo))]
+    public partial VideoFeed? Video { get; set; }
+
+    /// <summary>Whether a video's pictures show.</summary>
+    public bool HasVideo => Video is not null;
+
     /// <summary>Whether the user has played it.</summary>
     [ObservableProperty]
     public partial bool IsListened { get; set; }
@@ -149,9 +163,9 @@ public sealed partial class MessageViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(PlayGlyph), nameof(PlayTip))]
     public partial bool IsPlaying { get; set; }
 
-    /// <summary>Whether it is being downloaded and decoded before playing.</summary>
+    /// <summary>Whether it is being downloaded and opened before playing.</summary>
     [ObservableProperty]
-    public partial bool IsLoadingAudio { get; set; }
+    public partial bool IsLoadingMedia { get; set; }
 
     /// <summary>The position played, in seconds; the user moves it to seek.</summary>
     [ObservableProperty]
