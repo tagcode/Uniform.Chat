@@ -87,6 +87,21 @@ public class VideoTests
         Assert.False(playback.IsPlaying);
     }
 
+    /// <summary>An interface Media Foundation returns is released at once by <see cref="MediaFoundation.Release"/>, not when collected: decoders keep few samples, and the AV1 one stops after a seek's dropped pictures when they are not given back.</summary>
+    [Fact]
+    public void ReleaseAtOnce()
+    {
+        // Arrange
+        if (!OperatingSystem.IsWindows() || !MediaFoundation.IsAvailable) Assert.Skip("Media Foundation is not on this machine.");
+        MediaFoundation.Check(MediaFoundation.MFCreateMediaType(out MediaFoundation.IMFMediaType type));
+
+        // Act
+        MediaFoundation.Release(type);
+
+        // Assert: nothing left to call
+        Assert.ThrowsAny<Exception>(() => type.SetUINT32(MediaFoundation.AudioChannels, 2));
+    }
+
     /// <summary>Return the opener of a decoder; skip off its platform, or where it cannot decode H.264, as GStreamer without its plugins on build servers, or Windows N without its Media Feature Pack.</summary>
     private static Func<string, IVideoSource> Decoder(string decoder)
     {

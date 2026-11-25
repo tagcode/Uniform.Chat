@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
 /// <summary>The calls of <see href="https://learn.microsoft.com/windows/win32/medfound/media-foundation-programming-guide">Media Foundation</see> that the Windows camera, <see cref="Cameras.MediaFoundationCamera"/>, and video messages, <see cref="MediaFoundationVideoSource"/>, make: P/Invoke into the system's libraries, its COM interfaces source-generated, and whether it is installed.</summary>
-/// <remarks>The COM interfaces declare their methods in the Windows SDK headers' vtable order up to the last one used; slots before it that are never called keep placeholders. Media Foundation's objects are free-threaded: each thread that calls them joins the multithreaded apartment first, by <see cref="EnterMta"/>.</remarks>
+/// <remarks>The COM interfaces declare their methods in the Windows SDK headers' vtable order up to the last one used; slots before it that are never called keep placeholders. Interfaces returned are unique instances, through <see cref="UniqueComInterfaceMarshaller{T}"/>, so that <see cref="Release"/> releases them at once: a cached wrapper is released only when collected, and a decoder whose few samples are not given back stops with MF_E_SAMPLEALLOCATOR_EMPTY, as the AV1 one does while a seek drops pictures without allocating. Media Foundation's objects are free-threaded: each thread that calls them joins the multithreaded apartment first, by <see cref="EnterMta"/>.</remarks>
 internal static partial class MediaFoundation
 {
     /// <summary>The version of Media Foundation asked for, MF_VERSION of Windows 7 and later.</summary>
@@ -61,7 +61,7 @@ internal static partial class MediaFoundation
         inMta = true;
     }
 
-    /// <summary>Release a COM object now, rather than when collected.</summary>
+    /// <summary>Release a COM object now, rather than when collected; only a unique instance can be.</summary>
     public static void Release(object? instance)
     {
         // Wrappers of the source-generated interfaces
@@ -97,11 +97,11 @@ internal static partial class MediaFoundation
 
     /// <summary>A new attribute store.</summary>
     [LibraryImport("mfplat.dll")]
-    public static partial int MFCreateAttributes(out IMFAttributes attributes, uint initialSize);
+    public static partial int MFCreateAttributes([MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFAttributes>))] out IMFAttributes attributes, uint initialSize);
 
     /// <summary>A new media type.</summary>
     [LibraryImport("mfplat.dll")]
-    public static partial int MFCreateMediaType(out IMFMediaType type);
+    public static partial int MFCreateMediaType([MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFMediaType>))] out IMFMediaType type);
 
     /// <summary>The devices of the type the attributes name; an array of activation objects to free.</summary>
     [LibraryImport("mf.dll")]
@@ -109,11 +109,11 @@ internal static partial class MediaFoundation
 
     /// <summary>A synchronous reader of a media source.</summary>
     [LibraryImport("mfreadwrite.dll")]
-    public static partial int MFCreateSourceReaderFromMediaSource(IntPtr source, IMFAttributes attributes, out IMFSourceReader reader);
+    public static partial int MFCreateSourceReaderFromMediaSource(IntPtr source, IMFAttributes attributes, [MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFSourceReader>))] out IMFSourceReader reader);
 
     /// <summary>A synchronous reader of a file.</summary>
     [LibraryImport("mfreadwrite.dll", StringMarshalling = StringMarshalling.Utf16)]
-    public static partial int MFCreateSourceReaderFromURL(string url, IMFAttributes? attributes, out IMFSourceReader reader);
+    public static partial int MFCreateSourceReaderFromURL(string url, IMFAttributes? attributes, [MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFSourceReader>))] out IMFSourceReader reader);
 
     /// <summary>A PROPVARIANT holding a 64-bit integer, as a source reader's position and presentation attributes are; as large as the union on 64-bit Windows.</summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -238,15 +238,15 @@ internal static partial class MediaFoundation
         /// <summary>Select or deselect a stream, or all of them.</summary>
         [PreserveSig] int SetStreamSelection(uint stream, [MarshalAs(UnmanagedType.Bool)] bool selected);
         /// <summary>Return one of the stream's types as the file has it.</summary>
-        [PreserveSig] int GetNativeMediaType(uint stream, uint index, out IMFMediaType type);
+        [PreserveSig] int GetNativeMediaType(uint stream, uint index, [MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFMediaType>))] out IMFMediaType type);
         /// <summary>Return the stream's media type.</summary>
-        [PreserveSig] int GetCurrentMediaType(uint stream, out IMFMediaType type);
+        [PreserveSig] int GetCurrentMediaType(uint stream, [MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFMediaType>))] out IMFMediaType type);
         /// <summary>Set the stream's media type, decoding and converting where it can.</summary>
         [PreserveSig] int SetCurrentMediaType(uint stream, IntPtr reserved, IMFMediaType type);
         /// <summary>Move to a position, in 100 ns for a null format: to the keyframe before it.</summary>
         [PreserveSig] int SetCurrentPosition(in Guid format, in PropVariant position);
         /// <summary>Read the next sample, blocking.</summary>
-        [PreserveSig] int ReadSample(uint stream, uint control, out uint actualStream, out uint flags, out long timestamp, out IMFSample? sample);
+        [PreserveSig] int ReadSample(uint stream, uint control, out uint actualStream, out uint flags, out long timestamp, [MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFSample>))] out IMFSample? sample);
         /// <summary>Flush, unused.</summary>
         [PreserveSig] int Flush();
         /// <summary>GetServiceForStream, unused.</summary>
@@ -277,7 +277,7 @@ internal static partial class MediaFoundation
         /// <summary>GetBufferByIndex, unused.</summary>
         [PreserveSig] int GetBufferByIndex();
         /// <summary>Return the sample's data in one buffer.</summary>
-        [PreserveSig] int ConvertToContiguousBuffer(out IMFMediaBuffer buffer);
+        [PreserveSig] int ConvertToContiguousBuffer([MarshalUsing(typeof(UniqueComInterfaceMarshaller<IMFMediaBuffer>))] out IMFMediaBuffer buffer);
     }
 
     /// <summary>IMFMediaBuffer, up to Unlock.</summary>
