@@ -78,7 +78,7 @@
 
 # Room VOIP
 - MSC3401
-- Planned ~/.claude/plans/matrixrtc-group-calls.md
+- Planned plans/matrixrtc-group-calls.md
 
 # .NET 11
 - Codebase refactor
