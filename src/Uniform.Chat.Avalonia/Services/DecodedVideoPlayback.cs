@@ -6,7 +6,7 @@ using Uniform.Matrix.Audio;
 using Uniform.Matrix.Audio.Decoding;
 using Uniform.Matrix.Video;
 
-/// <summary>Plays a video whose pictures and sound a platform decodes, through an <see cref="IVideoSource"/>: Android's MediaCodec, or GStreamer on Linux. Its sound plays on the media speaker and keeps the time; each picture shows when its time comes.</summary>
+/// <summary>Plays a video whose pictures and sound a platform decodes, through an <see cref="IVideoSource"/>: Android's MediaCodec, GStreamer on Linux, or Media Foundation on Windows. Its sound plays on the media speaker and keeps the time; each picture shows when its time comes.</summary>
 /// <remarks>Seeking moves the source to the keyframe before the position and reads to the first picture at it. A video without sound keeps its own time.</remarks>
 /// <param name="open">Opens the source of a file, on the thread pool.</param>
 /// <param name="openSpeaker">Opens the media speaker.</param>

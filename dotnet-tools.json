@@ -15,6 +15,13 @@
         "dotnet-ef"
       ],
       "rollForward": false
+    },
+    "dotnet-stack": {
+      "version": "10.0.750501",
+      "commands": [
+        "dotnet-stack"
+      ],
+      "rollForward": false
     }
   }
 }

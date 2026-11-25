@@ -30,6 +30,12 @@ public partial class ChatView : UserControl
     /// <summary>Most scrolls in a row to reach the bottom, as a virtualized list grows while its last rows are measured.</summary>
     private const int MostScrolls = 8;
     private int scrollsLeft;
+    /// <summary>Most times growing or shrinking may start the scrolls over within <see cref="RestartWindow"/>: rows that keep changing height as they are scrolled to would otherwise scroll the list up and down without end, and hold up input.</summary>
+    private const int MostRestarts = 30;
+    /// <summary>The span within which <see cref="MostRestarts"/> are counted.</summary>
+    private static readonly TimeSpan RestartWindow = TimeSpan.FromSeconds(2);
+    private long restartsSince;
+    private int restarts;
 
     /// <summary>Create the view.</summary>
     public ChatView()
@@ -313,6 +319,19 @@ public partial class ChatView : UserControl
         if (followNewest && scroller is not null && scrollsLeft-- > 0) scroller.ScrollToEnd();
     }
 
+    /// <summary>Return whether the scrolls to the bottom may start over, counting it; false after <see cref="MostRestarts"/> within <see cref="RestartWindow"/>.</summary>
+    private bool Restart()
+    {
+        // A new span once the last one is over
+        if (System.Diagnostics.Stopwatch.GetElapsedTime(restartsSince) > RestartWindow)
+        {
+            restartsSince = System.Diagnostics.Stopwatch.GetTimestamp();
+            restarts = 0;
+        }
+        // Return whether within the count
+        return ++restarts <= MostRestarts;
+    }
+
     /// <summary>Note the user's scrolling input.</summary>
     private void OnUserScroll(object? sender, RoutedEventArgs e) => lastUserScroll = System.Diagnostics.Stopwatch.GetTimestamp();
 
@@ -334,8 +353,8 @@ public partial class ChatView : UserControl
         else if (byUser && e.OffsetDelta.Y != 0) followNewest = false;
         else if (followNewest)
         {
-            // Grown or shrunk: the tries start over, so a picture loaded later still brings the bottom back
-            if (e.ExtentDelta.Y != 0 || e.ViewportDelta.Y != 0) scrollsLeft = MostScrolls;
+            // Grown or shrunk: the tries start over, so a picture loaded later still brings the bottom back; not without end
+            if ((e.ExtentDelta.Y != 0 || e.ViewportDelta.Y != 0) && Restart()) scrollsLeft = MostScrolls;
             Dispatcher.UIThread.Post(ScrollOnce, DispatcherPriority.Background);
         }
 

@@ -18,6 +18,7 @@ public sealed class VideoView : Control
     private WriteableBitmap? bitmap;
     private byte[] pixels = [];
     private int posted;
+    private int wanted;
     private volatile VideoFeed? feed;
     private int rotation;
     private bool mirrored;
@@ -77,13 +78,18 @@ public sealed class VideoView : Control
     /// <summary>Whether the picture is turned sideways, so its width shows as height.</summary>
     private bool Turned => rotation is 90 or 270;
 
-    /// <summary>Return the size that fits the picture's aspect ratio in <paramref name="availableSize"/>; nothing without a picture.</summary>
+    /// <summary>Return the size that fits the picture's aspect ratio in <paramref name="availableSize"/>; nothing without a picture. Before its bitmap is made, e.g. when a list shows the view again, the feed's newest picture gives the shape, so the view does not grow later and move what is around it.</summary>
     protected override Size MeasureOverride(Size availableSize)
     {
+        // The bitmap's shape, else the newest picture's
+        VideoFrame? latest = feed?.Latest;
+        if (bitmap is null && latest is null) return default;
+        bool turned = bitmap is null ? latest!.Rotation is 90 or 270 : Turned;
+        Size shape = bitmap?.Size ?? new Size(latest!.Width, latest.Height);
+
         // The picture's own size where unconstrained
-        if (bitmap is null) return default;
-        double aspect = Turned ? bitmap.Size.Width / bitmap.Size.Height : bitmap.Size.Height / bitmap.Size.Width;
-        Size own = Turned ? new Size(bitmap.Size.Height, bitmap.Size.Width) : bitmap.Size;
+        double aspect = turned ? shape.Width / shape.Height : shape.Height / shape.Width;
+        Size own = turned ? new Size(shape.Height, shape.Width) : shape;
         double width = double.IsFinite(availableSize.Width) ? availableSize.Width : own.Width;
         double height = width * aspect;
         if (double.IsFinite(availableSize.Height) && height > availableSize.Height) (width, height) = (availableSize.Height / aspect, availableSize.Height);
@@ -109,11 +115,13 @@ public sealed class VideoView : Control
         }
     }
 
-    /// <summary>On any thread, e.g. the decoder's: convert the newest picture to screen colors on the thread pool, reading the feed from a field, as Avalonia properties are for the UI thread only; then show it on the UI thread, which only copies it, so that input is not held up on slow devices; one picture at a time, and those that come meanwhile are skipped.</summary>
+    /// <summary>On any thread, e.g. the decoder's: convert the newest picture to screen colors on the thread pool, reading the feed from a field, as Avalonia properties are for the UI thread only; then show it on the UI thread, which only copies it, so that input is not held up on slow devices; one picture at a time, into the one buffer, and of those that come meanwhile only the newest, after it.</summary>
     private void OnUpdated()
     {
-        // One in flight
+        // Wanted first, so one in flight takes it when done; else this one goes
+        Interlocked.Exchange(ref wanted, 1);
         if (Interlocked.Exchange(ref posted, 1) == 1) return;
+        Interlocked.Exchange(ref wanted, 0);
         VideoFrame? picture = feed?.Latest;
         if (picture is null)
         {
@@ -133,18 +141,28 @@ public sealed class VideoView : Control
             catch
             {
                 // On a failed conversion: ready for the next picture
-                Interlocked.Exchange(ref posted, 0);
+                Next();
                 throw;
             }
         });
     }
 
-    /// <summary>Show the newest picture now, e.g. when the feed changes.</summary>
+    /// <summary>Show the newest picture, e.g. when the feed changes: now, or after the one in flight; measured by it meanwhile.</summary>
     private void Show()
     {
-        // Through the same path
-        Interlocked.Exchange(ref posted, 0);
+        // Through the same path, never two at once into the one buffer
+        InvalidateMeasure();
+        // Done
         OnUpdated();
+    }
+
+    /// <summary>Let the next picture be converted, and convert the newest if one came meanwhile.</summary>
+    private void Next()
+    {
+        // Free, then what was wanted
+        Interlocked.Exchange(ref posted, 0);
+        // Done
+        if (Interlocked.CompareExchange(ref wanted, 0, 0) == 1) OnUpdated();
     }
 
     /// <summary>Show no picture.</summary>
@@ -155,7 +173,8 @@ public sealed class VideoView : Control
         bitmap = null;
         InvalidateMeasure();
         InvalidateVisual();
-        Interlocked.Exchange(ref posted, 0);
+        // Done
+        Next();
     }
 
     /// <summary>Copy the converted pixels of a <paramref name="width"/> by <paramref name="height"/> picture into the bitmap, sized to it, and redraw; then take the next picture.</summary>
@@ -188,6 +207,6 @@ public sealed class VideoView : Control
         }
         InvalidateVisual();
         // Done: the next picture may come
-        Interlocked.Exchange(ref posted, 0);
+        Next();
     }
 }

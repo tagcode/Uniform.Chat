@@ -50,6 +50,30 @@ public class VideoViewTests
         window.Close();
     }
 
+    /// <summary>A view shown again, as a message list does with a played video's row it scrolls back to, takes its picture's size at once, before the picture is converted again, so the row does not grow later and move the list.</summary>
+    [AvaloniaFact]
+    public void KeepSizeWhenShownAgain()
+    {
+        // Arrange: a picture shown, then the view taken out of the window
+        VideoFeed feed = new();
+        VideoView view = new() { Feed = feed, VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top };
+        Window window = new() { Width = 400, Height = 400, Content = view };
+        window.Show();
+        feed.Push(Picture(64, 48, 81, 90, 240));
+        Pump(() => view.Bounds.Height == 300);
+        window.Content = null;
+        Dispatcher.UIThread.RunJobs();
+
+        // Act: shown again, laid out before any job runs
+        window.Content = view;
+        window.UpdateLayout();
+
+        // Assert
+        Assert.Equal(new Size(400, 300), view.Bounds.Size);
+        // Done
+        window.Close();
+    }
+
     /// <summary>Run the UI's jobs until <paramref name="done"/>, at most two seconds, as pictures are converted on the thread pool first.</summary>
     private static void Pump(Func<bool> done)
     {

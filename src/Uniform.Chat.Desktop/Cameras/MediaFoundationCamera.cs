@@ -4,19 +4,15 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using Uniform.Matrix.Calls;
 using Uniform.Matrix.Video;
+using static Uniform.Chat.Desktop.Video.MediaFoundation;
 
 /// <summary>A Windows webcam through <see href="https://learn.microsoft.com/windows/win32/medfound/media-foundation-programming-guide">Media Foundation</see>'s source reader: NV12 pictures of 640x480, converted to I420 and encoded by <see cref="EncodingCamera"/>; half size when the peer asks for less.</summary>
-/// <remarks>The COM interfaces are source-generated and declare their methods in the Windows SDK headers' vtable order up to the last one used; slots before it that are never called keep placeholders. Windows' camera privacy setting decides whether the app may open the camera.</remarks>
-public sealed partial class MediaFoundationCamera : EncodingCamera
+/// <remarks>The calls and COM interfaces are those of <see cref="Video.MediaFoundation"/>. Windows' camera privacy setting decides whether the app may open the camera.</remarks>
+public sealed class MediaFoundationCamera : EncodingCamera
 {
-    private const uint Version = 0x00020070, FirstVideoStream = 0xFFFFFFFC, EndOfStream = 2;
     private static readonly Guid SourceType = new("c60ac5fe-252a-478f-a0ef-bc8fa5f7cad3"), VideoCaptureSource = new("8ac3587a-4ae7-42d8-99e0-0a6013eef90f");
-    private static readonly Guid MajorType = new("48eba18e-f8c9-4687-bf11-0a74c9f96a8f"), Subtype = new("f7e34c9a-42e8-4714-b74b-cb29d72c35e5"), FrameSize = new("1652c33d-d6b2-4012-b834-72030849a37d");
-    private static readonly Guid Video = new("73646976-0000-0010-8000-00aa00389b71"), Nv12 = new("3231564e-0000-0010-8000-00aa00389b71");
-    private static readonly Guid EnableVideoProcessing = new("fb394f3d-ccf1-42ee-bbb3-f9b845d5681d"), MediaSourceId = new("279a808d-aec7-40c8-9c6b-a6b492c78a66");
+    private static readonly Guid MediaSourceId = new("279a808d-aec7-40c8-9c6b-a6b492c78a66");
     private static readonly Guid FriendlyName = new("60d0e559-52f8-4fa2-bbce-acdb34a8ec01"), SymbolicLink = new("58f0aad8-22bf-4f8a-bb3d-d2c4978c6e2f");
-    private static readonly StrategyBasedComWrappers Wrappers = new();
-    private static bool started;
     private IMFActivate[] devices = [];
     private IMFSourceReader? reader;
     private CancellationTokenSource? stopping;
@@ -137,9 +133,8 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
     /// <summary>Return the video capture devices.</summary>
     private static IMFActivate[] Enumerate()
     {
-        // Media Foundation once, then the devices of the video capture type
-        if (!started) Check(MFStartup(Version, 0));
-        started = true;
+        // Media Foundation, then the devices of the video capture type
+        if (!IsAvailable) throw new COMException("Media Foundation does not start.");
         Check(MFCreateAttributes(out IMFAttributes attributes, 1));
         Check(attributes.SetGUID(SourceType, VideoCaptureSource));
         Check(MFEnumDeviceSources(attributes, out IntPtr array, out uint count));
@@ -278,175 +273,5 @@ public sealed partial class MediaFoundationCamera : EncodingCamera
         reader = null;
         // Done
         if (index < devices.Length) devices[index].ShutdownObject();
-    }
-
-    /// <summary>Release a COM object now, rather than when collected.</summary>
-    private static void Release(object instance)
-    {
-        // Wrappers of the source-generated interfaces
-        if (instance is ComObject com) com.FinalRelease();
-    }
-
-    /// <summary>Throw for a failed HRESULT.</summary>
-    private static void Check(int result) => Marshal.ThrowExceptionForHR(result);
-
-    /// <summary>Media Foundation's start.</summary>
-    [LibraryImport("mfplat.dll")]
-    private static partial int MFStartup(uint version, uint flags);
-
-    /// <summary>A new attribute store.</summary>
-    [LibraryImport("mfplat.dll")]
-    private static partial int MFCreateAttributes(out IMFAttributes attributes, uint initialSize);
-
-    /// <summary>A new media type.</summary>
-    [LibraryImport("mfplat.dll")]
-    private static partial int MFCreateMediaType(out IMFMediaType type);
-
-    /// <summary>The devices of the type the attributes name; an array of activation objects to free.</summary>
-    [LibraryImport("mf.dll")]
-    private static partial int MFEnumDeviceSources(IMFAttributes attributes, out IntPtr activates, out uint count);
-
-    /// <summary>A synchronous reader of a media source.</summary>
-    [LibraryImport("mfreadwrite.dll")]
-    private static partial int MFCreateSourceReaderFromMediaSource(IntPtr source, IMFAttributes attributes, out IMFSourceReader reader);
-
-    /// <summary>IMFAttributes, up to SetGUID.</summary>
-    [GeneratedComInterface]
-    [Guid("2cd2d921-c447-44a7-a13c-4adabfc247e3")]
-    internal partial interface IMFAttributes
-    {
-        /// <summary>GetItem, unused.</summary>
-        [PreserveSig] int GetItem();
-        /// <summary>GetItemType, unused.</summary>
-        [PreserveSig] int GetItemType();
-        /// <summary>CompareItem, unused.</summary>
-        [PreserveSig] int CompareItem();
-        /// <summary>Compare, unused.</summary>
-        [PreserveSig] int Compare();
-        /// <summary>GetUINT32, unused.</summary>
-        [PreserveSig] int GetUINT32();
-        /// <summary>Return a 64-bit value.</summary>
-        [PreserveSig] int GetUINT64(in Guid key, out ulong value);
-        /// <summary>GetDouble, unused.</summary>
-        [PreserveSig] int GetDouble();
-        /// <summary>GetGUID, unused.</summary>
-        [PreserveSig] int GetGUID();
-        /// <summary>GetStringLength, unused.</summary>
-        [PreserveSig] int GetStringLength();
-        /// <summary>GetString, unused.</summary>
-        [PreserveSig] int GetString();
-        /// <summary>Return a string value in memory the caller frees with CoTaskMemFree.</summary>
-        [PreserveSig] int GetAllocatedString(in Guid key, out IntPtr value, out uint length);
-        /// <summary>GetBlobSize, unused.</summary>
-        [PreserveSig] int GetBlobSize();
-        /// <summary>GetBlob, unused.</summary>
-        [PreserveSig] int GetBlob();
-        /// <summary>GetAllocatedBlob, unused.</summary>
-        [PreserveSig] int GetAllocatedBlob();
-        /// <summary>GetUnknown, unused.</summary>
-        [PreserveSig] int GetUnknown();
-        /// <summary>SetItem, unused.</summary>
-        [PreserveSig] int SetItem();
-        /// <summary>DeleteItem, unused.</summary>
-        [PreserveSig] int DeleteItem();
-        /// <summary>DeleteAllItems, unused.</summary>
-        [PreserveSig] int DeleteAllItems();
-        /// <summary>Set a 32-bit value.</summary>
-        [PreserveSig] int SetUINT32(in Guid key, uint value);
-        /// <summary>Set a 64-bit value.</summary>
-        [PreserveSig] int SetUINT64(in Guid key, ulong value);
-        /// <summary>SetDouble, unused.</summary>
-        [PreserveSig] int SetDouble();
-        /// <summary>Set a GUID value.</summary>
-        [PreserveSig] int SetGUID(in Guid key, in Guid value);
-        /// <summary>SetString, unused.</summary>
-        [PreserveSig] int SetString();
-        /// <summary>SetBlob, unused.</summary>
-        [PreserveSig] int SetBlob();
-        /// <summary>SetUnknown, unused.</summary>
-        [PreserveSig] int SetUnknown();
-        /// <summary>LockStore, unused.</summary>
-        [PreserveSig] int LockStore();
-        /// <summary>UnlockStore, unused.</summary>
-        [PreserveSig] int UnlockStore();
-        /// <summary>GetCount, unused.</summary>
-        [PreserveSig] int GetCount();
-        /// <summary>GetItemByIndex, unused.</summary>
-        [PreserveSig] int GetItemByIndex();
-        /// <summary>CopyAllItems, unused.</summary>
-        [PreserveSig] int CopyAllItems();
-    }
-
-    /// <summary>IMFMediaType; only its attributes are used.</summary>
-    [GeneratedComInterface]
-    [Guid("44ae0fa8-ea31-4109-8d2e-4cae4997c555")]
-    internal partial interface IMFMediaType : IMFAttributes;
-
-    /// <summary>IMFActivate, up to ShutdownObject.</summary>
-    [GeneratedComInterface]
-    [Guid("7fee9e9a-4a89-47a6-899c-b6a53a70fb67")]
-    internal partial interface IMFActivate : IMFAttributes
-    {
-        /// <summary>Create the object, e.g. the device's media source.</summary>
-        [PreserveSig] int ActivateObject(in Guid riid, out IntPtr result);
-        /// <summary>Shut the object down.</summary>
-        [PreserveSig] int ShutdownObject();
-    }
-
-    /// <summary>IMFSourceReader, up to ReadSample.</summary>
-    [GeneratedComInterface]
-    [Guid("70ae66f2-c809-4e4f-8915-bdcb406b7993")]
-    internal partial interface IMFSourceReader
-    {
-        /// <summary>GetStreamSelection, unused.</summary>
-        [PreserveSig] int GetStreamSelection();
-        /// <summary>SetStreamSelection, unused.</summary>
-        [PreserveSig] int SetStreamSelection();
-        /// <summary>GetNativeMediaType, unused.</summary>
-        [PreserveSig] int GetNativeMediaType();
-        /// <summary>Return the stream's media type.</summary>
-        [PreserveSig] int GetCurrentMediaType(uint stream, out IMFMediaType type);
-        /// <summary>Set the stream's media type, converting where it can.</summary>
-        [PreserveSig] int SetCurrentMediaType(uint stream, IntPtr reserved, IMFMediaType type);
-        /// <summary>SetCurrentPosition, unused.</summary>
-        [PreserveSig] int SetCurrentPosition();
-        /// <summary>Read the next sample, blocking.</summary>
-        [PreserveSig] int ReadSample(uint stream, uint control, out uint actualStream, out uint flags, out long timestamp, out IMFSample? sample);
-    }
-
-    /// <summary>IMFSample, up to ConvertToContiguousBuffer.</summary>
-    [GeneratedComInterface]
-    [Guid("c40a00f2-b93a-4d80-ae8c-5a1c634f58e4")]
-    internal partial interface IMFSample : IMFAttributes
-    {
-        /// <summary>GetSampleFlags, unused.</summary>
-        [PreserveSig] int GetSampleFlags();
-        /// <summary>SetSampleFlags, unused.</summary>
-        [PreserveSig] int SetSampleFlags();
-        /// <summary>GetSampleTime, unused.</summary>
-        [PreserveSig] int GetSampleTime();
-        /// <summary>SetSampleTime, unused.</summary>
-        [PreserveSig] int SetSampleTime();
-        /// <summary>GetSampleDuration, unused.</summary>
-        [PreserveSig] int GetSampleDuration();
-        /// <summary>SetSampleDuration, unused.</summary>
-        [PreserveSig] int SetSampleDuration();
-        /// <summary>GetBufferCount, unused.</summary>
-        [PreserveSig] int GetBufferCount();
-        /// <summary>GetBufferByIndex, unused.</summary>
-        [PreserveSig] int GetBufferByIndex();
-        /// <summary>Return the sample's data in one buffer.</summary>
-        [PreserveSig] int ConvertToContiguousBuffer(out IMFMediaBuffer buffer);
-    }
-
-    /// <summary>IMFMediaBuffer, up to Unlock.</summary>
-    [GeneratedComInterface]
-    [Guid("045fa593-8799-42b8-bc8d-8968c6453507")]
-    internal partial interface IMFMediaBuffer
-    {
-        /// <summary>Lock the buffer for reading.</summary>
-        [PreserveSig] int Lock(out IntPtr data, out uint maxLength, out uint currentLength);
-        /// <summary>Unlock the buffer.</summary>
-        [PreserveSig] int Unlock();
     }
 }

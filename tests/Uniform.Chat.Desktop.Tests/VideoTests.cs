@@ -5,21 +5,25 @@ using Uniform.Chat.Avalonia.Services;
 using Uniform.Chat.Desktop.Video;
 using Uniform.Matrix.Video;
 
-/// <summary>Tests of video through GStreamer on Linux: an MP4 with H.264 and AAC as phones record it, pictures upright and small, sound decoded, played to its end; skipped where GStreamer or its plugins are not installed.</summary>
+/// <summary>Tests of video through the desktops' decoders, GStreamer on Linux and Media Foundation on Windows: an MP4 with H.264 and AAC as phones record it, pictures upright and small, sound decoded, played to its end; skipped off their platform and where they cannot decode H.264.</summary>
 public class VideoTests
 {
     /// <summary>Folder of the test files, beside the test assembly.</summary>
     private static string Resources => Path.Combine(AppContext.BaseDirectory, "Resources");
 
-    /// <summary>The MP4, 322×180 with its rows padded in GStreamer's layout, dark on the left, and tagged to turn a quarter counter-clockwise, gives upright 180×322 pictures, dark at the bottom, 25 a second from time 0 despite its edit list, and two seconds of sound.</summary>
-    [Fact]
-    public void DecodeMp4()
+    /// <summary>The decoders tested, each skipped off its platform.</summary>
+    public static TheoryData<string> Decoders => ["GStreamer", "MediaFoundation"];
+
+    /// <summary>The MP4, 322×180 with its rows padded in the decoder's layout, dark on the left, and tagged to turn a quarter counter-clockwise, gives upright 180×322 pictures, dark at the bottom, 25 a second from time 0 despite its edit list, and two seconds of sound.</summary>
+    [Theory]
+    [MemberData(nameof(Decoders))]
+    public void DecodeMp4(string decoder)
     {
         // Arrange
-        SkipWithoutGStreamer();
+        Func<string, IVideoSource> open = Decoder(decoder);
 
         // Act
-        using GStreamerVideoSource source = new(Path.Combine(Resources, "halves.mp4"));
+        using IVideoSource source = open(Path.Combine(Resources, "halves.mp4"));
         List<(VideoFrame Picture, TimeSpan Time)> pictures = [];
         for (int i = 0; i < 500 && !source.IsAtEnd; i++) if (source.Next() is { } next) pictures.Add(next);
 
@@ -29,23 +33,24 @@ public class VideoTests
         Assert.Equal((48000, 2), (source.Sound.SampleRate, source.Sound.ChannelCount));
         Assert.InRange(source.Sound.Duration.TotalSeconds, 1.95, 2.1);
         Assert.InRange(pictures.Count, 48, 51);
-        Assert.Equal((180, 322), (pictures[0].Picture.Width, pictures[0].Picture.Height));
         Assert.Equal(TimeSpan.Zero, pictures[0].Time);
         Assert.Equal(TimeSpan.FromMilliseconds(40), pictures[1].Time - pictures[0].Time);
 
-        // Assert: upright, the dark half at the bottom
-        VideoFrame first = pictures[0].Picture;
+        // Assert: upright by its rotation, 180×322, the dark half at the bottom
+        VideoFrame first = pictures[0].Picture.Rotated(pictures[0].Picture.Rotation);
+        Assert.Equal((180, 322), (first.Width, first.Height));
         double top = first.Y.Take(first.Width * 100).Average(b => b), bottom = first.Y.Skip(first.Width * (first.Height - 100)).Average(b => b);
         Assert.True(top > 180 && bottom < 60, $"top {top:F0}, bottom {bottom:F0}");
     }
 
     /// <summary>Seeking gives the picture at the position; a file without video is refused.</summary>
-    [Fact]
-    public void SeekAndRefuse()
+    [Theory]
+    [MemberData(nameof(Decoders))]
+    public void SeekAndRefuse(string decoder)
     {
         // Arrange
-        SkipWithoutGStreamer();
-        using GStreamerVideoSource source = new(Path.Combine(Resources, "halves.mp4"));
+        Func<string, IVideoSource> open = Decoder(decoder);
+        using IVideoSource source = open(Path.Combine(Resources, "halves.mp4"));
 
         // Act
         source.SeekTo(TimeSpan.FromSeconds(1));
@@ -55,17 +60,18 @@ public class VideoTests
         // Assert
         Assert.NotNull(next);
         Assert.InRange(next.Value.Time.TotalSeconds, 0.99, 1.05);
-        Assert.Throws<NotSupportedException>(() => new GStreamerVideoSource(Path.Combine(Resources, "sound.m4a")));
+        Assert.Throws<NotSupportedException>(() => open(Path.Combine(Resources, "sound.m4a")));
     }
 
     /// <summary>The MP4 plays to its end on a speaker, its pictures as they are due.</summary>
-    [Fact]
-    public async Task PlayMp4()
+    [Theory]
+    [MemberData(nameof(Decoders))]
+    public async Task PlayMp4(string decoder)
     {
         // Arrange
-        SkipWithoutGStreamer();
+        Func<string, IVideoSource> open = Decoder(decoder);
         CancellationToken cancellationToken = TestContext.Current.CancellationToken;
-        await using DecodedVideoPlayback playback = new(path => new GStreamerVideoSource(path), () => new PullingSpeaker());
+        await using DecodedVideoPlayback playback = new(open, () => new PullingSpeaker());
         int pictures = 0;
         TaskCompletionSource ended = new(TaskCreationOptions.RunContinuationsAsynchronously);
         playback.PictureReady += _ => Interlocked.Increment(ref pictures);
@@ -81,13 +87,23 @@ public class VideoTests
         Assert.False(playback.IsPlaying);
     }
 
-    /// <summary>Skip where GStreamer or the plugins of H.264 and AAC are not installed, as on build servers.</summary>
-    private static void SkipWithoutGStreamer()
+    /// <summary>Return the opener of a decoder; skip off its platform, or where it cannot decode H.264, as GStreamer without its plugins on build servers, or Windows N without its Media Feature Pack.</summary>
+    private static Func<string, IVideoSource> Decoder(string decoder)
     {
-        // GStreamer, then a decoder of the file
-        if (!OperatingSystem.IsLinux() || !GStreamer.IsAvailable) Assert.Skip("GStreamer is not installed.");
-        try { new GStreamerVideoSource(Path.Combine(Resources, "halves.mp4")).Dispose(); }
-        catch (NotSupportedException exception) { Assert.Skip($"GStreamer cannot decode H.264: {exception.Message}"); }
+        // The platform's decoder
+        Func<string, IVideoSource>? open = decoder switch
+        {
+            "GStreamer" when OperatingSystem.IsLinux() && GStreamer.IsAvailable => path => new GStreamerVideoSource(path),
+            "MediaFoundation" when OperatingSystem.IsWindows() && MediaFoundation.IsAvailable => path => new MediaFoundationVideoSource(path),
+            _ => null,
+        };
+        if (open is null) Assert.Skip($"{decoder} is not on this machine.");
+
+        // Then a decoder of the file
+        try { open(Path.Combine(Resources, "halves.mp4")).Dispose(); }
+        catch (NotSupportedException exception) { Assert.Skip($"{decoder} cannot decode H.264: {exception.Message}"); }
+        // Return the opener
+        return open;
     }
 
     /// <summary>Reads 20 ms at a time from its source, as a device would.</summary>

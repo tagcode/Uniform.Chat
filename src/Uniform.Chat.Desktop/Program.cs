@@ -17,21 +17,22 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        // Notifications where the platform has them so far; a ring tone of our own, as desktops have none for calls; video through GStreamer on Linux where it is installed, else WebM in C#
+        // Notifications where the platform has them so far; a ring tone of our own, as desktops have none for calls; video through GStreamer on Linux where it is installed, or Media Foundation on Windows, else WebM in C#
         App.Platform = GuiPlatform.Desktop() with
         {
             Notifier = OperatingSystem.IsLinux() ? new FreeDesktopNotifier() : null,
             Ring = OperatingSystem.IsWindows() || OperatingSystem.IsLinux() ? _ => Uniform.Matrix.Audio.RingTone.Start(Uniform.Matrix.Audio.AudioDevices.ForThisPlatform()) : null,
             RingIsSoundOnly = true,
             Camera = V4l2Camera.Available() ? () => new V4l2Camera() : MediaFoundationCamera.Available() ? () => new MediaFoundationCamera() : null,
-            VideoPlayback = OperatingSystem.IsLinux() && GStreamer.IsAvailable ? () => new DecodedVideoPlayback(path => new GStreamerVideoSource(path), () => AudioDevices.ForThisPlatform()!.OpenMediaSpeaker()) : null,
-            PlaysVideo = OperatingSystem.IsLinux() && GStreamer.IsAvailable ? IsVideo : null,
+            VideoPlayback = OperatingSystem.IsLinux() && GStreamer.IsAvailable ? () => new DecodedVideoPlayback(path => new GStreamerVideoSource(path), () => AudioDevices.ForThisPlatform()!.OpenMediaSpeaker())
+                : OperatingSystem.IsWindows() && MediaFoundation.IsAvailable ? () => new DecodedVideoPlayback(path => new MediaFoundationVideoSource(path), () => AudioDevices.ForThisPlatform()!.OpenMediaSpeaker()) : null,
+            PlaysVideo = OperatingSystem.IsLinux() && GStreamer.IsAvailable || OperatingSystem.IsWindows() && MediaFoundation.IsAvailable ? IsVideo : null,
         };
         // Return exit code
         return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
-    /// <summary>Return whether a file of a MIME type and name is a video for GStreamer to play.</summary>
+    /// <summary>Return whether a file of a MIME type and name is a video for GStreamer or Media Foundation to play.</summary>
     private static bool IsVideo(string? mimeType, string? fileName) => mimeType?.StartsWith("video/", StringComparison.OrdinalIgnoreCase) == true || Path.GetExtension(fileName ?? "").ToLowerInvariant() is ".mp4" or ".m4v" or ".mov" or ".3gp" or ".webm" or ".mkv" or ".avi" or ".ogv";
 
     /// <summary>Configure Avalonia for the desktop; the XAML previewer of editors also calls this.</summary>
